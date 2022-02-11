@@ -1,0 +1,222 @@
+<aura:component
+    implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+    access="global" controller="EI_AddDeposit">
+    <aura:registerEvent name="EI_depositEvent" type="c:EI_depositEvent" />
+    <aura:attribute name="Usersdetails" type="User" default="{'sobject' : 'user'}" />
+    <lightning:overlayLibrary aura:id="overlayLib" />
+    <!--<lightning:notificationsLibrary aura:id="notifLib" /> -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <!-- Address Fields-->
+    <aura:attribute access="public" name="Street" type="String" />
+    <aura:attribute access="public" name="Town" type="String" />
+    <aura:attribute access="public" name="PostCode" type="String" />
+    <aura:attribute access="public" name="Country" type="String" />
+    <aura:attribute access="public" name="County" type="String" />
+    <aura:attribute access="public" name="addLandlord" type="Boolean" default="false" />
+    <aura:attribute name="landlordDetails" type="List" />
+    <aura:attribute name="PrimarylandlordDetails" type="List" />
+    <aura:attribute name="selectedPrimarylandlord" type="List" />
+    <aura:attribute name="selectedjointlandlord" type="List" />
+    <aura:attribute name="selectedjointlandlordID" type="List" />
+    <aura:attribute name="Propobj" type="Property__c" default="{ 'sobjectType': 'Property__c'}" />
+    <aura:attribute name="selectedProperty" type="Property__c" default="{ 'sobjectType': 'Property__c'}" />
+    <aura:attribute access="public" name="localAuthorityArea" type="String" />
+    <!-- <div class="slds-grid"> -->
+
+    <div>
+        <p style="font-size:1.7rem;	"><b>New Property</b></p>
+        <div style="font-size:1.5rem!important" class="slds-p-left_medium slds-p-right_medium">
+            <c:Register aura:id="compB" method="{!c.parentPress}" />
+            <!--<c:addressFinder aura:id="compB" IsEditMode="true" method="{!c.parentPress}" />
+            
+            <lightning:input aura:id="Newid" label="Postcode" required="true" type="string"
+                value="{!v.Propobj.Postal_Code__c}" />
+            <lightning:textarea aura:id="Newid" label="Street Address" type="String" required="true"
+                value="{!v.Propobj.Street__c}" maxlength="244" minlength="1" />
+            <lightning:input aura:id="Newid" label="City" type="String" required="true" value="{!v.Propobj.City__c}" />
+            <lightning:input aura:id="Newid" label="County" type="String" required="true"
+                value="{!v.Propobj.County__c}" />
+            <lightning:input aura:id="Newid" label="Country" required="true" type="String"
+                value="{!v.Propobj.Country__c}" />
+			-->
+            <!-- <lightning:input aura:id="Newid" label="Town" type="String" required="true" value="{!v.Propobj.Town__c}"/> -->
+            <lightning:input class="fontsize" aura:id="Newid" label="Is furnished" type="Checkbox"
+                checked="{!v.Propobj.Is_Furnished__c}" />
+            <lightning:input aura:id="Newid" label="No. of Bedrooms" value="{!v.Propobj.No_of_bedrooms__c}"
+                type="number" name="number" min="0" max="999" required="true" />
+            <lightning:input aura:id="Newid" label="No of Living Rooms" value="{!v.Propobj.No_of_living_rooms__c}"
+                type="number" name="number" min="0" max="999" required="true" />
+            <br />
+            <div class="slds-m-top_small slds-m-bottom_small" style="float: right; ">
+                <lightning:button aura:id="anotherLandlord" label="Add a new Landlord" variant="Brand"
+                    onclick="{!c.addLandlord}" />
+
+            </div>
+            <aura:if isTrue="{!v.Usersdetails.User_Type__c =='Agent'}">
+
+                <div>
+                    <b style="font-size: 130%;margin-right: 3%">Add primary landlords</b>
+                    <div class="slds-form-element">
+                        <div class="slds-form-element__control">
+                            <div class="slds-combobox_container">
+                                <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open"
+                                    aria-expanded="true" aria-haspopup="listbox" role="combobox">
+                                    <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right"
+                                        role="none">
+                                        <lightning:input type="text" label="Please Search Your Landlord"
+                                            aura:id="searchField1" onkeyup="{!c.searchKeyChange1}" placeholder="Search"
+                                            onclick="{!c.searchKeyChange1}" />
+                                        <span class=" slds-icon_container slds-icon-utility-search slds-input__icon
+                                                         slds-input__icon_right">
+                                        </span>
+                                    </div>
+                                    <aura:if isTrue="{!v.PrimarylandlordDetails[0].Id!=null}">
+                                        <div id="listbox-id-2"
+                                            class="slds-dropdown slds-dropdown_length-with-icon-7 slds-dropdown_fluid"
+                                            role="listbox">
+                                            <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+
+                                                <aura:iteration items="{!v.PrimarylandlordDetails}" var="p">
+
+                                                    <li role="presentation" class="slds-listbox__item">
+                                                        <div id="option1"
+                                                            class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta"
+                                                            role="option">
+                                                            <span class="slds-media__figure slds-listbox__option-icon">
+                                                                <span
+                                                                    class="slds-icon_container slds-icon-standard-account">
+                                                                </span>
+                                                            </span>
+                                                            <span class="slds-media__body">
+                                                                <span onclick="{!c.primaryLandlord}" id="{!p.Id}"
+                                                                    class="slds-listbox__option-text slds-listbox__option-text_entity">{!p.FirstName+p.LastName}</span>
+                                                            </span>
+                                                        </div>
+                                                    </li>
+
+                                                </aura:iteration>
+                                            </ul>
+                                        </div>
+
+                                    </aura:if>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <aura:iteration items="{!v.selectedPrimarylandlord}" var="pl">
+                    <div class="slds-card slds-m-top_small" style="border: 1px solid purple;">
+                        <lightning:card variant="Narrow" title="{!pl.FirstName+' '+pl.LastName}"
+                            iconName="standard:contact">
+
+                            <p class="slds-p-horizontal_small">
+                            <div class="slds-card__body">
+                                <p class="slds-truncate">Email :
+                                    <ui:outputText value="{!pl.Email}" />
+                                </p>
+                                <p class="slds-truncate">Phone :
+                                    <ui:outputText value="{!pl.Phone}" />
+                                </p>
+
+                            </div>
+                            </p>
+                        </lightning:card>
+                    </div>
+                </aura:iteration>
+
+
+            </aura:if>
+            <div class="slds-p-top_medium">
+                <div>
+                    <b style="font-size: 130%;margin-right: 3%">Add additional landlords?</b>
+                </div>
+                <div>
+                    <lightning:button label="Yes" class="slds-m-top_medium" variant="brand" onclick="{!c.clickYes}" />
+                    <lightning:button label="No" class="slds-m-top_medium" variant="brand" onclick="{!c.clickNo}" />
+                </div>
+            </div>
+            <aura:if isTrue="{!v.addLandlord}">
+
+                <div class="slds-form-element">
+                    <div class=" slds-form-element__control">
+                        <div class="slds-combobox_container">
+                            <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open"
+                                aria-expanded="true" aria-haspopup="listbox" role="combobox">
+                                <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right"
+                                    role="none">
+                                    <lightning:input type="text" name="Property" label="Please Search Your Landlord"
+                                        aura:id="searchField" onkeyup="{!c.searchKeyChange}" placeholder="Search"
+                                        onclick="{!c.searchKeyChange}" />
+                                    <span class=" slds-icon_container slds-icon-utility-search slds-input__icon
+                                                     slds-input__icon_right">
+                                    </span>
+                                </div>
+                                <aura:if isTrue="{!v.landlordDetails[0].Id!=null}">
+                                    <div id="listbox-id-2"
+                                        class="slds-dropdown slds-dropdown_length-with-icon-7 slds-dropdown_fluid"
+                                        role="listbox">
+                                        <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+
+                                            <aura:iteration items="{!v.landlordDetails}" var="p">
+
+                                                <li role="presentation" class="slds-listbox__item ">
+                                                    <div id="option1"
+                                                        class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta"
+                                                        role="option">
+                                                        <span class="slds-media__figure slds-listbox__option-icon ">
+                                                            <span class=" slds-icon_container
+                                                            slds-icon-standard-account">
+                                                            </span>
+                                                        </span>
+                                                        <span class="slds-media__body">
+                                                            <span onclick="{!c.JointLandlord}" id="{!p.Id}"
+                                                                class="slds-listbox__option-text slds-listbox__option-text_entity">{!p.FirstName+p.LastName}</span>
+                                                        </span>
+                                                    </div>
+                                                </li>
+
+                                            </aura:iteration>
+                                        </ul>
+                                    </div>
+                                </aura:if>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <aura:iteration items="{!v.selectedjointlandlord}" var="pl">
+                    <div class="slds-card slds-m-top_small" style="border: 1px solid purple;">
+                        <lightning:card variant="Narrow" title="{!pl.FirstName+' '+pl.LastName}"
+                            iconName="standard:contact">
+                            <aura:set attribute="actions">
+                                <lightning:button label="Remove" value="{!pl.Id}" onclick="{!c.removeJoint}" />
+                            </aura:set>
+                            <p class="slds-p-horizontal_small">
+                            <div class="slds-card__body">
+                                <p class="slds-truncate">Email :
+                                    <ui:outputText value="{!pl.Email}" />
+                                </p>
+                                <p class="slds-truncate">Phone :
+                                    <ui:outputText value="{!pl.Phone}" />
+                                </p>
+
+                            </div>
+                            </p>
+                        </lightning:card>
+                    </div>
+                </aura:iteration>
+
+            </aura:if>
+            <div class="slds-p-top_medium">
+                <lightning:button aura:id="saveId" label="Add Now" variant="Brand" onclick="{!c.doCreate}" />
+            </div>
+        </div>
+    </div>
+
+    <!-- </div> -->
+</aura:component>

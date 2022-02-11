@@ -1,0 +1,227 @@
+<aura:component controller="LoginController" implements="forceCommunity:themeLayout,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    
+     <ltng:require styles="{!$Resource.TDSTheme+'/assets/css/custom.css'}"
+                 scripts="{!join(',',
+                           $Resource.TDSTheme+'/assets/js/plugin.min.js',
+                           $Resource.TDSTheme+'/assets/js/custom.js')}"
+                  
+                  />
+    
+	<!-- Username and Password -->
+	<aura:attribute name="flagUserType" type="Boolean"  default="false"/>
+	<aura:attribute name="flagPassType" type="Boolean"  default="false"/>
+    <aura:attribute name="rememberMe" type="Boolean"  default="false"/>
+	<aura:attribute name="Username" type="String" />
+	<aura:attribute name="Password" type="String" />
+	<aura:attribute name="email" type="String" />
+	<aura:attribute name="resetUsername" type="String" />
+	<aura:attribute name="mylabel" type="String" />
+	<aura:attribute name="resetError" type="String" />
+	<aura:attribute name="showError" type="boolean"/>
+	<aura:attribute name="isShowResetModal" type="boolean" default="true"/>
+
+       <aura:handler event="aura:waiting" action="{!c.waiting}"></aura:handler>
+<aura:handler event="aura:doneWaiting" action="{!c.doneWaiting}"></aura:handler>
+
+      <aura:attribute name="PageSpinner" type="Boolean" default="true"></aura:attribute>
+    
+	<!-- BootStrap Errors using Aura:if-->
+	<aura:attribute name="UserNameError" type="boolean" default="false" />
+	<aura:attribute name="PasswordError" type="boolean" default="false" />
+    <aura:attribute name="errorMessage" type="boolean" default="false" />
+    <aura:attribute name="message" type="string" default="false" />
+	<aura:attribute name="errorMessage1" type="boolean" default="false" />
+    <aura:attribute name="message1" type="string" default="false" />
+	<aura:attribute name="UserNameResetError" type="boolean" default="false" />
+	
+    <lightning:navigation aura:id="navService" />
+    <html lang="en">
+    <head>
+
+        <title>TDS</title>
+    </head>
+      <aura:renderIf isTrue="{!v.PageSpinner}">
+ <div aura:id="ring" class="lds-dual-ring"></div>
+           <aura:set attribute="else">
+ <body>
+      <!-- reset modal Popup -->
+   <div class="custom-model modal fade" id="reset-popup" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="reset-popup" aria-hidden="true">       
+           <div class="modal-dialog modal-lg" style="max-width: 600px;" >
+                <aura:if isTrue="{!v.isShowResetModal}">
+                <div class="modal-content">
+                    <div class="modal-header">
+                       <p ><b style="font-size: x-large;">Password reset</b></p>
+                        <br></br>
+                         <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
+                            <span aria-hidden="true"> 
+                                <img src="{!$Resource.TDSTheme+'/assets/img/Cancel-icon.png'}" alt="" onclick="{!c.closeModel }" />
+                            </span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+						 <aura:if isTrue="{!v.errorMessage1}">
+							 <div id="errorAlert" class="alert alert-danger alert-dismissible fade show">
+								 <strong>Error!</strong> {!v.resetError}
+								 <button type="button" class="close" onclick="{!c.hideBootstrapErrors1}" name="error" >&times;</button >
+							 </div>                 
+						</aura:if>
+						<aura:if isTrue="{!v.UserNameResetError}">
+							 <div id="UserNameErrorAlert" class="alert alert-danger alert-dismissible fade show">
+								 <strong>Error!</strong> User name is mandatory.
+								 <button type="button" class="close" onclick="{!c.hideBootstrapErrors1}" name="userName1" >&times;</button >
+							 </div>                 
+						</aura:if>
+                        <div class="sf-custom-form">
+                            <p>Please enter the username that you used when creating your account. An email will be sent to that address with further instructions on how to reset your password.</p>
+                       <br></br>
+                          <form class="slds-form--stacked">
+                                <label for="inputUserName">Enter user name</label>
+                        <input  type="text" value="{!Username}" aura:id="resetUsername" class="login removeBorderCSS" required="true" autocomplete="off" />
+                    
+                        <br></br><br></br>
+                        <!--<div>    
+                            <ui:outputRichText class="errormessag" value="{!v.resetError}"/>
+                        </div>
+                        <input class="login-btn" type="submit" name="details" value="Send Password" onclick="{!c.resetPassword}"/>-->
+                        <lightning:button label="Reset password" class="see-all" variant="brand" onclick="{!c.resetPassword}"/>
+                        
+                    </form>
+                    </div>
+                </div>
+            </div>
+                     <aura:set attribute="else">
+                    <div class="modal-content">
+                          <div class="modal-header">
+			    		 <p ><b style="font-size: x-large;">Now check your email</b></p>
+                        <br></br>
+                         <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
+                            <span aria-hidden="true"> 
+                                <img src="{!$Resource.TDSTheme+'/assets/img/Cancel-icon.png'}" alt="" onclick="{!c.closeModel }" />
+                            </span>
+                        </button>
+                        </div>
+                          <div class="modal-body">
+                        
+			    		<p>Check the email account associated with your user name for instructions on resetting your password. Remember to look in your spam folder, where automated messages sometimes filter. If you still can't log in, contact your administrator.</p>
+                     <!--   <button type="button " class="login-btn" data-dismiss="modal"  aria-label="back to login"><span aria-hidden="true">Back To login</span></button>-->
+                        </div></div>
+                </aura:set>
+               </aura:if>
+        </div>
+     </div>
+ 
+   <!--  <div id="overlay">
+             <img src="{!$Resource.Loadingimage}"  width="120" height="100" alt=""/>
+      </div> 
+       Login HTML Start -->
+        <section class="login-details">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-6">
+                        <!-- Login Banner HTML Start -->
+                        <div class="login-banner show-desktop" style="background-image: url('/sfsites/c/resource/TDSTheme/assets/img/login-banner.png')">
+                            <div class="login-banner__text">
+                                <h2>Lorem Ipsum Dolor sit</h2>
+                                <p>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only</p>
+                            </div>
+                        </div>
+                        <!-- Login Banner HTML End -->
+                    </div>
+                   
+                    <div class="col-md-6">
+                        <!-- Login Form HTML Start -->
+                        <div class="login-banner-form">
+                            <figure class="logo">
+                                <img src="/sfsites/c/resource/TDSTheme/assets/img/Logo_FIles.png" alt="TDS Logo"/>
+                            </figure>
+                            <p>Welcome back! Please login to your account.</p>
+                            <div class="get_In_Touch_form">
+                                <form>
+                                   <aura:if isTrue="{!v.errorMessage}">
+                                         <div id="errorAlert" class="alert alert-danger alert-dismissible fade show">
+                                             <strong>Error!</strong> {!v.message}
+                                             <button type="button" class="close" onclick="{!c.hideBootstrapErrors}" name="userAttempt" >&times;</button >
+                                         </div>                 
+                                    </aura:if>
+                                    <aura:if isTrue="{!v.UserNameError}">
+                                         <div id="UserNameErrorAlert" class="alert alert-danger alert-dismissible fade show">
+                                             <strong>Error!</strong> User name is mandatory.
+                                             <button type="button" class="close" onclick="{!c.hideBootstrapErrors}" name="userName" >&times;</button >
+                                         </div>                 
+                                    </aura:if>
+                                    <aura:if isTrue="{!v.PasswordError}">
+                                         <div id="PasswordErrorAlert" class="alert alert-danger alert-dismissible fade show">
+                                             <strong>Error!</strong> Password is mandatory.
+                                             <button type="button" class="close" onclick="{!c.hideBootstrapErrors}" name="password" >&times;</button >
+                                         </div>                 
+                                    </aura:if>
+                                    <div class="form-row">
+                                        <div class="form-group col-12">
+                                            <label for="inputUserName">User name</label>
+                                            <input value="{!Username}" aura:id="uname" required="true" type="text" class="form-control" id="inputUserName" placeholder="Enter user name"/>
+                                        <!--<aura:if isTrue="{!v.flagUserType}">
+                                                    <div aura:id="depositWarning" style="color: rgb(194,57,52); font-size: 1.4rem!important;">
+                                                        Complete this field.
+                                                    </div>
+                                                </aura:if>-->
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-12">
+                                        <!--     <input type="password" value="{!Password}" aura:id="pass" class="login" required="true" autocomplete="off" />-->
+                                           <label for="inputPassword">Password</label>
+                                            <input value="{!Password}" aura:id="pass" required="true" type="password" class="form-control"  id="inputPassword" placeholder="********"/>
+                                        <!--<aura:if isTrue="{!v.flagPassType}">
+                                                    <div aura:id="depositWarning" style="color: rgb(194,57,52); font-size: 1.4rem!important;">
+                                                        Complete this field.
+                                                    </div>
+                                                </aura:if>-->
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                    <!--    <div class="form-group col-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="gridCheck"/>
+                                                <label class="form-check-label" for="gridCheck">Remember me</label>
+                                            </div>
+                                        </div> -->
+                                        <div class="form-group col-6">
+                                            <label>
+                                              <!--  <a href="#" class="forgot-password">Forgot Password</a>-->
+                                                
+                         <br></br>                    
+                     <div class="form-row" style="width:400px;margin-left:19px">
+                    
+                   <div class="form-group col-md-6">
+                          
+                      <input type="checkbox" class="form-check-input" id="gridSubscription" checked="{!v.rememberMe}"/>
+                    <label class="form-check-label" for="gridSubscription">Remember me</label>
+                     
+                      </div>
+                       <div class="form-group col-md-6">
+                            <a href="" data-toggle="modal" data-target="#reset-popup" class="" onclick="{!c.resetPwd}">Forgot password?</a>	
+                   
+                         </div>
+                  </div>
+          
+                                     
+                                            </label>
+                                        </div>
+                                    </div>
+                                   <!-- <ui:outputRichText class="errormessag" value="{!v.mylabel}"/>
+                                      <button onclick="{!c.getInput}" type="submit" class="see-all">Submit</button>-->
+                                  <lightning:button label="Submit" class="see-all" variant="brand" onclick="{!c.getInput}"/>
+                                    <a href="" onclick="{!c.RegisterPage}" class="learn-more" style="text-transform: none;">Sign up</a>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- Login Form HTML End -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </body>
+          </aura:set>
+   </aura:renderIf>   
+    </html>
+</aura:component>

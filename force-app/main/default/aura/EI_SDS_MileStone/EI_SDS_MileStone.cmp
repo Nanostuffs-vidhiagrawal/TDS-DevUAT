@@ -1,0 +1,37 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" access="global"
+                controller ="EI_SDS_MileStone">
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="CaseRec" type="Case" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <div>
+        <div class="form-group row maindiv" id="maindiv">
+            <div class="col-sm-4">
+                <div class="request-section">
+                    <lightning:icon iconName="standard:entity_milestone" alternativeText="Account" title="Account" ></lightning:icon>
+                    <label class='ptag' >Milestones</label>
+                </div>
+            </div>
+            <br></br>
+            <aura:if isTrue="{!or(or(v.CaseRec.Status=='Adjudication', v.CaseRec.Status=='Evidence review complete'), 
+                              or( or(v.CaseRec.Status=='Deposit to be repaid - court case', v.CaseRec.Status=='Review request accepted'), 
+                              	  or(v.CaseRec.Status=='Review request accepted – assign to adjudicator', 
+                                     or(or(v.CaseRec.Status=='Deposit to be repaid - resolved without adjudication',v.CaseRec.Status=='On Hold'),
+                             		   	or(or(v.CaseRec.Status=='Evidence gathering AA/LL',v.CaseRec.Status=='Evidence gathering TT'), 
+                             			  or(v.CaseRec.Status=='Repayment disputed - self-resolution', v.CaseRec.Status=='Deposit to be repaid - no evidence'))
+                                       ) ) ) ) }">
+                <label class='ptagsmall'>{!v.CaseRec.Status}</label><br></br>
+                <aura:if isTrue="{!v.CaseRec.Days_Remaining__c ==1}">
+                    <label style="font-style: italic">{!v.CaseRec.Days_Remaining__c} Day remaining </label><br></br>
+                    <aura:set attribute="else">
+                        <label style="font-style: italic">{!v.CaseRec.Days_Remaining__c} Days remaining </label><br></br>
+                    </aura:set>
+                </aura:if>
+                <br></br>
+                <aura:set attribute="else">
+                    <label>No milestones to show.</label><br></br>
+                </aura:set>
+            </aura:if>
+            
+        </div>
+    </div>
+</aura:component>

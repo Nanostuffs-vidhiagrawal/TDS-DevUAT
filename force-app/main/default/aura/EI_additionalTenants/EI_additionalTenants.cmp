@@ -1,0 +1,26 @@
+<aura:component
+    implements="lightning:isUrlAddressable,forceCommunity:themeLayout,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+    access="global">
+
+    <!-- Dyanimc title attribute -->
+    <aura:attribute name="title" type="String" />
+    <!-- Attribute to hold additional tenants -->
+    <aura:attribute name="arrObj" type="object[]" />
+
+    <aura:iteration items="{!v.arrObj}" var="item">
+        <div class="slds-grid slds-gutters">
+            <div class="slds-col  slds-size_3-of-12">
+                <lightning:card title="{!v.title}">
+                    <p class="slds-p-around_small" style="background:aliceblue;">
+                    <p class="slds-text-color_success">Title : {!item.title} </p> <br />
+                    <p class="slds-text-color_success">First Name : {!item.firstName} </p> <br />
+
+                    <p class="slds-text-color_success">Sur Name : {!item.SurName} </p> <br />
+                    <p class="slds-text-color_success">Email : {!item.email} </p> <br />
+                    <p class="slds-text-color_success">Phone : {!item.phone} </p> <br />
+                    </p>
+                </lightning:card>
+            </div>
+        </div>
+    </aura:iteration>
+</aura:component>

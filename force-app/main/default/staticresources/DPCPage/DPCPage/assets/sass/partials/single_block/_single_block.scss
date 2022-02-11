@@ -1,0 +1,62 @@
+.single_block {
+	@include border(1px, solid, map-get($gray_shade, gray02));
+	@include space(padding, bottom, $s25);
+	@include space(margin, bottom, $s15);
+
+	img {
+		max-width: $full;
+		width: $full;
+		@include space(margin, bottom, $s25);
+		@include respond-below(sm) {
+			@include space(margin, bottom, $s15);
+		}
+	}
+
+	&__text {
+		@include space(padding, left, $s10);
+		@include space(padding, right, $s10);
+
+		h5 {
+			font-family: $AllerRegular;
+			color: map-get($color, light-black);
+			overflow: hidden;
+		    display: -webkit-box;
+		    -webkit-line-clamp: 1;
+		    -webkit-box-orient: vertical;
+		}
+
+		p {
+			overflow: hidden;
+		    display: -webkit-box;
+		    -webkit-line-clamp: 2;
+		    -webkit-box-orient: vertical;
+		}
+
+		.update-time {
+			@include font_size($below_base);
+			color: map-get($gray_shade, gray01); 
+		}
+	}
+
+	a {
+		text-decoration: none;
+		outline: 0;
+	}
+}
+
+.three_column-block {
+	@include space(margin, top, $s55);
+	@include respond-below(sm) {
+		@include space(margin, top, $s20);
+	}
+	.container {
+		@include position_relative();
+	}
+
+	.view-all {
+		@include position_absolute($s15, $s15, auto, auto);
+		color: map-get($color, light_blue);
+		@include font_size($base);
+	}
+}
+

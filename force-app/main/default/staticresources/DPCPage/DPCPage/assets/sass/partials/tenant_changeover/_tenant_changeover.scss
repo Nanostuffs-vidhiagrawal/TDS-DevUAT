@@ -1,0 +1,220 @@
+.tenant_cover_step {
+	.deposit_steps_count {
+		.slick-slide {
+			width: 32% !important;
+		}
+	}
+
+	.deposit_steps_detail {
+		h5 {
+			&:nth-child(1) {
+				color: map-get($color, light-black);
+			}
+		}
+	}
+}
+
+.tenant_cover_table {
+	
+	width: 95%;
+	box-shadow: 0px 1px 4px #15223214;
+
+	@include respond-below(md) {
+		width: 100%;
+	}
+
+	.tenant_cover_table-headrow, .tenant_cover_table-divrow {
+
+		border-bottom: 1px solid rgba(0,0,0,0.1);
+		display: flex;
+		align-items: center;
+		
+		input[type="text"] {
+			@include border(1px, solid, map-get($gray_shade, gray03));
+			@include border_radius(4px);
+			@include space(padding, left, $s10);
+			@include space(padding, right, $s10);
+			@include space(padding, top, 0.7rem);
+			@include space(padding, bottom, 0.7rem);
+			outline: 0;
+			
+			@include respond-above(md) {
+				min-width: 20rem;
+			}
+		}
+	}
+
+	.tenant_cover_table-headrow {
+
+		background-color: rgba(45, 153, 187, 0.14);
+
+		.tenant_cover_table-cell {
+			@include font_size($base);
+			@include space(padding, all, $s15);
+		}
+	}
+
+	.tenant_cover_table-cell {
+		min-width: 5rem;
+		min-height: 1rem;
+		@include font_size($below_base);
+		color: map-get($color, light-black);
+		@include space(padding, left, $s15);
+		@include space(padding, right, $s15);
+		@include space(padding, top, $s10);
+		@include space(padding, bottom, $s10);
+
+		&:nth-child(2) {
+			width: 20rem;
+		}
+
+		a {
+			color: map-get($color, blue);
+			text-decoration: underline;
+		}
+	}
+
+	.form-check-inline {
+
+		.main { 
+	        display: block;
+	        @include position_relative();
+	        cursor: pointer; 
+
+	        /* Hide the default checkbox */ 
+
+	        input[type=checkbox] { 
+	            visibility: hidden; 
+	        } 
+
+	        /* Creating a custom checkbox based on demand */ 
+
+	        .geekmark { 
+	        	@include position_absolute(0.2rem, auto, auto, 0,);
+	            height: 21px; 
+	            width: 22px; 
+	            background-color: transparent;
+	            @include border_radius(4px);
+	            @include border(1px, solid, map-get($color, blue));
+
+	            /* Checkmark to be shown in checkbox */ 
+		        /* It is not be shown when not checked */ 
+
+		        &:after { 
+		            content: ""; 
+		            position: absolute; 
+		            display: none; 
+		        } 
+	        }
+
+	        /* Specify the background color to be shown when checkbox is checked */
+
+	        input {
+	        	&:checked {
+	        		& ~ .geekmark {
+	        			background-color: transparent; 
+
+	        			/* Display checkmark when checked */ 
+
+	        			&:after { 
+				            display: block; 
+				        } 
+	        		}
+	        	}
+	        }
+	    } 
+	}   
+          
+    /* Styling the checkmark using webkit */ 
+    /* Rotated the rectangle by 45 degree and showing only two border to make it look like a tickmark */ 
+
+    .main .geekmark:after { 
+        left: 7px; 
+        bottom: 4px; 
+        width: 6px; 
+        height: 15px; 
+        border: solid map-get($color, blue); 
+        border-width: 0 2px 2px 0; 
+        -webkit-transform: rotate(45deg); 
+        -ms-transform: rotate(45deg); 
+        transform: rotate(45deg); 
+    } 
+
+	/*Chrome*/
+	@media screen and (-webkit-min-device-pixel-ratio:0) {
+		input[type='range'] {
+			overflow: hidden;
+			-webkit-appearance: none;
+			background-color: transparent;
+		}
+    
+		input[type='range']::-webkit-slider-runnable-track {
+			-webkit-appearance: none;
+			color: #13bba4;
+		}
+    
+		input[type='range']::-webkit-slider-thumb {
+			width: 10px;
+			-webkit-appearance: none;
+			height: 10px;
+			cursor: ew-resize;
+			background: #434343;
+			box-shadow: -1200px 0 0 1200px map-get($color, blue);
+		}
+
+	}
+	/** FF*/
+	
+	input[type="range"]::-moz-range-progress {
+		background-color: transparent; 
+	}
+
+	input[type="range"]::-moz-range-track {  
+		background-color: transparent;
+	}
+
+	/* IE*/
+
+	input[type="range"]::-ms-fill-lower {
+		background-color: transparent; 
+	}
+	input[type="range"]::-ms-fill-upper {  
+		background-color: transparent;
+	}
+}
+
+.tenant_cover_deposit-detail {
+
+	h5 {
+		@include space(margin, top, $s50);
+		@include space(margin, bottom, $s40);
+
+		@include respond-below(sm) {
+			@include space(margin, top, $s25);
+			@include space(margin, bottom, $s15);
+		}
+	}
+
+	.tenant_cover_table {
+
+		@include space(margin, bottom, $s25); 
+
+		@include respond-below(sm) {
+			@include space(margin, bottom, $s15);
+		}
+
+		.form-check-inline {
+
+			.main {
+				@include space(padding, left, $s35); 
+			}
+
+			label {
+				display: block;
+				color: map-get($color, light-black);
+				@include font_size($base);
+				font-weight: bold;
+			}
+		}
+	}
+}

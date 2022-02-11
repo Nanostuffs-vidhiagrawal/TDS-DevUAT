@@ -1,0 +1,5 @@
+<apex:page controller="getFile" action="{!fileOpen}">
+    <apex:form >
+        <apex:outputText escape="false" value="{!boxResponse}"/> 
+    </apex:form>
+</apex:page>

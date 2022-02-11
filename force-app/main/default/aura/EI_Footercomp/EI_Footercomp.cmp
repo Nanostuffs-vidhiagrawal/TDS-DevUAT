@@ -1,0 +1,81 @@
+<aura:component implements="forceCommunity:themeLayout,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+<aura:handler event="aura:doneWaiting" action="{!c.doneWaiting}"></aura:handler>
+     <aura:attribute name="PageSpinner" type="Boolean" default="true"></aura:attribute>
+    <html lang="en">
+    
+    <head>
+   
+            </head>
+     <aura:renderIf isTrue="{!v.PageSpinner}">
+ <div aura:id="ring" class="lds-dual-ring"></div>
+           <aura:set attribute="else">    
+    <body>
+
+        <!-- Footer HTML Start -->
+        <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-4 col-md-3 col-sm-6 col-6">
+                        <h6>Accreditations</h6>
+                        <figure>
+                            <img src="{!$Resource.TDSTheme+ '/assets/img/cyber-essentials-badge.png'}" alt="Cyber Essentials"/>
+                        </figure>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-6">
+                        <h6>Need Help?</h6>
+                        <ul>
+                            <li>
+                                <a href="#">Support</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-6">
+                        <h6>Helpful Links</h6>
+                        <ul>
+                            <li>
+                                <a href="#">Resource Centre</a>
+                            </li>
+                            <li>
+                                <a href="#">Governance</a>
+                            </li>
+                            <li>
+                                <a href="#">Careers</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-2 col-md-3 col-sm-6 col-6">
+                        <h6>Social Media</h6>
+                        <ul class="Social_Media_list">
+                            <li>
+                                <a href="#"><img src="{!$Resource.TDSTheme+ '/assets/img/facebook-square.png'}" alt="Facebook Icon"/> Facebook</a>
+                            </li>
+                            <li>
+                                <a href="#"><img src="{!$Resource.TDSTheme+ '/assets/img/linkedin.png'}" alt="Linkedin Icon"/> Linkedin</a>
+                            </li>
+                            <li>
+                                <a href="#"><img src="{!$Resource.TDSTheme+ '/assets/img/twitter-square.png'}" alt="Twitter Icon"/> Twitter</a>
+                            </li>
+                            <li>
+                                <a href="#"><img src="{!$Resource.TDSTheme+ '/assets/img/youtube.png'}" alt="Youtube Icon"/> Youtube</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="copyright_part">
+                    <p>&copy; 2020 SafeDeposits Scotland Limited, All Rights Reserved.</p>
+                    <p>SafeDeposits Scotland Limited is a company registered in Scotland with number 405020</p>
+                </div>
+            </div>
+        </footer>
+        <!-- Footer HTML End -->
+
+  <!--      <script src="../assets/js/plugin.min.js"></script>
+        <script src="../assets/js/custom.js"></script> -->
+
+    </body>
+         </aura:set>
+    </aura:renderIf>
+</html>	
+</aura:component>

@@ -1,0 +1,11 @@
+.THIS .see-all{
+    margin-top: 0;
+}
+
+.THIS .login{
+    width:95%;
+}
+.THIS .errormessag{
+    font-size:1.4rem;
+    color:red;
+}

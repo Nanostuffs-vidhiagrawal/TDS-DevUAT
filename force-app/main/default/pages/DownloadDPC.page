@@ -1,0 +1,100 @@
+<apex:page readOnly="true" controller="DownloadDPC" applyHtmlTag="false" sidebar="false" showHeader="false"     
+           cache="true" renderAs="pdf" ><!--Deposit_Protecton_Certificate.pdf"-->
+           
+    <head>    
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />    
+            <style type="text/css"> 
+                @page {    
+                size: A4 portrait;    
+                    border: 2px solid black;
+                }    
+                td {    
+                    text-align: center;    
+                    font-size: 16px; 
+                    border-collapse: collapse;
+                }
+                tr {    
+                    text-align: center;    
+                    font-size: 16px;
+                }
+            </style>    
+    </head>
+    <body>
+        Tenancy Deposit Protection Certificate (Custodial Scheme)<br/><br/>
+        This Certificate informs you that your agent or landlord has registered your
+        tenancy deposit with TDS Custodial, a tenancy deposit scheme authorised by the
+        Department for Communities and Local Government. Your deposit has been paid
+        into our custodial scheme – this means that we will hold the money and safeguard it
+        during the tenancy, until you apply to have it returned once the tenancy has ended.<br/><br/>
+        You can use the Deposit Account Number at www.tenancydepositscheme.com to:<br/><br/>
+        1. check the status of your deposit protection and download an updated certificate<br/>
+        2. if you are the lead tenant, raise a dispute about the deposit at the end of the tenancy<br/>
+        3. check the progress of a dispute<br/><br/>
+        
+        Deposit Account Number: {!depositlist[0].Name} Certificate revised on: <apex:outputText value="{0,date,MM/dd/yy}"> <apex:param value="{!depositlist[0].Certificate_Revised_on__c}"/></apex:outputText>
+        <table>
+            <tr>
+                <td>Address of the property to which the deposit relates</td>
+                <td>{!depositlist[0].Property_Address__c}</td>
+            </tr>
+            <tr>
+                <td>Amount of deposit in tenancy agreement</td>
+                <td>£{!depositlist[0].Deposit_Amount__c}</td>
+                <td>Amount of deposit protected by TDS</td>
+                <td>£{!depositlist[0].Amount_of_Deposit_Protected_by_TDS__c}</td>
+            </tr>
+            <tr>
+                <td>Tenancy agreement start date</td>
+                <td><apex:outputText value="{0,date,MM/dd/yy}"> <apex:param value="{!depositlist[0].Start_Date__c}"/></apex:outputText></td>
+                <td>Tenancy agreement expected end date</td>
+                <td><apex:outputText value="{0,date,MM/dd/yy}"> <apex:param value="{!depositlist[0].End_Date__c}"/></apex:outputText></td>
+            </tr>
+            <tr>
+                <td>Date agent/landlord received the deposit</td>
+                <td><apex:outputText value="{0,date,MM/dd/yy}"> <apex:param value="{!depositlist[0].Date_Agent_Landlord_Received_Deposit__c}"/></apex:outputText> </td>
+                <td>Date TDS received the deposit</td>
+                <td><apex:outputText value="{0,date,MM/dd/yy}"> <apex:param value="{!depositlist[0].Date_Deposit_Received__c}" /> </apex:outputText> </td>
+            </tr>       
+            <tr>
+                <td>Lead tenant</td>
+                <apex:repeat value="{!depositAllocationList}" var="record">
+                    <td style="{!IF(record.Is_Lead__c==true,'','display:none')}">
+                    {!record.Deposit_Holder__r.Name}<br/>{!record.Deposit_Holder__r.PersonEmail}<br/>{!record.Deposit_Holder__r.Phone}</td>
+                </apex:repeat>
+            </tr>
+            <tr>
+                <td>Additional tenant(s)</td>
+                <apex:repeat value="{!depositAllocationList}" var="record">
+                    <td style="{!IF(record.Is_Lead__c==false,'','display:none')}">
+                    {!record.Deposit_Holder__r.Name}<br/>{!record.Deposit_Holder__r.PersonEmail}<br/>{!record.Deposit_Holder__r.Phone}</td>
+                </apex:repeat>
+            </tr>
+            
+            <tr>
+                <td>Landlord(s)</td>
+                <td>
+                    <apex:repeat value="{!propertyAllocationList}" var="record">
+                        {!record.Contact__r.Name}<br/>{!record.Contact__r.Email}<br/>{!record.Contact__r.Phone}<br/>
+                    </apex:repeat>
+                </td>
+            </tr>
+        </table><br/><br/>  
+        
+        The deposit is held as security against the tenant not meeting their obligations in connection with a tenancy or
+        occupancy arrangement. Your tenancy agreement will set out what the deposit can be used for, but in certain
+        circumstances, a landlord may want to use some or all of the deposit at the end of the tenancy to:<br/>
+        • pay for damage a tenant may have caused to the property;<br/>
+        • pay cleaning bills if the property has been left in poor condition;<br/>
+        • cover any unpaid rent;<br/>
+        • remedy a breach of the tenancy agreement.<br/><br/>
+        Most deposits are refunded through the landlord and tenant agreeing. However, in the event of a disagreement
+        over how this deposit is to be distributed when this tenancy ends, you may refer the matter to TDS for dispute
+        resolution. This service is free and the adjudicator will decide how the deposit is to be returned. As we hold your
+        deposit, you will need to request its repayment at the end of the tenancy. You should speak to your landlord
+        first in order to try to resolve any dispute that may arise over its return. If the landlord is uncontactable or does
+        not respond, you will need to provide us with a statutory declaration before the deposit can be repaid. We will
+        provide further guidance on this procedure where required.<br/><br/><br/><br/><br/>
+        <center>TDS Custodial, PO Box 1255, Hemel Hempstead, Herts HP1 9GN<br/>
+        T: 0300 037 1001 E: info@tenancydepositscheme.com W: www.tenancydepositscheme.com</center>
+    </body>
+</apex:page>

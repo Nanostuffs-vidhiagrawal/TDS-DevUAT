@@ -1,0 +1,82 @@
+<aura:component 
+	access="global" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes"
+    controller="EI_ReadCSV"
+    >
+
+    <aura:attribute name="ListOfTenancies" type="Deposit__c[]"/> 
+    <aura:attribute name="validationErrorList" type="list" />
+    <aura:attribute name="validateCSVResult" type="list" />
+    <aura:attribute name="showResult" type="boolean" default="false" />
+    <aura:attribute name="showErrorDetails" type="boolean" default="false" />
+    <aura:attribute name="updatesucceessmessage" type="boolean" default="false" />
+
+    <div>
+        <input type="file" class="file" aura:id="file" onchange="{!c.CreateRecord}"/>
+    </div>
+
+    <aura:if isTrue="{!v.updatesucceessmessage}">
+        <div
+            id="successAlert"
+            class="alert alert-success alert-dismissible fade show"
+        >
+            <strong>Success!</strong> Success! Your upload is complete. Your bulk reference for payment is BLK0002
+            <button
+                type="button"
+                class="close"
+                name="updatesuccessmsg"
+                >&times;</button
+            >
+        </div> 
+    </aura:if>   
+
+    
+    <aura:if isTrue="{!v.showResult}" >
+        <div class="table-container">
+            <table class="slds-table slds-table--striped" style="width:100%">
+                <thead>
+                    <tr>
+                        <th class="headingtext">Date</th>
+                        <th class="headingtext">Valildate Only?</th>
+                        <th class="headingtext">File Name</th>
+                        <th class="headingtext">Total Tenancies</th>
+                        <th class="headingtext">Failures</th>
+                        <th class="headingtext">status</th>
+                        <th class="headingtext"></th>
+                    </tr>
+                </thead>
+                <tbody style="font-size:1.5rem;">
+                    <aura:iteration items="{!v.validateCSVResult}" var="obj">
+                        <tr>
+                            <td class="slds-cell-wrap slds-text-align_left textcss">{!obj.date}</td>
+                            <td class="slds-cell-wrap slds-text-align_left textcss">{!obj.validateOnly}</td>
+                            <td class="slds-cell-wrap slds-text-align_left textcss">{!obj.fileName}</td>
+                            <td class="slds-cell-wrap slds-text-align_left textcss">{!obj.totalTenancies}</td>
+                            <td class="slds-cell-wrap slds-text-align_left textcss">{!obj.failures}</td>
+                            <td class="slds-cell-wrap slds-text-align_left textcss">
+                                <aura:if isTrue="{!obj.status != 'Success'}">
+                                    <a href="#" data-toggle="modal" onclick="{!c.handleShowErrorDetails}" >
+                                        {!obj.status}
+                                    </a>
+                                    <aura:set attribute="else" >
+                                        {!obj.status}
+                                    </aura:set>
+                                </aura:if>
+                            </td>
+                            <td class="slds-text-align_left textcss1">
+                                <aura:if isTrue="{!obj.status == 'Success'}">
+                                    <a href="#" class="tbl-btn" data-toggle="modal" onclick="{!c.handleImport}" >
+                                    Import
+                                    </a>
+                                </aura:if>
+                            </td>
+                        </tr>
+                    </aura:iteration>
+                </tbody>
+            </table>
+        </div>  
+    </aura:if>
+
+    <aura:if isTrue="{!v.showErrorDetails}">
+        <c:EI_BulkDataFaillures ListOfTenancies = "{!v.ListOfTenancies}" totalfailuresList = "{!v.validationErrorList}" />
+    </aura:if>
+</aura:component>

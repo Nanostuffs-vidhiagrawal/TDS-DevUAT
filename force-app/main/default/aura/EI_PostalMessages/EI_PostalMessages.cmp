@@ -1,0 +1,99 @@
+<aura:component
+   implements="flexipage:availableForAllPageTypes,force:appHostable,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+   access="global"
+   controller="EI_PostalMessagesController"
+   >
+   <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+   <aura:attribute name="messageList" type="List" />
+   <aura:attribute name="startDate" type="Date" />
+   <aura:attribute name="endDate" type="Date" />
+   <aura:attribute name="spinner" type="boolean" default="true"/>
+   <!--loading spinner start--> 
+   <aura:if isTrue="{!v.spinner}">
+      <div class="exampleHolder">
+         <lightning:spinner alternativeText="Loading" size="large" />
+      </div>
+   </aura:if>
+   <div class="">
+      <lightning:card title="Postal communications">
+         <table>
+            <tr>
+               <td>
+                  <ui:inputDate aura:id="EndDateField" value="{!v.startDate}" displayDatePicker="true" />
+               </td>
+               <td>
+                  <ui:inputDate aura:id="EndDateField" value="{!v.endDate}" displayDatePicker="true" />
+               </td>
+
+            <td><input class="slds-button slds-button_destructive amberButton" type = "button" value = "Search" onclick="{! c.searchData}"/></td>
+            </tr>
+         </table>
+         <div>
+            <input class="slds-button slds-button_brand mg-left" type = "button" value = "Download All" onclick="{! c.downloadAllPDF}"/>
+            <input class="slds-button slds-button_brand" type = "button" value = "Download Selected" onclick="{! c.downloadSelectedPDF}"/>
+            <input class="slds-button slds-button_destructive amberButton" type = "button" value = "Print All" onclick="{! c.printAllPDF}"/>
+            <input class="slds-button slds-button_destructive amberButton" type = "button" value = "Print Selected" onclick="{! c.printSelectedPDF}"/>
+         </div>
+         <br/>
+         <table class="slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" aria-labelledby="element-with-table-label other-element-with-table-label">
+            <thead>
+               <tr>
+                  <th class="" scope="col">
+                     <div class="slds-truncate">Select</div>
+                  </th>
+                  <th class="" scope="col">
+                     <div class="slds-truncate">Record ID</div>
+                  </th>
+                  <th class="" scope="col">
+                     <div class="slds-truncate">Contact</div>
+                  </th>
+                  <th class="" scope="col">
+                     <div class="slds-truncate">Record</div>
+                  </th>
+                  
+                  <th class="" scope="col">
+                     <div class="slds-truncate">Subject</div>
+                  </th>
+                  <th class="" scope="col">
+                     <div class="slds-truncate">Content populated?</div>
+                  </th>
+                  
+
+                  <th class="" scope="col">
+                     <div class="slds-truncate"></div>
+                  </th>
+                  <th class="" scope="col">
+                     <div class="slds-truncate"></div>
+                  </th>
+               </tr>
+            </thead>
+            <tbody>
+               <aura:iteration items="{!v.messageList}" var="obj">
+                  <tr class="slds-hint-parent">
+                     <td>
+                        <ui:inputCheckbox name="{!obj.objMessage.Id}" class="slds-checkbox" value="{!obj.isSelected}" />
+                     </td>
+                     <!--<td>{!obj.objInboundReport.Id}</td>-->
+                     <td><a href="{!'/one/one.app?#/sObject/'+ obj.objMessage.Id + '/view'}" target="_blank" tabindex="-1">{!obj.objMessage.Name}</a></td>
+                     <td class="{!obj.objMessage.Contact__c == '' || obj.objMessage.Contact__c == undefined ?'Red':''}"><a href="{!'/one/one.app?#/sObject/'+ obj.objMessage.Contact__c + '/view'}" target="_blank" tabindex="-1">{!obj.objMessage.Contact__r.Name}</a></td>
+                     <td><a href="{!'/one/one.app?#/sObject/'+ obj.objMessage.Record_ID__c + '/view'}" target="_blank" tabindex="-1">{!obj.objMessage.Record_ID__c}</a></td>
+                     <td>{!obj.objMessage.Subject__c}</td>
+                     <td>
+                        <ui:inputCheckbox name="{!obj.objMessage.Id}" class="slds-checkbox" value="{!obj.objMessage.Content_Populated__c}" />
+                     </td>
+                     
+                     <td>
+                        <!-- ???? add Aura If for Contact Only-->
+                         <a class="slds-button slds-button_brand mg-left" href="{!'/apex/EI_DownloadPost?Id='+obj.objMessage.Id+'&amp;isDownload=true'}" id="lnkDownload" target="_blank" download="{!obj.objMessage.Name}">Download</a> 
+                         
+                     </td>
+                     <td>
+                        <a class="slds-button slds-button_destructive amberButton" href="{!'/apex/EI_DownloadPost?Id='+obj.objMessage.Id}" id="lnkDownload" target="_blank" download="{!obj.objMessage.Name}">Print</a>
+                     </td>   
+                  </tr>
+               </aura:iteration>
+            </tbody>
+         </table>
+      </lightning:card>
+   </div>
+</aura:component>

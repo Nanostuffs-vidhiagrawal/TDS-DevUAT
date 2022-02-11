@@ -1,0 +1,27 @@
+.THIS .updateDtStyle {
+ margin-left: 278px;
+    width: 811px; 
+}
+.THIS .clickButton{
+    background-color : #32669E;
+    color: white;
+}
+.THIS .dateClass {
+    margin-bottom: 1rem;
+    font-family: Aller_bold;
+    font-size: 1.6rem;
+}
+.THIS.PropertyCard {
+    width:800px;
+}
+.THIS.landlordPage {
+    margin-right:150px;
+}
+.THIS.datewidth {
+   width:400px;
+}
+
+.THIS .cRegister .content{
+     width: 535px;
+    margin-left: -29px;
+}

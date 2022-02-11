@@ -1,0 +1,62 @@
+.my-option-search {
+
+	.go-back {
+		@include space(margin, bottom, $s25);
+	}
+
+	.filter-search {
+		@include space(margin, bottom, $s35); 
+
+		@include respond-below(sm) {
+			@include space(margin, bottom, $s15);
+		}
+		.col-2 {
+			@include space(padding, left, $zero);
+		}
+
+		.form-control {
+			@include border_radius($zero);
+			@include space(padding, left, $s10);
+			@include space(padding, right, $s10);
+			height: $s45;
+
+			@include respond-below(sm) {
+				@include space(margin, top, $zero);
+			}
+		}
+
+		button {
+			position: static;
+		}
+
+		
+
+		label {
+			width: $full;
+			color: map-get($color, light-black);
+			@include font_size($base);
+		}
+	}
+
+	.col-sm-6 {
+		.see-all {
+			img {
+				margin-right: 3px;
+    			margin-top: -4px;
+			}
+		}
+	}
+}
+
+.my-option-table {
+	
+	table {
+		&.dataTable {
+			@include space(margin, bottom, $zero);
+		}
+	}
+	
+	.dataTables_length, .dataTables_filter, .dataTables_info, .dataTables_paginate {
+		display: none !important; 
+	}
+}

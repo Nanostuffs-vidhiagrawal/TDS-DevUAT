@@ -1,0 +1,46 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	<aura:attribute name="isOpen" type="boolean" default="false"/>
+    <ltng:require styles="{! $Resource.EI_ZD_Assets + '/css/custom.css'}"/>
+    <body class="ZD_theme">
+
+    <!--<a href="#" data-toggle="modal" data-target="#createUser" class="see-all">Not Agree Submit Popup</a>-->
+<lightning:button variant="brand"
+                          label="Not Agree Submit Popup"
+                          title="Not Agree Submit Popup"
+                          onclick="{! c.openModel }" class="see-all"/>
+    <aura:if isTrue="{!v.isOpen}">
+    <!--Popup form HTMl start-->
+    <div class="custom-model modal fade show" id="createUser" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="createUser" aria-hidden="false" area-model="true" role="dialog" style="display: block;">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <!--<img src="../assets/img/thankful.png" alt="">-->
+                        <img src="{! $Resource.EI_ZD_Assets + '/img/thankful.png'}" alt=""/>
+                    <h4 class="modal-title">Thank you!</h4>
+                    <p>You have successfully responded to the claim</p>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="{! c.closeModel }">
+                        <span aria-hidden="true"> 
+                            <!--<img src="../assets/img/Cancel-icon.png" alt="">-->
+                                <img src="{! $Resource.EI_ZD_Assets + '/img/Cancel-icon.png'}" alt=""/>
+                        </span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h5>What happens next?</h5>
+                    <p>Your offer will be presented to the landlord who will have 5 working days to respond. If they agree, the claim will be finalised and you will need to pay the amount you have proposed. If they disagree, then you will be presented with their response.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Popup form HTMl end-->
+        </aura:if>
+<ltng:require scripts="{! $Resource.EI_ZD_Assets + '/js/plugin.min.js'}"/> 
+        <ltng:require scripts="{! $Resource.EI_ZD_Assets + '/js/jquery.dataTables.min.js'}"/> 
+       <!-- <ltng:require scripts="{! $Resource.EI_ZD_Assets + '/js/custom.js'}"/>
+    <script src="../assets/js/plugin.min.js"></script>
+    <script src="../assets/js/jquery.dataTables.min.js"></script>
+    <script src="../assets/js/custom.js"></script>-->
+
+
+</body>
+</aura:component>

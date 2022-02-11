@@ -1,0 +1,10 @@
+.THIS .yesnobtn {
+    text-align: left !important;
+}
+.THIS .clickButton{
+    background-color : #32669E;
+    color: white;
+}
+.THIS .slds-form-element__help{
+    font-size: initial!important;
+}

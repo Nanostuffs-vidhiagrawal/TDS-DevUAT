@@ -1,0 +1,3 @@
+<design:component >
+    <design:attribute name="noRecordsMsg" label="No Records Message" description="Specify message to be be displayed when no records exists." />
+</design:component>

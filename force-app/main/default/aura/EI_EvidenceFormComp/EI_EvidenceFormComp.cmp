@@ -1,0 +1,9 @@
+<aura:component implements="force:appHostable,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global">
+    <aura:attribute name="recordId" type="string"/>
+     
+    <div class="slds-m-around--xx-large">
+    
+        <!--Open URL in New Browser Tab With Record Id-->
+        <lightning:button label="Print evidence gathering form" variant="brand" onclick="{!c.handleOpenNewWindowWithRecordId}"/>
+    </div>
+</aura:component>

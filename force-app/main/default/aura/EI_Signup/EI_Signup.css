@@ -1,0 +1,64 @@
+.THIS .slds-has-error .slds-input{
+    border-color: 1px solid rgba(0,0,0,0.3);
+}
+.THIS .slds-required{
+    text-decoration: none!important;
+}
+.THIS .slds-form-element__label{
+    font-family: Aller_regular!important;
+}
+.THIS .divMsg{
+    font-size: initial;
+        text-align: justify;
+}
+.THIS .divMsg2{
+    font-size: initial;
+     text-align: center!important;  
+}
+.THIS .slds-form-element__help{
+    display: none!important;
+}
+
+.THIS.pdfFrame {
+    width: 100%;
+    height: 100%;
+}
+.THIS .slds-form-element__help{
+    font-size: 1.4rem!important;
+}
+.THIS .slds-has-error .slds-input{
+    border-color:none;
+    box-shadow:none;
+}
+.THIS .addressError{
+    display: none;
+}
+.THIS .confirm1 {
+    font-size: initial;
+    height: 80px;
+    display: none;
+    background-color: white;
+    border: 1px solid #aaa;
+    position: fixed;
+    width: 250px;
+    left: 50%;
+    margin-left: -100px;
+    padding: 6px 8px 8px;
+    box-sizing: border-box;
+    text-align: center;
+}
+.THIS #selectIam {
+    padding-bottom: 1.3rem;
+}/*
+.THIS .a:active{
+    color: white;
+}
+.THIS .a:focus{
+    color: white;
+}
+.THIS .a:hover{
+    color: white;
+}
+.THIS .see-all:hover{
+    color: white;
+}*/

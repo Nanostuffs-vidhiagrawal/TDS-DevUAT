@@ -1,0 +1,265 @@
+<aura:component implements="forceCommunity:themeLayout,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" 
+                controller="EI_headOfficeUtility">
+    <aura:attribute name="currentUser" type="User" />
+  <aura:attribute name="UpdateHeader" type="Boolean" default="false" />
+
+       <aura:handler access="public"  name="init" value="{!this}" action="{!c.doInit}" />
+    <force:recordData aura:id="recordLoader" recordId="{!$SObjectType.CurrentUser.Id}" fields="Name,User_Role__c,Addition_Permission__c" targetFields="{!v.currentUser}"/>
+<aura:handler event="aura:doneWaiting" action="{!c.doneWaiting}"></aura:handler>
+    
+    <aura:handler access="public"  name="init" value="{!this}" action="{!c.doInitcheck}" />
+    <aura:attribute name="activeDeposits" type="Boolean" default="false"/>
+    <aura:attribute name="Tenant" type="Boolean" default="false" />  
+    <aura:attribute name="IsHeadOfficeUser" type="Boolean" default="false" />
+    <aura:attribute name="logggedBranch" type="Boolean" default="false" />
+    <aura:attribute name="checkIfBranch" type="Boolean" default="false" />
+     <aura:attribute name="branchLoggedIn" type="Boolean" default="false" />
+    <aura:attribute name="profileName" type="String" default="" />
+    <aura:attribute name="countOfLandlord" type="Integer" />
+    <aura:attribute name="countOfTenant" type="Integer"/>
+    <aura:attribute name="Agent" type="Boolean" default="true" />
+    <aura:attribute name="LocalAuthority" type="Boolean" default="false" />
+    
+      <aura:attribute name="PageSpinner" type="Boolean" default="true"></aura:attribute>
+    
+    <lightning:navigation aura:id="navService" />
+    <html lang="en">
+        <head>
+            <ltng:require    
+                          styles="{!$Resource.TDSTheme  + '/assets/css/custom.css'}"
+                          scripts="{!join(',',
+                                   $Resource.TDSTheme+'/assets/js/plugin.min.js',
+                                   $Resource.TDSTheme+'/assets/js/jquery.dataTables.min.js',
+                                   $Resource.TDSTheme+'/assets/js/dataTables.responsive.js',
+                                   $Resource.TDSTheme+'/assets/js/datepicker.js',
+                                   $Resource.TDSTheme+'/assets/js/custom.js'
+                                   )}"
+                                                   />
+            
+        </head>
+ 
+     <aura:renderIf isTrue="{!v.PageSpinner}">
+ <div aura:id="ring" class="lds-dual-ring"></div>
+           <aura:set attribute="else">    
+     
+        <body style="overflow: auto;!important">
+       <!-- Spinner  -->
+      
+              
+            <!-- Navigation HTML Start -->
+            <div class="search-overlay"></div>
+            <nav class="custom-nav navbar navbar-expand-lg">
+                <a class="navbar-brand" href="https://xab195c-yuwehs-uwx3yxqtds.azurewebsites.net/">
+                    <img src="{!$Resource.TDSTheme + '/assets/img/Logo_FIles.png'}" alt="TDS Logo" loading="lazy"/>
+                </a>
+                
+                 <form class="form-inline show-tab">
+                     <input class="form-control search-input" type="search" placeholder="Search" aria-label="Search"/>
+                        <span class="btn search-btn"></span>
+                </form>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                   <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" onclick="{!c.resource}" href="">Resource centre <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Tenants</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Landlords/Agents</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Sign up</a>
+                    </li>
+                </ul>
+                    <form class="form-inline">
+                        <input class="form-control search-input" type="search" placeholder="Search" aria-label="Search"></input>
+                        <span class="btn search-btn"></span>
+                    </form> 
+                    
+          <!--Notification Bell Icon Start-->
+              <aura:if isTrue="{!v.Tenant}">  
+               <aura:if isTrue="{!v.activeDeposits}">    
+            <ul class="headeNav__notification ">
+                <li>       				             
+                     <a href="" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" onclick="{!c.tenantNotificationController}">
+                    <img src="{!$Resource.Notification_icon + '/assets/img/notify-icon.png'}" alt="Notification_icon" loading="lazy"></img>
+                         <span class="badge">{!v.countOfTenant}</span>
+                     </a>
+                </li>
+            </ul>
+             </aura:if>  
+               <aura:if isTrue="{!!v.activeDeposits}">    
+            <ul class="headeNav__notification ">
+                <li>       				             
+                     <a href="" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                    <img src="{!$Resource.Notification_icon + '/assets/img/notify-icon.png'}" alt="Notification_icon" loading="lazy"></img>
+                         <span class="badge"> 0 </span>
+                     </a>
+                </li>
+            </ul>
+             </aura:if>     
+                  
+            </aura:if>
+          <aura:if isTrue="{!!v.LocalAuthority}">        
+          <aura:if isTrue="{!!v.Tenant}">  
+          <ul class="headeNav__notification">
+                <li>       				             
+                     <a href="" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" onclick="{!c.tenantNotificationController}">
+                    <img src="{!$Resource.Notification_icon + '/assets/img/notify-icon.png'}" alt="Notification_icon" loading="lazy"></img>
+                     <span class="badge">{!v.countOfLandlord}</span>
+                    </a>
+                </li>
+            </ul>
+            </aura:if>
+           </aura:if>
+         <!--Notification Bell Icon End -->
+                    
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <img src="{!$Resource.sdsheaderfooter + '/assets/img/User_Icon.png'}"  alt="User Icon"/>
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="" onclick="{!c.logout}">Logout</a>
+                         <!--       <a class="dropdown-item" href="#">Sign Up</a>
+                                <a class="dropdown-item" href="#">Contact Us</a> -->
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <!-- Navigation HTML End -->
+            
+            
+           
+            
+            <!-- Help CTA HTML Start -->
+            <!--<a href="#" class="help-btn">How can we help you?</a>-->
+            <!-- Help CTA HTML End -->
+         <!--    <div id="overlay">
+                                    <img src="{!$Resource.Loadingimage}"  width="120" height="100" alt=""/>
+               </div>-->
+       <!-- Percentage completion HTML Start -->
+            
+     <section class="percentage_completion">
+            <div class="container">
+                <div class="row">
+                <div class="col-md-5"> 
+						 <aura:if isTrue="{!!v.LocalAuthority}">                    
+                    <h2>Welcome {!v.currentUser.Name}</h2> 
+                         </aura:if>                    
+                    
+                </div>
+                    <div class="col-md-7">
+                        <aura:if isTrue="{!!v.LocalAuthority}">
+                         <aura:if isTrue="{!!v.Tenant}">
+                         <c:EI_AccountPercentageBar/>
+                        </aura:if>
+                        <aura:if isTrue="{!v.Tenant}">
+                        <c:EI_TenantPercentageBar/>
+                        </aura:if>
+                     </aura:if>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Percentage completion HTML End -->
+            
+            <!-- Change Detail HTML Start -->
+            <div class="resource-center">    
+                
+                <!-- Tabs HTML Start -->
+                <nav class="custom-tab">
+                   <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                       <aura:if isTrue="{!v.LocalAuthority}">
+                           <h3>Deposits within LA - {!v.currentUser.Name}</h3>
+                           <aura:set attribute="else">
+                             
+                                <aura:if isTrue="{!and(v.profileName == 'Branch User',v.branchLoggedIn == false)}">
+                                   <a class="nav-link active" id="sf-deposit-tab" data-toggle="tab" href="#sf-deposit" role="tab" aria-controls="sf-deposit" aria-selected="true" onclick="{!c.homepage}">
+                            <img class="initial-state"  src="{!$Resource.TDSTheme+ '/assets/img/management.svg'}" alt=""/>
+                            <img class="hover-state" src="{!$Resource.TDSTheme+ '/assets/img/management-blue.svg'}"  alt=""/>
+                            Branch selection
+                       			 </a>
+                                     <aura:set attribute="else">
+                       <aura:if isTrue="{!!v.Tenant}">
+                        <aura:if isTrue="{!and(v.IsHeadOfficeUser,v.logggedBranch)}">
+                            <a class="nav-link active" id="sf-deposit-tab" data-toggle="tab" href="#sf-deposit" role="tab" aria-controls="sf-deposit" aria-selected="true" onclick="{!c.homepage}">
+                            <img class="initial-state"  src="{!$Resource.TDSTheme+ '/assets/img/management.svg'}" alt=""/>
+                            <img class="hover-state" src="{!$Resource.TDSTheme+ '/assets/img/management-blue.svg'}"  alt=""/>
+                            Branch management
+                        </a>
+                            <aura:set attribute="else">
+                                
+                                   
+                                <a class="nav-link active" id="sf-deposit-tab" data-toggle="tab" href="#sf-deposit" role="tab" aria-controls="sf-deposit" aria-selected="true" onclick="{!c.homepage}">
+                            <img class="initial-state"  src="{!$Resource.TDSTheme+ '/assets/img/management.svg'}" alt=""/>
+                            <img class="hover-state" src="{!$Resource.TDSTheme+ '/assets/img/management-blue.svg'}"  alt=""/>
+                            Deposit management
+                        </a>
+                         
+                            </aura:set>
+                        </aura:if> 
+                        <aura:if isTrue="{!or(v.checkIfBranch,v.profileName != 'Head Office User')}">
+                        <a class="nav-link " id="sf-Portfolio-tab" data-toggle="tab" href="#sf-Portfolio" role="tab" aria-controls="sf-Portfolio" aria-selected="false" onclick="{!c.manageyouraddresses}">
+                            <img class="initial-state"  src="{!$Resource.TDSTheme+ '/assets/img/portfolio.svg'}"  alt=""/>
+                            <img class="hover-state"  src="{!$Resource.TDSTheme+ '/assets/img/portfolio-blue.svg'}" alt=""/>
+                            My portfolio
+                        </a>
+                       </aura:if>
+                            <aura:if isTrue="{!v.Agent}">    
+                        <a class="nav-link" id="sf-Reporting-tab" data-toggle="tab" href="#sf-Reporting" role="tab" aria-controls="sf-Reporting" aria-selected="false" onclick="{!c.communityreport}">
+                            <img class="initial-state" src="{!$Resource.TDSTheme+ '/assets/img/reporting.svg'}" alt=""/>
+                            <img class="hover-state" src="{!$Resource.TDSTheme+ '/assets/img/reporting-blue.svg'}" alt=""/>
+                            Reporting
+                        </a>
+                            </aura:if>
+                             <aura:if isTrue="{!or(v.checkIfBranch,v.profileName != 'Head Office User')}">
+                           
+                                <a class="nav-link" id="sf-Bulk-tab" data-toggle="tab" href="#sf-Bulk" role="tab" aria-controls="sf-Bulk" aria-selected="false" onclick="{!c.openBulkActions}">
+                                    <img class="initial-state" src="{!$Resource.TDSTheme+ '/assets/img/bulk-action.svg'}" alt=""/>
+                                    <img class="hover-state" src="{!$Resource.TDSTheme+ '/assets/img/bulk-action-blue.svg'}" alt=""/>
+                                    Bulk actions
+                                </a>
+                             
+                        </aura:if>    
+                        <a class="nav-link" id="sf-setting-tab" data-toggle="tab" href="#" role="tab" aria-controls="sf-Events" aria-selected="false" onclick="{!c.openMyDetailsPage}">
+                            <img class="initial-state" src="{!$Resource.TDSTheme+ '/assets/img/setting.svg'}" alt=""/>
+                            <img class="hover-state" src="{!$Resource.TDSTheme+ '/assets/img/setting-blue.svg'}" alt=""/>
+                            My account
+                        </a>
+                            <aura:set attribute="else">
+                                 <a class="nav-link active" id="sf-deposit-tab" data-toggle="tab" href="#sf-deposit" role="tab" aria-controls="sf-deposit" aria-selected="true" onclick="{!c.tenentdeposits}">
+                            <img class="initial-state"  src="{!$Resource.TDSTheme+ '/assets/img/management.svg'}" alt=""/>
+                            <img class="hover-state" src="{!$Resource.TDSTheme+ '/assets/img/management-blue.svg'}"  alt=""/>
+                            Deposit management
+                        </a>
+                                <aura:if isTrue="{!v.activeDeposits}">
+                                <a class="nav-link" id="sf-setting-tab" data-toggle="tab" href="#" role="tab" aria-controls="sf-Events" aria-selected="false" onclick="{!c.tenentdetails}">
+                            <img class="initial-state" src="{!$Resource.TDSTheme+ '/assets/img/setting.svg'}" alt=""/>
+                            <img class="hover-state" src="{!$Resource.TDSTheme+ '/assets/img/setting-blue.svg'}" alt=""/>
+                            My account
+                        </a>
+                                </aura:if>
+                                </aura:set> 
+                       </aura:if>
+                                    </aura:set>
+                               </aura:if>
+                       </aura:set> 
+                       </aura:if>
+                       
+                    </div>
+                </nav>
+            </div>
+            
+            <br></br>
+        </body>
+     </aura:set>
+   </aura:renderIf>      
+        <br></br>
+    </html>
+</aura:component>

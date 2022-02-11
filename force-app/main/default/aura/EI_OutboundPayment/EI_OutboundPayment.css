@@ -1,0 +1,23 @@
+.THIS table {
+    border-collapse:separate; 
+    border-spacing: 0 0.2em;
+}
+
+.THIS table th, .THIS table td {
+    padding : 10px 6px;
+    min-width: 60px;
+    
+}
+
+.THIS td .slds-button+.slds-button {
+    margin-left: 1px;
+    margin-bottom: 5px;
+}
+
+.THIS td .slds-button_destructive{
+    margin-bottom: 5px;
+}
+
+.THIS .mg-left{
+    margin-left: 15px;
+}

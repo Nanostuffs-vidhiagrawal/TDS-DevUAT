@@ -1,0 +1,178 @@
+<aura:component  implements="force:appHostable,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global"
+                controller="EI_AGLLevidencegathering">
+    
+    <!--- attribute start -->
+    <aura:attribute name="ClaimsDetails" type="list" />
+    <aura:attribute name="viewclaimsection" type="Boolean" default="true" />
+    <aura:attribute name="viewcancelsummary" type="Boolean" default="false" />
+    <aura:attribute name="disputedamount" type="Decimal" default="0.00" />
+    <aura:attribute name="caserecid" type="string" />
+    <aura:attribute name="depositid" type="string" />
+    <aura:attribute name="userType" type="string" default = 'AGLL'/>
+
+    <!--- attribute end -->
+    
+    <lightning:navigation aura:id="navService"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    
+    <aura:if isTrue="{!v.viewclaimsection}">
+        
+        <div class="tab-content custom-tab-content" id="sf-tabContent">
+            
+            <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+                
+                <div class="list-of-btns">
+                    <div class="container">
+                        <h2 style="margin-top:-20px">Cancel claim</h2>
+                        <lightning:button onclick="{!c.goTodepositsummary}" aura:id="div0" class="go-back"><img  src="{!$Resource.TDSTheme  + '/assets/img/md-arrow-dropleft.png'}" alt="Back Icon"/> Go back</lightning:button>
+                    </div>
+                </div>
+                
+                <div class="deposit-agent">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <section class="deposit_steps">
+                                    <div class="deposit_steps_detail">
+                                        
+                                        <div class="claim-summary_gray-panel border">
+                                            <h6>If you cancel the dispute,this is how the reminder of the deposit will be repaid</h6>
+                                            
+                                            <div class="form-group row">
+                                                <div class="col-6 col-md-3">
+                                                    <label>Amount to be paid to agent/landlord</label>
+                                                </div>
+                                                <div class="col-6 col-md-5">
+                                                <!--    <input class="form-control"  placeholder="£0.00"/>-->
+                                                <aura:if isTrue = "{!v.userType == 'AGLL'}">
+                                                    <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="0.00"/>
+                                                    <aura:set attribute="else"> 
+                                                        <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!v.disputedamount}"/>
+                                                    </aura:set>
+                                                </aura:if>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="form-group row">
+                                                <div class="col-6 col-md-3">
+                                                    <label>Amount to be paid to tenant(s)</label>
+                                                </div>
+                                                <div class="col-6 col-md-5">
+                                                   <!-- <input class="form-control"  placeholder="£340.00"/>-->
+                                                   <aura:if isTrue = "{!v.userType == 'AGLL'}">
+                                                        <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!v.disputedamount}"/>
+                                                        <aura:set attribute="else">  
+                                                            <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="0.00"/>
+                                                        </aura:set>   
+                                                    </aura:if>
+                                                </div>
+                                            </div>
+                                            <aura:if isTrue = "{!v.userType == 'AGLL'}">
+                                                <p>If you click "Submit" we will close the case and notify the tenant(s) you are seeking on further deductions  </p>
+                                                <p>and will make payment to the tenant(s) within 5 working days.</p>
+                                                <br/>
+                                                <p> This cannot be undone.</p>
+                                                <br/>
+                                                <p>Any amount previously agreed is unaffected and either has been, or will be, paid separately.</p>
+                                                <aura:set attribute="else">  
+                                                    <p>If you click ‘Submit’ we will close the case and notify the agent/landlord that you are no longer disputing their claim. We will make payment to the agent/landlord within 5 working days.</p>
+                                                    <br/>
+                                                    <p>This cannot be undone.</p>
+                                                    <br/>
+                                                    <p>Any amount previously agreed is unaffected and either has been , or will be , paid separately.</p>
+                                                </aura:set>   
+                                            </aura:if>
+                                        </div>
+                                        <div class="text-right">
+                                            <a href="" class="see-all mw-auto" onclick="{!c.cancelclaimdetails}" > Submit</a>
+                                        </div>
+                                    </div>
+                                </section>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </aura:if>
+    
+
+     <aura:if isTrue="{!v.viewcancelsummary}">
+    <div class="tab-content custom-tab-content" id="sf-tabContent">
+            
+            <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+                                
+                <div class="deposit-agent">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <section class="deposit_steps">
+                                    <div class="deposit_steps_detail">
+                                        
+                                        <div class="claim-summary_gray-panel border">
+                                            <h6>Thank you for cancelling the dispute.We are arranging payment to the tenant</h6>
+                                            
+                                            <div class="form-group row">
+                                                <div class="col-6 col-md-3">
+                                                    <label>Amount to be paid to agent/landlord</label>
+                                                </div>
+                                                <div class="col-6 col-md-5">
+                                                    <aura:if isTrue = "{!v.userType == 'AGLL'}">
+                                                        <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="0.00"/>
+                                                        <aura:set attribute="else"> 
+                                                            <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!v.disputedamount}"/>
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="form-group row">
+                                                <div class="col-6 col-md-3">
+                                                    <label>Amount to be paid to tenant(s)</label>
+                                                </div>
+                                                <div class="col-6 col-md-5">
+                                                    <!--<input class="form-control"  placeholder="£340.00"/>-->
+                                                    <aura:if isTrue = "{!v.userType == 'AGLL'}">
+                                                        <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!v.disputedamount}"/>
+                                                        <aura:set attribute="else">  
+                                                            <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="0.00"/>
+                                                        </aura:set>   
+                                                    </aura:if>
+                                                </div>
+                                            </div>
+                                            <aura:if isTrue = "{!v.userType == 'AGLL'}">
+                                                <p>We have closed the case and will notify the tenant(s) you are seeking no further deductions.</p>
+                                                <p>and will make payment to the tenant(s) within 5 working days</p>
+                                                <br/>
+                                                <p>Any amount previously agreed is unaffected and either has been,or will be,paid separately.</p>
+                                                <aura:set attribute="else">  
+                                                    <p>We have closed the case and will notify the agent/landlord that you are no longer disputing their claim. We will make payment to the agent/landlord within 5 working days.</p>
+                                                    <p>This cannot be undone.</p>
+                                                    <br/>
+                                                    <p>Any amount previously agreed is unaffected and either has been, or will be, paid separately.</p>
+                                                </aura:set>   
+                                            </aura:if>
+                                        </div>
+                                        <div class="text-right">
+                                            <a href="" class="see-all mw-auto" onclick="{!c.goTodepositsummary}"> Go to deposit summary</a>
+                                        </div>
+                                    </div>
+                                </section>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </aura:if>
+    
+    
+    
+    
+</aura:component>

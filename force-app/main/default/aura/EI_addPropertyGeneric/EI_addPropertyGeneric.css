@@ -1,0 +1,46 @@
+.THIS .updateDtStyle {
+  /*  margin-left: 258px;
+    width: 760px;*/
+}
+.THIS .confrmBtn{
+    float: right;
+}
+.THIS .clickButton{
+    background-color : #32669E;
+    color: white;
+}
+.THIS .notclickButton{
+    background-color : white;
+    color: #32669E;
+}
+.THIS .dateClass {
+    margin-bottom: 1rem;
+    font-family: Aller_bold;
+    font-size: 1.6rem;
+}
+.THIS .slds-icon-text-success {
+    fill: #32669E;
+}
+
+.THIS .cRegister1 .slds-col:nth-child(1) {
+  display: none;
+  margin-left: -12px !important;  
+}
+
+.THIS .cEI_AddressFinder2 .slds-col:nth-child(1) {
+  display: none;
+}
+
+
+
+.THIS label {
+    display: inline-block;
+    margin-bottom: 1.6rem;
+}
+
+.THIS .cRegister1 .content {
+    width: 450px;
+    margin-left: -12px;
+    background-color: white;
+    padding: 15px;
+}

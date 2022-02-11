@@ -1,0 +1,202 @@
+.form-wizard {
+    color: map-get($color, dark-gray);
+    .wizard-form-radio {
+        display: inline-block;
+        @include space('marging', 'left', $s05);
+        position: relative;
+    }
+    .form-wizard-header {
+        text-align: center;
+        width: 90%;
+        @include space('marging', 'all', auto);
+    }
+    .wizard-fieldset {
+        display: none;
+        .wizard-form {
+            .lookupbtn {
+                float: none;
+            }
+
+            .mobile-toggle {
+                display: none;
+            }
+            max-height: 73.5rem;
+            background-color: opacify(rgba(map-get($color, blue), 0.1), 0.02);
+            @include space('padding', 'left', $s25);
+            @include space('padding', 'right', $s25);
+            @include space('padding', 'top', $s25);
+            @include space('padding', 'bottom', $s25);
+            @include border-radius($s20);
+            overflow-y: auto;
+            @include respond-below(sm) {
+                @include space('padding', 'all', $s20);
+                .mobile-toggle {
+                    display: inline-block;
+                    max-width: 100px;
+                    @include font_size($sm);
+                    @include border(1px, solid, map-get($color, light_blue));
+                    @include border-radius($s05);
+                    line-height: 1.2;
+                    float: right;
+                    text-align: center;
+                    color: map-get($color, light_blue);
+                    @include space('padding', 'all', 3px);
+                    img {
+                        position: relative;
+                        top: 5px;
+                    }
+                    &.disabled {
+                        opacity: 0.5;
+                        img {
+                            opacity: 0;
+                        }
+                    }
+                }
+            }
+        }
+        &.show {
+            display: block;
+            h5 {
+                font-size: ($s20);
+                color: map-get($color, black);
+                font-family: map-get($font-weights, regular);
+            }
+        }
+
+        .form-group {
+                @include font_size($below_base);
+            }
+
+        .form-control {
+            height: $s40;
+            @include font_size($below_base);
+            &:focus {
+                @include border(1px, solid, map-get($color, blue));
+                box-shadow: 0 0 0 0.2rem rgba(50, 102, 158, 0.25)
+            }
+        }
+    }
+    .form-group {
+        position: relative;
+        font-size: 1.6rem;
+        .date {
+            input[readonly] {
+                background-color: white;
+            }
+        }
+        // @include space('margin', 'top', $s20);
+        // @include space('margin', 'bottom', $s20);
+        &.error {
+            input,
+            textarea,
+            select {
+                border-color: map-get($color, danger);
+            }
+            label {
+                color: map-get($color, danger);
+            }
+        }
+    }
+    .form-wizard-steps {
+        @include space('margin', 'top', 0);
+        @include space('margin', 'bottom', $s10);
+        li {
+
+            div {
+                font-size: 14px;
+                padding-left: 5px;
+                padding-right: 5px;
+            }
+            color: map-get($color, light_gray);
+            width: 25%;
+            float: left;
+            position: relative;
+            &:after {
+                background-color: map-get($color, light_border);
+                content: "";
+                height: 4px;
+                left: 0;
+                position: absolute;
+                right: 0;
+                top: 15px;
+                width: 100%;
+            }
+            span {
+                @include border(2px, solid, map-get($color, light_border));
+                @include border-radius(50%);
+                @include space('margin', 'bottom', $s15);
+                background-color: white;
+                display: inline-block;
+                height: 36px;
+                position: relative;
+                text-align: center;
+                width: 36px;
+                z-index: 1;
+                @include space('padding', 'all', $s05);
+                &:last-child:after {
+                    width: 50%;
+                }
+            }
+            &.active,
+            &.activated {
+                color: map-get($color, light-black);
+                span {
+                    background-color: map-get($color, blue);
+                    color: map-get($color, white);
+                    path {
+                        fill: map-get($color, white);
+                    }
+                }
+                &:after {
+                    background-color: map-get($color, blue);
+                    left: 50%;
+                    width: 50%;
+                    border-color: map-get($color, blue);
+                }
+            }
+            &.activated {
+                &:after {
+                    width: 100%;
+                    border-color: map-get($color, blue);
+                }
+                &::before {
+                    content: '';
+                    background-image: url(../../assets/img/check-icon.svg);
+                    width: 20px;
+                    height: 20px;
+                    display: inline-block;
+                    background-position: center;
+                    background-repeat: no-repeat;
+                    position: absolute;
+                    top: -20px;
+                    left: calc(50% - 10px);
+                }
+            }
+            &:last-child:after {
+                width: 50%;
+                left: 0;
+            }
+        }
+    }
+}
+
+.wizard-btn {
+    .learn-more {
+        min-width: 10.5rem;
+
+        &.active {
+            background-color: map-get($color, blue);
+            color: map-get($color, white);
+        }
+    }
+}
+
+.auto-text {
+    @include font_size($x_sm);
+    color: map-get($gray_shade, gray03);
+    display: block;
+}
+
+.tenant_yes_detail, .landlord_yes_detail {
+    display: none;
+}

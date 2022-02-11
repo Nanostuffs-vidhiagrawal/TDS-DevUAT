@@ -1,0 +1,32 @@
+.tag-section {
+
+	.tags-row {
+		@include space(margin, top, $s30);
+		@include space(margin, bottom, $s20);
+
+		@include respond-below(sm) {
+			@include space(margin, top, $s15);
+			@include space(margin, bottom, $s05);
+		}
+		@include flexbox();
+		@include flex_properties(left, center, wrap);
+
+		.tag {
+			@include space(margin, left, $s10);
+			@include space(margin, bottom, $s10);
+			
+		}
+
+		p { 
+			@include space(margin, bottom, $zero);
+		}
+
+		.tags-btn {
+			max-width: $full !important;
+
+			@include respond-below(sm) {
+				max-width: 88% !important;
+			}
+		}
+	}
+}

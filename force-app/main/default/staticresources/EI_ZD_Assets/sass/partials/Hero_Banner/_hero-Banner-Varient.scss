@@ -1,0 +1,24 @@
+.hero-banner {
+	
+	&.dark {
+		@include color-theme(map-get($color, blue));
+	}
+
+	&.center {
+		@include align-item(center, center);
+		@include align-form(0 auto, none);
+
+		&.dark {
+			@include color-theme(map-get($color, blue));
+		}
+	}
+
+	&.right {
+		@include align-item(right, flex-end);
+		@include align-form(0, right);
+
+		&.dark {
+			@include color-theme(map-get($color, blue));
+		}
+	}
+}

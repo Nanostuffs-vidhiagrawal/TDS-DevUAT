@@ -1,0 +1,29 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" 
+                access="global">
+	 <!-- ZD Footer HTML Start -->
+    
+            <div class="ZD_theme">
+                <footer>
+                    <div class="container">
+                        <ul>
+                            <li>
+                                <a href="https://app.zerodeposit.com/claim-help" target="_blank">Need more help?</a>
+                            </li>
+                            <li>
+                                <a href="https://app.zerodeposit.com/claim-faq" target="_blank">FAQs</a>
+                            </li>
+                            <!--<li>
+                        <a href="#">Terms and Conditions</a>
+                    </li>-->
+                            <li>
+                                <a href="https://www.zerodeposit.com/privacy" target="_blank">Privacy Policy</a>
+                            </li>
+                        </ul>
+                    </div>
+                </footer>
+                <!-- ZD Footer HTML End
+        <ltng:require scripts="{!$Resource.EI_ZD_Assets + '/js/plugin.min.js'}" />
+        <ltng:require scripts="{!$Resource.EI_ZD_Assets + '/js/custom.js'}" />  -->
+            </div>
+    
+</aura:component>

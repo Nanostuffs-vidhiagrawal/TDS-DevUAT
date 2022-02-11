@@ -1,0 +1,113 @@
+<aura:component
+    implements="lightning:isUrlAddressable,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes"
+    controller="CreateUserUnderHO">
+
+    <!-- Attributes -->
+    <aura:attribute name="con" type="Contact"
+        default="{'sObjectType':'Contact','Job_role__c':'Head Office Administrator'}" />
+    <aura:attribute name="jobTitle" type="String" />
+
+    <aura:attribute name="jobRoleMap" type="Map" />
+    <aura:attribute name="jobRole" type="String" />
+   <aura:attribute name="permissionmap" type="Map" />
+    
+    <aura:attribute name="salutation" type="String" />
+    <aura:attribute name="salutationMap" type="Map" />
+
+    <aura:attribute name="options" type="List" default="[]" />
+    <aura:attribute name="values" type="List" default="[]" />
+    <aura:attribute name="selectedValues" type="List" default="[]" />
+    <aura:attribute name="oldselectedValues" type="List" default="[]" />
+
+    <aura:attribute name="accountId" type="String" />
+
+    <aura:attribute name="userId" type="String" />
+    <aura:attribute name="selectedUserId" type="String" />
+    <aura:attribute name="row" type="Object" />
+
+    <aura:attribute name="isDisabled" type="Boolean" default="true" />
+    <aura:attribute name="isUpdated" type="Boolean" default="false" />
+    <aura:attribute name="isActive" type="Boolean" />
+
+
+
+    <!-- Handler -->
+    <aura:handler name='init' value='{!this}' action='{!c.init}' />
+
+    <lightning:overlayLibrary aura:id="overlayLib" />
+
+    <div>
+
+        <lightning:dualListbox name="multipleOptions" label="Select Options" sourceLabel="Available"
+            selectedLabel="Selected" options="{!v.options}" value="{!v.values}" onchange="{! c.handleChange }"
+            disabled="{!v.isDisabled}" />
+
+    <!--    <lightning:input aura:id="field" label="Job title" value="{! v.con.Job_title__c}" required="true" maxlength="50"
+            messageWhenTooLong="Title cannot exceed 50 characters" minlength="1"
+            messageWhenTooShort="Title should have atleast 1 character" disabled="{!v.isDisabled}"
+            onchange="{! c.isUpdated }" />
+-->
+        
+
+        <lightning:select aura:id="jobRole" value="{!v.con.Job_role__c}" name="Job Role" label="Job Role"
+            required="true" messageWhenValueMissing="Choose one!" disabled="{!v.isDisabled}"
+            onchange="{! c.isUpdated }">
+     
+            <aura:iteration items="{!v.jobRoleMap}" var="jb" indexVar="key">
+                <option text="{!jb.value}" value="{!jb.key}" />
+            </aura:iteration>
+                   <option value="Head office administrator" text="Head office administrator"></option>
+        </lightning:select>
+
+            <lightning:select aura:id="permission" value="{!v.con.Additional_Permission__c}" name="Additional Permission" label="Additional Permission"
+            required="false" messageWhenValueMissing="Choose one!" disabled="{!v.isDisabled}"
+            onchange="{! c.isUpdated }">
+            <option value="{!v.con.Additional_Permission__c}" text="{!v.con.Additional_Permission__c}"></option>
+            <aura:iteration items="{!v.permissionmap}" var="jb" indexVar="key">
+                <option text="{!jb.value}" value="{!jb.key}" />
+            </aura:iteration>
+        </lightning:select>
+        
+        <lightning:select aura:id="salutation" value="{!v.con.Salutation}" name="Salutation" label="Salutation"
+            variant="label-stacked" required="true" messageWhenValueMissing="Choose one!" disabled="{!v.isDisabled}"
+            onchange="{! c.isUpdated }">
+            <option value="{!v.con.Salutation}">{!v.con.Salutation}</option>
+            <aura:iteration items="{!v.salutationMap}" var="sm" indexVar="key">
+                <option text="{!sm.value}" value="{!sm.key}" />
+            </aura:iteration>
+
+
+        </lightning:select>
+        <lightning:input aura:id="field" label="First Name" value="{!v.con.FirstName}" required="true" maxlength="40"
+            messageWhenTooLong="Title cannot exceed 40 characters" minlength="1"
+            messageWhenTooShort="Title should have atleast 1 character" disabled="{!v.isDisabled}"
+            onchange="{! c.isUpdated }" />
+        <lightning:input aura:id="field" label="Last Name" value="{!v.con.LastName}" required="true" maxlength="80"
+            messageWhenTooLong="Title cannot exceed 80 characters" minlength="1"
+            messageWhenTooShort="Title should have atleast 1 character" disabled="{!v.isDisabled}"
+            onchange="{! c.isUpdated }" />
+        <lightning:input aura:id="field" type="tel" name="mobile" label="Mobile" value="{!v.con.Phone}" required="true"
+            disabled="{!v.isDisabled}" onchange="{! c.isUpdated }" />
+        <lightning:input aura:id="field" label="Email" value="{!v.con.Email}" required="true" type="email"
+            disabled="{!v.isDisabled}" onchange="{! c.isUpdated }" />
+
+    </div>
+    <br />
+    <div>
+        <aura:if isTrue="{!v.isDisabled}">
+            <lightning:button variant="brand" label="Edit" title="Brand action" onclick="{! c.handleEdit }" />
+            <aura:if isTrue="{!v.isActive}">
+                <lightning:button variant="brand" label="Suspend User" title="Brand action"
+                    onclick="{! c.deactivateUser }" />
+                <aura:set attribute="else">
+                    <lightning:button variant="brand" label="ReActivate User" title="Brand action"
+                        onclick="{! c.reactivateUser }" />
+                </aura:set>
+            </aura:if>
+            <aura:set attribute="else">
+                <lightning:button variant="brand" label="Update" title="Brand action" onclick="{! c.handleUpdate }" />
+                <lightning:button variant="brand" label="Cancel" title="Brand action" onclick="{! c.handleCancel }" />
+            </aura:set>
+        </aura:if>
+    </div>
+</aura:component>

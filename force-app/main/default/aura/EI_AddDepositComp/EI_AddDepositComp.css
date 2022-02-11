@@ -1,0 +1,22 @@
+.THIS .formNotActive{
+  z-index: 998!important; opacity: 0!important; transition: opacity 300ms ease 0s;
+}
+.THIS .clickButton{
+    background-color : #32669E;
+    color: white;
+}
+.THIS .notclickButton{
+    background-color : white;
+    color: #32669E;
+}
+.THIS .formActive{
+  z-index: 999!important; opacity: 1!important;
+}
+
+.THIS .state-indicator{
+    pointer-events:none;
+}
+
+.THIS .slds-button .slds-button_brand .go-back{
+    display: none;
+}

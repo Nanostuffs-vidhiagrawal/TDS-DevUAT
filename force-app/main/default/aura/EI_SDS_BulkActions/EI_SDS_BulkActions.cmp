@@ -1,0 +1,346 @@
+<aura:component implements="forceCommunity:themeLayout,forceCommunity:availableForAllPageTypes,force:hasRecordId" access="global"
+                controller="EI_RegisterMultipleDepositsCls">
+    
+  <ltng:require styles="{!$Resource.TDSTheme  + '/assets/css/custom.css'}" />
+    
+  <aura:attribute name="currentUser" type="User" />
+  <force:recordData aura:id="recordLoader" recordId="{!$SObjectType.CurrentUser.Id}"
+                    fields="Name,ContactId,AccountId,User_Role__c,Profile.Name,Addition_Permission__c" 
+                    targetFields="{!v.currentUser}" />
+    
+    <!-- call doInit method on component load -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <!-- aura attributes to store data/values -->
+    <aura:attribute name="listOfPropertyAlocations" type="list" />
+    <aura:attribute name="PaginationList" type="list" />
+    <aura:attribute
+                    name="selectedCount"
+                    type="integer"
+                    default="0"
+                    description="selected Records Count"
+                    />
+    <!-- Landlord pagination -->
+    <aura:attribute name="startPageLandlord" type="Integer" />
+    <aura:attribute name="endPageLandlord" type="Integer" />  
+    <aura:attribute name="currentPageLandlord" type="integer" default="1" />
+    <aura:attribute name="pageSizeLandlord" type="Integer" default="4" description="number of records to be display on per page"/> 
+    <aura:attribute name="totalPagesCountLandlord" type="integer" default="1" />
+    <aura:attribute name="totalRecordsCountLandlord" type="Integer" /> 
+    
+    <aura:attribute name="showViewPage" type="boolean" default="true"/>   
+    <aura:attribute name="fromParentComp" type="boolean" default="false"/> 
+    
+    <aura:attribute name="startPage" type="Integer" />
+    <aura:attribute name="endPage" type="Integer" />
+    <aura:attribute name="totalRecordsCount" type="Integer" />
+    <aura:attribute
+                    name="pageSize"
+                    type="Integer"
+                    default="4"
+                    description="number of records to be display on per page"
+                    />
+    <aura:attribute name="strRecordId" type="String" />
+    <aura:attribute name="LandlordList" type="List" />   
+    <aura:attribute name="property" type="Object"/>
+    <aura:attribute name="PaginationLandlordList" type="list" />
+    
+    <aura:attribute name="currentPage" type="integer" default="1" />
+    <aura:attribute name="totalPagesCount" type="integer" default="1" />
+    <aura:attribute name="bNoRecordsFound" type="boolean" />
+    <aura:attribute name="showdiv" type="boolean" default="false" />
+    <aura:attribute name="Recid" type="string" />
+    <aura:attribute name="searchText" type="string" />
+    <aura:attribute name="openmodel" type="boolean" default="false" />
+    <aura:attribute name="totalFileSize" type="integer" default="0" />
+    <aura:attribute name="uploadingFileSize" type="integer" default="0" />
+    <!-- Newly added -->
+    <aura:attribute access="public" name="term" type="String" />
+    
+    <aura:attribute name="fileLableVisible" type="boolean" default="false"/>
+    <aura:attribute name="isEditable" type="boolean" default="false"/>
+    <aura:attribute name="truthy" type="boolean" default="true" />
+    <aura:attribute name="fileList" type="Object" default=""/>
+    <aura:attribute name="flType" type="String" default=""/>
+    <aura:attribute name="flName" type="String" default="No file selected"/>
+    <aura:attribute name="fileLable" type="String" default=""/>
+    <aura:attribute name="success" type="String" default=""/>
+    <aura:attribute name="fieldNames" type="List" />
+    <aura:attribute name="TargetFileName" type="String" /> 
+
+    <aura:attribute name="isAddTheFileSection" type="Boolean" default="true" />
+    <aura:attribute name="showFileUpload" type="boolean" default="true"/>
+    <aura:attribute name="isShowValidating" type="Boolean" default="false" /> 
+    <aura:attribute name="isSummSecFileValidate" type="Boolean" default="false" />
+    <aura:attribute name="showChildSection" type="Boolean" default="false" />
+    <aura:attribute name="isShowViewImportLog" type="Boolean" default="false" /> 
+    <aura:attribute name="isViewBulkImportLog" type="Boolean" default="false" /> 
+    <aura:attribute name="showImportDetails" type="Boolean" default="false" /> 
+    
+    <aura:attribute name="noOfDeposits" type="Integer" />
+    <aura:attribute name="showMain" type="Boolean" default="false" />
+    <aura:attribute name="bulkImportLog" type="Bulk_Import__c" />
+    
+    <aura:attribute name="validatedDate" type="Date" />
+    <aura:attribute name="totalTenancies" type="Integer" />
+    <aura:attribute name="totalFailures" type="Integer" />
+    <aura:attribute name="statusOfValidate" type="String" />
+    
+    <aura:attribute name="isValidateOnly" type="Boolean" default="true" />
+    <aura:attribute name="ListOfTenancies" type="List"/> 
+    <aura:attribute name="validationErrorList" type="List" />
+    
+    <aura:attribute name="upload" type="Boolean" default="false" />
+    <aura:attribute name="uploadBar" type="Integer" default="0" />
+    
+    <aura:attribute name="showSubTabs" type="Boolean" default="true" />
+    <aura:attribute name="showFileTypeError" type="Boolean" default="false" />
+    
+    <lightning:overlayLibrary aura:id="overlayLib" />
+    <lightning:overlayLibrary aura:id="overlayLibDemo" />
+    
+    <lightning:navigation aura:id="navServiceToOtherSection" />
+   
+    <div class="tab-content custom-tab-content" id="sf-tabContent">        
+        <div class="tab-pane fade show active" id="sf-Portfolio" role="tabpanel" aria-labelledby="sf-Portfolio-tab">
+            <div class="secondary-tab-container">
+                
+                <!-- LEFT TABS HTML Start -->
+                <nav class="left-custom-tab">
+                    <div class="nav nav-tabs" id="left-nav-tab" role="tablist">
+                        <a onclick="{!c.transferMultipleDepositSubTabs}" class="nav-link" id="left_nav-sf-presonal-tab"
+                           data-toggle="tab" href="#left_nav-sf-presonal" role="tab" aria-controls="left_nav-sf-presonal"
+                           aria-selected="true" >
+                            <img class="initial-state" src="{!$Resource.TDSTheme + '/assets/img/newspaper_icon.svg'}"
+                                 alt="" />
+                            Transfer multiple deposits
+                        </a>
+                        <a onclick="{!c.regMultipleDepositSubTabs}" class="nav-link active" id="left_nav-sf-bulkimport-tab"
+                           data-toggle="tab" href="#left_nav-sf-bulkimport" role="tab"
+                           aria-controls="left_nav-sf-bulkimport" aria-selected="false" >
+                            <img class="initial-state" src="{!$Resource.TDSTheme + '/assets/img/Organisation_icon.svg'}"
+                                 alt="" />
+                            Register multiple deposits
+                        </a>
+                        <ul id="uList" aura:id="leftSideSubTabs" class="org-detail-list">
+                            <li class="account-detail" >
+                                <a onclick="{!c.handleClickNewUpload}"><span class="arrow-left"></span>New upload</a>
+                            </li>
+                            <li class="account-detail">
+                                <a onclick="{!c.handleClickViewImportLogs}"><span class="arrow-left"></span>View import logs</a>
+                            </li>
+                        </ul>
+                        
+                        <a onclick="{!c.downloadMultiplecertificatesTabs}" class="nav-link" id="left_nav-sf-dpc-tab"
+                           data-toggle="tab" href="#left_nav-sf-dpc" role="tab"
+                           aria-controls="left_nav-sf-dpc" aria-selected="false" >
+                            <img class="initial-state" src="{!$Resource.TDSTheme + '/assets/img/Organisation_icon.svg'}"
+                                 alt="" />
+                            Download multiple certificates
+                        </a>
+                        
+                        <a onclick="{!c.downloadPIFormsTabs}" class="nav-link" id="left_nav-sf-pi-tab"
+                           data-toggle="tab" href="#left_nav-sf-pi" role="tab"
+                           aria-controls="left_nav-sf-pi" aria-selected="false" >
+                            <img class="initial-state" src="{!$Resource.TDSTheme + '/assets/img/Organisation_icon.svg'}"
+                                 alt="" />
+                            Download prescribed information forms
+                        </a>
+                    </div>
+                </nav>
+                <!-- LEFT TABS HTML End --> 
+                
+                <!-- MAIN BODY Start -->
+                <div class="tab-content custom-tab-content" id="sf-tabContent"> 
+                    <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+                        <div class="deposit-agent">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-md-12">  
+                                        <h5 class="slds-text-heading--medium" style="font-size: x-large;">Register multiple deposits</h5>
+                                        
+                                        <!-- Add the file Section START(SECTION-1) -->
+                                        <aura:if isTrue="{!v.showFileTypeError}">
+                                            <div id="fileTypeErrorAlertId"
+                                                 class="alert alert-danger alert-dismissible fade show"
+                                                 >
+                                                <strong>Error!</strong> only support csv files.
+                                                <button
+                                                        type="button"
+                                                        class="close"
+                                                        onclick="{!c.hideBootstrapErrors}"
+                                                        name="fileTypeErrorAlert"
+                                                        >&times;</button
+                                                    >
+                                            </div>                 
+                                        </aura:if>
+                                        
+                                        <aura:if isTrue="{!v.isAddTheFileSection}">
+                                            
+                                            <p class="slds-m-around_small" style="font-family: Aller_regular!important;">
+                                                <span style="display:inline-block">
+                                                    Please drag and drop your CSV file into the box below or select Browse to search for the file.
+                                                </span>
+                                            </p>
+                                            <br />
+                                            <br/>
+                                            <div class="form-group row">
+                                                <div class="col-lg-12 col-md-12">
+                                                    <div class="file_section">
+                                                        <div class="row">
+                                                            <div class="col-md-5 col-sm-12">
+                                                                <div class="custom_file" style="z-index:0;">
+                                                                    <img src="{!$Resource.TDSTheme  + '/assets/img/feather-download.svg'}" />
+                                                                    <p>Drag and drop file</p>
+                                                                    <p>OR</p>
+                                                                    <button type="button" class="see-all">Browse</button>
+                                                                </div>
+                                                                <lightning:input style="width:100%;height:18.5rem;opacity:0;" aura:id="fileId" files="{!v.fileList}" onchange="{!c.handleFilesChange}" 
+                                                                                         type="file" name="file" multiple="false"
+                                                                                 class="custom_file_upload"/>
+                                                               <!-- <input style="width:100%;" type="file" name="file"  onchange="{!c.handleFilesChange}" ></input>-->
+                                                            </div>
+                                                            <div class="col-md-7 col-sm-12">
+                                                                <div class="{!'select_file_section'+ v.success}">
+                                                                    <div class="no_file">
+                                                                        <span>{!v.flType}</span>
+                                                                            <p>{!v.flName} 
+                                                                                <aura:renderIf isTrue="{!and(v.upload, v.uploadBar == '100')}">
+                                                                                    has successfully uploaded
+                                                                                </aura:renderIf>
+                                                                            </p> 
+                                                                    </div>
+                                                                    <div class="upload_range_part">
+                                                                        <div>
+                                                                            <span class="upload_range"></span>
+                                                                            <aura:renderIf isTrue="{!v.upload}">
+                                                                                <span class="success_upload" style="{!'width:'+ v.uploadBar +'%'}"></span>
+                                                                            </aura:renderIf>
+                                                                            <p class="text-right">{!v.uploadingFileSize}kb of {!v.totalFileSize}kb</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                                    
+                                            <br/><br/>
+                                            <!-- Validate and Import buttons START -->
+                                            <div class="text-right">
+                                                <a href="" class="go-back" onclick="{!c.validatingTheFile}">
+                                                    Validate
+                                                    <img src="{!$Resource.TDSTheme+'/assets/img/md-arrow-dropleft.png'}" 
+                                                         style="transform: rotate(180deg); margin-left: 5px;" />
+                                                </a>
+                                                <a href="" class="go-back" onclick="{!c.ImportingTheFile}">
+                                                    Import
+                                                    <img src="{!$Resource.TDSTheme+'/assets/img/md-arrow-dropleft.png'}" 
+                                                         style="transform: rotate(180deg); margin-left: 5px;" />
+                                                </a>
+                                                <!-- Validate and Import buttons END -->
+                                            </div>
+                                            <br/>
+                                            <p class="slds-m-around_small" style="font-family: Aller_regular!important;">
+                                                <span style="display:inline-block">
+                                                    <a href="" style="color:#4D4C4C;" onclick="{!c.getGuidanceDocument}"><u>Click here</u></a> for guidance on registering multiple deposits
+                                                    <!-- https://thedisputeservice-uat-c.visualforce.com/resource/BulkImportGuide -->
+                                                </span>
+                                            </p>
+                                        </aura:if>
+                                        <!-- Add the file Section END -->
+                                        
+                                        <!-- Summary Section of File Validation START(SECTION-2) 
+                                        <aura:if isTrue="{!v.isSummSecFileValidate}">
+                                            <div class="table-container">
+                                                <table class="slds-table slds-table-striped" style="width:100%">
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="headingtext">Date</th>
+                                                            <th class="headingtext">Valildate <br/> Only?</th>
+                                                            <th class="headingtext">File Name</th>
+                                                            <th class="headingtext">Total Tenancies</th>
+                                                            <th class="headingtext">Failures</th>
+                                                            <th class="headingtext">status</th>
+                                                            <th class="headingtext"></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody style="font-size:1.5rem;">
+                                                        
+                                                        <tr>
+                                                            <td class="slds-cell-wrap slds-text-align_left textcss"></td>
+                                                            <td class="slds-cell-wrap slds-text-align_left textcss">'Yes'</td>
+                                                            <td class="slds-cell-wrap slds-text-align_left textcss">{!v.flName}</td>
+                                                            <td class="slds-cell-wrap slds-text-align_left textcss">{!v.noOfDeposits}</td>
+                                                            <td class="slds-cell-wrap slds-text-align_left textcss">{!v.totalFailures}</td>
+                                                            <td class="slds-cell-wrap slds-text-align_left textcss">
+                                                                <aura:if isTrue="{!v.statusOfValidate != 'Successful'}">
+                                                                    <a href="" data-toggle="modal" onclick="{!c.handleUnsuccessful}" >
+                                                                        {!v.statusOfValidate}
+                                                                    </a>
+                                                                    <aura:set attribute="else" >
+                                                                        {!v.statusOfValidate}
+                                                                    </aura:set>
+                                                                </aura:if>
+                                                            </td>
+                                                            <td class="slds-text-align_left textcss1">
+                                                                <aura:if isTrue="{!v.bulkImportLog.Status__c == 'Success'}">
+                                                                    <a href="#" class="tbl-btn" data-toggle="modal" onclick="{!c.handleImport}" >
+                                                                        Import
+                                                                    </a>
+                                                                </aura:if>
+                                                            </td>
+                                                        </tr>
+                                                        
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </aura:if>
+                                         Summary Section of File Validation END(SECTION-2) -->
+                            
+                                        <!-- Vidhi Code start -->
+                                        
+                                        <aura:if isTrue="{!v.isShowValidating}">
+                                            <!-- Child component for maintaining error logs START -->
+                                            <c:EI_SDS_BulkErrorLogs currentUser="{!v.currentUser}"
+                                                                    isValidateOnly = "{!v.isValidateOnly}" 
+                                                                    fileList = "{!v.fileList}"  
+                                                                    isSummSecFileValidate="{!v.isSummSecFileValidate}"
+                                                                    showChildSection="{!v.showChildSection}"
+                                                                    />
+                                            <!-- Child component for maintaining error logs END -->
+                                        </aura:if>
+                                        
+                                       
+                                        <aura:if isTrue="{!v.isShowViewImportLog}">
+                                         <!-- View Bulk Import logs Section start START -->
+                                            <c:EI_SDS_ViewImportLogs 
+                                                                     isViewBulkImportLog="{!v.isViewBulkImportLog}" 
+                                                                     showImportDetails="{!v.showImportDetails}" 
+                                                                     currentUser="{!v.currentUser}" />
+                                         <!-- View Bulk Import logs Section start END -->
+                                        </aura:if>
+                                        
+                                        <!-- Vidhi Code END -->
+                                        
+                                        <!-- <aura:if isTrue="{!v.showChildSection}">
+                                         Child component for maintaining error logs START
+                                            <c:EI_SDS_BulkErrorLogs currentUser="{!v.currentUser}"
+                                                                    ListOfTenancies = "{!v.ListOfTenancies}" showChildSection="{!v.showChildSection}"
+                                                                    validationErrorList = "{!v.validationErrorList}" fileName = "{!v.flName}" />
+                                         Child component for maintaining error logs END
+                                        </aura:if> -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- MAIN BODY End -->    
+				
+                
+                
+            </div>
+        </div>
+    </div>
+</aura:component>

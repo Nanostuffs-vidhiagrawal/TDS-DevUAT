@@ -1,0 +1,39 @@
+<aura:component controller="EI_ZD_EmailUtility" implements="force:lightningQuickAction,force:hasRecordId" access="global">
+    <aura:attribute name="from" type="String" default="ADR@tdsdisputesclaims.com"/>
+    <aura:attribute name="to" type="list" default=""/>
+    <aura:attribute name="body" type="String" default=""/>
+    <aura:attribute name="profile" type="String" default=""/>
+    <aura:attribute name="subject" type="String" default=""/>
+    <aura:attribute name="selectedValue" type="String" default=""/>
+    <aura:attribute name="message" type="Boolean" default="false"/>
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" /> 
+    
+    <!--<lightning:input name="from" aura:id="from" disabled="true" value="{!v.from}" label="From" /><br/>-->
+    <aura:if isTrue="{!v.profile == 'ZD Adjudicators'}">
+        <lightning:select name="from" aura:id = "fromAddress" label="from" required="true" value="{!v.from}">
+            
+            <option value="ADR@tdsdisputesclaims.com">ADR@tdsdisputesclaims.com</option>
+            <option value="claims@tdsdisputesclaims.com">claims@tdsdisputesclaims.com</option>
+            
+        </lightning:select> 
+        
+    </aura:if>
+     
+    <aura:if isTrue="{!v.profile == 'Zero Deposit'}">
+        <lightning:input name="from" aura:id="from" value="{!v.from}" label="From" disabled = "true"/><br/>
+        
+    </aura:if>
+    <lightning:select name="to" label="To" required="true" value="{!v.selectedValue}">
+        <option value="">-- None --</option>
+        <aura:iteration items="{!v.to}" var="to"> 
+            <option value="{!to.Account__r.Id}">{!to.Account__r.Name}</option>
+        </aura:iteration>
+    </lightning:select><br/>
+    <lightning:input name="subject" aura:id="subject" value="{!v.subject}" label="Subject" /><br/>
+    Body<lightning:inputRichText aura:id="body" value="{!v.body}" placeholder="" label="Body" /><br/>
+    
+    <lightning:button variant="base" label="Send" onclick="{!c.sendEmail}" class="slds-button--brand SMALL uiButton" /> &nbsp;&nbsp;     
+    <aura:if isTrue="{!v.message}">
+        <span style="color:red;">Email Sent Successfully.</span>
+    </aura:if>
+</aura:component>

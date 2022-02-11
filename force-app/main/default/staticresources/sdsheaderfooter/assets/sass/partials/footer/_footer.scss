@@ -1,0 +1,38 @@
+footer {
+	@include space(padding, top, $s50);
+
+	h3 {
+		@include space(margin, bottom, $s30);
+
+		@include respond-below(sm) {
+			@include space(margin, bottom, $s15);
+		}
+	}
+
+	figure {
+		img {
+			width: $s110;
+
+			@include respond-below(sm) {
+				width: $s55;
+			}
+		}
+	}
+
+	ul {
+		li {
+			@include font_size($below_base);
+			@include line_height($above_base);
+
+			@include respond-above(sm) {
+				@include space(padding, bottom, $s20);
+			}
+		}
+
+		&.Social_Media_list {
+			li {
+				@include space(padding, bottom, $s10);
+			}
+		}
+	}
+}

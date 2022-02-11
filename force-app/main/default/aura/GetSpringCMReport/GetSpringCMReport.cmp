@@ -1,0 +1,3 @@
+<aura:component description="fc_GetSpringCMReport" implements="force:lightningQuickAction,force:hasRecordId" >
+    <c:fc_GetSpringCMReportLWC recordId="{!v.recordId}" />
+</aura:component>

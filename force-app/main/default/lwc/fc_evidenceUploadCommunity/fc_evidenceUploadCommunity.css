@@ -1,0 +1,71 @@
+/*
+
+//============== put this into Community -> Advance -> Head Markup ====================
+
+button.slds-button.slds-button_success, button.slds-button.slds-button_success:active{
+    background-color: rgb(28, 176, 133);
+    color: rgb(255,255,255);
+}
+
+button.slds-button.slds-button_brand, button.slds-button.slds-button_brand:active{
+    background-color: rgb(18, 24, 91);
+    color: rgb(255,255,255);
+}
+
+.slds-section__title-action button.slds-button.slds-button_neutral,
+.slds-section__title-action button.slds-button.slds-button_neutral:hover{
+    background: rgb(238, 241, 246);
+}
+
+lightning-button.slds-section__title-action{
+    background-color: rgb(233, 234, 236);
+}
+
+lightning-button.slds-section__title-action button.slds-button.slds-button_neutral {
+    border: none;
+    background-color: rgb(233, 234, 236);
+}
+
+lightning-tab-bar {
+    background-color: #f3f2f2;
+}
+
+.slds-accordion__summary {
+    padding: 0.375rem;
+    background: #f3f2f2;
+}
+
+li.slds-vertical-tabs__nav-item {
+    background-color: #f3f2f2;
+}
+
+.slds-table tr th, .slds-table tr td {
+    padding: .125rem;
+    padding-left: 1.5rem;
+}
+
+.slds-table tr:nth-child(even), .slds-table tr:nth-child(even){
+    background-color: #f3f2f2;
+}
+
+tr th .slds-cell-fixed {
+    height: 1.5rem;
+    min-height: 1.5rem;
+    top: 8px;
+    background-color: #f3f2f2;
+}
+
+.slds-cell-fixed .slds-th__action {
+    height: 1.5rem;
+    min-height: 1.5rem;
+    padding: .125rem;
+    padding-left: 1.5rem;
+}
+
+lightning-primitive-header-actions {
+    display: none;
+}
+
+//==============  END ==============
+
+*/

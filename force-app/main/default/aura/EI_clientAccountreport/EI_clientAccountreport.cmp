@@ -1,0 +1,74 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global"
+                controller="EI_clientAccountreportcontroller">
+    
+    <div> 
+        <lightning:card variant="Narrow" >
+            <p class="slds-p-horizontal_small">
+                <lightning:input aura:id="FRD" type="date" name="input1" label="From date" required="true" />
+                <lightning:input aura:id="ToD" type="date" name="input2" label="To date" required="true" /><br/>
+                <lightning:button variant="brand" label="Search" title="Brand action" value = "{!v.searchdate}" onclick="{!c.showdata}"/>  
+            </p>
+        </lightning:card>
+    </div><br/><br/>
+    <!-- aura attributes to store data/values -->    
+    <aura:attribute name="deplist" type="Deposit__c[]"/>
+    <aura:attribute name="searchdate" type="date"/>
+    <div>
+        <lightning:button variant="brand" label="Download As Csv" title="Brand action"  onclick="{!c.downloadCsv}"/> <br/><br/>
+        <table class="slds-table slds-table--bordered slds-table--striped">
+            <thead>
+                <tr class="slds-text-title_caps">
+                    <!--header checkbox for select all-->                    
+                    <th scope="col">
+                        <div class="slds-truncate" title="Name">DAN</div>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate" title="Phone">Case status</div>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate" title="Type">Property address</div>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate" title="Type">Tenancy deposit amount</div>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate" title="Type">Protected amount</div>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate" title="Type">Tenancy start date</div>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate" title="Type">Tenant names</div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <aura:if isTrue="{!not(empty(v.deplist))}">
+                    <aura:iteration items="{!v.deplist}" var="registeredRecord">
+                        <tr>
+                            <td>{!registeredRecord.Deposit_Account_Number__c}</td>
+                            <td>{!registeredRecord.Case_Status__c}</td>
+                            <td>
+                                <div aria-label="" class="slds-text-area__content slds-grow slds-cell-wrap">
+                                	<ui:outputRichText value="{!registeredRecord.Property_Address__c}"/>
+                                </div>
+                            </td>
+                            <td>{!registeredRecord.Deposit_Amount__c}</td>
+                            <td>{!registeredRecord.Protected_Amount__c}</td>
+                            <td>{!registeredRecord.Start_Date__c}</td>
+                            <td>
+                                <div aria-label="" class="slds-text-area__content slds-grow slds-cell-wrap">
+                                	<ui:outputRichText value="{!registeredRecord.Tenants_Name__c}"/>
+                                </div>
+                            </td><br/>
+                        </tr>
+                    </aura:iteration>
+                    <aura:set attribute="else">
+                        There are no deposits to show.
+                    </aura:set>
+                </aura:if>
+            </tbody>
+        </table>
+    </div>
+    
+</aura:component>

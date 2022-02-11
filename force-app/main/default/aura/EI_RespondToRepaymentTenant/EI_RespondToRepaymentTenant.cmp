@@ -1,0 +1,21 @@
+<aura:component implements="forceCommunity:themeLayout,forceCommunity:availableForAllPageTypes" access="global"
+    controller="EI_TenantRespondToRepayment">
+
+    <!-- attributes -->
+    <aura:attribute name="data" type="Object" />
+    <aura:attribute name="columns" type="List" />
+
+    <!-- handlers-->
+    <aura:handler name="init" value="{! this }" action="{! c.doInit }" />
+
+    <!-- Navigation Service -->
+    <lightning:navigation aura:id="navService" />
+
+    <lightning:card title="View Deposit" footer="optionalFooter">
+        <!-- the container element determine the height of the datatable -->
+        <div style="height: 300px">
+            <lightning:datatable columns="{! v.columns }" data="{! v.data }" keyField="id"
+                onrowaction="{! c.handleRowAction }" />
+        </div>
+    </lightning:card>
+</aura:component>

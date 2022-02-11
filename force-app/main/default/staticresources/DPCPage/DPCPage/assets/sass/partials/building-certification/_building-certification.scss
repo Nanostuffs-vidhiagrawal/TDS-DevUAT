@@ -1,0 +1,163 @@
+.buiding-certification {
+    &.preview-page {
+        .form-view {
+            @include respond-below(sm) {
+                position: static;
+                opacity: 1;
+                height: auto;
+                width: auto;
+                z-index: 0;
+                &>h6 {
+                    display: block;
+                }
+            }
+        }
+        .print-pdf {
+            a {
+                display: block;
+                border: 2px solid #32669e;
+                padding: 6px 10px;
+                border-radius: 5px;
+            }
+        }
+        @include respond-above(sm) {
+            .preview-text-big {
+                @include font_size($lg)
+            }
+            .preview-text-medium {
+                @include font_size($above_base)
+            }
+            .preview-text-small {
+                @include font_size($base);
+                small {
+                    font-size: 100%
+                }
+            }
+            .form-view-inner {
+                .table {
+                    @include font_size($above_base);
+                    tr.blue-box {
+                        @include font_size($lg);
+                        border-bottom: 2px solid white;
+                    }
+                    td {
+                        @include space(padding, all, $s15);
+                    }
+                }
+            }
+        }
+    }
+    .mt-5 {
+        margin-top: $s45 !important;
+    }
+    .form-view {
+        .close-pdf-mobile {
+            display: none
+        }
+        background-image: url(../../assets/img/DRAFT.svg);
+        background-size: 80%;
+        background-position: center;
+        background-repeat: no-repeat;
+        @include respond-above(sm) {
+            @include border_radius($s20);
+            @include border(1px, solid, map-get($color, blue));
+            @include space(padding, all, $s15);
+        }
+        @include respond-below(sm) {
+            position: absolute;
+            z-index: -1;
+            background: #fff;
+            width: calc(100% - 30px);
+            top: 165px;
+            opacity: 0;
+            &>h6 {
+                display: none;
+            }
+        }
+        .form-view-inner {
+            @include border(1px, solid, map-get($color, light_border));
+            .logo-shadow {
+                box-shadow: 0px 10px 60px rgba(0, 0, 0, 0.1);
+            }
+            .text-blue {
+                color: map-get($color, blue);
+            }
+            .blue-box {
+                background-color: opacify(rgba(map-get($color, blue), 0.1), 0.02);
+            }
+            .repeat-tenant-name {
+                background-color: opacify(rgba(map-get($color, blue), 0.0), 0.025);
+                min-height: $s40;
+                font-family: map-get($font-weights, bold)
+            }
+            table {
+                @include font_size($sm - 1);
+                color: map-get($color, light_gray);
+                tr {
+                    &.blue-box {
+                        @include font_size($sm)
+                    }
+                    td {
+                        @include respond-below(sm) {
+                            @include space(padding, all, $s05);
+                            width: 100% !important;
+                            display: block;
+                            background-color: transparent;
+                        }
+                        vertical-align: middle;
+                        width: 55%;
+                        @include border(1px, solid, opacify(rgba(map-get($color, light_border), 0.15), 0.15));
+                        @include space(padding, top, $s10);
+                        @include space(padding, bottom, $s10);
+                        &:nth-child(2) {
+                            width: 45%;
+                            background-color: opacify(rgba(map-get($color, light_border), 0.05), 0.03);
+                            input {
+                                border: none;
+                                background-color: transparent;
+                                width: 100%;
+                                &:focus {
+                                    outline: none;
+                                }
+                                &::placeholder {
+                                    color: opacify(rgba(map-get($color, light_gray), 0.35), 0.15);
+                                    opacity: 1;
+                                }
+                                &:-ms-input-placeholder {
+                                    color: opacify(rgba(map-get($color, light_gray), 0.35), 0.15);
+                                }
+                                &::-ms-input-placeholder {
+                                    color: opacify(rgba(map-get($color, light_gray), 0.35), 0.15);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            p {
+                small {
+                    min-height: $s15;
+                    display: inline-block;
+                }
+            }
+        }
+    }
+    .container.show-preview-on-mobile {
+        .form-view {
+            z-index: 999;
+            opacity: 1;
+            .close-pdf-mobile {
+                display: block;
+                position: absolute;
+                top: -45px;
+                right: 10px;
+            }
+        }
+        .wizard-form {
+            overflow: hidden;
+            &>h5 {
+                opacity: 0;
+            }
+        }
+    }
+}

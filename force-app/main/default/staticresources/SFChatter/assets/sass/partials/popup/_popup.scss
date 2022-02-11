@@ -1,0 +1,105 @@
+.custom-model {
+	background: rgba(0,0,0,0.6);
+	.modal-dialog {
+		&.modal-lg {
+			max-width: 70rem;
+		}
+		.modal-header, .modal-body {
+			@include space(padding, left, $s30);
+			@include space(padding, right, $s30);
+			@include space(padding, top, $s20);
+			@include space(padding, bottom, $s20);
+
+			@include respond-below(sm) {
+				@include space(padding, left, $s20);
+				@include space(padding, right, $s20);
+			}
+		}
+
+		.alert {
+			img {
+				width: 18px;
+			    height: 18px;
+			    margin-right: 8px;
+			}
+			strong {
+				display: block;
+			}
+		}
+
+		.modal-header {
+			button {
+				span {
+					img {
+						width: 3.5rem;
+						height: 3.5rem;
+					}
+				}
+			}
+		}
+
+		.modal-body {
+			.sf-custom-form {
+				@include space(padding, top, $zero);
+
+				.text-right {
+					@include space(margin, all, $zero);
+				}
+
+				input, textarea, select {
+					background-color: transparent;
+				}
+			}
+
+			.cRegister2 {
+				.slds-col {
+					@include space(padding, all, $zero);
+
+					.content {
+						width: 100%;
+						@include space(margin, left, $zero);
+						@include space(padding, all, $zero);
+					}
+				}
+
+				.ManualAddress {
+					width: 100%!important;
+				}
+
+				.lookupbtn {
+					margin-right: 0 !important;
+				}
+
+				.clear {
+					right: 15px !important;
+					font-size: 10px !important;
+					line-height: 16px !important;
+				}
+
+				.EnterLink {
+					margin-right: 0px !important;
+				}
+			} 
+		}
+	}
+}
+
+.modal-backdrop {
+	display: none;
+}
+
+.tf-to-landlord {
+	&.modal-header {
+		display: block;
+
+		.modal-title {
+			@include space(margin, bottom, $s15);
+		}
+
+		.close {
+			position: absolute;
+		    top: $s15;
+		    right: $s15;
+		}
+	}
+}

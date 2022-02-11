@@ -1,0 +1,50 @@
+.THIS.myCard {
+	width:60%;
+    height:45%;
+    margin-left:10%;
+    margin-top:1%;
+}
+
+.THIS.alltenantshow{
+  display:none;
+    width:60%;
+    height:45%;
+    margin-left:10%;
+    margin-top:1%;
+}
+
+.THIS.alltenanthide{
+  display:none;  
+}
+
+.THIS .clickButton{
+    background-color : #32669E;
+    color: white;
+}
+
+.THIS .slds-text-heading_small.slds-truncate{
+    font-size:1.3rem;
+}
+
+.THIS .slds-checkbox_faux:after{
+    height: 0.65rem!important;
+    width: 1.45rem!important;
+}
+
+.THIS .slds-checkbox_faux{
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+}
+
+.THIS .slds-form-element__label{
+      font-size: 1.3rem!important;
+}
+
+.THIS .wind1cont {
+	margin-left: 118% !important;    
+}
+
+.THIS .win3btn {
+    margin-right : 2.3% !important;
+}

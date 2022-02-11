@@ -1,0 +1,271 @@
+body {
+	font-family: $AllerRegular;
+	background-color: #fff !important;
+}
+
+.container {
+	max-width: $container_size !important;
+	width: $full !important; 
+}
+
+.container-fluid {
+	@include space(padding, all, $zero);
+}
+
+.search-overlay {
+	@include position_fixed(0, 0, 0, 0);
+	height: 100vh;
+	background-color: rgba(255, 255, 255, 0.8);
+    z-index: 9;
+    display: none;
+}
+
+.horizantal-devider {
+	border: none;
+	border-bottom: 2px solid map-get($color, light_gray);
+	opacity: 0.3;
+}
+
+.global-space {
+	@include space(padding, top, $s75);
+	@include space(padding, bottom, $s75);
+
+	@include respond-below(sm) {
+		@include space(padding, top, $s25);
+		@include space(padding, bottom, $s25);
+	}
+}
+
+.mw-auto{
+	min-width: auto !important
+}
+
+.border-2{
+	border: 2px solid
+}
+
+.text-14{
+	font-size: 14px
+}
+.global-space-top {
+	@include space(padding, top, $s75);
+
+	@include respond-below(sm) {
+		@include space(padding, top, $s25);
+	}
+}
+
+.global-space-bottom {
+	@include space(padding, bottom, $s75);
+
+	@include respond-below(sm) {
+		@include space(padding, bottom, $s25);
+	}
+}
+
+.show-mobile {
+	display: block;
+	@include respond-above(sm) {
+		display: none;
+	}
+}
+
+.show-desktop {
+	display: block;
+	@include respond-below(sm) {
+		display: none;
+	}
+}
+
+.show-tab {
+	display: block;
+	@include respond-above(md) {
+		display: none;
+	}
+}
+
+.hide-tab {
+	display: none;
+	@include respond-above(md) {
+		display: block;
+	}
+}
+
+.datepicker-days {
+	@include font_size($sm);
+}
+
+.dataTables_scrollHeadInner {
+	width: $full !important;
+
+	.dataTable {
+		width: $full !important;
+	}
+}
+
+.wizard-section {
+	.form-wizard {
+		.wizard-form  {
+			.input-append.date .add-on {
+				position: absolute;
+    			right: 12%; 
+    			top: 50%;
+			}
+		}
+	}
+}
+
+.alert {
+	@include font_size($below_base);
+	@include space(margin, bottom, $s15);
+	@include space(padding, right, $s35);
+	@include space(padding, top, $s15);
+	@include space(padding, bottom, $s15);
+	@include border_radius($s10);
+	display: flex;
+
+	strong {
+		@include font_size($base);
+		@include space(margin, right, $s10);
+	}
+
+}
+
+.alert-dismissible {
+	.close {
+		@include font_size($xxx_lg);
+		font-weight: normal;
+    	top: 9%;
+    	outline: 0;
+	}
+}
+
+.tf-other-prop {
+	@include space(margin, top, $s25);
+
+	@include respond-below(sm) {
+		@include space(margin, top, $s15);
+	}
+}
+
+.go-back {
+	& ~ {
+		.alert {
+			@include space(margin, top, $s15);
+		}
+	}
+}
+
+.space-top {
+	@include space(margin, top, $s35);
+
+	@include respond-below(sm) {
+		@include space(margin, top, $s20);
+	}
+}
+
+@include respond-above(md) {
+	.new-deposit-width {
+		width: 92%;
+	}
+}
+
+.leftover_imp {
+	border-radius: $zero !important;
+	border: none;
+	border-left: 5px solid rgba(191, 13, 13, 0.2);
+	background-color: rgba(191, 13, 13, 0.1);
+	@include space(margin, bottom, $s10);
+
+	& ~ h5 {
+		@include space(margin, top, $s45);
+		color: map-get($color, light-black);
+
+		@include respond-below(sm) {
+			@include space(margin, top, $s25);
+		}
+	}
+}
+
+.evi_label {
+	font-family: $AllerRegular !important;
+	@include space(margin, bottom, $s10);
+	display: block;
+
+	&~.learn-more {
+		&:last-child {
+			@include space(margin, left, $s20);
+		}
+
+		&:hover, &.active {
+			background-color: map-get($color, blue);
+			color: map-get($color, white);
+		}
+	}
+}
+
+.slds-dropdown-trigger_click .slds-dropdown, 
+.slds-dropdown-trigger_click:hover .slds-dropdown, 
+.slds-dropdown-trigger--click .slds-dropdown, 
+.slds-dropdown-trigger--click:hover .slds-dropdown {
+    font-size: 14px;
+} 
+
+.search-input {
+	input {
+		width: $full;
+	    border: none;
+	    border-bottom: 1px solid map-get($gray_shade, gray03);
+	    outline: 0;
+	    @include space(padding, all, $s10);
+	}
+
+	.ui-widget.ui-widget-content {
+		width: $full;
+    	//@include space(margin, top, $s55);
+
+    	.ui-menu-item {
+    		.ui-menu-item-wrapper {
+    			font-family: $AllerRegular;
+    		}
+    	}
+	}
+}
+
+#divSuccess {
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+
+.sf-custom-form {
+	label{
+		text-align:left
+	}
+}
+
+#newsletter-form {
+	.col-md-6 {
+		display: block;
+	}
+}
+
+.support-block__text {
+	.apply-job-wrapper {
+		border: none !important;
+	}
+}
+
+#result {
+	select {
+		width: $full !important;
+		@include space(margin, top, $s15);
+	}
+}
+
+abbr[title], abbr[data-original-title] {
+	cursor: auto !important;
+}
+
+ .ui-menu .ui-menu-item.active .ui-menu-item-wrapper {
+    background-color: #ffffff;
+}

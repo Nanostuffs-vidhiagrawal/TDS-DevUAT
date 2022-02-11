@@ -1,0 +1,236 @@
+<aura:component
+  implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+  access="global"
+  controller="EI_ChangePaymentMethod"
+>
+    <ltng:require styles="{!$Resource.TDSTheme+'/assets/css/custom.css'}"
+                  scripts="{!join(',',
+                           $Resource.TDSTheme+'/assets/js/plugin.min.js',
+                           $Resource.TDSTheme+'/assets/js/custom.js',
+                           $Resource.TDSTheme+'/assets/js/plugin.min.js',
+                           $Resource.TDSTheme+'/assets/js/jquery.dataTables.min.js',
+                           $Resource.TDSTheme+'/assets/js/datepicker.js'
+                           )}"
+                  
+                  />
+    <aura:attribute name="isOpen" type="boolean" default="false"/>
+    <aura:attribute name="isBankTransfer" type="boolean" default="true"/>
+    <aura:attribute name="isCheque" type="boolean" default="false"/>
+    <aura:attribute name="showChangePayment" type="boolean" default="true"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="depositInstallmentInstance" type="object" />
+    <lightning:navigation aura:id="navService" />
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8"/>
+            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+            <link rel="stylesheet" href="../assets/css/custom.css"/>
+
+        <title>TDS</title>
+    </head>
+    <body>
+
+        
+        <div class="tab-content custom-tab-content" id="sf-tabContent">
+            
+            <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+
+                <div class="list-of-btns">
+                    <div class="container">
+                        <a href="" class="see-all"  data-toggle="modal" data-target="#cancelPayment">Cancel repayment</a>
+                    </div>
+                </div>
+				<aura:if isTrue="{!v.showChangePayment}">
+                    <div class="container">
+    
+                        <!-- Success Alert -->
+                        <div class="col-lg-12 col-md-12 alert alert-success alert-dismissible fade show">
+                            <strong>Confirmation!</strong> You have confirmed that you will not be making payment of the deposit at this time. <br/> You can pay the deposit again from the 'Registered (not paid)' section of your Deposit Management, or delete it if the tenancy is not proceeding.
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        </div>
+    
+                        <p>Select a payment method below, or cancel your payment.</p>
+    
+                        <div class="table-container no_navigation no_space">
+                            <table id="example-2" class="display scrollbar" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Address</th>
+                                        <th>Payment reference</th>
+                                        <th>Amount to pay</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>{!v.depositInstallmentInstance.objDeposit.Property_Address__c}</td>
+                                        <td>{!v.depositInstallmentInstance.objDeposit.Deposit_Account_Number__c}</td>
+                                        <td>&#163;{!v.depositInstallmentInstance.objDeposit.Protected_Amount__c}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <table id="example-3" class="display scrollbar" style="width:100%">
+                                <tbody>
+                                    <tr class="payment_total-row">
+                                        <td></td>
+                                        <td class="text-right"><strong>Total</strong></td>
+                                        <td><strong>&#163;297.50</strong></td>
+                                    </tr>
+                                    <tr class="payment_method-row">
+                                        <td><strong>Current payment method: <span>{!v.depositInstallmentInstance.objInstallment.Payment_Method__c}</span></strong></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+    
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <p><strong>Payment method</strong></p>
+                            </div>
+                            <div class="col-sm-8 text-right download-btns">
+                                <a href="#" class="learn-more" id = "{!v.depositInstallmentInstance.objDeposit.Property_Address__c}" onclick="{!c.bankTransferMethod}">Bank transfer</a>
+                                <a href="#" class="learn-more">Debit card</a>
+                                <a href="#" class="learn-more" >Cheque</a>
+                                <a href="#" class="see-all" onclick = "{!c.cancelPaymentJS}">Cancel payment</a>
+                            </div>
+                            
+                        </div>
+    
+                        <div class="">
+                            
+                        </div>
+                    </div>
+                </aura:if>
+
+            </div>
+
+        </div>
+        
+        
+        <aura:if isTrue="{!v.isOpen}">
+            
+            
+             
+            <!-- Modal/Popup Box starts here-->
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <!-- Modal/Popup Box Header Starts here-->
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{! c.closeModel }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Modal/PopUp Box</h2>
+                    </header>
+                    <!--Modal/Popup Box Body Starts here-->
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <p><b>Modals/Popup Box are used to display content in a layer above the app. This paradigm is used in cases such as the creation or editing of a record, as well as various types of messaging and wizards.
+                            </b>
+                        </p>
+                    </div>
+                    <!--Modal/Popup Box Footer Starts here-->
+                    <footer class="slds-modal__footer">
+                        <lightning:button variant="neutral"
+                                          label="Cancel"
+                                          title="Cancel"
+                                          onclick="{! c.closeModel }"/>
+                        <lightning:button variant="brand"
+                                          label="OK"
+                                          title="OK"
+                                          onclick="{!c.submitDetails}"/>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </aura:if>
+            
+        
+        <!-- Tabs HTML End -->
+
+        <!-- Footer HTML Start -->
+        
+        <!-- Footer HTML End -->
+
+        <!--<script src="../assets/js/plugin.min.js"></script>
+        <script src="../assets/js/jquery.dataTables.min.js"></script>
+        <script src="../assets/js/dataTables.responsive.js"></script>
+        <script src="../assets/js/datepicker.js"></script>
+        <script src="../assets/js/custom.js"></script>-->
+        
+        <aura:if isTrue="{!or(v.isBankTransfer, v.isCheque)}" >
+            <p style= "font-size:30px">Transaction Details</p>
+            <aura:if isTrue="{!v.isBankTransfer}" >
+                <p>Thank you for confirming that you will make payment by bank transfer.</p>
+                <p>Please pay the amount stated below into the following bank account. Please copy the bank details exactly as they are shown or your payment may be rejected.</p>
+                <aura:set attribute="else">
+                    <p>Thank you for confirming that you will make payment by cheque.</p>
+                    <p>Please pay the amount stated below into the following address.</p>
+                </aura:set>
+            </aura:if>
+            
+            
+            <table>
+                <tr>
+                    <td>Payment reference number</td>
+                    <td>{!v.depositInstallmentInstance.objDeposit.Deposit_Account_Number__c}</td>
+                </tr>
+                <tr>
+                    <td>Total deposits</td>
+                    <td>1</td>
+                </tr>
+                <tr>
+                    <td>Amount to pay</td>
+                    <td>{!v.depositInstallmentInstance.objDeposit.Protected_Amount__c}</td>
+                </tr>
+                <tr>
+                    <aura:if isTrue="{!v.isBankTransfer}" >
+                        <td><b>Bank details to make payment to</b></td>
+                        <td>
+                            <b>Account Name:</b> The Dispute Service Limited Custodial Client Account<br/>
+                            <b>Account Number:</b> 44647190<br/>
+                            <b>Sort Code:</b> 60-01-15
+
+                        </td>
+                        <aura:set attribute="else">
+                            <td><b>Address to make cheque payableto</b></td>
+                            <td>TDS Custodial<br/>PO Box 1255<br/>Hemel Hempstead<br/>Herts<br/>HP1 9GN</td>
+                        </aura:set>
+                    </aura:if>
+                </tr>
+            </table>
+            <br/>
+            <div>
+                <p>! Important: The deposit is not protected until TDS Custodial has received payment in cleared funds. This may take upto 3 working days and until then the deposit status on your Deposit Management screen will show as Awaiting Payment.</p>
+                <aura:if isTrue="{!v.isCheque}" >
+                    <p>Failure to attach the print out of this page or failure to quote the correct reference will delay protection of your deposit(s)</p>
+                </aura:if>
+            </div>
+            
+            <p style= "font-size:30px">Your Deposits</p>
+            
+            <table>
+                <tr>
+                    <th>Address</th>
+                    <th>Deposit Account Number</th>
+                    <th>Amount to be protected</th>
+                    <th></th>
+                </tr>
+                <tr>
+                    <td>{!v.depositInstallmentInstance.objDeposit.Property_Address__c}</td>
+                    <td>{!v.depositInstallmentInstance.objDeposit.Deposit_Account_Number__c}</td>
+                    <td>{!v.depositInstallmentInstance.objDeposit.Protected_Amount__c}</td>
+                    <td>
+                        <input type="button" value= "Download prescribed information"/><br/>
+                        <input type="button" value= "Customise Prescribed Information"/>
+                    </td>
+                </tr>
+            </table>
+        </aura:if>
+
+    </body>
+    
+	
+</aura:component>

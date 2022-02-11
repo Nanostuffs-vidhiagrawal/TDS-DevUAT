@@ -1,0 +1,233 @@
+<aura:component controller="EI_ZD_LoginController" implements="forceCommunity:themeLayout,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    
+   <!-- <ltng:require styles="{!$Resource.EI_ZD_Assets  + '/css/custom.css'}"
+                  scripts="{!join(',',
+                           $Resource.EI_ZD_Assets+'/js/plugin.min.js',
+                           $Resource.EI_ZD_Assets+'/js/custom.js')}"
+                  
+                  /> -->
+    <ltng:require styles="{!$Resource.EI_ZD_Assets  + '/css/custom.css'}"
+                  scripts="{!join(',',
+                           $Resource.EI_ZD_Assets+'/js/plugin.min.js'
+                           )}"
+                  
+                  />
+    
+    
+    <!-- Username and Password -->
+    <aura:attribute name="flagUserType" type="Boolean"  default="false"/>
+    <aura:attribute name="flagPassType" type="Boolean"  default="false"/>
+    <aura:attribute name="Username" type="String" />
+    <aura:attribute name="Password" type="String" />
+    <aura:attribute name="email" type="String" />
+    <aura:attribute name="resetUsername" type="String" />
+    <aura:attribute name="mylabel" type="String" />
+    <aura:attribute name="resetError" type="String" />
+    <aura:attribute name="showError" type="boolean"/>
+    <aura:attribute name="isShowResetModal" type="boolean" default="true"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler event="aura:waiting" action="{!c.waiting}"></aura:handler>
+    <aura:handler event="aura:doneWaiting" action="{!c.doneWaiting}"></aura:handler>
+    
+    <aura:attribute name="PageSpinner" type="Boolean" default="true"></aura:attribute>
+    
+    <!-- BootStrap Errors using Aura:if-->
+    <aura:attribute name="UserNameError" type="boolean" default="false" />
+    <aura:attribute name="PasswordError" type="boolean" default="false" />
+    <aura:attribute name="errorMessage" type="boolean" default="false" />
+    <aura:attribute name="message" type="string" default="false" />
+    <aura:attribute name="errorMessage1" type="boolean" default="false" />
+    <aura:attribute name="message1" type="string" default="false" />
+    <aura:attribute name="UserNameResetError" type="boolean" default="false" />
+    
+    <lightning:navigation aura:id="navService" />
+    <html lang="en">
+        <head>
+            <meta charset="utf-8"/>
+            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+            
+    <!--        <link rel="stylesheet" href="{!$Resource.EI_ZD_Assets  + '/assets/css/custom.css'}"/> -->
+            
+            <title>TDS</title>
+            <title>TDS</title>
+        </head>
+        
+        
+        
+        <aura:renderIf isTrue="{!v.PageSpinner}">
+            <div aura:id="ring" class="lds-dual-ring"></div>
+            <aura:set attribute="else">
+                
+                <body class="ZD_theme">
+                    
+                    <!-- reset modal Popup -->
+                    <div class="custom-model modal fade"  id="reset-popup" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="reset-popup" aria-hidden="true">       
+                        <div class="modal-dialog modal-lg" style="max-width: 600px;" >
+                            <aura:if isTrue="{!v.isShowResetModal}">
+                                
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <p ><b style="font-size: x-large;">PASSWORD RESET</b></p>
+                                        <br></br>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
+                                            <span aria-hidden="true"> 
+                                                <img src="{!$Resource.EI_ZD_Assets+'/img/Cancel-icon.png'}" alt="" onclick="{!c.closeModel }" />
+                                            </span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <aura:if isTrue="{!v.errorMessage1}">
+                                            <div id="errorAlert" class="alert alert-danger alert-dismissible fade show">
+                                                <strong>Error!</strong> {!v.resetError}
+                                                <button type="button" class="close" onclick="{!c.hideBootstrapErrors1}" name="error" >&times;</button >
+                                            </div>                 
+                                        </aura:if>
+                                        
+                                        <div class="sf-custom-form">
+                                            <p>Please enter the Email address that you used when creating your account. An email will be sent to that address with further instructions on how to reset your password.</p>
+                                            <br></br>
+                                            <form class="slds-form--stacked">
+                                                <!--     This is change due to Uat bugs                 -->
+                                               <!-- <label for="inputUserName">User Name</label> --> 
+                                                <label for="inputUserName">Email address</label>
+                                                <input  type="text" value="{!Username}" aura:id="resetUsername" class="login removeBorderCSS" required="true" autocomplete="off" />
+                                                
+                                                <br></br><br></br>
+                                                <!--<div>    
+                            <ui:outputRichText class="errormessag" value="{!v.resetError}"/>
+                        </div>
+                        <input class="login-btn" type="submit" name="details" value="Send Password" onclick="{!c.resetPassword}"/>-->
+                                                <lightning:button label="Reset Password" class="see-all" variant="brand" onclick="{!c.resetPassword}"/>
+                                                <aura:if isTrue="{!v.UserNameResetError}">
+                                                    <div id="UserNameErrorAlert" class="sf-custom-form" style=" font-size: larger;
+                                                                                                               color: red;
+                                                                                                               ">
+                                                        <strong>Error!</strong> Email address is mandatory.
+                                                        <button type="button" class="close" onclick="{!c.hideBootstrapErrors1}" name="userName1" >&times;</button >
+                                                    </div>                 
+                                                </aura:if>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <aura:set attribute="else">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <p ><b style="font-size: x-large;">Now check your email</b></p>
+                                            <br></br>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
+                                                <span aria-hidden="true"> 
+                                                    <img src="{!$Resource.EI_ZD_Assets+'/img/Cancel-icon.png'}" alt="" onclick="{!c.closeModel }" />
+                                                </span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            
+                                            <p>Check the email account associated with your user name for instructions on resetting your password. Remember to look in your spam folder, where automated messages sometimes filter. If you still can't log in, contact your administrator.</p>
+                                            <!--   <button type="button " class="login-btn" data-dismiss="modal"  aria-label="back to login"><span aria-hidden="true">Back To login</span></button>-->
+                                        </div></div>
+                                </aura:set>
+                            </aura:if>
+                        </div>
+                    </div>
+                    
+                    <!--  <div id="overlay">
+             <img src="{!$Resource.Loadingimage}"  width="120" height="100" alt=""/>
+      </div> 
+       Login HTML Start -->
+                    <section class="login-details">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <!-- Login Banner HTML Start -->
+                                    <div class="login-banner show-desktop" style="background-image: url('/sfsites/c/resource/EI_ZD_Assets/img/login-banner_New.png')">
+                                        <div class="login-banner__text">
+                                            <h2>Login to Your Account</h2>
+                                            <p>In order to respond to your Landlord's claim, you need to login your account. If you have any questions or are having trouble logging you can<b><a href="http://app.zerodeposit.com/contact" style ="color:#101010" target="_blank" class=""> contact us for help</a></b></p>
+                                        </div>
+                                    </div>
+                                    <!-- Login Banner HTML End -->
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <!-- Login Form HTML Start -->
+                                    <div class="login-banner-form">
+                                        <figure class="logo">
+                                            <img src="{!$Resource.EI_ZD_Assets  + '/img/ZD_logo.png'}" alt="TDS Logo" loading="lazy" />
+                                        </figure>
+                                        <p>Welcome back! Please login to your account.</p>
+                                        <div class="get_In_Touch_form">
+                                            <form>
+                                                <aura:if isTrue="{!v.errorMessage}">
+                                                    <div id="errorAlert" class="alert alert-danger alert-dismissible fade show">
+                                                        <strong>Error!</strong> {!v.message}
+                                                        <button type="button" class="close" onclick="{!c.hideBootstrapErrors}" name="userAttempt" >&times;</button >
+                                                    </div>                 
+                                                </aura:if>
+                                                <aura:if isTrue="{!v.UserNameError}">
+                                                    <div id="UserNameErrorAlert" class="alert alert-danger alert-dismissible fade show">
+                                                        <strong>Error!</strong> Email address is mandatory.
+                                                        <button type="button" class="close" onclick="{!c.hideBootstrapErrors}" name="userName" >&times;</button >
+                                                    </div>                 
+                                                </aura:if>
+                                                <aura:if isTrue="{!v.PasswordError}">
+                                                    <div id="PasswordErrorAlert" class="alert alert-danger alert-dismissible fade show">
+                                                        <strong>Error!</strong> Password is mandatory.
+                                                        <button type="button" class="close" onclick="{!c.hideBootstrapErrors}" name="password" >&times;</button >
+                                                    </div>                 
+                                                </aura:if>
+                                                <div class="form-row">
+                                                    <div class="form-group col-12">
+                                                        <label for="inputUserName">Email address</label>
+                                                        <input value="{!Username}" aura:id="uname" required="true" type="text" class="form-control" id="inputUserName" placeholder="Email address"/>
+                                                        <!--<aura:if isTrue="{!v.flagUserType}">
+                                                    <div aura:id="depositWarning" style="color: rgb(194,57,52); font-size: 1.4rem!important;">
+                                                        Complete this field.
+                                                    </div>
+                                                </aura:if>-->
+                                                    </div>
+                                                </div>
+                                                <div class="form-row">
+                                                    <div class="form-group col-12">
+                                                        <!--     <input type="password" value="{!Password}" aura:id="pass" class="login" required="true" autocomplete="off" />-->
+                                                        <label for="inputPassword">Password</label>
+                                                        <input value="{!Password}" aura:id="pass" required="true" type="password" class="form-control"  id="inputPassword" placeholder="********"/>
+                                                        <!--<aura:if isTrue="{!v.flagPassType}">
+                                                    <div aura:id="depositWarning" style="color: rgb(194,57,52); font-size: 1.4rem!important;">
+                                                        Complete this field.
+                                                    </div>
+                                                </aura:if>-->
+                                                    </div>
+                                                </div>
+                                                <div class="form-row">
+                                                    <!--    <div class="form-group col-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="gridCheck"/>
+                                                <label class="form-check-label" for="gridCheck">Remember me</label>
+                                            </div>
+                                        </div> -->
+                                                    <div class="form-group col-6">
+                                                        <label>
+                                                            <!--  <a href="#" class="forgot-password">Forgot Password</a>-->
+                                                            <a href="" data-toggle="modal" data-target="#reset-popup" class="" onclick="{!c.resetPwd}">Forgot Password?</a>	
+                                                            
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <!-- <ui:outputRichText class="errormessag" value="{!v.mylabel}"/>
+                                      <button onclick="{!c.getInput}" type="submit" class="see-all">Submit</button>-->
+                                                <lightning:button label="Submit" class="see-all" variant="brand" onclick="{!c.getInput}"/>
+                                                <!--  <a href="" onclick="{!c.RegisterPage}" class="learn-more">Sign up</a>-->
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <!-- Login Form HTML End -->
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </body>
+            </aura:set>
+        </aura:renderIf>   
+    </html>
+</aura:component>

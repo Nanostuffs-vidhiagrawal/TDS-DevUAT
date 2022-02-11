@@ -1,0 +1,59 @@
+<!-- Fc Claim Item -->
+<template>
+        <div class="slds-text-heading_medium" style="color: rgb(18, 24, 91);">{claimItem.disputeItemType}</div>
+        <lightning-accordion allow-multiple-sections-open active-section-name={activeSections}>
+        <lightning-accordion-section name="A" label={labels.landlord_section_title}>
+                <lightning-layout class="slds-wrap" multiple-rows="true">
+                    <lightning-layout-item size="6">
+                        <div class="slds-form-element slds-p-around_small slds-border_bottom  "><span class="slds-form-element__label">{labels.landlord_section_claimed_by}</span>
+                            <div class="slds-form-element__control"><span class="slds-form-element__static"><lightning-formatted-number value={claimItem.claimedByLandlord} format-style="currency" currency-code="GBP"></lightning-formatted-number></span></div>
+                        </div>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="6"></lightning-layout-item>
+                </lightning-layout>
+                <div class="slds-form-element slds-p-around_small slds-border_bottom  "><span class="slds-form-element__label">{labels.landlord_section_statement}</span>
+                    <div class="slds-form-element__control"><span class="slds-form-element__static"><span style="font-size: 12.992px;">{claimItem.landlordStatement}</span></span>
+                    </div>
+                </div>
+                <c-fc_evidence-attachment-table evidence-list={landLordAttachments} allow-delete={allowDeleteLandLordDocuments} field-set={landLordDocumentsColumns}> </c-fc_evidence-attachment-table>
+        </lightning-accordion-section>
+        <lightning-accordion-section name="B" label={labels.tenant_section_title}>
+                    <div class="slds-form-element   "><span class="slds-form-element__label">{labels.tenant_section_statement}</span>
+                        <div class="slds-form-element__control"><span class="slds-form-element__static"><p>{claimItem.tenantStatement}</p></span></div>
+                    </div>
+                    <template if:true={allowEdit}>
+                        <div class="slds-p-around_small">
+                            <lightning-button-group>
+                                <lightning-button class="slds-theme_brand slds-border_top slds-border_bottom slds-border_left slds-border_right" icon-position="left" variant="brand" type="button" label={labels.tenant_section_edit_button} icon-name="utility:add" onclick={editTenantResponse}></lightning-button>
+                            </lightning-button-group>
+                        </div>
+                    </template>
+        </lightning-accordion-section>
+            <lightning-accordion-section name="C" label={labels.evidence_section_title}>
+                    <template if:true={allowEdit}>
+                        <div class="slds-p-around_small">
+                            <lightning-button-group>
+                                <lightning-button class="slds-theme_brand slds-border_top slds-border_bottom slds-border_left slds-border_right" icon-position="left" variant="brand" type="button" label={labels.evidence_section_add_button} icon-name="utility:add" onclick={uploadAttachments}></lightning-button>
+                            </lightning-button-group>
+                        </div>
+                    </template>
+                    <c-fc_evidence-attachment-table evidence-list={tenantAttachments} allow-delete={allowEdit} field-set={tenantDocumentsColumns} onevidencerowdeleted={handleEvidenceAttachmentDeleted}> </c-fc_evidence-attachment-table>
+        </lightning-accordion-section>
+    </lightning-accordion>
+    <c-fc_modal name="edit-tenant-response-modal" header={labels.edit_response_modal_title}>
+        <div class="slds-p-around_medium">
+            <lightning-textarea class="slds-m-around_small" label={labels.edit_response_modal_tenant_statement_label} variant="standard" value={claimItem.tenantStatement}></lightning-textarea>
+        </div>
+        <div slot="footer">
+            <lightning-layout class="slds-wrap" multiple-rows="true">
+                <lightning-layout-item size="6"></lightning-layout-item>
+                <lightning-layout-item size="6">
+                    <lightning-button class="slds-m-around_small slds-theme_brand slds-border_top slds-border_bottom slds-border_left slds-border_right" icon-position="right" variant="brand" type="submit" label="Save" onclick={tenantResponseModified}></lightning-button>
+                </lightning-layout-item>
+            </lightning-layout>
+        </div>
+    </c-fc_modal>
+    <c-fc_modal name="upload-evidence-modal" label={labels.attachment} header={labels.add_evidence}>
+        <c-fc_evidence-upload class="evidenceUpload" case-id={claimItem.caseId} dispute-item-id={claimItem.id} user-type="Tenant" onclosemodal={handleEvndenceModalClosed} is-internal={isInternal}></c-fc_evidence-upload>
+    </c-fc_modal>
+</template>

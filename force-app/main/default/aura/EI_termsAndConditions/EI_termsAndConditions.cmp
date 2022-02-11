@@ -1,0 +1,290 @@
+<aura:component implements = "flexipage:availableForAllPageTypes,force:appHostable" access="global" >
+    <aura:attribute name="termsAndCondition" type="Boolean"  />
+    <aura:if isTrue="{!v.termsAndCondition}">
+        <div>
+            <b>Privacy Policy
+            </b>
+            <br></br>
+            <p>Your privacy is important to us. To better protect your privacy we provide this notice explaining our online information practices and the choices you can make about the way your information is collected and used.</p>
+            <br></br>
+            <b>The information we collect
+            </b>
+            <p>
+                Your contact name and address, telephone number, e mail address and specific requirements will be retained by us when (and if) you submit them through the online form when registering with SafeDeposits and registering details of tenancies and deposits.  This information is stored securely and is disposed of in a secure manner when no longer required.  It is used for the purposes shown below.
+            </p>
+            <br></br>
+            <b>
+                The way we use information
+            </b>
+            <br></br>
+            <p>
+                To contact you regarding our products; to provide relevant information to government and professional bodies to comply with statute or the rules of that organisation; to submit any details requested by any body investigating a crime, or by Her Majesty’s Revenue and Customs; to any tenant where the details of the tenanted property and the persons forming the Tenant have been registered with SafeDeposits; to any interested third party who has provided the whole or part of the deposit as a guarantor or in another capacity;; any landlord who wishes to verify that the  deposit has been protected; or any legal adviser.
+            </p>
+            <br></br>
+            <b>
+                Our commitment to data security
+            </b>
+            <br></br>
+            <p>
+                To prevent unauthorised access, maintain data accuracy and ensure the correct use of information we have installed appropriate physical, electronic and managerial procedures to safeguard and secure the information we collect online.
+                We are not liable if any information is obtained by any third party through illegal or fraudulent access to this website
+            </p>
+            <br></br>
+            <b>
+                Accessibility
+            </b>
+            <br></br>
+            <p>
+                It is important to make web sites accessible to all users. Therefore this site has been designed to meet the Web Content Accessibility Guidelines 1.0. These guidelines are intended to make web content accessible to people with disabilities.
+                The SafeDeposits website has been developed to comply to a minimum of level A conformance of the Web Content Accessibility Guidelines, but also satisfies many other checkpoints laid out in the Guidelines for levels AA and AAA.
+                You can change the size of text on this site by using your web browser settings. For example, in Internet Explorer you can set this by going to the menu View > Text Size or using the Zoom level at the bottom left of the status bar in Internet Explorer 7. In Mozilla Firefox this can be found under View --> Text Size.
+            </p>
+            <br></br>
+            <b>
+                Terms and Conditions
+            </b>
+            <br></br>
+            <p>
+                These are the Terms and Conditions for the use of the website of SafeDeposits Scotland Ltd (“SafeDeposits” or “we”).  By entering and using this website as a user (“User”) it is deemed acceptance of the terms and conditions shown below which take effect from the date when the User first uses this website. </p>
+            <br></br>
+            <b>
+                General
+            </b>
+            <br></br>
+            <p>
+                1.	SafeDeposits does not have any liability for any loss suffered by the User in using the website.
+                <br></br> 2.	We accept no liability for any failure of the User to comply with these terms and conditions where the failure is due to circumstances outside the reasonable control of SafeDeposits.
+                <br></br> 3.	The User agrees to abide by the privacy conditions of SafeDeposits shown on the website.
+                <br></br> 4.	The validity of these terms and conditions will be affected and shall remain in force even if any part of the terms and conditions is held to be illegal invalid or unenforceable.
+                <br></br> 5.	The waiving of any rights by SafeDeposits under these terms on conditions on one occasion will not affect the validity of those rights or mean that the right will automatically be waived on any other occasion or circumstance.
+                <br></br> 6.	If the User discriminates against any employee of SafeDeposits or acts in an illegal or aggressive manner to any employee of SafeDeposits then we reserve the right to terminate the right of the User to use the website with immediate effect. Any sums paid to SafeDeposits will not be refunded.
+                
+            </p>
+            <br></br>
+            <b>
+                Computer Malfunction and Virus Protection
+            </b>
+            <br></br>
+            <p>
+                1.	SafeDeposits has no liability to any User for any defect failure or malfunction of the computer system and software package used by SafeDeposits.<br/>
+                2.	We cannot accept any responsibility for any loss, malfunction, disruption or damage to the computer system or any software data of the User.<br/>
+                3.	While SafeDeposits endeavours to check and test all the material used on the website the User must take any precautions deemed necessary to protect the User from viruses, other computer interference or coding which may damage the computer system of the User when accessing the website.  It is recommended that a suitable anti virus system is used for protection when down loading information from the internet.
+            </p>
+            <br></br>
+            <b>
+                Using the Website
+            </b>
+            <br></br>
+            <p>
+                1.	The User agrees to use the website only for lawful purposes and will not act in a way which will restrict or prohibit the use and enjoyment of any third party.  Such actions include but are not restricted to any conduct which is unlawful, harasses, distresses or inconveniences any other person; and the broadcasting of obscene or offensive material; or which may cause obstruction or interference with the website.
+                <br/>2.	The User is forbidden not air, transmit, or post any unlawful, defamatory, obscene, inflammatory, abusive, hateful, or outrageous material on the website which could be considered to be a criminal or civil offence or any breach of the law or which may encourage others in such actions.
+            </p>
+            <br></br>
+            <b>
+                Charges
+            </b>
+            <br></br>
+            <p>
+                SafeDeposits does not charge for the use of the website however the User may be charged by a mobile network for access to the internet direct from the User’s mobile telephone. The User should check charges direct as they may vary according to the network.</p>
+            <br></br>
+            <b>
+                Variation
+            </b>
+            <br></br>
+            <p>
+                SafeDeposits reserves the right to vary the terms and conditions of the website from time to time and without prior notice. The User should check regularly as continuing use of the website constitutes acceptance of any variation.</p>
+            <br></br>
+            <b>
+                Copyright
+            </b>
+            <br></br>
+            <p>
+                This website, including all material, attachments and guidance notes, is the copyright of SafeDeposits.</p>
+            <br></br>
+            <b>
+                Disclaimer
+            </b>
+            <br></br>
+            <p>
+                1.	All material presented on the website is provided without any warranty or representation either direct or indirect of its accuracy, fitness for purpose, quality, security, non-infringement of copyright or compatibility.
+                <br/>2.	SafeDeposits is not liable for any direct, indirect or consequential loss, damage, expense, loss of profits or data arising from the use of in connection with the use of the website of SafeDeposits.
+                <br/>3.	All information transmitted to or from the website of SafeDeposits cannot be guaranteed as totally secure.  All transmissions are at the risk of the User.
+                <br/> 4.	The use of the website is not a substitute for independent professional advice.  The User is urged to obtain advice relevant to their circumstances.
+                <br/>5.	SafeDeposits has no liability or responsibility for any third party material displayed on this website.
+            </p>
+            <br></br>
+            
+            <b>
+                Jurisdiction
+            </b>
+            <br/>
+            <p>
+                These Terms and Conditions are governed by and shall be construed in accordance with the laws of Scotland. In the event of a dispute the Scottish courts shall have exclusive jurisdiction.
+            </p>
+            <br/>
+            
+        </div> 
+        <aura:set attribute="else">
+            <b>
+                How SafeDeposits deals with tenancies with more than one landlord or tenant
+            </b>
+            <br/>
+            <b>
+                Introduction
+            </b>
+            
+            <br/>
+            <p>
+                SafeDeposits recognises that many tenancies involve more than one landlord or tenant.  It is in the interests of tenants, landlords and agents that the process of registering and protecting deposits, applying for their repayment and managing any dispute about a deposit is as simple and efficient as possible.  SafeDeposits aims to achieve this by applying the following guidance.
+            </p>
+            <br/>
+            <b>
+                Tenancies involving more than one landlord
+            </b>
+            <br/>
+            <b>
+                Registration of joint landlords to use SafeDeposits
+            </b>
+            
+            <br/>
+            <p>
+                SafeDeposits will treat all landlords of a tenancy as being jointly and severally liable for the landlord’s obligations and will treat the authority of any one or more joint landlords as binding on the others.  
+                <br/>
+                This means that there is no need for a lead landlord.  SafeDeposits will regard the landlord who completes registration as a scheme user as having authority to act on behalf of any other joint landlords.  It is only therefore necessary for one landlord to register in order to protect a deposit subsequently, but this does not prevent all landlords registering as users should they wish to do so.
+            </p>
+            <br/>
+            <b>
+                Submission of deposits to SafeDeposits by joint landlords
+            </b>
+            <br/>
+            <p>
+                When a landlord who is registered as a user with SafeDeposits wishes to submit a deposit, he will be required to provide his local authority registration details.  The landlord will then be asked to provide the details of any joint landlord(s) for the tenancy, including their local authority registration details.
+            </p>
+            <br/>
+            <b>
+                Deposit repayment process involving joint landlords
+            </b>
+            <br/>
+            <p>Where there is more than one landlord, the landlords should decide between them who is to apply for repayment of the deposit on behalf of them all.</p>
+            <br/>
+            <b>
+                ADR process involving joint landlords
+            </b>
+            <br/>
+            <p>
+                Where there is more than one landlord, the landlords should decide between them who is to manage the process on behalf of them all.
+                
+            </p>
+            <br/>
+            <b>
+                Tenancies involving more than one tenant
+            </b>
+            <b>
+                Nomination of a Lead Tenant by a landlord
+            </b>
+            <br/>
+            <p>
+                Where a tenancy involves more than one tenant, the landlord will be asked to nominate one of the tenants as the lead tenant, who is authorised by all the joint tenants to act on behalf of them all when dealing with the protection of the deposit, the claim for its repayment at the end of the tenancy, and any dispute about it.
+                <br/>
+                When submitting the deposit for protection with SafeDeposits, the landlord will be asked to confirm that:
+                <br/>
+                •	All tenants have agreed to the appointment of the lead tenant;
+                <br/> •	The lead tenant is aware of how SafeDeposits will deal with joint tenants;
+                <br/> •	The landlord will indemnify SafeDeposits against any claims from the joint tenants. 
+                <br/>
+                When the deposit has been registered, confirmation of deposit protection will be sent to all joint tenants.  The Deposit Protection Certificate will show the names of all joint tenants and will highlight who the lead tenant is. All joint tenants will receive a Deposit Repayment Number, and may contact SafeDeposits regarding their Deposit at any time during the period the Deposit is held by SafeDeposits. 
+                <br/>
+                Any deposit for a tenancy involving joint tenants can only be registered with SafeDeposits once.  It is not possible to register the deposit in ‘shares’ individually for each joint tenant.
+            </p>
+            <br/>
+            <b>
+                Responding to a Deposit Repayment Proposal from a Landlord
+            </b>
+            <br/>
+            <p>
+                When SafeDeposits receives a Deposit Repayment Proposal from a landlord, a copy of the proposal will be sent to all joint tenants.
+                <br/>
+                SafeDeposits will explain to all joint tenants that a response to the landlord’s proposal must be received within 30 working days.  If no response is received, payment will be made in accordance with the landlord’s proposal.
+                <br/>
+                The lead tenant will be asked to respond to the proposal on behalf of all the joint tenants within 30 working days.
+                <br/>
+                If SafeDeposits has not received a Response to a landlord’s proposal within 15 working days, we will contact the other joint tenants and give them the opportunity to appoint a replacement lead tenant to continue the process and provide a response to the landlord’s proposal within the 30 working days.
+                
+            </p>
+            <br/>
+            <b>
+                Proposal for Deposit Repayment from tenant(s)
+            </b>
+            <br/>
+            <p>
+                All joint tenants will receive a Deposit Repayment Number from SafeDeposits.  This will allow any tenant to apply for repayment of the deposit at the end of the tenancy should it prove necessary for them to do so.
+                <br/>
+                SafeDeposits will normally expect to receive a Proposal for Deposit Repayment from the lead tenant.  Any proposal received from the lead tenant will be sent to the other joint tenants.
+                <br/>
+                If any of the other joint tenants wishes to submit a Proposal for Deposit Repayment, they must first contact SafeDeposits and apply to become replacement lead tenant.
+                <br/>
+                Where a Proposal for Deposit Repayment has been submitted by a lead tenant or replacement lead tenant, SafeDeposits will not be able to accept the proposal if a Proposal for Deposit Repayment has already been received from the landlord.
+                <br/>
+                If SafeDeposits has not received a proposal from the landlord, and the landlord disagrees with the lead tenant’s proposal, the landlord may submit his own proposal, which will replace the lead tenant’s proposal.
+                
+            </p>
+            <br/>
+            <b>
+                Repayment of the deposit to joint landlords and joint tenants
+            </b>
+            <br/>
+            <p>
+                SafeDeposits will pay any deposit due to joint landlords equally to all landlords named on the Deposit Protection Certificate.  The only exception to this will be if a different allocation of the deposit repayment is authorised in writing and signed by all the landlords or where otherwise required by operation of law.
+                <br/>
+                SafeDeposits will normally pay any deposit due to joint tenants equally to all tenants named on the Deposit Protection Certificate. The only exception to this will be if a different allocation of the deposit repayment is authorised in writing and signed by all the landlords or where otherwise required by operation of law.  
+                
+            </p>
+            <br/>
+            <b>
+                Change in lead tenant by landlord
+            </b>
+            <br/>
+            <p>
+                If the landlord wishes to nominate one of the other joint tenants to replace the lead tenant during the tenancy, he can do so online via the SafeDeposits website, or by contacting SafeDeposits.  The landlord will only be able to nominate one of the other joint tenants registered with SafeDeposits in relation to the tenancy:
+                <br/>•	The landlord will be asked to confirm that;
+                <br/>•	All tenants have agreed to the appointment of the replacement lead tenant;
+                <br/>•	The replacement lead tenant is aware of how SafeDeposits will deal with joint tenants;
+                <br/>•	The landlord will indemnify SafeDeposits against any claims from the joint tenants. 
+                <br/>
+                Once the landlord has completed the process, SafeDeposits will contact all the parties confirming the change in lead tenant and issuing a new Deposit Protection Certificate showing the replacement lead tenants and other joint tenants.
+                
+            </p>
+            <br/>
+            <b>
+                Change in lead tenant by tenant(s)
+            </b>
+            <br/>
+            <p>
+                Any changes to the lead tenant during the tenancy should be processed by the landlord.  The tenants should discuss with the landlord any changes they wish to make in relation to the lead tenant.
+                <br/>
+                At the end of the tenancy, any of the joint tenants can apply to SafeDeposits to become a replacement lead tenant if:
+                <br/>•	They disagree with a Proposal for Deposit Repayment submitted by the lead tenant and wish to submit their own proposal, or
+                <br/>•	They are told by SafeDeposits that no response to a landlord’s Proposal for Deposit Repayment has been received and they wish to become lead tenant in order to respond on behalf of the tenants.
+                
+                <br/>Any tenant applying to become a replacement lead tenant must:
+                <br/>•	Confirm in writing that all tenants have agreed to their appointment as lead tenant
+                <br/>•	Confirm in writing that he has made the other joint tenants aware of how joint tenants will be dealt with
+                <br/>•	Indemnify SafeDeposits against any claims from other joint tenants.
+                
+                <br/>The appointment of a replacement lead tenant will take effect from the date SafeDeposits receives their application as long as it has been properly completed. 
+                
+                
+                <br/>In the case of a replacement lead tenant under (1 above), the application must be received by SafeDeposits within 5 working days of the lead tenant’s proposal being sent to all the joint tenants.
+                
+                <br/>In the case of a replacement lead tenant under (2 above), if a response to the landlord’s Proposal for Deposit repayment is received from the original lead tenant before the appointment of the replacement lead tenant has been confirmed, SafeDeposits will regard the response from the original lead tenant as having been submitted on behalf of all the joint tenants.
+                
+                <br/>SafeDeposits will contact all the parties confirming the change in lead tenant.
+                
+            </p>
+            <br/>
+            
+            
+        </aura:set>
+    </aura:if> 
+    
+</aura:component>

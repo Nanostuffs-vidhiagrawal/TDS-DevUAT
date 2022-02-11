@@ -1,0 +1,40 @@
+<!-- Evidence Upload Community -->
+<template>
+    <template if:false={isAuthenticated}>
+        <c-fc_authentication onloginsuccesful={handleLoginSuccessful}></c-fc_authentication>
+    </template>
+    <template if:true={isAuthenticated}>
+        <template if:true={caseRecord}>
+            <div class="slds-container_center slds-container_large">
+                <template if:true={isStepNumber1}>
+                    <c-fc_claim-details-banner banner-text={bannerText}></c-fc_claim-details-banner>
+                    <c-fc_claim-details claim-record={caseRecord}></c-fc_claim-details>
+                    <c-fc_tenant-contact-list edit-enabled={canEdit} tenant-list={caseRecord.tenantList} ontenant_changed={handleTenantChanged} ></c-fc_tenant-contact-list>
+                </template>
+                <template if:true={isStepNumber2}>
+                    <c-fc_claim-details-banner banner-text={bannerText}></c-fc_claim-details-banner>
+                    <div class="slds-p-around_medium slds-text-heading_medium" style="color: #12185B;">Key Documents</div>
+                    <div>
+                        <c-fc_evidence-attachment-table evidence-list={caseRecord.attachments}
+                                                        allow-delete={allowDeleteKeyDocuments}
+                                                        field-set={keyDocumentsColumns}></c-fc_evidence-attachment-table>
+                    </div>
+                    <c-fc_claim-items-details is-mobile={isMobile} claim-record={caseRecord} allow-edit={canEdit} ontenant_response_modified={tenantResponseModified} onevidencecreated={handleEvidenceCreated} onevidence_attachment_deleted={handleEvidenceAttachmentDeleted}></c-fc_claim-items-details>
+                </template>
+                <div class="slds-clearfix">
+                    <lightning-button-group class="slds-float_right">
+                        <template if:true={isStepNumber1}>
+                            <lightning-button class="slds-theme_brand slds-border_top slds-border_bottom slds-border_left slds-border_right" icon-position="left" variant="brand" type="button" label="Next" onclick={nextStep}></lightning-button>
+                        </template>
+                        <template if:true={isStepNumber2}>
+                            <lightning-button class="slds-theme_brand slds-border_top slds-border_bottom slds-border_left slds-border_right" icon-position="left" variant="brand" type="button" label="Back" onclick={prevStep}></lightning-button>
+                            <template if:true={canEdit}>
+                                <lightning-button class="slds-theme_brand slds-border_top slds-border_bottom slds-border_left slds-border_right" icon-position="right" variant="success" label="Save" onclick={finishEditingDispute}></lightning-button>
+                            </template>
+                        </template>
+                    </lightning-button-group>
+                </div>
+            </div>
+        </template>
+    </template>
+</template>

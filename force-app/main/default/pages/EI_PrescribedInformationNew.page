@@ -1,0 +1,162 @@
+<apex:page controller="EI_PrescribedInformationNew" showHeader="false" standardStylesheets="false" applyBodyTag="false" applyHtmlTag="false" renderAs="pdf" >
+
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+      
+     <title>TDS</title>
+    </head>
+    <body>
+    <table width="100%" cellspacing="0" cellpadding="0" style="max-width: 1200px; padding: 0 15px; margin: 0 auto; font-family: arial; font-size: 16px; color: #000;  line-height: 24px;">
+            <tr>
+                <td style="padding-bottom: 0px;"></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align: center; font-family: arial;font-weight: bold;">
+                    Prescribed information about your tenancy deposit
+                    <br/>
+                    <i>in accordance with</i> 
+                    <br/>
+                    Regulation 42 of the Tenancy Deposit Schemes (Scotland) Regulations 2011
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-bottom: 20px;"></td>
+            </tr>
+            <tr>
+                <td style="width: 55%; font-family: arial;font-size: 14px; font-weight: bold;padding-left: 10px;padding-bottom: 120px" >From (Landlord)</td>
+                <td style="width: 45%; font-family: arial;font-size: 14px; border: 2px solid #8FCDF1; padding: 10px 15px 15px 15px; font-weight: normal">
+                     <!--   <apex:repeat value="{!propList}" var="prop">
+                            <apex:repeat var="d" value="{!prop.Property_Allocations__r}">
+                                {!d.Contact__r.Name}
+                                {!if(prop.Property_Allocations__r[prop.Property_Allocations__r.size-1].Id == d.Id, "", ",")}
+                          </apex:repeat>
+                      </apex:repeat> -->
+                    {!landlordList}
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-bottom: 20px;"></td>
+            </tr>
+            <tr>
+                <td style="width: 55%; font-family: arial;font-size: 14px;font-weight: bold; padding-left: 10px;">Landlord's registration status (register maintained by the local authority under section 82 (registers) of the Antisocial Behaviour Etc (Scotland) Act 2004.</td>
+                <td style="width: 45%; font-family: arial; border: 2px solid #8FCDF1;font-size: 14px; padding: 10px 15px 15px 15px; font-weight: normal">
+                Is registered: {!depositList[0].property__r.Landlord_Registration_Number__c} 
+                </td>
+            </tr>
+            <tr>
+                <td style="padding-bottom: 20px;"></td>
+            </tr>
+            <tr>
+                <td style="width: 55%; font-family: arial;font-weight: bold;font-size: 14px; padding-left: 10px">To (Tenant)</td>
+                <td style="width: 45%; font-family: arial; border: 2px solid #8FCDF1;font-size: 14px; padding: 10px 15px 15px 15px; font-weight: normal">
+                  <!-- <apex:repeat value="{!propList}" var="prop">
+                      <apex:repeat var="c" value="{!prop.Deposits__r }">
+                            {!c.Tenants_Name__c}
+                       </apex:repeat>
+                  </apex:repeat>   -->
+                  {!depositList[0].Tenants_Name__c}
+                </td>
+            </tr>
+            
+             <tr>
+                <td style="padding-bottom: 20px;"></td>
+            </tr>
+            <tr>
+                <td style="width: 55%; font-family: arial;font-size: 14px;font-weight: bold; padding-left: 10px;padding-bottom: 70px">Concerning your tenancy deposit paid in connection with the following property:</td>
+                <td style="width: 45%; font-family: arial; border: 2px solid #8FCDF1;font-size: 14px; padding: 10px 15px 15px 15px; font-weight: normal"> 
+                <!-- <apex:repeat value="{!propList}" var="prop">
+                      <apex:repeat var="c" value="{!prop.Deposits__r }">
+                            {!c.Property_Address__c}
+                        </apex:repeat>
+                   </apex:repeat> -->
+                   {!depositList[0].Property_Address__c}
+                 </td>
+            </tr>
+            
+             <tr>
+                <td style="padding-bottom: 20px;"></td>
+            </tr>
+            <tr>
+                <td style="width: 55%; font-family: arial;font-size: 14px;padding-left: 10px"><b>Total Deposit Paid</b> <br><i>For joint tenancies, this is the combined amount paid by all tenants</i></br></td>
+                <td style="width: 45%; font-family: arial; border: 2px solid #8FCDF1;font-size: 14px; padding: 10px 15px 15px 15px; font-weight: normal"> 
+                <!-- <apex:repeat value="{!propList}" var="prop">
+                    <apex:repeat var="c" value="{!prop.Deposits__r }">
+                           £ {!c.Protected_Amount__c}
+                     </apex:repeat>
+                  </apex:repeat> -->
+                  {!depositList[0].Protected_Amount__c}
+                 </td>
+            </tr>
+            
+            <tr>
+                <td style="padding-bottom: 20px;"></td>
+            </tr>
+            <tr>
+                <td style="width: 55%; font-family: arial;font-size: 14px; font-weight: bold;padding-left: 10px">Date received by the landlord (or their representative):</td>
+                <td style="width: 45%; font-family: arial; border: 2px solid #8FCDF1;font-size: 14px; padding: 10px 15px 15px 15px; font-weight: normal">
+                <!-- <apex:repeat value="{!propList}" var="prop">
+                     <apex:repeat var="c" value="{!prop.Deposits__r }">
+                           <p> <apex:outputText value="{0, date,  dd / MM / yyyy}">
+                                      <apex:param value="{!c.Date_Deposit_Received__c}" /> </apex:outputText></p>
+                       </apex:repeat>
+                  </apex:repeat> -->
+                <p> <apex:outputText value="{0, date,  dd / MM / yyyy}">
+                    <apex:param value="{!depositList[0].Date_Deposit_Received__c}" /> </apex:outputText>
+                </p>
+                </td>
+            </tr>
+            
+             <tr>
+                <td style="padding-bottom: 20px;"></td>
+            </tr>
+            <tr>
+                <td style="width: 55%; font-family: arial;font-size: 14px;font-weight: bold; padding-left: 10px">Date paid by the landlord (or their representative) to SafeDeposits Scotland</td>
+                <td style="width: 45%; font-family: arial; border: 2px solid #8FCDF1;font-size: 14px; padding: padding: 10px 15px 15px 15px; font-weight: normal"> 
+                 <!-- <apex:repeat value="{!propList}" var="prop">
+                  <apex:repeat var="c" value="{!prop.Deposits__r }">
+                          &nbsp;&nbsp;&nbsp;&nbsp;<apex:outputText value="{0, date,  dd / MM / yyyy}">
+                                <apex:param value="{!c.Payment_Received_By_Scheme__c}" /> </apex:outputText> 
+                      </apex:repeat>
+                </apex:repeat> -->
+                    &nbsp;&nbsp;&nbsp;&nbsp;<apex:outputText value="{0, date,  dd / MM / yyyy}">
+                    <apex:param value="{!depositList[0].Payment_Received_By_Scheme__c}" /> </apex:outputText> 
+                </td>
+            </tr>
+            
+            <tr>
+                <td style="padding-bottom: 20px;"></td>
+            </tr>
+            <tr>
+                <td style="width: 55%; font-family: arial;font-size: 14px;font-weight: bold; padding-left: 10px;">The circumstances in which all or part of the tenancy deposit may be retained at the end of the tenancy are contained in the following section of your tenancy agreement:</td>
+                <td style="width: 45%; font-family: arial; border: 2px solid #8FCDF1;font-size: 14px; padding: 10px 15px 15px 15px;  font-weight: normal">
+                <!-- <apex:repeat value="{!propList}" var="prop">
+                      <apex:repeat var="c" value="{!prop.Deposits__r }">
+                            {!currentUserPIReferClause}
+                       </apex:repeat>
+                </apex:repeat> -->
+                {!currentUserPIReferClause}
+                 </td>
+            </tr>
+        
+              <tr>
+                <td style="padding-bottom: 120px;"></td>
+            </tr>
+            <tr>
+                <td style="width: 65%; font-family: arial;font-weight: bold;font-size: 14px;"><p>The circumstances are:</p></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="width: 100%; font-family: arial; border: 2px solid #8FCDF1;font-size: 14px; padding: 30px; font-weight: normal">
+                    <!-- <apex:repeat value="{!propList}" var="prop">
+                    <apex:repeat var="c" value="{!prop.Deposits__r }">
+                        {!currentUserPIClause}
+                    </apex:repeat>
+                   </apex:repeat> -->
+                   {!currentUserPIClause}
+                 </td>
+            </tr>
+           
+        </table>
+        </body>
+</apex:page>

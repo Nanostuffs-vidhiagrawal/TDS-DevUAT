@@ -1,0 +1,4 @@
+<apex:page controller="RegistrationFormCheck" showHeader="false" sidebar="false" lightningStylesheets="true">
+    <apex:Slds />
+    <apex:iframe src="{!imageURL}" scrolling="true" height="900px" width="100%" id="theIframe"/>
+</apex:page>

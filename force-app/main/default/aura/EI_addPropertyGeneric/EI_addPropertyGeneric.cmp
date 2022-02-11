@@ -1,0 +1,940 @@
+<aura:component
+                implements="forceCommunity:themeLayout,forceCommunity:availableForAllPageTypes"
+                access="global"
+                controller="EI_Properties"
+                >
+    <aura:attribute
+                    name="Usersdetails"
+                    type="User"
+                    default="{'sobject' : 'user'}"
+                    />
+    <aura:attribute
+                    name="buttonLabel"
+                    type="String"
+                    default="Add now"
+                    />
+    
+    <aura:registerEvent name="EI_PopulateProperty" type="c:EI_PopulateProperty" />
+    
+    
+    <ltng:require    
+                  styles="{!$Resource.TDSTheme  + '/assets/css/custom.css'}"
+                  scripts="{!join(',',
+                           $Resource.TDSTheme+'/assets/js/plugin.min.js',
+                           $Resource.TDSTheme+'/assets/js/jquery.dataTables.min.js',
+                           $Resource.TDSTheme+'/assets/js/dataTables.responsive.js',
+                           $Resource.TDSTheme+'/assets/js/datepicker.js',
+                           $Resource.TDSTheme+'/assets/js/custom.js')}"
+                  />
+    
+    <lightning:overlayLibrary aura:id="overlayLib" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="FromTransferPage" type="Boolean" default="false" />
+        <aura:attribute name="propList" type="List"  />
+    <!-- Attribute for Date Error Visibiity -->
+    <aura:attribute name="showRecievedDateError" type="Boolean" default="false"/>
+    <aura:attribute name="showTenancyDateError" type="Boolean" default="false" /> 
+    <aura:attribute name="formNumber" type="Integer" default="0" />
+    
+    <!-- Error messages attributes -->
+    <aura:attribute name="rentError" type="Boolean" default="false" />
+    <aura:attribute name="primaryLandlord" type="Boolean" default="false" />
+    <aura:attribute name="startDateError" type="Boolean" default="false" />
+    <aura:attribute name="genericError" type="Boolean" default="false"/>    
+    <aura:attribute name="propertyError" type="Boolean" default="false" />
+    <aura:attribute name="finalError" type="Boolean" default="false" />
+    <aura:attribute name="wrongCharacterStreet" type="Boolean" default="false" />
+    <aura:attribute name="wrongPostCode" type="Boolean" default="false" />
+    <aura:attribute name="duplicatePostCode" type="Property__c" default="" />
+    <aura:attribute name="amountCantBeLessThan1Error" type="Boolean" default="false"/>
+    
+    <!-- Property required field Errors -->
+     
+    <aura:attribute name="addressError" type="Boolean" default="false" />
+    <aura:attribute name="primaryError" type="Boolean" default="false" />
+    
+    <!-- ThankyouPage attributes -->
+    <aura:attribute name="propertyAddress" type="String" access="global" />
+    <aura:attribute name="newDepositId" type="String" access="global" />
+    <aura:attribute name="displayThankyouMessage" type="Boolean" default="false" />
+    
+    <aura:attribute name="parentComp"  type="Boolean" default="false"   />
+	<aura:attribute name="JointLandlord" type="Boolean" default="false" />
+    
+    <!-- Address Fields-->
+    <aura:attribute access="public" name="Street" type="String" />
+    <aura:attribute access="public" name="Town" type="String" />
+    <aura:attribute access="public" name="PostCode" type="String" />
+    <aura:attribute access="public" name="Country" type="String" />
+    <aura:attribute access="public" name="County" type="String" />
+    <aura:attribute access="public" name="addLandlord" type="Boolean" default="false" />
+    <aura:attribute name="landlordDetails" type="List" />
+    <aura:attribute name="PrimarylandlordDetails" type="List" />
+    <aura:attribute name="selectedPrimarylandlord" type="List" />
+    <aura:attribute name="selectedjointlandlord" type="List" />
+    <aura:attribute name="selectedjointlandlordID" type="List" />
+    
+    <aura:attribute name="RentAmount" type="String" />
+    
+    <aura:attribute name="depositRecievedDate" type="Date"/>
+    
+    <aura:attribute name="selectedValue" type="String" default=""/>
+    
+    <aura:attribute
+                    name="Propobj"
+                    type="Property__c"
+                    default="{ 'sobjectType': 'Property__c'}"
+                    />
+    <aura:attribute
+                    name="selectedProperty"
+                    type="Property__c"
+                    default="{ 'sobjectType': 'Property__c'}"
+                    />
+    
+    <!-- Error Message Attribute-->
+    <aura:attribute name="errorList" type="Error_Message__mdt[]" default=""/> 
+    <aura:attribute name="LandlordErrorNew" type="string"/>
+    <aura:attribute name="PropertyErrorNew" type="string"/>
+    <aura:attribute name="PostcodeErrorNew" type="string"/>
+    
+    <!-- Navigation Service -->
+    <lightning:navigation aura:id="navService" />
+    
+    <!--Popup form HTMl start
+        <div class="custom-model modal fade" id="addlandlord" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="createlandlord" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Add a new landlord</h3>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true"> 
+                                <c:EI_addLandlordToProperty/> <img src="../assets/img/Cancel-icon.png" alt=""/>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                         <form class="sf-custom-form"> 
+                            <div class="text-right">
+                                <button type="button" class="learn-more" data-dismiss="modal">cancel</button>
+                                <button class="see-all">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+    <!--Popup form HTMl end-->
+    
+    <!-- <div class="slds-grid"> -->
+    
+    <!-- <lightning:card title="New Property"> 
+    <div class="slds-p-left_medium slds-p-right_medium"> -->
+    <!--  <c:Register aura:id="compB" method="{!c.parentPress}" />  -->
+    
+    <!--   <br /> -->
+    <!--  <div class="slds-m-top_small slds-m-bottom_small" style="float: right; ">
+        <lightning:button
+          aura:id="anotherLandlord"
+          label="Add a new Landlord"
+          variant="Brand"
+          onclick="{!c.addLandlord}"
+        />
+	</div> -->
+    
+	<!--   <aura:if isTrue="{!v.Usersdetails.User_Type__c =='Agent'}">
+        <div>
+          <b style="font-size: 130%;margin-right: 3%">Add primary landlords</b>
+          <div class="slds-form-element">
+            <div class="slds-form-element__control">
+              <div class="slds-combobox_container">
+                <div
+                  class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open"
+                  aria-expanded="true"
+                  aria-haspopup="listbox"
+                  role="combobox"
+                >
+                  <div
+                    class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right"
+                    role="none"
+                  >
+                    <lightning:input
+                      type="text"
+                      label="Please Search Your Landlord"
+                      aura:id="searchField1x"
+                      onkeyup="{!c.searchKeyChange1}"
+                      placeholder="Search"
+                      onclick="{!c.searchKeyChange1}"
+                    />
+                    <span
+                      class=" slds-icon_container slds-icon-utility-search slds-input__icon
+                                                         slds-input__icon_right"
+                    >
+                    </span>
+                  </div>
+                  <aura:if isTrue="{!v.PrimarylandlordDetails[0].Id!=null}">
+                    <div
+                      id="listbox-id-2"
+                      class="slds-dropdown slds-dropdown_length-with-icon-7 slds-dropdown_fluid"
+                      role="listbox"
+                    >
+                      <ul
+                        class="slds-listbox slds-listbox_vertical"
+                        role="presentation"
+                      >
+                        <aura:iteration
+                          items="{!v.PrimarylandlordDetails}"
+                          var="p"
+                        >
+                          <li role="presentation" class="slds-listbox__item">
+                            <div
+                              id="option1"
+                              class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta"
+                              role="option"
+                            >
+                              <span
+                                class="slds-media__figure slds-listbox__option-icon"
+                              >
+                                <span
+                                  class="slds-icon_container slds-icon-standard-account"
+                                >
+                                </span>
+                              </span>
+                              <span class="slds-media__body">
+                                <span
+                                  onclick="{!c.primaryLandlord}"
+                                  id="{!p.Id}"
+                                  class="slds-listbox__option-text slds-listbox__option-text_entity"
+                                  >{!p.FirstName+p.LastName}</span
+                                >
+                              </span>
+                            </div>
+                          </li>
+                        </aura:iteration>
+                      </ul>
+                    </div>
+                  </aura:if>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aura:iteration items="{!v.selectedPrimarylandlord}" var="pl">
+          <div
+            class="slds-card slds-m-top_small"
+            style="border: 1px solid purple;"
+          >
+            <lightning:card
+              variant="Narrow"
+              title="{!pl.FirstName+' '+pl.LastName}"
+              iconName="standard:contact"
+            >
+              <p class="slds-p-horizontal_small">
+                <div class="slds-card__body">
+                  <p class="slds-truncate"
+                    >Email : <ui:outputText value="{!pl.Email}" />
+                  </p>
+                  <p class="slds-truncate"
+                    >Phone : <ui:outputText value="{!pl.Phone}" />
+                  </p>
+                </div>
+              </p>
+            </lightning:card>
+          </div>
+        </aura:iteration>
+      </aura:if> -->
+    <!--   <div class="slds-p-top_medium">
+        <div>
+          <b style="font-size: 130%;margin-right: 3%"
+            >Add additional landlords?</b
+          >
+        </div>
+        <div>
+          <lightning:button
+            label="Yes"
+            class="slds-m-top_medium"
+            variant="brand"
+            onclick="{!c.clickYes}"
+          />
+          <lightning:button
+            label="No"
+            class="slds-m-top_medium"
+            variant="brand"
+            onclick="{!c.clickNo}"
+          />
+        </div>
+      </div> -->
+    <!--   <aura:if isTrue="{!v.addLandlord}">
+        <div class="slds-form-element">
+          <div class=" slds-form-element__control">
+            <div class="slds-combobox_container">
+              <div
+                class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open"
+                aria-expanded="true"
+                aria-haspopup="listbox"
+                role="combobox"
+              >
+                <div
+                  class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right"
+                  role="none"
+                >
+                  <lightning:input
+                    type="text"
+                    name="Property"
+                    label="Please Search Your Landlord"
+                    aura:id="searchField"
+                    onkeyup="{!c.searchKeyChange}"
+                    placeholder="Search"
+                    onclick="{!c.searchKeyChange}"
+                  />
+                  <span
+                    class=" slds-icon_container slds-icon-utility-search slds-input__icon
+                                                     slds-input__icon_right"
+                  >
+                  </span>
+                </div>
+                <aura:if isTrue="{!v.landlordDetails[0].Id!=null}">
+                  <div
+                    id="listbox-id-2"
+                    class="slds-dropdown slds-dropdown_length-with-icon-7 slds-dropdown_fluid"
+                    role="listbox"
+                  >
+                    <ul
+                      class="slds-listbox slds-listbox_vertical"
+                      role="presentation"
+                    >
+                      <aura:iteration items="{!v.landlordDetails}" var="p">
+                        <li role="presentation" class="slds-listbox__item ">
+                          <div
+                            id="option1"
+                            class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta"
+                            role="option"
+                          >
+                            <span
+                              class="slds-media__figure slds-listbox__option-icon "
+                            >
+                              <span
+                                class=" slds-icon_container
+                                                            slds-icon-standard-account"
+                              >
+                              </span>
+                            </span>
+                            <span class="slds-media__body">
+                              <span
+                                onclick="{!c.JointLandlord}"
+                                id="{!p.Id}"
+                                class="slds-listbox__option-text slds-listbox__option-text_entity"
+                                >{!p.FirstName+p.LastName}</span
+                              >
+                            </span>
+                          </div>
+                        </li>
+                      </aura:iteration>
+                    </ul>
+                  </div>
+                </aura:if>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aura:iteration items="{!v.selectedjointlandlord}" var="pl">
+          <div
+            class="slds-card slds-m-top_small"
+            style="border: 1px solid purple;"
+          >
+            <lightning:card
+              variant="Narrow"
+              title="{!pl.FirstName+' '+pl.LastName}"
+              iconName="standard:contact"
+            >
+              <aura:set attribute="actions">
+                <lightning:button
+                  label="Remove"
+                  value="{!pl.Id}"
+                  onclick="{!c.removeJoint}"
+                />
+              </aura:set>
+              <p class="slds-p-horizontal_small">
+                <div class="slds-card__body">
+                  <p class="slds-truncate"
+                    >Email : <ui:outputText value="{!pl.Email}" />
+                  </p>
+                  <p class="slds-truncate"
+                    >Phone : <ui:outputText value="{!pl.Phone}" />
+                  </p>
+                </div>
+              </p>
+            </lightning:card>
+          </div>
+        </aura:iteration>
+      </aura:if>	-->
+    <!--  <div class="slds-p-top_medium">
+        <lightning:button
+          aura:id="saveId"
+          label="Add Now"
+          variant="Brand"
+          onclick="{!c.doCreate}"
+        />
+      </div>
+    </div>
+  </lightning:card> -->
+    <!-- Deposit Steps HTML Start -->
+    
+    <div onclick="{!c.hideSuggesions}">
+        <aura:if isTrue="{!v.FromTransferPage}">
+            
+            <!-- Bootstrap error messages START -->
+            <aura:if isTrue="{!v.finalError}">
+                <div id="titleErrorErrorAlert" class="alert alert-danger alert-dismissible fade show">
+                    <strong>Error!</strong>Some issue occured while transfering this deposit.
+                    <button
+                            type="button"
+                            class="close"
+                            onclick="{!c.hideBootstrapErrors}"
+                            name="finalError"
+                            >&times;</button
+                        >
+                </div>
+            </aura:if>
+            
+            <aura:if isTrue="{!v.wrongCharacterStreet}">
+                <div id="wrongCharacterStreet" class="alert alert-danger alert-dismissible fade show">
+                    <strong>Error!</strong> You can not enter number in street address
+                    <button
+                            type="button"
+                            class="close"
+                            onclick="{!c.hideBootstrapErrors}"
+                            name="wrongCharacterStreet"
+                            >&times;</button
+                        >
+                </div>
+            </aura:if>
+            
+            <aura:if isTrue="{!v.primaryLandlord}">
+                <div id="titleErrorErrorAlert" class="alert alert-danger alert-dismissible fade show">
+                    <strong>Error!</strong>Please add primary landlord.
+                    <button
+                            type="button"
+                            class="close"
+                            onclick="{!c.hideBootstrapErrors}"
+                            name="primaryLandlord"
+                            >&times;</button
+                        >
+                </div>
+            </aura:if>
+            
+            <aura:if isTrue="{!v.propertyError}">
+                <div id="titleErrorErrorAlert" class="alert alert-danger alert-dismissible fade show">
+                    <strong>Error!</strong>Please provide address.
+                    <button
+                            type="button"
+                            class="close"
+                            onclick="{!c.hideBootstrapErrors}"
+                            name="Property"
+                            >&times;</button
+                        >
+                </div>
+            </aura:if>
+            
+            <aura:if isTrue="{!v.rentError}">
+                <div id="titleErrorErrorAlert" class="alert alert-danger alert-dismissible fade show">
+                    <strong>Error!</strong>Please provide deposit amount.
+                    <button
+                            type="button"
+                            class="close"
+                            onclick="{!c.hideBootstrapErrors}"
+                            name="RentAmount"
+                            >&times;</button
+                        >
+                </div>
+            </aura:if>
+            
+            <aura:if isTrue="{!v.startDateError}">
+                <div id="titleErrorErrorAlert" class="alert alert-danger alert-dismissible fade show">
+                    <strong>Error!</strong>Please provide start date.
+                    <button
+                            type="button"
+                            class="close"
+                            onclick="{!c.hideBootstrapErrors}"
+                            name="StartDate"
+                            >&times;</button
+                        >
+                </div>
+            </aura:if>
+            
+            <aura:if isTrue="{!v.amountCantBeLessThan1Error}">
+                <div id="amountCantBeLessThan1Error" class="alert alert-danger alert-dismissible fade show">
+                    <strong>Error!</strong>Deposit amount should not be less than £1
+                    <button
+                            type="button"
+                            class="close"
+                            onclick="{!c.hideBootstrapErrors}"
+                            name="amountCantBeLessThan1Error"
+                            >&times;</button
+                        >
+                </div>
+            </aura:if>
+            <!-- Bootstrap error messages START -->
+            
+        </aura:if>
+        <section class="deposit_steps">                                    
+            <div class="deposit_steps_detail">
+                    <aura:if isTrue="{!v.wrongPostCode}">
+                <div id="wrongPost" class="alert alert-danger alert-dismissible fade show">
+                   <!-- <strong>Error!</strong> This postcode is not allowed-->
+                    {!v.PostcodeErrorNew}
+                    <button
+                            type="button"
+                            class="close"
+                            onclick="{!c.hideBootstrapErrors}"
+                            name="wrongPostCode"
+                            >&times;</button
+                        >
+                </div>
+            </aura:if>
+                <aura:if isTrue="{!v.addressError}">
+                <div id="addressError" class="alert alert-danger alert-dismissible fade show">
+                   <!-- <strong>Error!</strong>Please fill address.-->
+                 {!v.PropertyErrorNew}
+                    <button
+                            type="button"
+                            class="close"
+                            onclick="{!c.hideBootstrapErrors}"
+                            name="addressError"
+                            >&times;</button
+                        >
+                </div>
+                </aura:if>    
+                <aura:if isTrue="{!v.primaryError}">
+                <div id="primaryError" class="alert alert-danger alert-dismissible fade show">
+                    <!--<strong>Error!</strong>Please add primary landlord.-->
+                    {!v.LandlordErrorNew}
+                    <button
+                            type="button"
+                            class="close"
+                            onclick="{!c.hideBootstrapErrors}"
+                            name="primaryError"
+                            >&times;</button>
+                        
+                </div>    
+            </aura:if>
+                <form>
+                    <div class="form-group row">
+                        <label for="address_search" class="col-xs-12 col-sm-4 col-lg-4 col-form-label">Property address</label>
+                        <div id="duplicateRecord" style="margin-top: -16px;" class="col-xs-12 col-sm-8 col-lg-7">
+                            <!-- <label for="address_search" class="col-form-label">Address search</label>
+                                                    <input type="text" class="form-control" id="address_search" value="Start typing an address..."></input>
+                                                    <span class="manual_entery">Enter Manually</span> -->
+                            <c:Register1 propList="{!v.propList}" PostcodeErrorNew="{!v.PostcodeErrorNew}" aura:id="compA" method="{!c.parentPress}" />
+                            
+                            <aura:if isTrue="{!and(v.duplicatePostCode != null, v.duplicatePostCode != '') }">
+                                <div  class="form-group row">
+                                    <div class="col-sm-8 col-lg-7 offset-sm-5"> 
+                                        <div
+                                             class="alert alert-warning alert-dismissible fade show"
+                                             >
+                                            <img
+                                                 src="{!$Resource.TDSTheme + '/assets/img/warning-icon.png'}"
+                                                 alt="warning Icon"
+                                                 />
+                                            <div>
+                                                <strong>Warning!</strong> A Property is already protected for this customer	
+                                                <a href="" id="{!v.duplicatePostCode.Id}" class="tbl-btn" onclick="{!c.handleLinkToViewProperty}">
+                                                    <img id="{!v.duplicatePostCode.Id}" src="{!$Resource.TDSTheme + '/assets/img/View_icon.svg'}" 
+                                                         alt="View Icon"/> {!v.duplicatePostCode.Name} </a> 
+                                                .
+                                            </div>
+                                            <button
+                                                    type="button"
+                                                    class="close"
+                                                    data-dismiss="alert"
+                                                    >×</button
+                                                >
+                                        </div>
+                                    </div>
+                                </div>
+                            </aura:if>
+                            
+                            <!-- <c:EI_AddressFinder2 aura:id="compA" method="{!c.parentPress}"/>  --> 
+                        </div>
+                    </div>
+                    <aura:if isTrue="{!v.Usersdetails.User_Type__c =='Agent'}">
+                        <div class="form-group row">
+                            <label for="landlord" class="col-xs-12 col-sm-4 col-lg-4 col-form-label">Landlord</label>
+                            <div class="col-xs-12 col-sm-8 col-lg-7">
+                                <!--   <label for="landlord" class="col-form-label">Primary landlord</label>
+                                                    <select class="form-control" id="landlord" >
+                                                        <option>Select option</option>
+                                                        <option>option01</option>
+                                                        <option>option02</option>
+                                                        <option>option03</option>
+                                                        <option>option04</option>
+                                                    </select> -->
+                                <div>
+                                    <!-- <b style="font-size: 130%;margin-right: 3%">Add primary landlords</b> -->
+                                    <div class="slds-form-element">
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-combobox_container">
+                                                <div
+                                                     class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open"
+                                                     aria-expanded="true"
+                                                     aria-haspopup="listbox"
+                                                     role="combobox"
+                                                     >
+                                                    <div
+                                                         class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right"
+                                                         role="none"
+                                                         >
+                                                        <lightning:input
+                                                                         type="text"
+                                                                         label="Add primary landlord"
+                                                                         aura:id="searchField1"
+                                                                         value="{!v.selectedValue}"             
+                                                                         onkeyup="{!c.searchKeyChange1}"
+                                                                         placeholder="Search"
+                                                                         onclick="{!c.searchKeyChange1}"
+                                                                         class="searchInputClass"
+                                                                         autocomplete="off"  
+                                                                         />
+                                                        <span
+                                                              class=" slds-icon_container slds-icon-utility-search slds-input__icon
+                                                                     slds-input__icon_right"
+                                                              >
+                                                        </span>
+                                                    </div>
+                                                    <aura:if isTrue="{!v.PrimarylandlordDetails[0].Id!=null}">
+                                                        <div
+                                                             id="listbox-id-2"
+                                                             class="slds-dropdown slds-dropdown_length-with-icon-7 slds-dropdown_fluid"
+                                                             role="listbox"
+                                                             >
+                                                            <ul
+                                                                class="slds-listbox slds-listbox_vertical"
+                                                                role="presentation"
+                                                                >
+                                                                <aura:iteration
+                                                                                items="{!v.PrimarylandlordDetails}"
+                                                                                var="p"
+                                                                                >
+                                                                    <li role="presentation" class="slds-listbox__item">
+                                                                        <div
+                                                                             id="option1"
+                                                                             class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta"
+                                                                             role="option"
+                                                                             >
+                                                                            <span
+                                                                                  class="slds-media__figure slds-listbox__option-icon"
+                                                                                  >
+                                                                                <span
+                                                                                      class="slds-icon_container slds-icon-standard-account"
+                                                                                      >
+                                                                                </span>
+                                                                            </span>
+                                                                            <span class="slds-media__body">
+                                                                                <span
+                                                                                      onclick="{!c.primaryLandlord}"
+                                                                                      id="{!p.Id}"
+                                                                                      class="slds-listbox__option-text slds-listbox__option-text_entity"
+                                                                                      >{!p.FirstName+' '+p.LastName}</span
+                                                                                    >
+                                                                            </span>
+                                                                        </div>
+                                                                    </li>
+                                                                </aura:iteration>
+                                                            </ul>
+                                                        </div>
+                                                    </aura:if>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <br/><br/>
+                                <!--  <a href="#" data-toggle="modal" data-target="#addlandlord" class="learn-more"> <img src="../assets/img/add-new-property.svg" alt="Add Icon"/> Add a new landlord</a> 
+                                                    <a href="#" data-toggle="modal" data-target="#addUser" class="see-all" onclick="{!c.navigateToLandlordPage}"> 
+                                                            <img src="{!$Resource.TDSTheme + '/assets/img/add-circle.svg'}" alt="Add Icon"/> Add a landlord</a>-->
+                            
+                                <c:EI_addNonMemberLandlord JointLandlord="{!v.JointLandlord}" aura:id="compB" method="{!c.parentPress2}" />
+                            
+                            </div>
+                        </div>
+                    </aura:if>   
+                    <div class="form-group row">
+                        <div class="col-sm-4">
+                            <label class="col-form-label">Additional landlord</label>
+                        </div>
+                        
+                        <div class="col-sm-5">
+                            <div>
+                                <label class="col-form-label">Add additional landlord?</label>
+                            </div>
+                            <!-- <a class="learn-more">Yes</a>
+                                                    <a class="learn-more">No</a> -->
+                            <div>
+                                <lightning:button aura:id="landlordYes"
+                                                  label="Yes"
+                                                  class="learn-more"
+                                                  variant="brand"
+                                                  onclick="{!c.clickYes}"
+                                                  />
+                                <lightning:button aura:id="landlordNo"
+                                                  label="No"
+                                                  class="learn-more"
+                                                  variant="brand"
+                                                  onclick="{!c.clickNo}"
+                                                  />
+                            </div>
+                            <br/>
+                            <br/>
+                            <aura:if isTrue="{!v.addLandlord}">
+                                <div class="slds-form-element">
+                                    <div class=" slds-form-element__control">
+                                        <div class="slds-combobox_container">
+                                            <div
+                                                 class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open"
+                                                 aria-expanded="true"
+                                                 aria-haspopup="listbox"
+                                                 role="combobox"
+                                                 >
+                                                <div
+                                                     class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right"
+                                                     role="none"
+                                                     >
+                                                    <lightning:input
+                                                                     type="text"
+                                                                     name="Property"
+                                                                     label="Please search your landlord"
+                                                                     aura:id="searchField"
+                                                                     onkeyup="{!c.searchKeyChange}"
+                                                                     placeholder="Search"
+                                                                     onclick="{!c.searchKeyChange}"
+                                                                     autocomplete="off"  
+                                                                     />
+                                                    <span
+                                                          class=" slds-icon_container slds-icon-utility-search slds-input__icon
+                                                                 slds-input__icon_right"
+                                                          >
+                                                    </span>
+                                                </div>
+                                                <aura:if isTrue="{!v.landlordDetails[0].Id!=null}">
+                                                    <div
+                                                         id="listbox-id-2"
+                                                         class="slds-dropdown slds-dropdown_length-with-icon-7 slds-dropdown_fluid"
+                                                         role="listbox"
+                                                         >
+                                                        <ul
+                                                            class="slds-listbox slds-listbox_vertical"
+                                                            role="presentation"
+                                                            >
+                                                            <aura:iteration items="{!v.landlordDetails}" var="p">
+                                                                <li role="presentation" class="slds-listbox__item ">
+                                                                    <div
+                                                                         id="option1"
+                                                                         class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta"
+                                                                         role="option"
+                                                                         >
+                                                                        <span
+                                                                              class="slds-media__figure slds-listbox__option-icon "
+                                                                              >
+                                                                            <span
+                                                                                  class=" slds-icon_container
+                                                                                         slds-icon-standard-account"
+                                                                                  >
+                                                                            </span>
+                                                                        </span>
+                                                                        <span class="slds-media__body">
+                                                                            <span
+                                                                                  onclick="{!c.JointLandlord}"
+                                                                                  id="{!p.Id}"
+                                                                                  class="slds-listbox__option-text slds-listbox__option-text_entity"
+                                                                                  name="{!p.FirstName+p.LastName}">{!p.FirstName+' '+p.LastName}</span
+                                                                                >
+                                                                        </span>
+                                                                    </div>
+                                                                </li>
+                                                            </aura:iteration>
+                                                        </ul>
+                                                    </div>
+                                                </aura:if>                  
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="font-size:1.6rem">
+                                       <aura:iteration items="{!v.selectedjointlandlord}" var="item">
+                                            
+                                            {!item.FirstName+' '+item.LastName} &nbsp; 
+                                            <lightning:icon variant="success" iconName="utility:success" alternativeText="Success!"
+                                                            title="success variant" /> &nbsp;&nbsp;
+                                            
+                                        </aura:iteration>
+                                    </div>    
+                                </div>
+                                <!--
+                                                        <div class="another_landlord">
+                                                        <label for="another_landlord" class="col-form-label">Add another landlord</label>
+                                                        <select class="form-control" id="another_landlord" >
+                                                            <option>Select option</option>
+                                                            <option>option01</option>
+                                                            <option>option02</option>
+                                                            <option>option03</option>
+                                                            <option>option04</option>
+                                                        </select></div>
+                                                        
+                                                        -->
+                                <br/><br/>
+                                <!--   <a href="#" data-toggle="modal" data-target="#addlandlord" class="learn-more"> <img src="/assets/img/add-new-property.svg" alt="Add Icon"/> Add a new landlord</a> 
+                                                        <a href="#" data-toggle="modal" data-target="#addUser" class="see-all" onclick="{!c.navigateToLandlordPage}"> 
+                                                            <img src="{!$Resource.TDSTheme + '/assets/img/add-circle.svg'}" alt="Add Icon"/> Add a landlord</a>
+                                                     --> 
+                                <c:EI_addNonMemberLandlord JointLandlord="{!v.JointLandlord}" aura:id="compC" method="{!c.parentPress3}"/>
+                            </aura:if>
+                        </div>
+                    </div>
+                    <aura:if isTrue="{!v.FromTransferPage}">
+                        <div class="form-group row">
+                            <label for="Rent" class="col-sm-4 offset-sm-4 col-form-label">Deposit amount</label>
+                            <div class="col-sm-8 col-lg-7 offset-sm-4">
+                               <!-- <input type="text" name="" class="form-control" id="Rent" placeholder="&#163;" tabindex="0"/>-->
+                                   <lightning:input aura:id="Rent"  title="" type="number"  onchange="{!c.removeZero}" onfocus="{!c.removeZero}" class="lightInput" label="" placeholder="£0" formatter="currency" step="0.01" value=""/>
+                            </div>
+                        </div>
+                        <div class="form-group row updateDtStyle">
+                            <div class="col-sm-8">
+                                <p style="margin-left: 6px;" class="dateClass">Tenancy start date</p>
+                                <div class="d-flex">
+                                    <!--  <div class="form-group row ">
+                                            <div class="col-sm-8 offset-sm-4">
+                                                <p  class="dateClass">Tenancy start date</p>
+                                                <div class="d-flex" style= "margin-left: -5px;"> -->
+                                    <div class="flex3">
+                                        <select class="form-control" id="depositRecievedDate" name="day">
+                                            <option value="" disabled="true" selected="true"
+                                                    >Select Day</option
+                                                >
+                                            <option id="drd01" value="01">1</option>
+                                            <option id="drd02" value="02">2</option>
+                                            <option id="drd03" value="03">3</option>
+                                            <option id="drd04" value="04">4</option>
+                                            <option id="drd05" value="05">5</option>
+                                            <option id="drd06" value="06">6</option>
+                                            <option id="drd07" value="07">7</option>
+                                            <option id="drd08" value="08">8</option>
+                                            <option id="drd09" value="09">9</option>
+                                            <option id="drd10" value="10">10</option>
+                                            <option id="drd11" value="11">11</option>
+                                            <option id="drd12" value="12">12</option>
+                                            <option id="drd13" value="13">13</option>
+                                            <option id="drd14" value="14">14</option>
+                                            <option id="drd15" value="15">15</option>
+                                            <option id="drd16" value="16">16</option>
+                                            <option id="drd17" value="17">17</option>
+                                            <option id="drd18" value="18">18</option>
+                                            <option id="drd19" value="19">19</option>
+                                            <option id="drd20" value="20">20</option>
+                                            <option id="drd21" value="21">21</option>
+                                            <option id="drd22" value="22">22</option>
+                                            <option id="drd23" value="23">23</option>
+                                            <option id="drd24" value="24">24</option>
+                                            <option id="drd25" value="25">25</option>
+                                            <option id="drd26" value="26">26</option>
+                                            <option id="drd27" value="27">27</option>
+                                            <option id="drd28" value="28">28</option>
+                                            <option id="drd29" value="29">29</option>
+                                            <option id="drd30" value="30">30</option>
+                                            <option id="drd31" value="31">31</option>
+                                        </select>
+                                    </div>
+                                    <div class="flex3">
+                                        <select class="form-control " id="depositRecievedMonth" name="month">
+                                            <option value="" disabled="true" selected="true"
+                                                    >Select Month</option
+                                                >
+                                            <option id="drm01" value="01">January</option>
+                                            <option id="drm02" value="02">February</option>
+                                            <option id="drm03" value="03">March</option>
+                                            <option id="drm04" value="04">April</option>
+                                            <option id="drm05" value="05">May</option>
+                                            <option id="drm06" value="06">June</option>
+                                            <option id="drm07" value="07">July</option>
+                                            <option id="drm08" value="08">August</option>
+                                            <option id="drm09" value="09">September</option>
+                                            <option id="drm10" value="10">October</option>
+                                            <option id="drm11" value="11">November</option>
+                                            <option id="drm12" value="12">December</option>
+                                        </select>
+                                    </div>
+                                    <div class="flex3">
+                                        <select class="form-control" id="depositRecievedYear" name="year">
+                                            <option value="" disabled="true" selected="true"
+                                                    >Select Year</option
+                                                >
+                                            <option id="dry2015" value="2015">2015</option>
+                                            <option id="dry2016" value="2016">2016</option>
+                                            <option id="dry2017" value="2017">2017</option>
+                                            <option id="dry2018" value="2018">2018</option>
+                                            <option id="dry2019" value="2019">2019</option>
+                                            <option id="dry2020" value="2020">2020</option>
+                                            <option id="dry2021" value="2021">2021</option>
+                                            <option id="dry2022" value="2022">2022</option>
+                                            <option id="dry2023" value="2023">2023</option>
+                                            <option id="dry2024" value="2024">2024</option>
+                                        </select>
+                                    </div>
+                                    <!--  <div class="flex1">
+                                                    <div class="calander-icon">
+                                                      <input name="datepicker-ui" type="text" id="datepicker-depo" />
+                                                    </div>
+                                                  </div> -->
+                                </div>
+                                <aura:if isTrue="{!v.showRecievedDateError}">
+                                    <p class="mb-0 ml-2 mt-3 text-danger"
+                                       >Please Enter a valid Date
+                                    </p>
+                                </aura:if>  
+                                
+                            </div>
+                        </div>
+                        
+                    </aura:if>
+                    <div class="form-group row">
+                        <div class="col-sm-12 col-lg-11 text-center">
+                            <!--  <a href="#" class="go-back"><img src="../assets/img/md-arrow-dropleft.png" alt="Back Icon"/> Go Back</a> -->
+                            <!--  <button type="submit" class="see-all">Submit</button>    -->
+                            
+                            <aura:renderIf isTrue="{!!v.FromTransferPage}">
+                                <lightning:button class="see-all"
+                                                  aura:id="goBack"
+                                                  label="Back"
+                                                  variant="Brand"
+                                                  onclick="{!c.goBack}"
+                                                  />
+                                <lightning:button class="see-all"
+                                                  aura:id="saveId"
+                                                  label="{!v.buttonLabel}"
+                                                  variant="Brand"
+                                                  onclick="{!c.doCreate}"
+                                                  />
+                                <aura:set attribute="else">
+                                    <lightning:button class="see-all confrmBtn"
+                                                      aura:id="saveId"
+                                                      label="Confirm transfer"
+                                                      variant="Brand"
+                                                      onclick="{!c.confirmTransfer}"
+                                                      />
+                                </aura:set>
+                            </aura:renderIf>
+                        </div>
+                        <div class="slds-p-top_medium">
+                            
+                            
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+    
+</aura:component>

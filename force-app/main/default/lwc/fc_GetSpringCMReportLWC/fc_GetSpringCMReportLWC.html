@@ -1,0 +1,13 @@
+<template>
+    <lightning-card
+            title={label.downloadingFile}
+            icon-name="standard:file"
+    >
+        <template if:false={showError}>
+            <p>{label.downloadingFileStartsShortly}</p>
+        </template>
+        <template if:true={showError}>
+            <p class=slds-text-color--error>{label.downloadingFileError}</p>
+        </template>
+    </lightning-card>
+</template>

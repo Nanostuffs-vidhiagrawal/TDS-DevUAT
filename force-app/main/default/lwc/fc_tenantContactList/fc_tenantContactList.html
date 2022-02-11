@@ -1,0 +1,14 @@
+<!-- Fc Tenant Contact List -->
+<template>
+    <lightning-card class="slds-p-around_medium" title="Tenant Contact Details" icon-name="standard:avatar" variant="base">
+        <div class="slds-card__body_inner" >
+            <lightning-layout class="slds-wrap" multiple-rows="true">
+                <template for:each={tenantList} for:item="tenantRecord">
+                    <lightning-layout-item class="slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-2 slds-p-right_small slds-p-top_small" key={tenantRecord.id}>
+                        <c-fc_tenant-details-card edit-enabled={editEnabled} tenant-record={tenantRecord} ontenant_changed={handleEditTenant}></c-fc_tenant-details-card>
+                    </lightning-layout-item>
+                </template>
+            </lightning-layout>
+        </div>
+    </lightning-card>
+</template>

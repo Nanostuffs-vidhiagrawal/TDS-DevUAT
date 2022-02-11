@@ -1,0 +1,144 @@
+<aura:component implements="force:appHostable,forceCommunity:themeLayout,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+  access="global" controller="ManagePropertyForLocalAuthority">
+    
+    <!--attributes -->
+   <!-- <aura:attribute name="data" type="Object" />-->
+    <!--<aura:attribute name="branchlist" type="List" />-->
+    <!--<aura:attribute name="columns" type="List" />-->
+    <!--<aura:attribute name="noRecordsMsg" type="String"
+    default="There is no open branch. You may add by clicking 'Add New Branch'Button" />-->
+    <!--<aura:attribute name="selectedCount" type="integer" default="0"
+    description="selected Records Count"/>-->
+    
+    <aura:attribute name="listOfPropertyAlocations" type="list" />
+    <aura:attribute name="listOfPropertyAlocationsforDownload" type="list" />
+    <aura:attribute name="PaginationLandlordList" type="list" />    
+    <aura:attribute name="searchValue" type="String" />    
+    <aura:attribute name="recordFound" type="Boolean" default="false" />
+  	<lightning:overlayLibrary aura:id="overlayLib" />
+  	<aura:attribute name="startPageLandlord" type="Integer" />
+  	<aura:attribute name="endPageLandlord" type="Integer" />
+  	<aura:attribute name="totalRecordsCountLandlord" type="Integer" />
+  	<aura:attribute
+    name="pageSizeLandlord"
+    type="Integer"
+    default="50"
+    description="number of records to be display on per page"/>
+  <aura:attribute name="currentPageLandlord" type="integer" default="1" />
+  <aura:attribute name="totalPagesCountLandlord" type="integer" default="1" />
+  <aura:attribute name="bNoRecordsFound" type="boolean" default="false" />  
+  <aura:handler name="init" value="{! this }" action="{! c.init }" />
+    <lightning:overlayLibrary aura:id="overlayLib" />
+    <lightning:navigation aura:id="navService" /> 
+    <!-- Protect Search HTML Start -->
+                <!--<section class="protect-search my-option-search">-->
+   				<div style="margin-top: -41px;" class="tab-content custom-tab-content" id="sf-tabContent">
+                    <div class="container">
+                        <!--<a href="index.html" class="go-back"><img src="{!$Resource.TDSTheme + '/assets/img/md-arrow-dropleft.png'}" alt="Back Icon"/>Go Back </a>-->
+                            <div class="row">
+                                <div class="col-sm-6 col-lg-4">                              
+                                </div>
+                                <div class="col-sm-8 col-lg-8 text-right">
+                                    <lightning:icon iconName="doctype:excel" size="large" alternativeText="XLS file" title="XLS" onclick="{!c.downloadXlsx}"/> &nbsp;
+                                    <lightning:icon iconName="doctype:csv" size="large" alternativeText="CSV file" title="CSV" onclick="{!c.downloadCsv}"/> &nbsp;
+                                    
+                                </div>                            
+                            </div>                      
+                        
+                                <section class="protect-search">
+                                    <div class="container tab-pane fade show active">                          
+                                        <div class="row">   
+                                            <div class="col-sm-6">
+                                                <div class="filter-search">    
+                                                    <input type="text" name="searchValue"  id="searchValue" class="form-control" placeholder="Search by landlord registration number" value="{!v.searchValue}"/>
+                                                    <button type="button" onclick="{!c.handleSearch}"></button>                                   
+                                                </div>
+                                            </div> 
+                                        </div>
+                                    </div>
+                                </section>  <br/><br/>             
+
+                        <!-- Table HTML Start -->
+                        <div class="table-container my-option-table">
+                            <table  class="slds-table--striped" style="table-layout: fixed;">
+                                <thead>
+                                    <tr>
+                                        <th class="headingtext">Property postcode</th>
+                                        <th class="headingtext" >Address</th>
+                                        <th class="headingtext">Agent </th>
+                                        <th class="headingtext" style="width:180px">Landlord registration number</th>
+                                        <th class="headingtext">Landlord name </th>
+                                        <th class="headingtext" >Landlord address</th>
+                                        <th class="headingtext">Tenants name </th>
+                                        <th class="headingtext" >Deposit received date</th>
+                                                                               
+                                    </tr>
+                                </thead>
+                                <tbody style="font-size:1.5rem;">                           
+                                   
+                                    <aura:iteration items="{!v.PaginationLandlordList}" var="branch">   
+                                      
+                                    <tr>
+                                        <td class="slds-cell-wrap textcss" >{!branch.Postal_Code__c}</td>
+                                        
+                                        <td class="slds-cell-wrap textcss" style="padding:10px">{!branch.Street__c},{!branch.City__c}</td>                                       
+                                        <td class="slds-cell-wrap textcss" style="padding:10px">                                            
+                                            <aura:if isTrue="{!(branch.Property_Owner__r.RecordType.Name =='Letting Agent' ||  branch.Property_Owner__r.RecordType.Name =='Organization') }">
+                                            {!branch.Property_Owner__r.Name}
+                                            </aura:if>                                            
+                                        </td>                                    
+                                        <td class="slds-cell-wrap textcss" style="padding:10px; word-break: break-word;">{!branch.Landlord_Registration_Number__c}</td>
+                                        <td class="slds-cell-wrap textcss" style="padding:10px">                                            
+                                            <aura:if isTrue="{!(branch.Property_Owner__r.RecordType.Name =='Individual Landlord' || branch.Property_Owner__r.RecordType.Name =='Corporate Landlord') }">
+                                               {!branch.Property_Owner__r.Name}                                        
+                                            </aura:if>                                              
+                                        </td>
+                                        
+                                        <td class="slds-cell-wrap textcss" style="padding:10px">{!branch.Property_Owner__r.Address__pc}</td>           
+                                        <td class="slds-cell-wrap textcss" style="word-wrap:break-word; padding:10px" >
+                                            <aura:iteration items="{!branch.Deposits__r}" var="deposit">
+                                            {!deposit.Tenants_Name__c}
+                                            </aura:iteration>
+                                        </td>
+                                        <td class="slds-cell-wrap textcss" style="padding:10px">
+                                            <aura:iteration items="{!branch.Deposits__r}" var="deposit">
+                                             <ui:outputDate aura:id="oDate" value="{!deposit.Date_Deposit_Received__c}" format="DD/MM/YYYY" />   
+                                            <!--{!deposit.Date_Deposit_Received__c}-->
+                                           </aura:iteration>
+                                            
+                                        </td>
+                                        </tr>
+                                    </aura:iteration>
+                                     
+                                </tbody>
+                                <br />                                
+                   <div style="margin-left:500px!important;">
+                      <nav aria-label="Page navigation">
+                          <ul class="pagination">
+                              <aura:if isTrue="{!or(v.startPageLandlord == 0,v.PaginationLandlordList.length==0)}">
+                                  <li class="page-item disabled"><a class="page-link" href="" >Previous</a></li>
+                                  <aura:set attribute="else">
+                                      <li class="page-item"><a class="page-link" id="previousId" style="width :120px" href="" onclick="{!c.navLandlordPage}">Previous</a></li>
+                                  </aura:set>
+                              </aura:if>
+                              <li class="page-item"><a class="page-link" href="" style="width :120px">Page {!v.currentPageLandlord} out of {!v.totalPagesCountLandlord}</a></li>
+                              <aura:if isTrue="{!or((v.endPageLandlord + 1) >= v.totalRecordsCountLandlord,v.PaginationLandlordList.length==0 )}">
+                                  <li class="page-item disabled"><a class="page-link" href="" >Next</a></li>							
+                                  <aura:set attribute="else">
+                                      <li class="page-item"><a class="page-link" id="nextId" href="" onclick="{!c.navLandlordPage}">Next</a></li>
+                                  </aura:set>
+                              </aura:if>
+                          </ul>
+                      </nav>
+                  </div>                      
+                      
+                            </table>
+                        </div>
+                        <!-- Table HTML End -->
+                    </div>
+    			</div>
+               
+
+    
+    
+</aura:component>

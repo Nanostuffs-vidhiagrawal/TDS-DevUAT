@@ -1,0 +1,42 @@
+.THIS .textcss{
+    font-family: Aller_regular!important;
+   
+    color: #212529!important;
+    font-weight: 400!important;
+    line-height: 1.5!important;
+    font-size: 15px!important;
+    border-top: none;
+    border-bottom: none;
+    padding: 8px 18px;
+    white-space: nowrap!important;
+}
+.THIS .left-align {
+  text-align: left;
+}
+.THIS .right-align {
+  text-align: right;
+  margin-right: 2%;
+}
+.THIS .dataTables_empty{
+    display:none!important;
+}
+
+.THIS .headingtext{
+    text-align:left;
+    padding: 16px 18px;
+    border-bottom: none!important;
+    font-weight: bold;
+    background-color: #F5F6FA;
+    font-size: 15px!important;
+    line-height: 1.5;
+    color:#212529;
+    border-top: none!important;
+    font-family: Aller_regular;
+}
+.THIS .pagination {
+    margin-left: 150%;
+}
+.THIS .input[type="button"][disabled="disabled"]
+{
+   color:Grey;
+}

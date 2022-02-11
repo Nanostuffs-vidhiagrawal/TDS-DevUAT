@@ -1,0 +1,2 @@
+<apex:page controller="UpdateProfileClass" action="{!doProfileUpdate}">
+</apex:page>

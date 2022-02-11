@@ -1,0 +1,200 @@
+.THIS .addressHeading{
+    
+        
+}
+.THIS label {
+    display: inline-block;
+    margin-bottom: 1.6rem;
+    font-family: Aller_bold;
+}
+.THIS .slds-form-element__control.slds-grow{
+    margin-top: -16px;
+}
+.THIS .lookupbtn{
+    font-size: 1.2rem;
+    font-family: Aller_regular!important;
+    border-radius: 3rem;
+    border-width: 2px;
+    border-style: solid;
+    border-color: #32669e;
+    background-color: #fff;
+    color: #32669e;
+    transition: .3s;
+    padding-top: .7rem;
+    padding-bottom: .7rem;
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+    margin-right: 8%;
+    float: right;
+}
+.THIS .content{
+      width: 450px;
+      margin-left: -40px;
+    	background-color: white;
+    	padding: 15px;
+    
+    }
+.THIS .slds-textarea {
+    font-size: 1.6rem;
+    
+}
+
+    .THIS .fieldWrap{
+    	width: 100%;
+    	clear: both;
+    }
+
+    .THIS .label{
+    	width: 15%;
+    	display: inline-block;
+    }
+
+    .THIS .seperator{
+    	margin-bottom: 15px;
+    	display: none;
+    }
+.THIS .ManualAddress{
+    display: none;
+    width: 90%!important;
+   
+}
+.THIS .EnterLink{
+    text-decoration: underline;
+    color:#14c5bd;
+    font-family: monospace;
+    float:right;
+    font-size: 1.6rem;
+    margin-right:40px;
+}
+    .THIS .outputArea{
+    	display: none;
+    	padding-left: 5px;
+     	font-size: 1.6rem;
+    	font-family: Aller_regular!important;
+    	color: #1f2d3d;
+        text-align: left;
+    }
+
+    .THIS .addressFind{
+    	width: 70%;
+    	height: 37px;
+    	padding: 5px;
+    	font-size: 1.6rem!important;
+    	border: 1px solid transparent;
+    	border-bottom: 1px solid #D9D8D7;
+    	background: white;
+    	font-family: Aller_regular!important;
+    }
+
+    .THIS .searchInput::placeholder{
+    	font-size: 1.6rem;
+    }
+
+    .THIS .searchInput:focus {
+    	border-bottom: 1px solid #12ada6;
+    	outline: 0;
+    }
+
+.THIS .selectin{
+    width: 100%;
+    margin-top: 15px;
+    height: 45px;
+    padding-left: 5px;
+    font-size: 1.6rem;
+    font-family: Aller_regular!important;
+    border: 1px solid #D9D8D7;
+    color: #1f2d3d;
+  }
+
+    .THIS .selectin:focus{
+    	outline: 0;
+    	border: 1px solid #12ada6;
+    }
+    /*
+    select > option:selected {
+    	cursor: pointer;
+    	background: #14C5BD;
+    }
+    */
+
+    .THIS .selectin > option:focus{
+    	background:#14C5BD ;
+    	outline: none;
+    }
+
+    .THIS .btn {
+    	background-color: #14C5BD;
+    	color: white;
+    	width: 100px;
+    	height: 37px;
+    	border: none;
+    	cursor: pointer;
+    	float: right;
+    	font-size: 16px;
+    }
+
+    .THIS .btn:hover{
+    background: #7BDEDA;
+    }
+
+    .THIS .clear{
+    	display: none;
+    	position: relative;
+    	background: #bbb8b8;
+    	width: 20px;
+    	
+    	text-align: center;
+    	border-radius: 20px;
+    	float: right;
+    	padding: 2px;
+    	color: white;
+    	font-size: 14px;
+    	right: 50px;
+    	top: -28px;
+    	line-height: 18px;
+    }
+
+.THIS .clear:hover{
+    	background: #969696;
+    	cursor: pointer;
+    }
+
+.THIS .error{
+	background: #f5b355; 
+	padding: 10px;
+	margin-top: 15px;
+	display: none; 
+}
+
+.THIS .cRegister .searchInput {
+    width: 65%!important;
+    height: 37px;
+    padding: 5px;
+    font-size: 10px!important;
+}
+
+
+
+.THIS .look-upbutton {
+  font-size: 12px;
+  font-size: 1.2rem;
+  border-radius: 3rem;
+  -moz-border-radius: 3rem;
+  -webkit-border-radius: 3rem;
+  -khtml-border-radius: 3rem;
+  border-width: 2px;
+  border-style: solid;
+  border-color: #32669E;
+  background-color: #fff;
+  color: #32669E;
+  transition: 0.3s;
+  padding-top: 0.7rem;
+  padding-bottom: 0.7rem;
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
+}
+
+.THIS .look-upbutton:hover {
+  background-color: #32669E;
+  color: #fff;
+}

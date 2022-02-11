@@ -1,0 +1,70 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global"
+                controller="EI_manageusers">
+    
+    <aura:attribute name="strRecordId" type="String" />
+    <aura:attribute name="salutation" type="String" />
+    <aura:attribute name="salutationMap" type="Map" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="conobj" type="Contact" default="{ 'sobjectType': 'Contact'}"/>
+    
+    <lightning:overlayLibrary aura:id="overlayLib" />
+    
+    <div class="modal-content" style="border: none!important;">
+        <div class="modal-header">
+            <h3 class="modal-title">Update User Details</h3>
+        </div>
+        
+        <div class="modal-body">
+            <div class="sf-custom-form">
+                <form>
+                    <div class="form-row">
+                        <div class="form-group col-md-10">
+                            
+                            <lightning:select aura:id="salutation" value="{!v.conobj.Salutation}" name="Salutation" label="Title"
+                                              required="true" messageWhenValueMissing="Choose one!">
+                                <aura:iteration items="{!v.salutationMap}" var="sm" indexVar="key">
+                                    <option text="{!sm.value}" value="{!sm.key}" />
+                                </aura:iteration>
+                            </lightning:select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-5">
+                            <lightning:input aura:id="mandate" required="true"  label="First Name"   value="{!v.conobj.FirstName}"/>
+                        </div>
+                        <div class="form-group col-md-5">
+                            <lightning:input aura:id="mandate" required="true"  label="Last name"   value="{!v.conobj.LastName}"/>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-10">
+                            <lightning:input disabled ="true" label="Email"   value="{!v.conobj.Email}"/>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-10">
+                            <lightning:input aura:id="mandate" required="true" messageWhenPatternMismatch="enter number only" pattern="[0-9]*" label="Telephone Number"   value="{!v.conobj.Phone}"/>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-10">
+                            <ui:inputSelect label="User Role" class="dynamic" value="{!v.conobj.Job_role__c}" required="true" aura:id="jobrole" change=""/> 
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-10">
+                            <ui:inputSelect label="Additional Permission" value="{!v.conobj.Additional_Permission__c}" class="dynamic" aura:id="userpermission" change=""/> 
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12 text-right">
+                            <a href="#" class="learn-more">cancel</a>
+                            <lightning:button class="see-all" label="Update" title="Save" onclick="{!c.updateuser }" />
+                        </div>
+                    </div>
+                    <br/>                
+                </form>
+            </div>
+        </div>
+    </div>
+</aura:component>

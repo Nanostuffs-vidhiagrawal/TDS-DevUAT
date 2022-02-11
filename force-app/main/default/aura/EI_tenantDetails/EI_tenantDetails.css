@@ -1,0 +1,10 @@
+.THIS.changeMe {
+  display: none;
+}
+.THIS .clickButton{
+    background-color : #32669E;
+    color: white;
+}
+.THIS .slds-has-error.slds-form-element__help{
+    font-size:1.3rem!important;
+}

@@ -1,0 +1,830 @@
+<aura:component
+  implements="lightning:isUrlAddressable,forceCommunity:themeLayout,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+  access="global"
+>
+       
+    <aura:attribute name="editModeTimeId" type="string"  default =""/> 
+    
+    <aura:attribute name="rentAmount" type="Decimal" access="global" />
+    <aura:attribute name="depositAmount" type="Decimal" access="global" />
+    <aura:attribute name="amountToProtect" type="Decimal" access="global" />
+    <aura:attribute name="depositRecievedDate" type="Date" access="global" />
+    <aura:attribute name="tenancyStartDate" type="Date" access="global" />
+    <aura:attribute name="noOfTenants" type="Integer" access="global" />  
+    <aura:attribute name="depositReference" type="String" access="global" />
+    
+    <aura:attribute name="tenantItemList" type="list" access="global" />
+    <aura:attribute name="itemListlength" type="Integer" access="global" />
+    <aura:attribute name="selectedPrimarylandlord" type="List" />
+    <aura:attribute name="BranchID" type="String" access="global" />
+    
+    <aura:attribute name="noOfformSumbitted" type="Integer" default="0" access="global" />
+    
+    <!-- Handle the aura:valueChange event -->
+    <aura:handler name="change" value="{!v.noOfformSumbitted}" action="{!c.handleValueChange}"/> 
+    
+    <!-- Attribute for Date Error Visibiity -->
+    <aura:attribute name="showRecievedDateError" type="Boolean" default="false"/>
+    <aura:attribute name="showTenancyDateError" type="Boolean" default="false" /> 
+    <aura:attribute name="fillForm" type="Boolean" default="false"/>
+    <aura:attribute name="formNumber" type="Integer" default="0" />
+    
+    <!--To pass value for summary  -->
+    <aura:attribute
+                    name="selectedProperty"
+                    type="Property__c"
+                    default="{'sobjectType': 'Property__c'}"
+                    />
+    
+    <!-- To hold all Landlord -->
+    <aura:attribute name="selecedPrimeLandlord" type="String" access="global" />
+    
+    <!-- To hold all additional Tenants -->
+    <aura:attribute name="arrObj" type="object[]" />
+    
+    <!-- This attribute will hold Property of Lead Tenant -->
+    <aura:attribute name="leadTenantObj" type="object" />
+    
+    <!-- Attribute to control visibility of child comp -->
+    <aura:attribute
+                    name="depositView"
+                    type="Boolean"
+                    default="true"
+                    description="This is the main markup for this comp"
+                    />
+    <aura:attribute
+                    name="showSummary"
+                    type="Boolean"
+                    default="false"
+                    description="Control Summary Section Visibility"
+                    />
+    <aura:attribute
+                    name="showAddTenant"
+                    type="Boolean"
+                    default="false"
+                    description="Control Visibility of Tenant section"
+                    />
+    <!-- <aura:attribute name="showdepositComp" type="Boolean" default="true"
+        description="Control Visibility of Tenant section" /> -->
+    
+    <!-- Event Handler -->
+    <aura:handler
+                  name="EI_tenantDetailEvent"
+                  event="c:EI_tenantDetailEvent"
+                  action="{!c.EI_tenantDetailEvent}"
+                  />
+    <aura:handler
+                  name="EI_backToTenantComp"
+                  event="c:EI_backToTenantComp"
+                  action="{!c.EI_backToTenantComp}"
+                  />
+    
+    <aura:handler
+                  name="EI_depositDetailFromSummary"
+                  event="c:EI_depositDetailFromSummary"
+                  action="{!c.EI_depositDetailFromSummary}"
+                  />
+    
+    <aura:handler
+                  name="EI_tenantHome"
+                  event="c:EI_tenantHome"
+                  action="{!c.EI_tenantHome}"
+                  />
+    
+    <!-- Event Register -->
+    <aura:registerEvent name="EI_tenantHome" type="c:EI_tenantHome" />
+    <aura:registerEvent
+                        name="EI_backToDepositHome"
+                        type="c:EI_backToDepositHome"
+                        />
+    
+    
+    <!-- System Event -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <!-- <aura:if isTrue="true">
+        <c:EI_AddDepositComp />
+    </aura:if> -->
+    
+    <aura:attribute name="landRegisterNumber" type="String" access="global" />
+    <aura:attribute name="landRegisterstatus" type="String" access="global" />
+    
+    <!-- BootStrap Error Attributes -->  
+    <aura:attribute name="genericError" type="Boolean" default="false"/>
+    <aura:attribute name="amountCantBeLessThan1Error" type="Boolean" default="false"/>
+    <aura:attribute name="tenantNumberError" type="Boolean" default="false"/>  
+    <aura:attribute name="rentAmountError" type="Boolean" default="false"/>
+    <aura:attribute name="depositAmountError" type="Boolean" default="false"/>
+    <aura:attribute name="amntToProtectError" type="Boolean" default="false"/>
+    
+    <aura:renderIf isTrue="{!v.depositView}">
+        
+        <!-- <lightning:input aura:id="field" type="number" label="Rent Amount" placeholder="£" formatter="currency"
+                    step="0.01" required="true" value="{!v.rentAmount}" class="col-sm-12 col-form-label"/> -->
+        <aura:if isTrue="{!v.genericError}">
+            <div
+                 id="genericError"
+                 class="alert alert-danger alert-dismissible fade show" style="width: 65%;"
+                 >
+                <!-- <strong>Error!</strong> Please provide all the details.-->
+                All fields are mandatory
+                <button
+                        type="button"
+                        class="close"
+                        onclick="{!c.hideBootstrapErrors}"
+                        name="genericError"
+                        >&times;</button
+                    >
+            </div>
+        </aura:if>
+        
+        <aura:if isTrue="{!v.amountCantBeLessThan1Error}">
+            <div
+                 id="amountCantBeLessThan1Error"
+                 class="alert alert-danger alert-dismissible fade show" style="width: 65%;"
+                 >
+                <!--<strong>Error!</strong> Invalid number of tenant.-->
+                Rent amount, deposit amount and amount to protect should not be less than £1
+                <button
+                        type="button"
+                        class="close"
+                        onclick="{!c.hideBootstrapErrors}"
+                        name="amountCantBeLessThan1Error"
+                        >&times;</button
+                    >
+            </div>
+        </aura:if> 
+        
+        <aura:if isTrue="{!v.tenantNumberError}">
+            <div
+                 id="tenantNumberError"
+                 class="alert alert-danger alert-dismissible fade show" style="width: 65%;"
+                 >
+                <!--<strong>Error!</strong> Invalid number of tenant.-->
+                Please enter the tenant details
+                <button
+                        type="button"
+                        class="close"
+                        onclick="{!c.hideBootstrapErrors}"
+                        name="tenantNumberError"
+                        >&times;</button
+                    >
+            </div>
+        </aura:if> 
+        
+        <aura:if isTrue="{!v.rentAmountError}">
+            <div
+                 id="rentAmountError"
+                 class="alert alert-danger alert-dismissible fade show" style="width: 65%;"
+                 >
+                <!--<strong>Error!</strong> Invalid rent amount.-->
+                Please enter a valid rent amount.
+                <button
+                        type="button"
+                        class="close"
+                        onclick="{!c.hideBootstrapErrors}"
+                        name="rentAmountError"
+                        >&times;</button
+                    >
+            </div>
+        </aura:if>
+        
+        <aura:if isTrue="{!v.depositAmountError}">
+            <div
+                 id="depositAmountError"
+                 class="alert alert-danger alert-dismissible fade show" style="width: 65%;"
+                 >
+                <!--<strong>Error!</strong> Invalid deposit amount.-->
+                Please enter a valid deposit amount.
+                <button
+                        type="button"
+                        class="close"
+                        onclick="{!c.hideBootstrapErrors}"
+                        name="depositAmountError"
+                        >&times;</button
+                    >
+            </div>
+        </aura:if>
+        
+        <aura:if isTrue="{!v.amntToProtectError}">
+            <div
+                 id="amntToProtectError"
+                 class="alert alert-danger alert-dismissible fade show" style="width: 65%;"
+                 >
+                <!--<strong>Error!</strong> Invalid amount to protect.-->
+                Please enter a valid amount to protect.
+                <button
+                        type="button"
+                        class="close"
+                        onclick="{!c.hideBootstrapErrors}"
+                        name="amntToProtectError"
+                        >&times;</button
+                    >
+            </div>
+        </aura:if>
+        
+        <div class="form-group row">
+            
+            <!-- BootStrap Error -->
+            
+            <!--   <label for="rent_amount" class="col-sm-12 col-form-label"
+                        >Rent amount</label
+                      > -->
+            <div class="col-sm-12 col-lg-8">
+                <!-- <input
+                          type="number"
+                          class="form-control"
+                          id="rent_amount"
+                          placeholder="0123456"
+                        /> -->
+                <lightning:input
+                                 id="rent_amount"
+                                 aura:id="field"
+                                 type="number"
+                                 label="Rent amount (per month)"
+                                 placeholder="£"
+                                 formatter="currency"
+                                 step="0.01"
+                                 value="{!v.rentAmount}" 
+                                 onblur="{!c.handleBlur}" 
+                                 />
+            </div>
+        </div>
+        
+        <div class="form-group row">
+            <!--       <label
+                        for="Deposit_amount"
+                        class="col-sm-12 col-form-label"
+                        >Deposit amount</label
+                      > -->
+            <div class="col-sm-12 col-lg-8">
+                <!--     <input
+                          type="number"
+                          class="form-control"
+                          id="Deposit_amount"
+                          placeholder="&#163;"
+                        /> 	-->
+                <lightning:input
+                                 aura:id="field"
+                                 type="number"
+                                 label="Deposit amount"
+                                 placeholder="£"
+                                 formatter="currency"
+                                 step="0.01"
+                                 value="{!v.depositAmount}"
+                                 onblur="{!c.handleBlur}"
+                                 />
+                <aura:if isTrue="{!v.depositAmount>v.rentAmount*2}">
+                    <div aura:id="depositWarning" style="color: orange; font-size:15px;">
+                        As per the Housing Act 1988, a tenancy deposit should be a maximum
+                        of two months' rent.
+                    </div>
+                </aura:if>
+            </div>
+        </div>
+        
+        <div class="form-group row">
+            <!--       <label
+                        for="Amount_to_protect"
+                        class="col-sm-12 col-form-label"
+                        >Amount to protect</label
+                      > -->
+            <div class="col-sm-12 col-lg-8">
+                <!--    <input
+                          type="number"
+                          class="form-control"
+                          id="Amount_to_protect"
+                          placeholder="&#163;"
+                        />	-->
+                
+                <lightning:input
+                                 aura:id="field"
+                                 type="number"
+                                 label="Amount to protect"
+                                 placeholder="£"
+                                 formatter="currency"
+                                 step="0.01"
+                                 value="{!v.amountToProtect}" 
+                                 onblur="{!c.handleBlur}" 
+                                 />
+            </div>
+        </div>
+        
+        <!--     <lightning:input aura:id="field" type="number" label="Deposit amount" placeholder="£"
+                    formatter="currency" step="0.01" required="true" value="{!v.depositAmount}"
+                    onblur="{! c.handleBlur }" />
+
+                
+
+                <lightning:input aura:id="field" type="number" label="Amount to protect/pay to the scheme" placeholder="£"
+                    formatter="currency" step="0.01" required="true" value="{!v.amountToProtect}" /> -->
+        <!-- <div class="form-group row">
+                      <label
+                        for="Deposit_received"
+                        class="col-sm-12 col-form-label"
+                        >Deposit received date</label
+                      >
+                      <div class="col-xs-12 col-sm-4 col-lg-2">
+                        <select class="form-control" id="Deposit_received">
+                          <option selected="true"> Day</option>
+                          <option>01</option>
+                          <option>02</option>
+                          <option>03</option>
+                          <option>04</option>
+                        </select>
+                      </div>
+                      <div class="col-xs-12 col-sm-4 col-lg-3">
+                        <select class="form-control">
+                          <option selected="true"> Month</option>
+                          <option>01</option>
+                          <option>02</option>
+                          <option>03</option>
+                          <option>04</option>
+                        </select>
+                      </div>
+                      <div class="col-xs-12 col-sm-4 col-lg-3">
+                        <select class="form-control">
+                          <option selected="true"> Year</option>
+                          <option>01</option>
+                          <option>02</option>
+                          <option>03</option>
+                          <option>04</option>
+                        </select>
+                      </div>
+                    </div>  -->
+        
+        <div class="form-group row">
+            <div class="col-sm-8">
+                <p class="dateClass">Deposit received date</p>
+                <div class="d-flex">
+                    <div class="flex3">
+                        <select class="form-control" id="depositRecievedDate" name="day">
+                            <option value="" disabled="true" selected="true"
+                                    >Select Day</option
+                                >
+                            <option id="drd01" value="01">1</option>
+                            <option id="drd02" value="02">2</option>
+                            <option id="drd03" value="03">3</option>
+                            <option id="drd04" value="04">4</option>
+                            <option id="drd05" value="05">5</option>
+                            <option id="drd06" value="06">6</option>
+                            <option id="drd07" value="07">7</option>
+                            <option id="drd08" value="08">8</option>
+                            <option id="drd09" value="09">9</option>
+                            <option id="drd10" value="10">10</option>
+                            <option id="drd11" value="11">11</option>
+                            <option id="drd12" value="12">12</option>
+                            <option id="drd13" value="13">13</option>
+                            <option id="drd14" value="14">14</option>
+                            <option id="drd15" value="15">15</option>
+                            <option id="drd16" value="16">16</option>
+                            <option id="drd17" value="17">17</option>
+                            <option id="drd18" value="18">18</option>
+                            <option id="drd19" value="19">19</option>
+                            <option id="drd20" value="20">20</option>
+                            <option id="drd21" value="21">21</option>
+                            <option id="drd22" value="22">22</option>
+                            <option id="drd23" value="23">23</option>
+                            <option id="drd24" value="24">24</option>
+                            <option id="drd25" value="25">25</option>
+                            <option id="drd26" value="26">26</option>
+                            <option id="drd27" value="27">27</option>
+                            <option id="drd28" value="28">28</option>
+                            <option id="drd29" value="29">29</option>
+                            <option id="drd30" value="30">30</option>
+                            <option id="drd31" value="31">31</option>
+                        </select>
+                    </div>
+                    <div class="flex3">
+                        <select class="form-control " id="depositRecievedMonth" name="month">
+                            <option value="" disabled="true" selected="true"
+                                    >Select Month</option
+                                >
+                            <option id="drm01" value="01">January</option>
+                            <option id="drm02" value="02">February</option>
+                            <option id="drm03" value="03">March</option>
+                            <option id="drm04" value="04">April</option>
+                            <option id="drm05" value="05">May</option>
+                            <option id="drm06" value="06">June</option>
+                            <option id="drm07" value="07">July</option>
+                            <option id="drm08" value="08">August</option>
+                            <option id="drm09" value="09">September</option>
+                            <option id="drm10" value="10">October</option>
+                            <option id="drm11" value="11">November</option>
+                            <option id="drm12" value="12">December</option>
+                        </select>
+                    </div>
+                    <div class="flex3">
+                        <select class="form-control" id="depositRecievedYear" name="year">
+                            <option value="" disabled="true" selected="true"
+                                    >Select Year</option
+                                >
+                            <option id="dry2015" value="2015">2015</option>
+                            <option id="dry2016" value="2016">2016</option>
+                            <option id="dry2017" value="2017">2017</option>
+                            <option id="dry2018" value="2018">2018</option>
+                            <option id="dry2019" value="2019">2019</option>
+                            <option id="dry2020" value="2020">2020</option>
+                            <option id="dry2021" value="2021">2021</option>
+                            <option id="dry2022" value="2022">2022</option>
+                            <option id="dry2023" value="2023">2023</option>
+                            <option id="dry2024" value="2024">2024</option>
+                        </select>
+                    </div>
+                    <!--  <div class="flex1">
+            <div class="calander-icon">
+              <input name="datepicker-ui" type="text" id="datepicker-depo" />
+            </div>
+          </div> -->
+                </div>
+                <aura:if isTrue="{!v.showRecievedDateError}">
+                    <p class="mb-0 ml-2 mt-3 text-danger" >
+                        <!--  Please enter a valid date -->
+                        Enter a valid date
+                    </p>
+                </aura:if>  
+                
+            </div>
+        </div>
+        
+        <div class="form-group row">
+            <div class="col-sm-8">
+                <p class="dateClass">Tenancy start date</p>
+                <div class="d-flex">
+                    <div class="flex3">
+                        <select class="form-control" id="tenancyStartDate" name="day" value="">
+                            <option value="" disabled="true" selected="true"
+                                    >Select Day</option
+                                >
+                            <option id="tsd01" value="01">1</option>
+                            <option id="tsd02" value="02">2</option>
+                            <option id="tsd03" value="03">3</option>
+                            <option id="tsd04" value="04">4</option>
+                            <option id="tsd05" value="05">5</option>
+                            <option id="tsd06" value="06">6</option>
+                            <option id="tsd07" value="07">7</option>
+                            <option id="tsd08" value="08">8</option>
+                            <option id="tsd09" value="09">9</option>
+                            <option id="tsd10" value="10">10</option>
+                            <option id="tsd11" value="11">11</option>
+                            <option id="tsd12" value="12">12</option>
+                            <option id="tsd13" value="13">13</option>
+                            <option id="tsd14" value="14">14</option>
+                            <option id="tsd15" value="15">15</option>
+                            <option id="tsd16" value="16">16</option>
+                            <option id="tsd17" value="17">17</option>
+                            <option id="tsd18" value="18">18</option>
+                            <option id="tsd19" value="19">19</option>
+                            <option id="tsd20" value="20">20</option>
+                            <option id="tsd21" value="21">21</option>
+                            <option id="tsd22" value="22">22</option>
+                            <option id="tsd23" value="23">23</option>
+                            <option id="tsd24" value="24">24</option>
+                            <option id="tsd25" value="25">25</option>
+                            <option id="tsd26" value="26">26</option>
+                            <option id="tsd27" value="27">27</option>
+                            <option id="tsd28" value="28">28</option>
+                            <option id="tsd29" value="29">29</option>
+                            <option id="tsd30" value="30">30</option>
+                            <option id="tsd31" value="31">31</option>
+                        </select>
+                    </div>
+                    <div class="flex3">
+                        <select class="form-control" id="tenancyStartMonth" name="month">
+                            <option value="" disabled="true" selected="true"
+                                    >Select Month</option
+                                >
+                            <option id="tsm01" value="01">January</option>
+                            <option id="tsm02" value="02">February</option>
+                            <option id="tsm03" value="03">March</option>
+                            <option id="tsm04" value="04">April</option>
+                            <option id="tsm05" value="05">May</option>
+                            <option id="tsm06" value="06">June</option>
+                            <option id="tsm07" value="07">July</option>
+                            <option id="tsm08" value="08">August</option>
+                            <option id="tsm09" value="09">September</option>
+                            <option id="tsm10" value="10">October</option>
+                            <option id="tsm11" value="11">November</option>
+                            <option id="tsm12" value="12">December</option>
+                        </select>
+                    </div>
+                    <div class="flex3">
+                        <select class="form-control" id="tenancyStartYear" name="year">
+                            <option value="" disabled="true" selected="true"
+                                    >Select Year</option
+                                >
+                            <option id="tsy2015" value="2015">2015</option>
+                            <option id="tsy2016" value="2016">2016</option>
+                            <option id="tsy2017" value="2017">2017</option>
+                            <option id="tsy2018" value="2018">2018</option>
+                            <option id="tsy2019" value="2019">2019</option>
+                            <option id="tsy2020" value="2020">2020</option>
+                            <option id="tsy2021" value="2021">2021</option>
+                            <option id="tsy2022" value="2022">2022</option>
+                            <option id="tsy2023" value="2023">2023</option>
+                            <option id="tsy2024" value="2024">2024</option>
+                        </select>
+                    </div>
+                    <!--     <div class="flex1">
+            <div class="calander-icon">
+              <input name="datepicker-ui" type="text" id="datepicker-ui" />
+            </div>
+          </div> -->
+                </div>	
+                <aura:if isTrue="{!v.showTenancyDateError}">
+                    <p class="mb-0 ml-2 mt-3 text-danger">                 
+                        <!--Please enter a valid date-->
+                        Enter a valid date
+                    </p>
+                </aura:if>
+                
+            </div>
+        </div>
+        
+        <div class="form-group row">
+            <!--  <label for="Number_of_tenants" class="col-sm-12 col-form-label"
+        >Number of tenants</label
+      > -->
+            <div class="col-sm-12 col-lg-8">
+                <!--<input type="number" class="form-control" id="Number_of_tenants" value="{!v.noOfTenants}" /> -->
+                <lightning:input aura:id="field" label="Number of tenants" placeholder="Enter number of tenants" type="number" min="1" max="99" required="false"
+                                 messageWhenRangeUnderflow="  " value="{!v.noOfTenants}" />  
+            </div>
+        </div>
+        
+        <div class="form-group row">
+            <!-- <label for="Deposit_reference" class="col-sm-12 col-form-label"
+        >Deposit reference <span class="optional">Optional</span></label
+      > -->
+            <div class="col-sm-12 col-lg-8">
+                <!-- <input type="number" class="form-control" id="Deposit_reference" /> -->
+                <lightning:input aura:id="field" type="text" name="depRef" placeholder="Enter deposit reference"  label="Deposit reference (Optional)" value="{!v.depositReference}" />
+            </div>
+        </div>
+        
+        <!-- <lightning:input aura:id="field" type="date" label="The date they received the deposit" placeholder="DD-MMM-YYYY"
+                    required="true" value="{!v.depositRecievedDate}" /> -->
+        <!--       <lightning:input aura:id="field" type="date" label="Tenancy start date" placeholder="DD-MMM-YYYY"
+                    required="true" value="{!v.tenancyStartDate}" /> -->
+        <!--         <lightning:input aura:id="field" label="Number of tenants" type="number" min="1" max="999" required="true"
+                    value="{!v.noOfTenants}" /> -->
+        <!--         <lightning:input aura:id="field" type="text" label="User reference for the deposit (optional)" value="{!v.depositReference}" />-->
+        <p class="slds-p-top_small">
+            
+            <div class="col-sm-12 col-lg-8 text-right">
+                <lightning:button
+                                  variant="brand"
+                                  label="Back"
+                                  onclick="{! c.backToDepositHome }" class="see-all"
+                                  />
+                <lightning:button
+                                  variant="brand"
+                                  label="Continue"
+                                  onclick="{! c.doContinue }" class="see-all"
+                                  />
+                <!-- <button type="submit" class="see-all">Continue</button> -->
+            </div>
+            <!--  <div class="col-sm-12 col-lg-8 text-right">
+             
+        <button type="submit" class="see-all">Continue</button> 
+      </div> -->
+        </p>
+    </aura:renderIf>
+    
+    <!-- <form>
+    <div class="form-group row">
+      <label for="Rent_period" class="col-sm-12 col-form-label"
+        >Rent period</label
+      >
+      <div class="col-xs-12 col-sm-6 col-lg-4">
+        <input
+          type="text"
+          class="form-control"
+          id="Rent_period"
+          placeholder="Monthly Rent"
+        />
+      </div>
+      <div class="col-xs-12 col-sm-6 col-lg-4">
+        <input
+          type="text"
+          class="form-control"
+          id="Rent_period"
+          placeholder="Weekly Rent"
+        />
+      </div>
+    </div>
+      <div class="form-group row">
+                      <label
+                        for="Deposit_amount"
+                        class="col-sm-12 col-form-label"
+                        >Deposit amount</label
+                      >
+                      <div class="col-sm-12 col-lg-8">
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="Deposit_amount"
+                          placeholder="&#163;"
+                        />
+                      </div>
+                    </div> 
+    <div class="form-group row">
+      <label for="Amount_to_protect" class="col-sm-12 col-form-label"
+        >Amount to protect</label
+      >
+      <div class="col-sm-12 col-lg-8">
+        <input
+          type="number"
+          class="form-control"
+          id="Amount_to_protect"
+          placeholder="&#163;"
+        />
+      </div>
+    </div>
+     <div class="form-group row">
+                      <label
+                        for="Deposit_received"
+                        class="col-sm-12 col-form-label"
+                        >Deposit received date</label
+                      >
+                      <div class="col-xs-12 col-sm-4 col-lg-2">
+                        <select class="form-control" id="Deposit_received">
+                          <option selected="true"> Day</option>
+                          <option>01</option>
+                          <option>02</option>
+                          <option>03</option>
+                          <option>04</option>
+                        </select>
+                      </div>
+                      <div class="col-xs-12 col-sm-4 col-lg-3">
+                        <select class="form-control">
+                          <option selected="true"> Month</option>
+                          <option>01</option>
+                          <option>02</option>
+                          <option>03</option>
+                          <option>04</option>
+                        </select>
+                      </div>
+                      <div class="col-xs-12 col-sm-4 col-lg-3">
+                        <select class="form-control">
+                          <option selected="true"> Year</option>
+                          <option>01</option>
+                          <option>02</option>
+                          <option>03</option>
+                          <option>04</option>
+                        </select>
+                      </div>
+                    </div>
+       <div class="form-group row">
+                      <label
+                        for="Tenancy_start"
+                        class="col-sm-12 col-form-label"
+                        >Tenancy start date</label
+                      >
+                      <div class="col-xs-12 col-sm-4 col-lg-2">
+                        <select class="form-control" id="Tenancy_start">
+                          <option selected="true"> Day</option>
+                          <option>01</option>
+                          <option>02</option>
+                          <option>03</option>
+                          <option>04</option>
+                        </select>
+                      </div>
+                      <div class="col-xs-12 col-sm-4 col-lg-3">
+                        <select class="form-control">
+                          <option selected="true"> Month</option>
+                          <option>01</option>
+                          <option>02</option>
+                          <option>03</option>
+                          <option>04</option>
+                        </select>
+                      </div>
+                      <div class="col-xs-12 col-sm-4 col-lg-3">
+                        <select class="form-control">
+                          <option selected="true"> Year</option>
+                          <option>01</option>
+                          <option>02</option>
+                          <option>03</option>
+                          <option>04</option>
+                        </select>
+                      </div>
+                    </div> 
+       <div class="form-group row">
+                      <label
+                        for="Number_of_tenants"
+                        class="col-sm-12 col-form-label"
+                        >Number of tenants</label
+                      >
+                      <div class="col-sm-12 col-lg-8">
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="Number_of_tenants"
+                        />
+                      </div>
+                    </div> 
+     <div class="form-group row">
+                      <label
+                        for="Deposit_reference"
+                        class="col-sm-12 col-form-label"
+                        >Deposit reference
+                        <span class="optional">Optional</span></label
+                      >
+                      <div class="col-sm-12 col-lg-8">
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="Deposit_reference"
+                        />
+                      </div>
+                    </div> 
+    <div class="form-group row">
+      <div class="col-sm-12 col-lg-8 text-right">
+        <button type="submit" class="see-all">Continue</button>
+      </div>
+    </div>
+  </form> -->
+    
+    <aura:if isTrue="{!v.showAddTenant}">
+        <p class="slds-p-around_small">
+            <c:EI_tenantDetails
+                                aura:id="childCmp"
+                                cardTitle="Lead Tenant details"
+                                IsLeadTenant="true"
+                                LeadSummary="true"
+                                leadTenantObj="{!v.leadTenantObj}"
+                                arrObj="{!v.arrObj}"
+                                fillForm ="{!v.fillForm}"        
+                                noOfTenants="{!v.noOfTenants}"
+                                formNumber ="{!v.formNumber}"
+                                />
+        </p>
+        <aura:iteration items="{!v.tenantItemList}" var="item">
+            <p class="slds-p-around_small">
+                <c:EI_tenantDetails
+                                    aura:id="childCmp"
+                                    cardTitle="{!'Additional Tenants ' + item + ' of ' + v.itemListlength}"
+                                    IsLeadTenant="false"
+                                    fillForm ="{!v.fillForm}"
+                                    LeadSummary="false"
+                                    arrObj="{!v.arrObj}"
+                                    item="{!item}"
+                                    itemListlength="{!v.itemListlength}"                  
+                                    leadTenantObj="{!v.leadTenantObj}"
+                                    formNumber ="{!v.formNumber}"
+                                    />
+            </p>
+        </aura:iteration>
+        
+        <div class="col-sm-12 col-lg-8 text-right">   
+            <lightning:button
+                              variant="brand"
+                              label="Back"
+                              title="BackToDepositSection"                
+                              onclick="{! c.backToDepositComp}"
+                              class="see-all"                
+                              />
+            
+            <lightning:button
+                              variant="brand"
+                              label="Continue"
+                              title="moveToSummaryPage"
+                              onclick="{! c.moveToSummaryPage }"
+                              class="see-all"                
+                              />
+        </div>
+    </aura:if>
+    
+    
+    
+    <!-- <aura:if isTrue="true">
+        <c:EI_leadTenantSummary leadTenantObj="{!v.leadTenantObj}" />
+    </aura:if> -->
+    
+    <!-- <aura:if isTrue="true">
+        <c:EI_additionalTenants arrObj="{!v.arrObj}" />
+    </aura:if> -->
+    
+    <!-- Summary Component -->
+    
+    <aura:if isTrue="{!v.showSummary}">
+        <c:EI_DepositSummary
+                             rentAmount="{!v.rentAmount}"
+                             depositAmount="{!v.depositAmount}"
+                             amountToProtect="{!v.amountToProtect}"
+                             depositRecievedDate="{!v.depositRecievedDate}"
+                             tenancyStartDate="{!v.tenancyStartDate}"
+                             noOfTenants="{!v.noOfTenants}"
+                             depositReference="{!v.depositReference}"
+                             arrObj="{!v.arrObj}"
+                             leadTenantObj="{!v.leadTenantObj}"
+                             selectedProperty="{!v.selectedProperty}"
+                             selecedPrimeLandlord="{!v.selecedPrimeLandlord}"
+                             selectedPrimarylandlord="{!v.selectedPrimarylandlord}"
+                             landRegisterNumber="{!v.landRegisterNumber}"
+                             landRegisterstatus="{!v.landRegisterstatus}"
+                             BranchID="{!v.BranchID}"
+                             />
+    </aura:if>
+    
+</aura:component>

@@ -1,0 +1,69 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" controller="EI_ZD_TenantRespondToClaim" access="global" >
+	
+    
+    
+    <lightning:card title="Respond Claim">
+            <aura:if isTrue="{!v.ClaimsDetails[0].Status =='Invitation to view the claim'}">
+            <div>Tenant's Responded claim</div><br/>
+            <div>Total level of cover</div>
+            <div>{!v.ClaimsDetails[0].Total_Claim_Amount__c}</div><br/>
+            <div>Repayment to Amax Estates</div><br/>
+            
+            <aura:iteration var="desptItems" items="{!v.ClaimsDetails[0].Dispute_Items__r}">
+                <div style="width:100%;float:left;">
+                    <div style="width:30%;float:left;">{!desptItems.Type__c}</div>
+                    <div style="width:30%;float:left;">{!desptItems.Claimed_by_Landlord__c}</div>
+                </div> 
+            </aura:iteration>
+            
+            <div style="width:100%;float:left; margin-bottom:2%;">    
+                <div style="width:30%;float:left;">Total</div>
+                <div style="width:30%;float:left;">{!v.ClaimsDetails[0].Total_Claim_Amount__c}</div>
+            </div>
+            <br/><br/>
+            <div>Please select one of the following options</div><br/>
+            <select  id="selectIam" class="form-control" name="TenantOptions"
+                    required="true"  onchange="{!c.handleSelectedvalue}">
+                <option >-- Please select ---</option>
+                <option >I agree with the agent/landlord's claim</option>
+                <option >I do not agree with the agent/landlord's claim</option>
+            </select>
+            <div></div><br/>
+            <lightning:button  variant="brand" label="Submit" onclick="{!c.doSubmit}" /> <br/>
+            </aura:if>
+            <aura:if isTrue="{!v.ClaimsDetails[0].Status =='Self-Resolution'}">
+                <c:EI_ZD_TenantRespondSelfResolution ClaimsDetails="{!v.ClaimsDetails}" />
+            </aura:if>
+             
+        </lightning:card>
+    
+    
+    
+   <!-- 
+    <lightning:card title="Respond Claim">
+                <div>Total level of cover</div>
+                <div>{!v.ClaimsDetails[0].Total_Claim_Amount__c}</div><br/>
+                <div>Repayment to Amax Estates</div><br/>
+                <div style="width:100%;float:left;">
+                    <div style="width:30%;float:left;font-weight: bold;">Agent/Landlord Request</div>
+                    <div style="width:30%;float:left;font-weight: bold;">Tenant(s) Response </div>
+                </div>
+                <br/>
+                <aura:iteration var="desptItems" items="{!v.ClaimsDetails[0].Dispute_Items__r}">
+                    <div style="width:100%;float:left;">
+                        <div style="width:30%;float:left;font-weight: bold;">{!desptItems.Type__c}</div><br/>
+                        <div style="width:30%;float:left;"><lightning:input name="input1" value="{!desptItems.Claimed_by_Landlord__c}" disabled="true"/></div> &nbsp;&nbsp;
+                        <div style="width:20%;float:left;"><lightning:input  type="number"  placeholder="£" formatter="currency" 
+                                                                            value="{!desptItems.Agreed_by_Tenant__c}" onblur="{!c.calculateTenantTotal}"/></div>
+                    </div> 
+                </aura:iteration>
+                
+                <div style="width:100%;float:left; margin-bottom:2%;">    
+                    <div style="width:30%;float:left;">Total</div>
+                    <div style="width:30%;float:left;">{!v.totalTenantAmount}</div>
+                </div>
+                <br/><br/>
+                <lightning:button label="Submit" variant="brand" onclick="{!c.doSubmitDisagree}" /> <br/>
+            </lightning:card> -->
+    
+</aura:component>

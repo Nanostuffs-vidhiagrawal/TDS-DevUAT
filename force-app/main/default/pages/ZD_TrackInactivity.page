@@ -1,0 +1,43 @@
+<apex:page doctype="html-5.0" >
+    <script>
+        
+        var timeoutID;
+ 
+        function setup() {
+            this.addEventListener("mousemove", resetTimer, false);
+            this.addEventListener("mousedown", resetTimer, false);
+            this.addEventListener("keypress", resetTimer, false);
+            this.addEventListener("DOMMouseScroll", resetTimer, false);
+            this.addEventListener("mousewheel", resetTimer, false);
+            this.addEventListener("touchmove", resetTimer, false);
+            this.addEventListener("MSPointerMove", resetTimer, false);
+         
+            startTimer();
+        }
+        setup();
+         
+        function startTimer() {
+            timeoutID = window.setTimeout(goInactive, 5000);
+        }
+         
+        function resetTimer(e) {
+            window.clearTimeout(timeoutID);
+         
+            goActive();
+        }
+         
+        function goInactive() {
+            // do something
+            window.parent.location.href = "https://www.zerodeposit.com/"; 
+            
+        }
+         
+        function goActive() {
+            // do something
+            //alert('active')
+            startTimer();
+        }
+    </script>
+    
+    
+</apex:page>

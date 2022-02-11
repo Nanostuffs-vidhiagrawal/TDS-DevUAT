@@ -1,0 +1,33 @@
+<aura:component controller="DeactivatePortalaccount" implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	
+ <!--<lightning:button variant="Brand" label="Deactive Account" title="Base action" onclick="{!c.handleClick}"/>-->
+    <aura:attribute name="succeessmessage" type="boolean" default="false" />
+              <aura:if isTrue="{!v.succeessmessage}">
+                  <div
+                       id="successAlert"
+                       class="alert alert-success alert-dismissible fade show"
+                       >
+"Thank you for confirming you wish to close your account. The request has been sent to our customer service team who will be in contact regarding this shortly."                      <button
+                              type="button"
+                              class="close"
+                              onclick="{!c.hideBootstrapErrors}"
+                              name="successmsg"
+                              >&times;</button
+                          >
+                  </div>                 
+              </aura:if>
+       <h5>Close account</h5>
+                <form class="sf-custom-form">
+                  <div class="form-row">
+                    <div class="form-group col-md-6">
+                    <lightning:button variant="Brand" class="see-all" label="Close Account" title="Close Account" onclick="{!c.handleClick}">    
+                        <img
+                          src="{!$Resource.TDSTheme + '/assets/img/close-account.svg'}"
+                          alt="Close account Icon"
+                        />
+                        Close account
+                        </lightning:button>
+                    </div>
+                  </div>
+                </form>
+</aura:component>

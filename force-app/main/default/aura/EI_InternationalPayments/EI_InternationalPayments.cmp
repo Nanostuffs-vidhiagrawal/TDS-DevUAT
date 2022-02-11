@@ -1,0 +1,215 @@
+<aura:component
+   implements="flexipage:availableForAllPageTypes,force:appHostable,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+   access="global"
+   controller="EI_RepaymentsUtility"
+   >
+   <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+   <aura:attribute name="installmentList" type="List" />
+   <aura:attribute name="checkedCount" type="Integer" />
+   <aura:attribute name="spinner" type="boolean" default="true"/>
+   <aura:attribute name="disable" type="boolean" default="true"/>
+   <aura:attribute name="isModalOpen" type="boolean" default="false"/>
+   <aura:attribute name="reasonMap" type="Map"/>
+   <aura:attribute name="selectReason" type="boolean" default="true"/>
+   <aura:attribute name="selectOtherReason" type="boolean" default="false"/>
+   <aura:attribute name="reasonForFlag" type="String" />
+   <aura:attribute name="reasonForFlagSpecified" type="String" />
+   <aura:attribute name="installmentId" type="String" />
+   <aura:attribute name="isModalFilter" type="boolean" default="false"/>
+   <aura:attribute name="isFilter" type="boolean" default="false"/>
+   <aura:attribute name="options" type="List" default="[
+      {'label': 'Amount', 'value': 'amount'},
+      {'label': 'Created Date', 'value': 'date'}
+      ]"/>
+   <aura:attribute name="selectedFilter" type="String" default=""/>
+   <aura:attribute name="isFilterSelected" type="boolean" default="false"/>
+   <aura:attribute name="isFilterConfirmed" type="boolean" default="false"/>
+   <aura:attribute name="startDate" type="Date" />
+   <aura:attribute name="endDate" type="Date" />
+   <aura:attribute name="filterAmount" type="Decimal"/>
+   <!--loading spinner start--> 
+   <aura:if isTrue="{!v.spinner}">
+      <div class="exampleHolder">
+         <lightning:spinner alternativeText="Loading" size="large" />
+      </div>
+   </aura:if>
+   <!-- Loading spinner end-->
+   <aura:if isTrue="{!v.isModalFilter}">
+      <!-- Modal/Popup Box starts here-->
+      <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+         <div class="slds-modal__container">
+            <!-- Modal/Popup Box Header Starts here-->
+            <header class="slds-modal__header">
+               <lightning:buttonIcon iconName="utility:close"
+                  onclick="{! c.closeModelFilter }"
+                  alternativeText="close"
+                  variant="bare-inverse"
+                  class="slds-modal__close"/>
+               <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Filter records</h2>
+            </header>
+            <!--Modal/Popup Box Body Starts here-->
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+               <aura:if isTrue="{!v.isFilterSelected}">
+                  <div class="form-group">
+                     <!--Lightning radio group component-->
+                     <lightning:radioGroup name="radioGroup"
+                        label="Please select filter type"
+                        required="false"
+                        options="{!v.options}"
+                        value="{!v.selectedFilter}"
+                        type="radio"/>
+                  </div>
+                  <div style="float: right;">
+                     <input style= "margin-top: 5px;" class="slds-button slds-button_destructive custom" type = "button"  value = "Cancel" onclick="{! c.closeModelFilter}"/>
+                     <input style= "margin-top: 5px;" class="slds-button slds-button_brand" type = "button"  value = "Next" onclick="{! c.selectFilterType}"/>
+                  </div>
+               </aura:if>
+               <aura:if isTrue="{!v.isFilterConfirmed}">
+                  <div class="form-group">
+                     <aura:if isTrue="{!v.selectedFilter == 'amount'}">
+                        <ui:inputCurrency aura:id="amount"  value="{!v.filterAmount}"  placeholder="Enter amount"/>
+                     </aura:if>
+                     <aura:if isTrue="{!v.selectedFilter == 'date'}">
+                        <table>
+                           <tr>
+                              <td>
+                                 <ui:inputDate aura:id="EndDateField" value="{!v.startDate}" displayDatePicker="true" />
+                              </td>
+                              <td>
+                                 <ui:inputDate aura:id="EndDateField" value="{!v.endDate}" displayDatePicker="true" />
+                              </td>
+                           </tr>
+                        </table>
+                     </aura:if>
+                  </div>
+                  <div style="float: right;">
+                     <input style= "margin-top: 5px;" class="slds-button slds-button_destructive custom" type = "button"  value = "Cancel" onclick="{! c.closeModelFilter}"/>
+                     <input style= "margin-top: 5px;" class="slds-button slds-button_brand" type = "button"  value = "Next" onclick="{! c.confirmFilterType}"/>
+                  </div>
+               </aura:if>
+            </div>
+         </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open"></div>
+   </aura:if>
+   <div class= "">
+      <aura:if isTrue="{!v.isModalOpen}">
+         <!-- Modal/Popup Box starts here-->
+         <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+               <!-- Modal/Popup Box Header Starts here-->
+               <header class="slds-modal__header">
+                  <lightning:buttonIcon iconName="utility:close"
+                     onclick="{! c.closeModel }"
+                     alternativeText="close"
+                     variant="bare-inverse"
+                     class="slds-modal__close"/>
+                  <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Flag Payment</h2>
+               </header>
+               <!--Modal/Popup Box Body Starts here-->
+               <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                  <aura:if isTrue="{!v.selectReason}">
+                     <div class="form-group">
+                        <!--Lightning radio group component-->
+                        <lightning:radioGroup name="radioGroup"
+                           label="Reason For Flag"
+                           required="false"
+                           options="{!v.reasonMap}"
+                           value="{!v.reasonForFlag}"
+                           type="radio"/>
+                     </div>
+                     <input style= "margin-top: 5px;" class="slds-button slds-button_brand custom" type = "button" value = "Flag" onclick="{! c.flag}"/>
+                     <input style= "margin-top: 5px;" class="slds-button slds-button_destructive custom" type = "button" value = "Cancel" onclick="{! c.closeModel}"/>
+                  </aura:if>
+                  <aura:if isTrue="{!v.selectOtherReason}">
+                     <lightning:input label="Please specify other reason" placeholder="type here..." value="{!v.reasonForFlagSpecified}"/>
+                     <input style= "margin-top: 5px;" class="slds-button slds-button_brand custom" type = "button"  value = "Flag" onclick="{! c.flagSpecified}"/>
+                     <input style= "margin-top: 5px;" class="slds-button slds-button_destructive custom" type = "button"  value = "Cancel" onclick="{! c.closeModel}"/>
+                  </aura:if>
+               </div>
+            </div>
+         </section>
+         <div class="slds-backdrop slds-backdrop_open"></div>
+      </aura:if>
+      <lightning:card title="International Payment Details">
+         <div>
+            <input class="slds-button slds-button_brand mg-left" type = "button" disabled="{!v.disable}" value = "Mark Selected Paid" onclick="{! c.markAsPaid}"/>
+             <div style = "float:right;">
+                <lightning:icon iconName="standard:filter" alternativeText="Filter" title="Filter" onclick="{! c.openFilter}"/>
+             </div>
+         </div>
+         
+          <br/>
+         <table class="slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" aria-labelledby="element-with-table-label other-element-with-table-label">
+            <thead>
+               <tr>
+                  <th class="" scope="col">
+                     <div >Select</div>
+                  </th>
+                  <th class="" scope="col">
+                     <div >Name</div>
+                  </th>
+                  <th class="" scope="col">
+                     <div >Contact</div>
+                  </th>
+                  <th class="" scope="col">
+                     <div >DAN</div>
+                  </th>
+                  <th class="" scope="col">
+                     <div >Case</div>
+                  </th>
+                  <th class="" scope="col">
+                     <div >Notes</div>
+                  </th>
+                  <th class="" scope="col">
+                     <div >Payee Name</div>
+                  </th>
+                  <th class="" scope="col">
+                     <div >Bank Name</div>
+                  </th>
+                  <th class="" scope="col">
+                     <div >IBAN</div>
+                  </th>
+                  <th class="" scope="col">
+                     <div >Swift Code</div>
+                  </th>
+                  <th class="" scope="col">
+                     <div >Bank Identification Code</div>
+                  </th>
+                  <th class="" scope="col">
+                     <div >Amount</div>
+                  </th>
+                  <th class="" scope="col">
+                     <div >Actions To Perform</div>
+                  </th>
+               </tr>
+            </thead>
+            <tbody>
+               <aura:iteration items="{!v.installmentList}" var="obj">
+                  <tr class="slds-hint-parent">
+                     <td>
+                        <ui:inputCheckbox name="{!obj.objInstallment.Id}" class="slds-checkbox" change="{!c.onCheck}" value="{!obj.isSelected}" />
+                     </td>
+                     <!--<td>{!obj.objInstallment.Id}</td>-->
+                     <td><a href="{!'/one/one.app?#/sObject/'+ obj.objInstallment.Id + '/view'}" target="_blank" tabindex="-1">{!obj.objInstallment.Name}</a></td>
+                     <td><a href="{!'/one/one.app?#/sObject/'+ obj.objInstallment.Contact__c + '/view'}" target="_blank" tabindex="-1">{!obj.objInstallment.Contact__r.Name}</a></td>
+                     <td><a href="{!'/one/one.app?#/sObject/'+ obj.objInstallment.Deposit__c + '/view'}" target="_blank" tabindex="-1">{!obj.objInstallment.Deposit__r.Deposit_Account_Number__c}</a></td>
+                     <td><a href="{!'/one/one.app?#/sObject/'+ obj.objInstallment.Case__c + '/view'}" target="_blank" tabindex="-1">{!obj.objInstallment.Case__r.CaseNumber}</a></td>
+                     <td>{!obj.numberOfNotes}</td>
+                     <td>{!obj.objInstallment.Bank_Account_Holder_Name__c}</td>
+                     <td>{!obj.objInstallment.Bank_Name__c}</td>
+                     <td>{!obj.objInstallment.Custom_Account_Number__c}</td>
+                     <td>{!obj.objInstallment.Swift_Code__c}</td>
+                     <td>{!obj.objInstallment.BIC__c}</td>
+                     <td>{!obj.objInstallment.Amount__c}</td>
+                     <td>
+                        <input class="slds-button slds-button_brand mg-top" type = "button" value = "Mark as paid" onclick="{! c.markAsPaid}" id="{!obj.objInstallment.Id}"/>
+                        <input class="slds-button slds-button_destructive mg-top" type = "button" value = "Flag Payment" onclick="{!c.openModel}" id="{!obj.objInstallment.Id}"/>
+                     </td>
+                  </tr>
+               </aura:iteration>
+            </tbody>
+         </table>
+      </lightning:card>
+   </div>
+</aura:component>

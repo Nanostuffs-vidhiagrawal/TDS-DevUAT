@@ -1,0 +1,30 @@
+<aura:component
+    implements="lightning:isUrlAddressable,forceCommunity:themeLayout,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+    access="global">
+
+    <aura:attribute name="rentAmount" type="Decimal" access="global" default="0" />
+    <aura:attribute name="depositAmount" type="Decimal" access="global" default="0" />
+    <aura:attribute name="amountToProtect" type="Decimal" access="global" default="0" />
+    <aura:attribute name="depositRecievedDate" type="Date" access="global" />
+    <aura:attribute name="tenancyStartDate" type="Date" access="global" />
+    <aura:attribute name="noOfTenants" type="Integer" access="global" />
+    <aura:attribute name="depositReference" type="String" access="global" />
+
+    <lightning:overlayLibrary aura:id="overlayLib" />
+
+    <!-- <aura:attribute name="depositView" type="Boolean" default="true" /> -->
+    <p style="background:aliceblue;">
+    <p class="slds-text-color_success">Rent Amount : £{!v.rentAmount} </p> <br />
+    <p class=" slds-text-color_success">Deposit Amount : £{!v.depositAmount} </p> <br />
+    <p class="slds-text-color_success">Amount to Protect : £{!v.amountToProtect} </p> <br />
+    <p class=" slds-text-color_success">Deposit Received Date : {!v.depositRecievedDate} </p><br />
+    <p class="slds-text-color_success">Tenancy start date : {!v.tenancyStartDate} </p> <br />
+    <p class=" slds-text-color_success">Number of tenants : {!v.noOfTenants} </p><br />
+    <p class="slds-text-color_success">Deposit Reference : {!v.depositReference} </p> <br />
+
+    <!-- <p class="slds-p-top_small">
+        <lightning:button name="modal" label="Edit Deposit" onclick="{!c.doEditDeposit}" />
+    </p>  -->
+    </p>
+
+</aura:component>

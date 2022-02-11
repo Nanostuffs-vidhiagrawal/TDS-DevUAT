@@ -1,0 +1,30 @@
+<aura:component implements="force:lightningQuickActionWithoutHeader,force:hasRecordId" controller="EI_UnallocateIRController">
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="report" type="Inbound_Report__c" />
+    <aura:attribute name="reasonMap" type="Map"/>
+    <aura:attribute name="selectReason" type="boolean" default="false"/>
+    <aura:attribute name="selectOtherReason" type="boolean" default="false"/>
+    
+
+    <aura:if isTrue="{!v.selectReason}">
+        <div class="form-group">
+            <!--Lightning radio group component-->
+            <lightning:radioGroup name="radioGroup"
+                                  label="Reason For Unallocation"
+                                  required="false"
+                                  options="{!v.reasonMap}"
+                                  value="{!v.report.Reason_For_Unallocation__c}"
+                                  type="radio"/>
+        </div>
+        <input style= "margin-top: 5px;" class="slds-button slds-button_brand custom" type = "button" disabled="{!v.disable}" value = "Unallocate" onclick="{! c.unallocate}"/>
+        <input style= "margin-top: 5px;" class="slds-button slds-button_destructive custom" type = "button" disabled="{!v.disable}" value = "Cancel" onclick="{! c.closeWindow}"/>
+    </aura:if>
+
+    <aura:if isTrue="{!v.selectOtherReason}">
+        
+        <lightning:input label="Please specify other reason" placeholder="type here..." value="{!v.report.Reason_For_Unallocation_Specified__c}"/>
+        <input style= "margin-top: 5px;" class="slds-button slds-button_brand custom" type = "button" disabled="{!v.disable}" value = "Unallocate" onclick="{! c.unallocateOther}"/>
+        <input style= "margin-top: 5px;" class="slds-button slds-button_destructive custom" type = "button" disabled="{!v.disable}" value = "Cancel" onclick="{! c.closeWindow}"/>
+    </aura:if>
+
+</aura:component>

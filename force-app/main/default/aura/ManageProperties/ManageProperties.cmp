@@ -1,0 +1,377 @@
+<aura:component
+  implements="force:appHostable,forceCommunity:themeLayout,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+  access="global"
+  controller="ManageProperties"
+>
+  <aura:attribute name="currentUser" type="User" />
+  <force:recordData
+    aura:id="recordLoader"
+    recordId="{!$SObjectType.CurrentUser.Id}"
+    fields="Name,Contact.Job_role__c,Contact.Additional_Permission__c"
+    targetFields="{!v.currentUser}"
+  />
+
+  <!-- call doInit method on component load -->
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+  <!-- aura attributes to store data/values -->
+  <aura:attribute name="listOfPropertyAlocations" type="list" />
+  <aura:attribute name="PaginationList" type="list" />
+  <aura:attribute
+    name="selectedCount"
+    type="integer"
+    default="0"
+    description="selected Records Count"
+  />
+    <!-- HideAction on the basis of roles and permissions -->
+      <aura:attribute name="viewPropertyFlag" type="boolean" default="false"/>
+    <aura:attribute name="submitEvidence" type="boolean" default="false"/>
+    
+    
+    
+   <!-- Landlord pagination -->
+    <aura:attribute name="startPageLandlord" type="Integer" />
+  <aura:attribute name="endPageLandlord" type="Integer" />  
+      <aura:attribute name="currentPageLandlord" type="integer" default="1" />
+     <aura:attribute name="pageSizeLandlord" type="Integer" default="4" description="number of records to be display on per page"/> 
+     <aura:attribute name="totalPagesCountLandlord" type="integer" default="1" />
+    <aura:attribute name="totalRecordsCountLandlord" type="Integer" /> 
+    
+      <aura:attribute name="showViewPage" type="boolean" default="true"/>   
+    <aura:attribute name="fromParentComp" type="boolean" default="false"/> 
+    
+  <aura:attribute name="startPage" type="Integer" />
+  <aura:attribute name="endPage" type="Integer" />
+  <aura:attribute name="totalRecordsCount" type="Integer" />
+  <aura:attribute
+    name="pageSize"
+    type="Integer"
+    default="4"
+    description="number of records to be display on per page"
+  />
+      <aura:attribute name="strRecordId" type="String" />
+    <aura:attribute name="LandlordList" type="List" />   
+    <aura:attribute name="property" type="Object"/>
+     <aura:attribute name="PaginationLandlordList" type="list" />
+    
+  <aura:attribute name="currentPage" type="integer" default="1" />
+  <aura:attribute name="totalPagesCount" type="integer" default="1" />
+  <aura:attribute name="bNoRecordsFound" type="boolean" />
+  <aura:attribute name="showdiv" type="boolean" default="false" />
+  <aura:attribute name="Recid" type="string" />
+  <aura:attribute name="searchText" type="string" />
+  <aura:attribute name="openmodel" type="boolean" default="false" />
+
+  <!-- Address Fields-->
+  <aura:attribute access="public" name="Street" type="String" />
+  <aura:attribute access="public" name="Town" type="String" />
+  <aura:attribute access="public" name="PostCode" type="String" />
+  <aura:attribute access="public" name="Country" type="String" />
+  <aura:attribute access="public" name="County" type="String" />
+  <aura:attribute access="public" name="LocalAreaCode" type="String" />
+  <aura:attribute
+    name="Propobj"
+    type="Property__c"
+    default="{ 'sobjectType': 'Property__c'}"
+  />
+   <aura:attribute name="PageSpinner" type="boolean" default="true"/>
+      <aura:handler event="aura:doneWaiting" action="{!c.doneWaiting}"></aura:handler>
+    
+  <lightning:overlayLibrary aura:id="overlayLib" />
+  <lightning:overlayLibrary aura:id="overlayLibDemo" />
+
+  <lightning:navigation aura:id="navServiceMyProperty" />
+  
+    
+  <html>
+        <aura:renderIf isTrue="{!v.PageSpinner}">
+      <div class="lds-dual-ring">
+      </div>
+      <aura:set attribute="else">  
+    <body>
+      <!-- Protect Search HTML Start -->
+      <section class="protect-search">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-3">
+              
+              <!--Popup form HTMl start-->
+             <!--  <div
+                class="custom-model modal fade"
+                id="addProperty"
+                data-backdrop="static"
+                data-keyboard="false"
+                tabindex="-1"
+                aria-labelledby="createUser"
+                aria-hidden="true"
+              > -->
+                <!--  <div class="modal-dialog modal-lg"> -->
+                  <!--  <div class="modal-content"> -->
+                  <!--   <div class="modal-header"> --> 
+                     <!--  <h3 class="modal-title">Add a new property</h3> -->
+                     <!--  <button
+                        type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-label="Close"
+                        onclick="{!c.forceRefreshCallback}"      
+                      >
+                        <span aria-hidden="true">
+                          <img
+                            src="{!$Resource.TDSTheme + '/assets/img/Cancel-icon.png'}"
+                            alt=""
+                          />
+                        </span>
+                      </button> -->
+                   <!--  </div> -->
+                   <!--  <div class="modal-body"> -->
+                  <!--     <div class="sf-custom-form"> -->
+                       <!--  <form> -->
+                            
+                    <!--      <div class="form-row"> -->
+                            <!--   <c:EI_propertyAndLandlordSearch/> -->
+                    <!--             <c:EI_addNewProperty/>  -->
+                           <!-- <div class="form-group col-md-12">
+                              <label for="popup-Address"
+                                >Address<span class="mandatory-field"
+                                  >*</span
+                                ></label
+                              >
+                              <input
+                                type="Text"
+                                class="form-control"
+                                id="popup-Address"
+                                placeholder="Start typing the Address"
+                              />
+                            </div> -->
+		       <!--              </div> -->
+                      <!--     <div class="form-row">
+                            <div class="form-group col-md-12">
+                              <label for="popup-landlord">Landlord</label>
+                              <input
+                                type="Text"
+                                class="form-control"
+                                id="popup-landlord"
+                                placeholder="Start typing to search for a Landlord"
+                              />
+                            </div>
+                          </div> -->
+                       <!--    <div class="form-row">
+                            <div class="form-group col-md-12 text-right">
+                              <a href="#" class="learn-more">cancel</a>
+                              <button class="see-all">Save</button>
+                            </div>
+                          </div> -->
+                     <!--    </form>-->
+                   <!--    </div> -->
+                  <!--   </div> -->
+               <!--    </div> -->
+                <!--  </div> --> 
+            <!--   </div> -->
+              <!--Popup form HTMl end-->
+            </div>
+
+          </div>
+        </div>
+      </section>
+      <!-- Protect Search HTML End -->
+
+      <!-- left Tabs HTML Start -->
+         
+          
+      <div class="secondary-tab-container">
+        <nav class="left-custom-tab">
+          <div class="nav nav-tabs" id="left-nav-tab" role="tablist">
+            <a onclick="{!c.navigateMyProp}"
+              class="nav-link active"
+              id="left_nav-sf-presonal-tab"
+              data-toggle="tab"
+              href="#left_nav-sf-presonal"
+              role="tab"
+              aria-controls="left_nav-sf-presonal"
+              aria-selected="true"
+            >
+              <img
+                class="initial-state"
+                src="{!$Resource.TDSTheme + '/assets/img/newspaper_icon.svg'}"
+                alt=""
+              />
+              Manage my properties
+            </a>
+            <a onclick="{!c.navigateLandlord}"
+              class="nav-link"
+              id="left_nav-sf-organisation-tab"
+              data-toggle="tab"
+              href="#left_nav-sf-organisation"
+              role="tab"
+              aria-controls="left_nav-sf-organisation"
+              aria-selected="false"
+            >
+              <img
+                class="initial-state"
+                src="{!$Resource.TDSTheme + '/assets/img/Organisation_icon.svg'}"
+                alt=""
+              />
+              Manage my landlords
+            </a>
+          </div>
+        </nav>
+
+        <div style="margin-top: -41px;" class="tab-content custom-tab-content" id="sf-tabContent">
+          <div
+            class="tab-pane fade show active"
+            id="left_nav-sf-presonal"
+            role="tabpanel"
+            aria-labelledby="left_nav-sf-presonal-tab"
+          >
+            <section>
+                <a
+                href="javascript:void(0)"
+                data-toggle="modal"
+                data-target="#addProperty"
+                class="see-all"
+                onclick="{!c.navigateToProperty}" 
+                >Add a new property</a
+              >
+   <!-- Protect Search HTML Start -->
+                 
+                            <div class="row">
+                                
+                                <div class="col-sm-6">
+                                      <div  class="signUp">
+                            <div class="login-banner-form">                   
+             <div class="get_In_Touch_form">
+           <div class="form-row">
+                                   <label for="SelectTitle">Select term</label>
+                                                <select id="SelectItem" class="form-control" value="{!v.term}" required="true"
+                                                        onchange="{!c.statusCheck}" >
+                                                     <option value="Active">Live</option>
+                                                            <option value="Inactive">Archived</option>
+                                                         
+                                                </select>
+                 </div>
+                                </div>
+                                          </div>
+                                </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="filter-search">
+                                        <input type="text" onkeypress="{!c.searchproperty}" id="searchtext" class="form-control" placeholder="Enter your search here...." value="{!v.searchText}"/>
+                                        <button type="button" onclick="{! c.searchButton }"></button>
+										<!--<ui:inputText value="{!v.searchText}" class="form-control" placeholder="Search" />
+										<lightning:buttonIcon iconName="utility:search" variant="bare" onclick="{! c.handleClick }" alternativeText="Enter your search here...." class="slds-input__icon" />-->
+                                    </div>
+                                </div>
+                            </div>
+                     
+                    <!-- Protect Search HTML End -->
+           
+              
+              
+                
+              
+              <div class="container">
+                <div class="table-container">
+                  <table
+                    class="slds-table slds-table--striped"
+                    style="table-layout: fixed;"
+                  >
+                    <thead>
+                      <tr>
+                        <th class="headingtext" style="width:45%;">Property address</th>
+                        <th class="headingtext">Landlord</th> 
+                        <th class="headingtext"></th>
+       				</tr>
+                    </thead>
+                    <tbody style="font-size:1.5rem;">
+                        <aura:if isTrue="{!!v.bNoRecordsFound}">
+                      <aura:iteration items="{!v.PaginationList}" var="obj">
+                          <tr>
+                            <td class="slds-cell-wrap slds-text-align_left textcss">{!obj.Property__r.Street__c}, {!obj.Property__r.City__c}, {!obj.Property__r.County__c}, {!obj.Property__r.Postal_Code__c}, {!obj.Property__r.Country__c}</td>
+                            <!--  <td class="slds-cell-wrap slds-text-align_left textcss">{!obj.Property_Address__c}</td>-->
+                            <td class="slds-cell-wrap slds-text-align_left textcss">{!obj.Contact__r.Name}</td>
+                            <td class="slds-text-align_left textcss">
+                                 <aura:if isTrue="{!!v.viewPropertyFlag}">  
+                                <a href="" class="tbl-btn" id="{!obj.Property__c}" onclick="{!c.ViewProperty}" ><img
+                                  src="{!$Resource.TDSTheme + '/assets/img/View_icon.svg'}"
+                                  alt="View Icon" /> View / Edit</a >
+                                </aura:if>
+                                </td>
+                          </tr>
+                      </aura:iteration>
+                          
+                            </aura:if>
+                    </tbody>
+                    <br />
+                      
+                    <div style="margin-left:200px!important;">
+                         <aura:if isTrue="{!!v.bNoRecordsFound}">
+                        <nav aria-label="Page navigation">
+							<ul class="pagination">
+								<aura:if isTrue="{!or(v.startPage == 0,v.PaginationList.length==0)}">
+									<li class="page-item disabled"><a class="page-link" href="" >Previous</a></li>
+									<aura:set attribute="else">
+										<li class="page-item"><a class="page-link" id="previousId" style="width :120px" href="" onclick="{!c.navigation}">Previous</a></li>
+									</aura:set>
+								</aura:if>
+								 <li class="page-item"><a class="page-link" href="" style="width :120px">Page {!v.currentPage} out of {!v.totalPagesCount}</a></li>
+								<aura:if isTrue="{!or((v.endPage + 1) >= v.totalRecordsCount,v.PaginationList.length==0 )}">
+									<li class="page-item disabled"><a class="page-link" href="" >Next</a></li>							
+									<aura:set attribute="else">
+										<li class="page-item"><a class="page-link" id="nextId" href="" onclick="{!c.navigation}">Next</a></li>
+									</aura:set>
+								</aura:if>
+							</ul>
+						</nav>
+                        </aura:if>
+                      <!--<lightning:button
+					  class="page-link"
+                        label="Previous"
+                        disabled="{!or(v.startPage == 0,v.PaginationList.length==0)}"
+                        onclick="{!c.navigation}"
+                        variant="brand"
+                        name="previous"
+                      />
+                      <span
+                        class="slds-badge slds-badge_lightest"
+                        style="margin-right: 10px;margin-left: 10px;"
+                      >
+                        Page {!v.currentPage} out of {!v.totalPagesCount}
+                      </span>
+                      <lightning:button
+					  class="page-link"
+                        label="Next"
+                        disabled="{!or((v.endPage + 1) >= v.totalRecordsCount,v.PaginationList.length==0 )}"
+                        onclick="{!c.navigation}"
+                        variant="brand"
+                        iconPosition="right"
+                        name="next"
+                      /> -->
+                    </div>
+                      <!--Pagination Buttons End -->
+                      <!-- Pagination HTML Start -->
+					  <!-- Pagination HTML Start -->
+						
+                      <!-- Pagination HTML End -->
+                  </table>
+                </div>
+              </div>
+            
+            </section>
+          </div>
+
+          <!-- Manage My Landlords-->
+       <div class="tab-pane fade" id="left_nav-sf-organisation" role="tabpanel" aria-labelledby="left_nav-sf-organisation-tab">
+     <!--    <c:EI_viewLandlord showViewPage="{!v.showViewPage}" fromParentComp="{!v.fromParentComp}" />-->
+          </div>
+        </div>
+      </div>
+       
+      <aura:renderif
+        isTrue="{!and(or(v.currentUser.User_Role__c == 'Disputes Administrator',v.currentUser.User_Role__c == 'Finance Administrator',v.currentUser.User_Role__c == 'View Only'),v.currentUser.Addition_Permission__c != 'Manage properties')}"
+      >
+      </aura:renderif>
+    </body>
+                </aura:set>
+        </aura:renderIf>
+  </html>
+</aura:component>

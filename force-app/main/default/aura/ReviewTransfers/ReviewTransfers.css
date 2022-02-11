@@ -1,0 +1,53 @@
+.THIS .dataTables_empty{
+    display:none!important;
+}
+
+.THIS .textbuttoncss {
+    text-transform: capitalize!important;
+}
+
+.THIS .tenant_cover_table .form-check-inline .main .geekmark{
+    top: -0.4rem!important;
+    right: -1.0rem!important;
+    bottom: .2rem!important;
+    left: auto;
+    height: 19px!important;
+    width: 19px!important;
+}
+
+.THIS .textcss{
+    font-family: Aller_regular!important;
+    text-align: left!important;
+    color: #212529!important;
+    font-weight: 400!important;
+    line-height: 1.5!important;
+    font-size: 15px!important;
+    border-top: none;
+    border-bottom: none;
+    padding: 8px 18px;
+}
+
+.THIS .headingtext{
+    text-align:left;
+    padding: 16px 18px;
+    border-bottom: none!important;
+    font-weight: bold;
+    background-color: #F5F6FA;
+    font-size: 15px!important;
+    line-height: 1.5;
+    color:#212529;
+    border-top: none!important;
+    font-family: Aller_regular;
+}
+
+.THIS .textcss1{
+    font-family: Aller_regular!important;
+    text-align: left!important;
+    color: #212529!important;
+    font-weight: 400!important;
+    line-height: 1.5!important;
+    font-size: 15px!important;
+    border-top: none;
+    border-bottom: none;
+    padding: 2px 14px;
+}

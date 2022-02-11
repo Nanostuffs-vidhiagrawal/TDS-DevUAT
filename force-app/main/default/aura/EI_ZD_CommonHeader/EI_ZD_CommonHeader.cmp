@@ -1,0 +1,83 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" 
+                controller="EI_ZD_CommonHeader_cc" access="global">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <aura:attribute type="String" name="userName" />
+    <aura:attribute type="String" name="pageName" />
+    <ltng:require scripts="{!$Resource.BackBtn}" />
+    <ltng:require styles="{!$Resource.EI_ZD_Assets  + '/css/custom.css'}" />
+    <ltng:require scripts="{!$Resource.EI_Inactivity}" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler  event="c:EI_ZD_refreshParentView" action="{!c.refreshParentViewEvent}"/>
+    
+    <!-- <div class="exampleHolder">
+        <lightning:spinner aura:id="mySpinner" variant="brand" size="large" />
+    </div> -->
+    
+            <div class="ZD_theme" id="scrollToHeader">
+                
+                
+                <!-- Navigation HTML Start -->
+                <nav class="custom-nav navbar navbar-expand-lg">
+                    <a class="navbar-brand" href="#">
+                        <img src="{!$Resource.EI_ZD_Assets  + '/img/ZD_logo.png'}" alt="TDS Logo" loading="lazy" />
+                    </a>
+                    
+                    <ul class="navbar-nav show-tab">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <img src="{!$Resource.EI_ZD_Assets  + '/img/User_Icon.png'}" alt="User Icon" />
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="" onclick="{!c.logout}">Logout</a>
+                                <a class="dropdown-item" href="http://app.zerodeposit.com/contact">Contact Us</a>
+                            </div>
+                        </li>
+                    </ul>
+                    
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"><img src="{!$Resource.EI_ZD_Assets  + '/img/Icon-menu.png'}" alt="Hamburger Icon" /></span>
+                    </button>
+                    
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <span class="navbar-text">
+                            <b><a href="https://app.zerodeposit.com/contact" target="_blank">Need help?</a></b> 
+                            <span>0333 200 2542 <br/> <a href="https://app.zerodeposit.com/contact"  target="_blank">Chat to us</a></span>
+                        </span>
+                        <ul class="navbar-nav hide-tab">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <img src="{!$Resource.EI_ZD_Assets  + '/img/User_Icon.png'}" alt="User Icon" />{!v.userName}
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <!-- <a class="dropdown-item" href="#">Login</a>
+                            <a class="dropdown-item" href="#">Sign Up</a>-->
+                                    <a class="dropdown-item" href="" onclick="{!c.logout}">Logout</a>
+                                    <a class="dropdown-item" href="http://app.zerodeposit.com/contact">Contact Us</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+                <!-- Navigation HTML End -->
+                <section class="percentage_completion">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <h4>{!v.pageName}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Tabs HTML Start -->
+                <nav class="custom-tab">
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <a class="nav-link active" id="sf-deposit-tab" href="" onclick="{!c.goToCliamSummary}" role="tab" aria-controls="sf-deposit" aria-selected="true">
+                            <img class="initial-state" src="{!$Resource.EI_ZD_Assets  + '/img/refund.png'}" alt="" />
+                            <img class="hover-state" src="{!$Resource.EI_ZD_Assets  + '/img/refund.png'}" alt="" />
+                            Claim summary
+                        </a>
+                    </div>
+                </nav>
+                
+            </div>
+</aura:component>

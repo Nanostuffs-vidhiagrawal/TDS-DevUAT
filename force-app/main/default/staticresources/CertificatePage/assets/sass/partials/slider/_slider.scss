@@ -1,0 +1,38 @@
+.resource_slider {
+	.slick-slide {
+		outline: 0;
+	}
+	ul 	{
+		&.slick-dots {
+			text-align: center;
+			li {
+				@include font_size(0);
+				@include space(padding, all, $zero);
+				display: inline-block;
+
+				button {
+					height: 1.4rem;
+					@include border_radius($half);
+					@include border(1px, solid, map-get($color, light_gray));
+					background-color: transparent;
+					@include space(margin, left, $s10); 
+					outline: $zero;
+				}  
+
+				&.slick-active {
+					button {
+						background-color: map-get($color, light_blue);
+						@include border(1px, solid, map-get($color, light_blue));
+						outline: $zero;
+					}
+				}
+			}
+		}
+	}
+}
+
+.three_column_overlay_slider {
+	.slick-slide {
+		outline: 0;
+	}
+}

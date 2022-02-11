@@ -1,0 +1,118 @@
+.table-container {
+    box-shadow: 0px 1px 4px #15223214;
+    @include border_radius($s05);
+    padding: 8px;
+    @include space(margin, bottom, $s25);
+    h3 {
+        @include font_size($xx_lg);
+        color: map-get($color, black);
+        font-family: $AllerRegular;
+    }
+}
+
+.no_navigation {
+	.dataTables_length, .dataTables_info, .dataTables_paginate {
+		display: none;
+	}
+}
+
+.no_space {
+	.dataTable {
+		margin-bottom: $zero !important;
+	}
+}
+
+.payment_total-row {
+    background-color: rgba(0, 0, 0, 0.15) !important;
+
+    td {
+        padding-bottom: $s15 !important;
+        padding-top: $s15 !important;
+    }
+}
+
+.payment_method-row {
+    background-color: rgba(0, 0, 0, 0.07) !important;
+
+    td {
+        padding-bottom: $s15 !important;
+        padding-top: $s15 !important;
+    }
+}
+
+.leftover_table {
+    @include font_size($below_base);
+    @include space(margin, top, $s30);
+    @include space(margin, bottom, $s30);
+
+    @include respond-below(sm) {
+        @include space(margin, top, $s20);
+        @include space(margin, bottom, $s20);
+    }
+
+    tr {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+        td {
+            @include space(padding, top, $s15);
+            @include space(padding, bottom, $s15);
+            @include space(padding, left, $s05);
+            @include space(padding, right, $s05);
+
+            p {
+                @include font_size($below_base);
+            }
+        }
+    }
+}
+
+.leftover_address {
+    table {
+        tr {
+            td {
+                &:first-child {
+                    width: 25%;
+                }
+
+                &:last-child {
+                    width: 43%;
+                    @include space(padding, right, $zero);
+                }
+
+                .download {
+                    float: left;
+                }
+            }
+        }
+    }
+}
+
+.account_table {
+    table {
+        tr {
+            th {
+                vertical-align: top;
+                padding-bottom: 15px;
+
+                @include respond-below(sm) {
+                    text-align: center;
+                }
+            }
+
+            td {
+                
+                @include respond-below(sm) {
+                    text-align: center;
+                    vertical-align: top;
+                }
+
+                .see-all {
+                    @include respond-below(sm) {
+                        min-width: 10.5rem;
+                        @include space(padding, all, $s05);
+                    }
+                }
+            }
+        }
+    }
+}

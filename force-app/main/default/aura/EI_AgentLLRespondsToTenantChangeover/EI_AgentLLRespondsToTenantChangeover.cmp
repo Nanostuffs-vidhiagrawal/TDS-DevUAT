@@ -1,0 +1,554 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes"
+                controller="EI_TenentChangeoverApx" access="global" >
+    
+    <aura:attribute name="alreadyregistertenant" type="Boolean" default="false" />
+    <aura:attribute name="registerTenant" type="Boolean" default="false" />
+    <aura:attribute name="showdepositlist" type="Boolean" default="true" />
+    <aura:attribute name="depositlist" type="Deposit__c[]" />
+    <aura:attribute name="selecteddeposit" type="Deposit__c[]" default="{ 'sobjectType': 'Deposit__c'}" />
+    
+    
+    <aura:attribute name="deptenantlist" type="List"/>
+    <aura:attribute name="selectedtenantids" type="List"/>
+    <aura:attribute name="olddepositid" type="string" />
+    
+    <aura:attribute name="tenantChangeOver" type="string" />
+    <aura:attribute name="loggedinTenant" type="string" />
+    <aura:attribute name="isSelectAll" type="Boolean" default="false"/>
+    <aura:attribute name="showalltenants" type="Boolean" default="false"/>
+    <aura:attribute name="changeovertenants" type="Boolean" default="false"/>
+    <aura:attribute name="updatechangeovertenant" type="Deposit_Allocation__c[]" />
+    <aura:attribute name="sumofchangeoveramount" type="integer"  />
+    <aura:attribute name="newdepositstartdate" type="date" />
+    <aura:attribute name="newdepositamount" type="integer" />
+    <aura:attribute name="newtenantnumber" type="integer" />
+    <aura:attribute name="startdatecheck" type="Boolean" default="false"/>
+    <!-- <aura:attribute name="newtenancycomponent" type="Boolean" default="false"/> -->
+    <aura:attribute name="manualstartdateinsert" type="Boolean" default="false"/>
+    <aura:attribute name="startdatebox" type="Boolean" default="false"/>
+    <aura:attribute name="moretenantsection" type="Boolean" default="false"/>
+    <aura:attribute name="tenantItemList" type="list" access="global" />
+    <aura:attribute name="itemListlength" type="Integer" access="global" />
+    <aura:attribute name="arrObj" type="object[]" />
+    <aura:attribute name="viewCorrectButton" type="Boolean" default="false"/>
+    <aura:attribute name="tenantChange" type="Boolean" default="false"/>
+    
+    <aura:attribute name="startdateDay" type="string" />
+    <aura:attribute name="startdateMonth" type="string" />
+    <aura:attribute name="startdateYear" type="string" />
+    <aura:attribute name="isWin2BtnDisabled" type="Boolean" default="true" />
+    
+    <aura:attribute name="totalChangeoverAmt" type="Decimal"/>
+    
+    <!-- <aura:attribute name="windowNum" type="String" default="Window 1" /> -->
+    <aura:attribute name="isWindow1" type="Boolean" default="true" />
+    <aura:attribute name="showContinueBttn" type="Boolean" default="true" />
+
+    <!-- Bootstrap Errors Window 1 -->
+    <aura:attribute name="isValidTenantCount" type="Boolean" default="false" />
+    <aura:attribute name="isValidEnteredAmt" type="Boolean" default="false" />
+    <aura:attribute name="isValidTotalAmt" type="Boolean" default="false" />
+    <aura:attribute name="isValidTotalTenants" type="Boolean" default="false" />
+    
+    <!-- Bootstrap Errors Window 2 -->
+    <aura:attribute name="isValidTenancyStartDate" type="Boolean" default="false" />
+    <aura:attribute name="isValidDepositAmt" type="Boolean" default="false" />
+    <aura:attribute name="isValidNumOfTenants" type="Boolean" default="false" />
+    <aura:attribute name="isValidMaxTenants" type="Boolean" default="false" />
+    
+    <aura:attribute name="registertenantbutton" type="Boolean" default="true" />
+    
+    <aura:attribute name="isCorrect" type="Boolean" default="false" />
+    <aura:attribute name="upperSection" type="Boolean" default="true" />
+    <aura:attribute name="nextWindow2" type="Boolean" default="false" />
+    <aura:attribute name="totalNoOfChangeoverTenants" type="Integer" />
+    
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
+    
+    <lightning:navigation aura:id="navService" />
+    
+    <aura:handler name="EI_Tenantchangeoverdetails" event="c:EI_Tenantchangeoverdetails" action="{!c.EI_Tenantchangeoverdetails}" />
+    
+    <ltng:require styles="{!$Resource.TDSTheme+'/assets/css/custom.css'}"
+                  scripts="{!join(',',
+                           $Resource.TDSTheme+'/assets/js/plugin.min.js',
+                           $Resource.TDSTheme+'/assets/js/custom.js')}"
+                  /> 
+    <!-- <aura:if isTrue="{!v.showalltenants}"> --> 
+    
+    
+    
+    <!--*************************************************************************************
+		*************************************************************************************
+		************************************************************************************* -->
+    <aura:attribute name="blankAllocationList" type="List" access="global"/>
+    <aura:attribute name="showAddressFlag" type="Boolean" default = "false"/>
+    <aura:handler name="cmpEvent" event="c:ceEvent" action="{!c.handleComponentEvent}"/>
+    
+    <div class="tab-content custom-tab-content" id="sf-tabContent">
+        
+        <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+            <div class="deposit-agent">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                             <h2>Tenant changeover</h2>
+                            <aura:if isTrue="{!v.upperSection}">
+                                <a href="" class="go-back" onclick="{!c.handleGoBack}">
+                                    <img src="{!$Resource.TDSTheme+'/assets/img/md-arrow-dropleft.png'}" alt="Back Icon"></img>
+                                    Go back 
+                                </a>
+                                <aura:set attribute="else">
+                                    <a href="" class="go-back" onclick="{!c.backOnly}">
+                                        <img src="{!$Resource.TDSTheme+'/assets/img/md-arrow-dropleft.png'}" alt="Back Icon"></img>
+                                        Go back 
+                                    </a>
+                                </aura:set>
+                            </aura:if>
+                            
+                            <aura:if isTrue="{!v.upperSection}">
+                                <section class="deposit_steps tf-other-prop">
+                                    <div class="deposit_steps_detail">
+                                        <div class="row">
+                                            <div class="col-xs-12 col-md-12 col-lg-8">
+                                                <div class="deposit_box_container">
+                                                    <!-- <div class="deposit_box ">
+                                                        <div>
+                                                            <h5 class="text-secondary">Deposit Status:</h5>
+                                                            <h6>Deposit held</h6>
+                                                        </div>
+                                                    </div> -->
+                                                    <div class="deposit_box bg-blue-light">
+                                                        <div>
+                                                            <h5 class="text-secondary">Total deposit held:</h5>
+                                                            <!-- <h6>&pound;{!v.deptenantlist[0].Depositobject.Deposit_Amount__c}</h6> -->
+                                                            <h6>&pound;{!v.deptenantlist[0].Depositobject.Protected_Amount__c}</h6>
+                                                        </div>
+                                                        <!-- <img src="../assets/img/pound_icon.png" alt="" /> -->
+                                                        <img src="{!$Resource.TDSTheme+'/assets/img/pound_icon.png'}" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <form>
+                                            <aura:if isTrue="{!v.showAddressFlag}">
+                                                <c:EI_ForwardingAddress depositId = "{!v.depositRecordId}" allocationList = "{!v.blankAllocationList}"/>
+                                            </aura:if>
+                                            <aura:if isTrue="{!!v.showAddressFlag}">
+                                            
+                                                <div class="form-group row">
+                                                    <p class="col-sm-10 col-lg-8">SafeDeposits Scotland has been told that the following tenant(s) have moved out and should receive the following split(s) of the deposit.</p>
+                                                </div>
+                                                
+                                                <div class="form-group row">
+                                                    <div class="col-md-10 col-lg-6">
+                                                        <div class="request_table">
+                                                            <label class="col-form-label">Repayment to tenant(s)</label>
+                                                            <div class="request_table_box">{!v.deptenantlist}
+                                                                <aura:iteration items="{!v.updatechangeovertenant}" var="deptAlloc">
+                                                                    <p class="request_table_text">
+                                                                        <span>{!deptAlloc.Deposit_Holder__r.Name}</span>
+                                                                        <span>&#163;{!deptAlloc.Tenencychangeoveramount__c}</span>
+                                                                    </p>
+                                                                </aura:iteration>
+                                                            </div>
+                                                            <div class="request_table_total">
+                                                                <p class="request_table_text">
+                                                                    <span>Total</span>
+                                                                    <span>&#163;{!v.totalChangeoverAmt}</span>
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group row">
+                                                    <div class="col-sm-10 col-lg-6">
+                                                        <label>Is this correct?</label>
+                                                        <div>
+                                                            <!-- <a id="property_yes" class="learn-more mr-3">Yes</a>
+                                                            <a id="property_no" class="learn-more">No</a> -->
+                                                            <lightning:button aura:id="firstyes" label="Yes" onclick="{!c.handleYes}" class="learn-more"/>
+                                                            <lightning:button aura:id="firstno" label="No" onclick="{!c.handleNo}" class="learn-more"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                
+                                                <!-- If the agent/landlord selects correct start -->
+                                                <aura:if isTrue="{!v.isCorrect}">
+                                                    <div class="form-group row">
+                                                        <div class="tenant_cover_deposit-detail">
+                                                            <!-- Bootstrap Errors for Window 2 Start -->
+                                                            <aura:if isTrue="{!v.isValidDepositAmt}">
+                                                                <div id="validDepositAmtAlert" class="alert alert-danger alert-dismissible fade show" >
+                                                                    <strong>Error!</strong> Please enter valid deposit amount.
+                                                                    <button type="button"
+                                                                            class="close"
+                                                                            onclick="{!c.hideBootstrapErrors}"
+                                                                            name="depositAmount"
+                                                                            >&times;
+                                                                    </button>
+                                                                </div>                 
+                                                            </aura:if>
+                                                            <aura:if isTrue="{!v.isValidNumOfTenants}">
+                                                                <div id="validNumOfTenantsAlert" class="alert alert-danger alert-dismissible fade show" >
+                                                                    <strong>Error!</strong> No. of tenants cannot be less then remaining tenants of previous deposit.
+                                                                    <button type="button"
+                                                                            class="close"
+                                                                            onclick="{!c.hideBootstrapErrors}"
+                                                                            name="numOfTenants"
+                                                                            >&times;
+                                                                    </button>
+                                                                </div>                 
+                                                            </aura:if>
+                                                            <aura:if isTrue="{!v.isValidMaxTenants}">
+                                                                <div id="validMaxTenantsAlert" class="alert alert-danger alert-dismissible fade show" >
+                                                                    <strong>Error!</strong> No. of tenants exceed than the limit.
+                                                                    <button type="button"
+                                                                            class="close"
+                                                                            onclick="{!c.hideBootstrapErrors}"
+                                                                            name="maxTenants"
+                                                                            >&times;
+                                                                    </button>
+                                                                </div>                 
+                                                            </aura:if>
+                                                            <!-- Bootstrap Errors for Window 2 End -->
+                                                            
+                                                            <h5>Deposit details</h5>
+                                                            <div class="tenant_cover_table"> 
+                                                                <div class="form-check form-check-inline">
+                                                                    <label class="main">Tenancy start date has not changed
+                                                                        <!-- <lightning:input type="checkbox" aura:id="checkBoxId" label="Tenancy start date has not changed" name="checkbox" onchange="{!c.onClickCheckBox}"/> -->
+                                                                        <input type="checkbox"  onchange="{!c.onClickCheckBox}" id="checkBoxId"/> 
+                                                                        <span class="geekmark"></span> 
+                                                                    </label> 
+                                                                </div>
+                                                            </div>
+                                                            <form>
+                                                                <div class="form-group row">
+                                                                    <label for="Tenancy_start" class="col-sm-12 col-form-label">Tenancy start date</label>
+                                                                    <div class="col-xs-16 col-sm-4 col-lg-3">
+                                                                        <select class="form-control" id="startDateId" name="day">
+                                                                            <option value="" disabled="true" selected="true"
+                                                                                    >Select Day</option>
+                                                                            <option id="drd01" value="01">1</option>
+                                                                            <option id="drd02" value="02">2</option>
+                                                                            <option id="drd03" value="03">3</option>
+                                                                            <option id="drd04" value="04">4</option>
+                                                                            <option id="drd05" value="05">5</option>
+                                                                            <option id="drd06" value="06">6</option>
+                                                                            <option id="drd07" value="07">7</option>
+                                                                            <option id="drd08" value="08">8</option>
+                                                                            <option id="drd09" value="09">9</option>
+                                                                            <option id="drd10" value="10">10</option>
+                                                                            <option id="drd11" value="11">11</option>
+                                                                            <option id="drd12" value="12">12</option>
+                                                                            <option id="drd13" value="13">13</option>
+                                                                            <option id="drd14" value="14">14</option>
+                                                                            <option id="drd15" value="15">15</option>
+                                                                            <option id="drd16" value="16">16</option>
+                                                                            <option id="drd17" value="17">17</option>
+                                                                            <option id="drd18" value="18">18</option>
+                                                                            <option id="drd19" value="19">19</option>
+                                                                            <option id="drd20" value="20">20</option>
+                                                                            <option id="drd21" value="21">21</option>
+                                                                            <option id="drd22" value="22">22</option>
+                                                                            <option id="drd23" value="23">23</option>
+                                                                            <option id="drd24" value="24">24</option>
+                                                                            <option id="drd25" value="25">25</option>
+                                                                            <option id="drd26" value="26">26</option>
+                                                                            <option id="drd27" value="27">27</option>
+                                                                            <option id="drd28" value="28">28</option>
+                                                                            <option id="drd29" value="29">29</option>
+                                                                            <option id="drd30" value="30">30</option>
+                                                                            <option id="drd31" value="31">31</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="col-xs-16 col-sm-4 col-lg-3">
+                                                                        <select class="form-control " id="startMonthId" name="month">
+                                                                            <option value="" disabled="true" selected="true"
+                                                                                    >Select Month</option
+                                                                                >
+                                                                            <option id="drm01" value="01">January</option>
+                                                                            <option id="drm02" value="02">February</option>
+                                                                            <option id="drm03" value="03">March</option>
+                                                                            <option id="drm04" value="04">April</option>
+                                                                            <option id="drm05" value="05">May</option>
+                                                                            <option id="drm06" value="06">June</option>
+                                                                            <option id="drm07" value="07">July</option>
+                                                                            <option id="drm08" value="08">August</option>
+                                                                            <option id="drm09" value="09">September</option>
+                                                                            <option id="drm10" value="10">October</option>
+                                                                            <option id="drm11" value="11">November</option>
+                                                                            <option id="drm12" value="12">December</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <div class="col-xs-16 col-sm-4 col-lg-3">
+                                                                        <select class="form-control" id="startYearId" name="year">
+                                                                            <option value="" disabled="true" selected="true"
+                                                                                    >Select Year</option
+                                                                                >
+                                                                            <option id="dry2015" value="2015">2015</option>
+                                                                            <option id="dry2016" value="2016">2016</option>
+                                                                            <option id="dry2017" value="2017">2017</option>
+                                                                            <option id="dry2018" value="2018">2018</option>
+                                                                            <option id="dry2019" value="2019">2019</option>
+                                                                            <option id="dry2020" value="2020">2020</option>
+                                                                            <option id="dry2021" value="2021">2021</option>
+                                                                            <option id="dry2022" value="2022">2022</option>
+                                                                            <option id="dry2023" value="2023">2023</option>
+                                                                            <option id="dry2024" value="2024">2024</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                
+                                                                <aura:if isTrue="{!v.isValidTenancyStartDate}">
+                                                                    <p class="mb-0 ml-2 mt-3 text-danger"
+                                                                       >Please enter a valid date
+                                                                    </p><br/>
+                                                                </aura:if>  
+                                                                <div class="form-group row">
+                                                                    <label for="Amount_to_protect" class="col-sm-12 col-form-label">Deposit amount</label>
+                                                                    <div class="col-sm-12 col-lg-8">
+                                                                        <!-- <input type="number" class="form-control" id="Amount_to_protect" 
+                                                                        placeholder="&#163;" /> -->
+                                                                        <lightning:input type="number" placeholder="£" formatter="currency" step="0.01" name="input2" 
+                                                                                         aura:id="newtenancy" value="{!v.newdepositamount}" />
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <label for="Deposit_reference" class="col-sm-12 col-form-label">Number of tenants</label>
+                                                                    <div class="col-sm-12 col-lg-8">
+                                                                        <!-- <input type="number" class="form-control" id="Deposit_reference" /> -->
+                                                                        <lightning:input type="number" name="input3" aura:id="newtenancy" 
+                                                                                         value="{!v.newtenantnumber}" />
+                                                                    </div>
+                                                                </div>
+                                                                
+                                                                <div class="form-group row">
+                                                                    <div class="col-sm-10 col-lg-8">
+                                                                        <!-- <button type="submit" class="see-all">Submit</button> -->
+                                                                        <lightning:button variant="brand" label="Continue" class="see-all"
+                                                                                          title="Continue" onclick="{!c.createdeposit}"/>
+                                                                    </div>
+                                                                </div>
+                                                                
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </aura:if>
+                                                <!-- If the agent/landlord selects correct end -->
+                                            </aura:if>
+                                        </form>
+                                        
+                                    </div>
+                                </section>
+                            </aura:if>
+                            
+                            <aura:if isTrue="{!v.nextWindow2}">
+                                <section class="deposit_steps tf-other-prop">
+                                    <div class="deposit_steps_detail">
+                                        
+                                        <form> 
+                                            
+                                            <!-- Continue to 2nd Window Start -->
+                                            
+                                            <section class="deposit_steps">
+                                                <div class="deposit_steps_detail space-top">
+                                                    <form>
+                                                        <aura:if isTrue="{!v.registertenantbutton}">
+                                                            <div class="form-group row">
+                                                                <!-- <label class="col-sm-4 col-form-label">Have you registered the new tenants in a deposit already?</label> -->
+                                                                <label class="col-sm-4 col-form-label">If you have received a deposit for any incoming tenant(s), 
+                                                                    have you already protected that amount under a separate deposit protection? 
+                                                                    If so, you can you merge it with this deposit.
+                                                                </label>
+                                                                <div class="col-sm-8">
+                                                                    <!-- <a class="learn-more">Yes</a>
+                                                  					<a class="learn-more">No</a> -->
+                                                                    <lightning:button label="Yes" aura:id="secondYes" variant="brand" class="learn-more" 
+                                                                                      onclick="{!c.clickYes}" />
+                                                                    <lightning:button label="No" aura:id="secondNo" variant="brand" class="learn-more" 
+                                                                                      onclick="{!c.clickNo}" />
+                                                                </div>
+                                                            </div>
+                                                        </aura:if>
+                                                        
+                                                        <!-- Window 2 YES functionality Start -->
+                                                        <aura:if isTrue="{!v.alreadyregistertenant}">
+                                                            <div class="form-group row">
+                                                                <label for="landlord" class="col-xs-12 col-sm-4 col-lg-4 col-form-label">
+                                                                    Search for the deposit to link the tenants with the existing tenant(s)
+                                                                </label>
+                                                                <!--<div class="col-xs-12 col-sm-8 col-lg-7"> -->
+                                                                <div class="col-sm-8 col-lg-7">
+                                                                    <label for="landlord" class="col-form-label">Search deposit</label>
+                                                                    <!-- <select class="form-control" id="landlord" >
+                                                                    <option>EW1234567 - 1 The Road, HP2 7DW</option>
+                                                                    <option>option01</option>
+                                                                    <option>option02</option>
+                                                                    <option>option03</option>
+                                                                    <option>option04</option>
+                                                                </select> -->
+                                                                    <div class="slds-form-element">
+                                                                        <div class="slds-form-element__control">
+                                                                            <div class="slds-combobox_container">
+                                                                                <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open"
+                                                                                     aria-expanded="true" aria-haspopup="listbox"
+                                                                                     role="combobox">
+                                                                                    <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right"
+                                                                                         role="none">
+                                                                                        <lightning:input type="text" name="Deposit" class="form-control1"
+                                                                                                         aura:id="searchField" placeholder="Search"
+                                                                                                         onkeyup="{!c.searchKeyChange}"
+                                                                                                         onclick="{!c.searchKeyChange}" /> 
+                                                                                        <!-- onblur="{!c.hideDepositList}" onblur="{!c.selectedRecord}" -->
+                                                                                        <span class=" slds-icon_container slds-icon-utility-search slds-input__icon
+                                                                                                     slds-input__icon_right">
+                                                                                        </span>
+                                                                                    </div>
+                                                                                    <aura:if isTrue="{!and(v.depositlist[0].Id!=null,v.showdepositlist==true)}">
+                                                                                        <div id="listbox-id-2"
+                                                                                             class="slds-dropdown slds-dropdown_length-with-icon-7 slds-dropdown_fluid"
+                                                                                             role="listbox">
+                                                                                            <ul class="slds-listbox slds-listbox_vertical"
+                                                                                                role="presentation">
+                                                                                                <aura:iteration items="{!v.depositlist}" var="p">
+                                                                                                    <li role="presentation" class="slds-listbox__item">
+                                                                                                        <div id="option1"
+                                                                                                             class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta"
+                                                                                                             role="option">
+                                                                                                            <span class="slds-media__figure slds-listbox__option-icon">
+                                                                                                                <span class="slds-icon_container slds-icon-standard-account">
+                                                                                                                </span>
+                                                                                                            </span>
+                                                                                                            <span class="slds-media__body">
+                                                                                                                <span onclick="{!c.selectedRecord}"
+                                                                                                                      id="{!p.Id}"
+                                                                                                                      class="slds-listbox__option-text slds-listbox__option-text_entity">{!p.Name}</span>
+                                                                                                            </span>
+                                                                                                        </div>
+                                                                                                    </li>
+                                                                                                </aura:iteration>
+                                                                                            </ul>
+                                                                                        </div>
+                                                                                    </aura:if>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    
+                                                                    <div class="slds-card slds-m-top_small">
+                                                                        <aura:iteration items="{!v.selecteddeposit}" var="p">
+                                                                            <div style="border: 1px solid purple;">
+                                                                                <lightning:card variant="base" title="{!p.Name}" iconName="standard:contact">
+                                                                                    <div>
+                                                                                        <p class="slds-p-horizontal_small">
+                                                                                            <div class="slds-card__body">
+                                                                                                <p><b>Address</b> :
+                                                                                                    <ui:outputText
+                                                                                                                   value="{!p.Property_Address__c}" />
+                                                                                                </p>
+                                                                                            </div>
+                                                                                            <!-- <aura:if isTrue="{!v.Livedeposit}">
+                                                                                            <div aura:id="depositWarning" style="color: orange; ">
+                                                                                                A deposit is already protected for this property.
+                                                                                                You can protect an additional deposit for a different tenancy.
+                                                                                                Would you like to continue?
+                                                                                            </div>
+                                                                                        </aura:if>-->
+                                                                                        </p>
+                                                                                    </div>
+                                                                                </lightning:card>
+                                                                            </div>
+                                                                        </aura:iteration>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <div class="col-sm-12 col-lg-11 text-right">
+                                                                    <!-- <button type="submit" class="see-all">Submit</button>  
+                                                                	<lightning:button variant="brand" label="Submit" title="Submit" 
+                                                                                  disabled="{!v.selecteddeposit.length==0}" 
+                                                                                  class="see-all" onclick="{!c.dochangeover2}" /> -->
+                                                                    <lightning:button variant="brand" label="Submit" title="Submit" 
+                                                                                      disabled="{!v.isWin2BtnDisabled}" 
+                                                                                      class="see-all" onclick="{!c.dochangeover2}" /> 
+                                                                </div>
+                                                            </div>
+                                                        </aura:if>
+                                                        <!-- Window 2 YES functionality End -->
+                                                        
+                                                        <!-- Window 2 NO functionality Start -->
+                                                        <aura:if isTrue="{!v.registerTenant}">
+                                                            <!-- <div class="form-group row">
+                                                            <div class="col-sm-12 col-lg-11 text-left">
+                                                                <strong>Deposit startdate</strong> :- {!v.newdepositstartdate}<br/>
+                                                                <strong>Deposit Amount</strong>:-{!v.newdepositamount}<br/>
+                                                                <strong>Total No. of Tenants</strong>:-{!v.newtenantnumber}
+                                                            </div>
+                                                        </div> -->
+                                                            <div>
+                                                                <!-- <lightning:card>
+                                                                <strong>Deposit startdate</strong> :- {!v.newdepositstartdate}<br/>
+                                                                <strong>Deposit Amount</strong>:-{!v.newdepositamount}<br/>
+                                                                <strong>Total No. of Tenants</strong>:-{!v.newtenantnumber}<br/>
+                                                            </lightning:card> -->
+                                                                <aura:iteration items="{!v.tenantItemList}" var="item">
+                                                                    <p class="slds-p-around_small">
+                                                                        <c:EI_TenantDetailsChangeover aura:id="childCmp"
+                                                                                                      cardTitle="{!'Additional Tenants ' + item + ' of ' + v.itemListlength}"  
+                                                                                                      arrObj="{!v.arrObj}" item="{!item}"
+                                                                                                      newdepositstartdate = "{!v.newdepositstartdate}" 
+                                                                                                      newdepositamount ="{!v.newdepositamount}"   
+                                                                                                      newtenantnumber="{!v.newtenantnumber}" 
+                                                                                                      olddepositid="{!v.olddepositid}"/>                      
+                                                                        
+                                                                    </p>
+                                                                </aura:iteration> 
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <div class="col-sm-12 col-lg-11 text-right">
+                                                                    <!-- <button type="submit" class="see-all">Submit</button> -->
+                                                                    <lightning:button variant="brand" label="Submit" title="Submit" 
+                                                                                      class="see-all win3btn" onclick="{!c.dochangeover3}" />
+                                                                </div>
+                                                            </div>
+                                                        </aura:if>
+                                                        <!-- Window 2 No functionality End -->
+                                                        
+                                                        <!-- <div class="form-group row">
+                                                        <div class="col-sm-12 col-lg-11 text-right">
+                                                            <button type="submit" class="see-all">Submit</button>
+                                                        </div>
+                                                    </div> -->
+                                                    </form>
+                                                </div>
+                                            </section>
+                                            
+                                            <!-- Continue to 2nd Window End -->
+                                            
+                                            <!-- <div class="form-group row">
+                                                <div class="col-sm-10 col-lg-8">
+                                                    <lightning:button variant="brand" label="Continue111" class="see-all"
+                                                                      title="Continue" onclick="{!c.createdeposit}"/>
+                                                </div>
+                                            </div> -->
+                                            
+                                        </form>
+                                        
+                                    </div>
+                                </section>
+                            </aura:if>    
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+</aura:component>

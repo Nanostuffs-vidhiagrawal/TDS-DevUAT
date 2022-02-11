@@ -1,0 +1,27 @@
+.contact_safeDeposits {
+	.two_column_layout {
+		@include space(padding, bottom, $s75);
+
+		@include respond-below(sm) {
+			@include space(padding, bottom, $s25);
+		}
+	}
+
+	.overlay-box-container {
+		@include space(padding, bottom, $s35);
+		@include space(padding, top, $s35);
+
+		@include respond-below(sm) {
+			@include space(padding, bottom, $s15);
+			@include space(padding, top, $s15);
+		}
+	}
+
+	hr {
+		@include space(margin, bottom, $s75);
+
+		@include respond-below(sm) {
+			@include space(margin, bottom, $s25);
+		}
+	}
+}

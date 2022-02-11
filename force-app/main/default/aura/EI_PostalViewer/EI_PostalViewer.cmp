@@ -1,0 +1,59 @@
+<aura:component controller="EI_PostalViewerController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    
+    <aura:attribute name="MessageData" type="List" />
+    <aura:attribute name="EventList" type="List" />
+    <aura:attribute name="openedCount" type="Integer" default = "0"/>
+    
+    <aura:attribute name="data" type="Object"/>
+    <aura:attribute name="columns" type="List"/> 
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
+    <aura:attribute name="activeSectionsMessage" type="String" default="" />
+    <aura:attribute name="spinner" type="boolean" default="true"/>
+    <!--loading spinner start--> 
+    <aura:if isTrue="{!v.spinner}">
+      <div class="exampleHolder">
+         <lightning:spinner alternativeText="Loading" size="large" />
+      </div>
+    </aura:if>
+   <!-- Loading spinner end-->
+    <lightning:accordion aura:id="accordion" >
+        <aura:iteration items="{!v.MessageData}" var="item">
+            <lightning:accordionSection name="{!item.Message_Id__c}" label="{!item.Contact__r.Name+' - '+item.Subject__c}">
+                <div class="slds-size--1-of-2 slds-m-around--x-small">
+
+
+                    
+
+                    <table class="slds-table slds-table_bordered slds-table_col-bordered .slds-has-flexi-truncate" aria-labelledby="element-with-table-label other-element-with-table-label">
+                        <thead>
+                            <tr>
+                              <th class="" scope="col">
+                                 <div class="slds-truncate">Message</div>
+                              </th>
+                              <th class="" scope="col">
+                                 <div class="slds-truncate">Contact Name</div>
+                              </th>
+                              <th class="" scope="col">
+                                 <div class="slds-truncate">Content</div>
+                              </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                           
+                            <tr class="slds-hint-parent">
+                                <td><a href="{!'/one/one.app?#/sObject/'+ item.Id + '/view'}" target="_blank" tabindex="-1">View Message</a></td>
+                                <td>{!item.Contact__r.Name}</td>
+                                <td><ui:outputCheckbox  class="slds-checkbox" value="{!item.Content_Populated__c}" /></td>
+
+                                
+                            </tr>
+                        </tbody>
+                        
+                    </table>
+                    
+                </div>
+            </lightning:accordionSection>
+        </aura:iteration>
+    </lightning:accordion>
+       
+</aura:component>

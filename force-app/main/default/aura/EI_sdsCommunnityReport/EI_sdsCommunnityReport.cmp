@@ -1,0 +1,81 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+                  
+    
+     <lightning:navigation aura:id="navService" />
+    <div class="table-container my-option-table">
+        <table  class="slds-table slds-table--striped" style="table-layout: fixed;">
+            <thead>
+                <tr>
+                    <th class="headingtext"><h5> Report name</h5></th>
+                    <th class="headingtext" ><h5>Description of report</h5></th>                              
+                </tr>
+            </thead>  
+            <tbody>
+                <tr class="slds-hint-parent">
+                    <td class="slds-cell-wrap textcss" style="font-size:16px; padding-left:18px" data-label="Report name" scope="row">
+                        <div class="slds-truncate" title="Cloudhub">
+                            <a href="" tabindex="-1" onclick="{!c.historicDeposite}">Historic deposit repayments</a>
+                        </div>
+                    </td>
+                    <td class="slds-cell-wrap textcss" style="font-size:16px;padding-left:18px"  data-label="Account Name">
+                        <div class="slds-truncate" title="Cloudhub">This report shows your past deposits and how the funds were distributed <br/> at the end of the tenancy.</div>
+                    </td>
+                </tr>
+                <tr class="slds-hint-parent">                                        
+                    <td class="slds-cell-wrap textcss" style="font-size:16px; padding-left:18px" data-label="Report name" scope="row">
+                        <div class="slds-truncate" title="Cloudhub">
+                            <a href="" tabindex="-1" onclick="{!c.closedDeposits}"> Closed deposits</a>
+                        </div>
+                    </td>
+                    <td  class="slds-cell-wrap textcss" style="font-size:16px;padding-left:18px" data-label="Account Name">
+                        <div class="slds-truncate" title="Cloudhub">This report shows you all of your closed deposits.</div>
+                    </td>                                         
+                </tr> 
+                
+                <tr class="slds-hint-parent"> 
+                    <td  class="slds-cell-wrap textcss" style="font-size:16px; padding-left:18px" data-label="Report name" scope="row">
+                        <div class="slds-truncate" title="Cloudhub">
+                            <a href="" tabindex="-1" onclick="{!c.depositInfoByStatus}">Deposit info by status</a>
+                        </div>
+                    </td>
+                    <td class="slds-cell-wrap textcss" style="font-size:16px;padding-left:18px" data-label="Account Name">
+                        <div class="slds-truncate" title="Cloudhub">This report allows you to view all of the deposits that you currently have in <br/> each individual stage 
+                            (i.e. Registered not paid, Deposit held, Repayment <br/> requested by one party).</div>
+                    </td>
+                </tr>  
+                
+                <tr class="slds-hint-parent"> 
+                    <td class="slds-cell-wrap textcss" style="font-size:16px; padding-left:18px" data-label="Report name" scope="row">
+                        <div class="slds-truncate" title="Cloudhub">
+                            <a href="" tabindex="-1" onclick="{!c.archivedDeposits}">Archived deposits</a>
+                        </div>
+                    </td>
+                    <td class="slds-cell-wrap textcss" style="font-size:16px;padding-left:18px" data-label="Account Name">
+                        <div class="slds-truncate" title="Cloudhub">This report shows you your deposits with the status of ‘Deposit repayments <br/> concluded in the last year' and how the funds were distributed at the end <br/> of the tenancy. You can adjust the date range this report displays.</div>
+                    </td>                                     
+                    
+                </tr>
+                
+                <tr class="slds-hint-parent"> 
+                    <td class="slds-cell-wrap textcss" style="font-size:16px; padding-left:18px" data-label="Report name" scope="row">
+                        <div class="slds-truncate" title="Cloudhub">
+                            <a href="" tabindex="-1" onclick="{!c.paymentsToYou}">Payments to you</a>
+                        </div>
+                    </td>
+                    <td class="slds-cell-wrap textcss" style="font-size:16px;padding-left:18px" data-label="Account Name">
+                        <div class="slds-truncate" title="Cloudhub">This report shows you payments that SafeDeposits has made to you. It  <br/>includes reference numbers to help  you identify which deposit<br/> the payment related to.</div>
+                    </td>                                     
+                    
+                </tr> 
+                
+                
+            </tbody>
+            
+            
+            
+        </table>
+    </div>
+   
+    
+    
+</aura:component>

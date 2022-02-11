@@ -1,0 +1,296 @@
+.custom-tab {
+	@include font_size($above_base);
+	box-shadow: 0px 3px 2px #00000029;
+
+	.nav-tabs {
+		max-width: $container_size !important;
+		width: $full !important; 
+		border: none;
+		margin: 0 auto;
+		@include space(padding, right, $s15);
+		@include space(padding, left, $s15);
+
+		a {
+			&.nav-link {
+				@include respond-above(sm) {
+					@include space(margin, right, $s35);
+				}
+
+				@include respond-below(xs) {
+					@include space(padding, left, $s10);
+					@include space(padding, right, $s10);
+					@include space(padding, bottom, $s10); 
+					@include space(padding, top, $s15); 
+				}
+
+				border: none;
+				border-bottom: 2px solid transparent;
+				@include space(padding, left, $s15);
+				@include space(padding, right, $s15);
+				@include space(padding, top, $s15);
+				@include space(padding, bottom, $s15);
+				color: map-get($color, gray);
+				//transition: 0.3s;
+				background-repeat: no-repeat;
+  				background-position-y: center;
+  				background-position-x: $s15;
+
+				&.active, &:hover {
+					border: none;
+					color: map-get($color, blue);
+					border-bottom: 2px solid map-get($color, blue);
+
+				}
+
+				&.active {
+					img {
+						&.hover-state {
+							display: inline-block !important;
+						}
+						&.initial-state {
+							display: none !important;
+						}
+					}
+				}
+
+				img {
+					&.hover-state {
+						display: none;
+					}
+				}
+
+				@include respond-below(xs) {
+					@include font_size($below_base);
+				}
+
+				&.tab05 {
+  					background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24.457' height='21.5' viewBox='0 0 24.457 21.5'%3E%3Cpath id='iconfinder_04.Bank_290147' d='M24.926,25.5H1.532a.532.532,0,1,1,0-1.063H24.926a.532.532,0,0,1,0,1.063ZM8.975,20.183a.532.532,0,1,1,0,1.063H4.722a.532.532,0,1,1,0-1.063h.532V13.271H4.722a.532.532,0,0,1,0-1.063H8.975a.532.532,0,0,1,0,1.063H8.443v6.912Zm-1.6-6.912H6.317v6.912H7.38Zm7.975,6.912a.532.532,0,1,1,0,1.063H11.1a.532.532,0,1,1,0-1.063h.532V13.271H11.1a.532.532,0,0,1,0-1.063h4.253a.532.532,0,0,1,0,1.063h-.532v6.912Zm-1.6-6.912H12.7v6.912H13.76Zm10.1,9.57a.531.531,0,0,1-.532.532H3.127a.532.532,0,1,1,0-1.063h20.2A.531.531,0,0,1,23.862,22.842Zm-2.127-2.658a.532.532,0,0,1,0,1.063H17.482a.532.532,0,0,1,0-1.063h.532V13.271h-.532a.532.532,0,0,1,0-1.063h4.253a.532.532,0,0,1,0,1.063H21.2v6.912Zm-1.6-6.912H19.077v6.912H20.14ZM2.063,10.081,13.229,4l11.165,6.081v1.063H2.063Zm19.96,0L13.229,5.534,4.4,10.081Z' transform='translate(-1 -4)' fill='%23707070' fill-rule='evenodd'/%3E%3C/svg%3E");
+
+					&.active, &:hover {
+						background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24.457' height='21.5' viewBox='0 0 24.457 21.5'%3E%3Cpath id='iconfinder_04.Bank_290147' d='M24.926,25.5H1.532a.532.532,0,1,1,0-1.063H24.926a.532.532,0,0,1,0,1.063ZM8.975,20.183a.532.532,0,1,1,0,1.063H4.722a.532.532,0,1,1,0-1.063h.532V13.271H4.722a.532.532,0,0,1,0-1.063H8.975a.532.532,0,0,1,0,1.063H8.443v6.912Zm-1.6-6.912H6.317v6.912H7.38Zm7.975,6.912a.532.532,0,1,1,0,1.063H11.1a.532.532,0,1,1,0-1.063h.532V13.271H11.1a.532.532,0,0,1,0-1.063h4.253a.532.532,0,0,1,0,1.063h-.532v6.912Zm-1.6-6.912H12.7v6.912H13.76Zm10.1,9.57a.531.531,0,0,1-.532.532H3.127a.532.532,0,1,1,0-1.063h20.2A.531.531,0,0,1,23.862,22.842Zm-2.127-2.658a.532.532,0,0,1,0,1.063H17.482a.532.532,0,0,1,0-1.063h.532V13.271h-.532a.532.532,0,0,1,0-1.063h4.253a.532.532,0,0,1,0,1.063H21.2v6.912Zm-1.6-6.912H19.077v6.912H20.14ZM2.063,10.081,13.229,4l11.165,6.081v1.063H2.063Zm19.96,0L13.229,5.534,4.4,10.081Z' transform='translate(-1 -4)' fill='%23135191' fill-rule='evenodd'/%3E%3C/svg%3E");
+					}
+				}
+
+				&.tab06 {
+  					background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='21.775' height='22.696' viewBox='0 0 21.775 22.696'%3E%3Cg id='Group_11626' data-name='Group 11626' transform='translate(-299.5 0.5)'%3E%3Cpath id='Icon_material-event-note' data-name='Icon material-event-note' d='M19.687,11.263H8.839v2.17H19.687Zm2.17-7.594H20.772V1.5H18.6V3.67H9.924V1.5H7.754V3.67H6.67a2.16,2.16,0,0,0-2.159,2.17L4.5,21.027A2.169,2.169,0,0,0,6.67,23.2H21.857a2.176,2.176,0,0,0,2.17-2.17V5.839A2.176,2.176,0,0,0,21.857,3.67Zm0,17.357H6.67V9.094H21.857ZM16.433,15.6H8.839v2.17h7.594Z' transform='translate(295.5 -1.5)' fill='none' stroke='%235b5b5b' stroke-width='1'/%3E%3Cpath id='Icon_ionic-ios-close-circle' data-name='Icon ionic-ios-close-circle' d='M7.51,3.375A4.135,4.135,0,1,0,11.646,7.51,4.135,4.135,0,0,0,7.51,3.375ZM8.558,9.007,7.51,7.96,6.463,9.007a.318.318,0,1,1-.449-.449L7.061,7.51,6.013,6.463a.318.318,0,0,1,.449-.449L7.51,7.061,8.558,6.013a.318.318,0,0,1,.449.449L7.96,7.51,9.007,8.558a.319.319,0,0,1,0,.449A.316.316,0,0,1,8.558,9.007Z' transform='translate(309.629 -3.375)' fill='%23707070'/%3E%3C/g%3E%3C/svg%3E");
+
+					&.active, &:hover {
+						background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='21.775' height='22.696' viewBox='0 0 21.775 22.696'%3E%3Cg id='Group_11626' data-name='Group 11626' transform='translate(-299.5 0.5)'%3E%3Cpath id='Icon_material-event-note' data-name='Icon material-event-note' d='M19.687,11.263H8.839v2.17H19.687Zm2.17-7.594H20.772V1.5H18.6V3.67H9.924V1.5H7.754V3.67H6.67a2.16,2.16,0,0,0-2.159,2.17L4.5,21.027A2.169,2.169,0,0,0,6.67,23.2H21.857a2.176,2.176,0,0,0,2.17-2.17V5.839A2.176,2.176,0,0,0,21.857,3.67Zm0,17.357H6.67V9.094H21.857ZM16.433,15.6H8.839v2.17h7.594Z' transform='translate(295.5 -1.5)' fill='none' stroke='%235b5b5b' stroke-width='1'/%3E%3Cpath id='Icon_ionic-ios-close-circle' data-name='Icon ionic-ios-close-circle' d='M7.51,3.375A4.135,4.135,0,1,0,11.646,7.51,4.135,4.135,0,0,0,7.51,3.375ZM8.558,9.007,7.51,7.96,6.463,9.007a.318.318,0,1,1-.449-.449L7.061,7.51,6.013,6.463a.318.318,0,0,1,.449-.449L7.51,7.061,8.558,6.013a.318.318,0,0,1,.449.449L7.96,7.51,9.007,8.558a.319.319,0,0,1,0,.449A.316.316,0,0,1,8.558,9.007Z' transform='translate(309.629 -3.375)' fill='%23135191'/%3E%3C/g%3E%3C/svg%3E");
+					}
+				}
+			}
+		}
+	}
+}
+
+.custom-tab-content {
+	@include space(padding, top, $s15);
+}
+
+
+.secondary-tab-container {
+	margin: 0 auto;
+	@include space(margin, top, $s35);
+
+	@include respond-below(sm) {
+		@include space(margin, top, $s15);
+	}
+
+	max-width: $container_size !important;
+	width: $full !important;
+	@include space(padding, right, $s15);
+	@include space(padding, left, $s15);
+	@include flexbox();
+
+	@include respond-below(xs) {
+		display: block;
+	}
+
+	h5 {
+		color: map-get($color, light-black);
+		@include space(margin, bottom, $zero);
+	}
+
+	.left-custom-tab {
+		max-width: 24rem;
+		background-color: map-get($color, light-black);
+		@include space(padding, top, $s30);
+		
+		min-height: calc(100vh - 15rem);
+		@include border_radius($s15);
+		@include space(margin, right, $s35);
+
+		@include respond-below(md) {
+			@include space(margin, right, $s15);
+		}
+
+		@include respond-below(xs) {
+			max-width: 100%;
+			@include space(padding, bottom, $s30);
+		}
+
+		.nav {
+
+			&.nav-tabs {
+				border-bottom: none;
+			}
+
+			ul {
+				&.org-detail-list {
+					display: none;
+					@include space(padding, left, $s30);
+					background-color: rgba(50, 102, 158, 0.8);
+					@include space(padding, bottom, $s15);
+					@include space(padding, top, $s15);
+					@include space(margin, top, -$s05);
+					width: $full;
+					li {
+						a {
+							@include font_size($sm);
+							color: map-get($color, white);
+							@include flexbox();
+							@include flex_properties(flex-start, center, nowrap);
+							cursor: pointer;
+
+							span {
+								display: inline-block;
+								transform: rotate(90deg);
+								@include space(margin, right, $s05);
+								width: $zero; 
+								height: $zero; 
+								border-left: 4px solid transparent;
+								border-right: 4px solid transparent;
+
+								border-bottom: 4px solid map-get($color, white);
+							}
+						}
+					}
+				}
+			}
+
+			.nav-link {
+				@include font_size($base);
+				color: map-get($color, white);
+				@include space(padding, left, $s20);
+				@include space(padding, right, $s20);
+				@include space(padding, top, 0.8rem);
+				@include space(padding, bottom, $s10);
+				@include space(margin, bottom, $s05);
+				background-color: transparent;
+				border: none;
+				width: $full;
+				@include flexbox();
+				@include flex_properties(left, center, nowrap);
+
+				&.active {
+					background-color: map-get($color, blue);
+				}
+
+				img {
+					@include space(margin, right, $s10);
+				}
+			}
+		}
+	}
+
+	.custom-tab-content {
+		width: $full;
+
+		.table-container {
+			@include space(padding, right, $zero);
+			@include space(padding, left, $zero);
+			@include space(padding, top, $zero);
+
+			.dataTables_length, .dataTables_filter, .dataTables_info {
+				display: none !important;
+			}
+
+			.dataTables_wrapper {
+				.dataTables_paginate {
+					float: none;
+					text-align: center;
+				}
+			}
+
+			table.dataTable {
+				margin: 0 auto 10px;
+			}
+		}
+
+		.form-check {
+			label {
+				color: map-get($color, gray);
+				@include font_size($below_base);
+			}
+		}
+	}
+
+	.organization-details {
+		@include space(margin, bottom, $s35);
+		@include space(padding, bottom, $s25);
+		border-bottom: 1px solid map-get($gray_shade, gray04);
+
+		label {
+			& ~ span {
+				display: block;
+				@include space(padding, bottom, $s10);
+				color: map-get($banner-form-color, light-gray);
+				@include font_size($sm);
+			}
+		}
+
+		.see-all {
+			@include space(margin, left, $zero);
+		}
+
+		.learn-more, .see-all {
+			img {
+				@include space(margin, right, $s05);
+				@include space(margin, top, -$s05);
+			}
+		}
+
+		.dataTables_paginate {
+			display: none !important;
+		}
+
+		.table-container {
+			@include space (margin, top, $s45);
+
+			@include respond-below(sm) {
+				@include space (margin, top, $s15);
+			}
+		}
+
+		.custom-model {
+			text-align: left;
+		}
+	}
+
+	.property-details {
+		.see-all {
+			&:first-child {
+				@include space(margin, right, $s10);
+			}
+		}
+	}
+
+	.property-detail-table {
+		@include font_size($base);
+		@include space(padding, top, $s15);
+
+		.property-detail-row {
+			@include space(padding, top, $s10);
+			@include space(padding, bottom, $s10);
+			border-bottom: 1px solid map-get($gray_shade, gray04);
+
+			&:last-child {
+				border-bottom: none;
+			}
+
+			.col-sm-8 {
+				color: map-get($color, light_gray);
+			}
+		}
+	}
+}

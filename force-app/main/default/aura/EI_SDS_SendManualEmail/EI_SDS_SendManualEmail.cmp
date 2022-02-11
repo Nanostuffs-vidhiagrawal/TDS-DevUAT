@@ -1,0 +1,82 @@
+<aura:component controller="EI_SDS_SendManualEmailCls" implements="force:lightningQuickAction,force:hasRecordId" access="global">
+    
+    <aura:attribute name="PageSpinner" type="boolean" default="false"/>
+    
+    <aura:attribute name="listOfEmails" type="object[]" />
+    <aura:attribute name="wrapedEmail" type="object" />
+    <aura:attribute name="from" type="String"/>  <!-- ADR@tdsdisputeclaims.com -->
+    <aura:attribute name="to" type="list" default=""/>
+    <aura:attribute name="body" type="String" />
+    <aura:attribute name="subject" type="String" default=""/>
+    <aura:attribute name="toRecAccEmail" type="String" default=""/>
+    <aura:attribute name="toRecConId" type="String" default=""/>
+    <aura:attribute name="templates" type="list" default=""/>
+    <aura:attribute name="selectedTemplate" type="Integer" default=""/>
+    <aura:attribute name="filetype" type="List" default="['.png', '.jpg', '.jpeg', '.pdf', '.docx']" />
+    <aura:attribute name="base64" type="String[]"/>
+    <aura:attribute name="fileList" type="Object" default=""/>
+    <aura:attribute name="fileName" type="String[]" />
+    
+    <aura:attribute name="fromEmailError" type="Boolean" default="false"/>
+    <aura:attribute name="successMessage" type="Boolean" default="false"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" /> 
+ 
+    <aura:if isTrue="{!v.fromEmailError}">
+        <span style="color:red;">From Email is not valid.</span>
+    </aura:if>
+    
+    <lightning:navigation aura:id="navServiceLandlord" />
+    
+     <aura:renderIf isTrue="{!v.PageSpinner}">
+        <div class="exampleHolder">
+            <lightning:spinner alternativeText="Loading" size="large" />
+        </div>
+     </aura:renderIf>
+    <div class="tab-content custom-tab-content" id="sf-tabContent">      
+        <!--<lightning:input name="from" aura:id="from" disabled="false" value="{!v.from}" label="From" /><br/> -->
+        <lightning:select name="from" label="Select From Email" required="true" value="{!v.from}">
+            <option value="info@safedepositsscotland.com">info@safedepositsscotland.com</option>
+            <option value="deposits@safedepositsscotland.com">deposits@safedepositsscotland.com</option>
+            <option value="adr@safedepositsscotland.com">adr@safedepositsscotland.com</option>
+            <option value="client.relations@safedepositsscotland.com">client.relations@safedepositsscotland.com</option>
+        </lightning:select>
+        
+        <lightning:select name="to" label="To" required="true" value="{!v.toRecConId}" onchange="{!c.handleChangeTo}">
+            <option value="">-- None --</option>
+            <aura:iteration items="{!v.to}" var="to"> 
+                <option value="{!to.Id}">{!to.name} ({!to.role}) {!to.email}</option>
+            </aura:iteration>
+        </lightning:select>
+        <br/>
+        <lightning:select name="Templates" label="Select Template" required="true" value="{!v.selectedTemplate}" onchange="{!c.handleTemplateChange}">
+            <option value="">-- None --</option>
+            <!-- <option value="2358468">2358468</option> -->
+            <aura:iteration items="{!v.templates}" var="temp"> 
+                <option value="{!temp.Template_Id__c}">({!temp.Template_Id__c}) {!temp.Label}</option>
+            </aura:iteration> 
+            <!--    <option value="3042965">Confirmation of change of email address</option>
+        <option value="2352522">No response from tenant</option>
+        <option value="3043048">How to protect a deposit with SafeDeposits</option> -->
+            <!--  <option value="2358468">Test Table</option> -->
+            
+        </lightning:select>
+        <br/>
+        <lightning:input name="subject" aura:id="subject" value="{!v.subject}" label="Subject" />
+        <br/>
+        Body<lightning:inputRichText aura:id="body" value="{!v.body}" placeholder="" label="Body" />
+        <br/>
+        
+        <aura:iteration items="{!v.fileName}" var="fName"> 
+            <p>{!fName}</p>
+        </aura:iteration>
+        
+        <lightning:input aura:id="fileId" files="{!v.fileList}" onchange="{!c.handleUploadFinished}" type="file" name="file" multiple="true"/>
+        
+        <lightning:button variant="base" label="Send" onclick="{!c.sendEmail}" class="slds-button--brand SMALL uiButton" /> &nbsp;&nbsp;     
+        <aura:if isTrue="{!v.successMessage}">
+            <span style="color:green;">Email Sent Successfully.</span>
+        </aura:if>
+    </div>
+    
+</aura:component>

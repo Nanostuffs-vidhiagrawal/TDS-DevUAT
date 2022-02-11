@@ -1,0 +1,404 @@
+<aura:component
+                implements="forceCommunity:themeLayout,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+                access="global" controller="EI_AddNonMemberLandlord">
+    
+    <ltng:require styles="{!$Resource.TDSTheme+'/assets/css/custom.css'}"
+                  scripts="{!join(',',
+                           $Resource.TDSTheme+'/assets/js/plugin.min.js',
+                           $Resource.TDSTheme+'/assets/js/custom.js')}"
+                  />
+    
+    <aura:attribute name="OrgUser" type="Boolean" default='false' />
+    <aura:attribute name="orgUsercheckbox" type="Boolean" default='false' />
+    <aura:attribute name="propertyRecId" type="String" />
+    <aura:attribute name="Title" type="String" />
+    <aura:attribute name="firstName" type="String" />
+    <aura:attribute name="lastName" type="String" />
+    <aura:attribute name="Email" type="String" />
+    <aura:attribute name="Phone" type="String" />
+    <aura:attribute name="Address" type="String" />
+    <aura:attribute name="companyName" type="String" />
+    <aura:attribute name="companyPhone" type="String" />
+    <aura:attribute name="letAgntId" type="String" />
+    <aura:attribute name="companyAddress" type="String" />
+    <aura:attribute name="userType" type="String" />
+    
+    <aura:attribute name="companyEmail" type="String" />
+    
+    <!-- Address Fields-->
+    <aura:attribute access="public" name="Street" type="String" />
+    <aura:attribute access="public" name="Town" type="String" />
+    <aura:attribute access="public" name="PostCode" type="String" />
+    <aura:attribute access="public" name="Country" type="String" />
+    <aura:attribute access="public" name="County" type="String" />
+    <aura:attribute access="public" name="LandRegNumber" type="String" default=""/>
+    <aura:attribute access="public" name="LandRegNumberList" type="List" />
+    
+    <!-- BootStrap Errors using Aura:if-->
+      <aura:attribute name="companyNameError" type="boolean" default="false" />
+      <aura:attribute name="companyPhoneError" type="boolean" default="false" />
+      <aura:attribute name="titleError" type="boolean" default="false" />
+      <aura:attribute name="firstNameError" type="boolean" default="false" />
+      <aura:attribute name="surNameError" type="boolean" default="false" />
+      <aura:attribute name="emailError" type="boolean" default="false" />
+      <aura:attribute name="telephoneNumError" type="boolean" default="false" />
+      <aura:attribute name="registrationNumError" type="boolean" default="false" />
+      <aura:attribute name="isAddressValidError" type="boolean" default="false" />
+      <aura:attribute name="duplicateemailerror" type="boolean" default="false" />
+      <aura:attribute name="succeessmessage" type="boolean" default="false" />
+      <aura:attribute name="updatesucceessmessage" type="boolean" default="false" />
+      <aura:attribute name="isLandlordOrganisation" type="Boolean" default="false" />
+      
+    <lightning:overlayLibrary aura:id="overlayLib" />
+    <aura:handler event="force:refreshView" action ="{!c.addNewRecord}"/>
+    
+    <aura:registerEvent name="showToast" type="force:showToast" />
+	<aura:registerEvent name="refreshViewProperty" type="c:refreshViewProperty" />
+    
+	<a href="#" data-toggle="modal" data-target="#createUser" class="see-all"> 
+    <img src="{!$Resource.TDSTheme + '/assets/img/add-circle.svg'}" alt="Add Icon"/> Add a landlord</a>
+    
+    <!--Popup form HTMl start-->
+    <div class="custom-model modal fade" id="createUser" data-backdrop="static" data-keyboard="false" 
+         tabindex="-1" aria-labelledby="createUser" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    
+                    <h3 class="modal-title">Add a new landlord</h3>
+                    
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true"> 
+                            <img src="{!$Resource.TDSTheme + '/assets/img/Cancel-icon.png'}" alt="" />
+                        </span>
+                    </button>
+                </div>
+                
+                <!-- Bootstrap Error messages Start -->
+            
+					<aura:if isTrue="{!v.succeessmessage}">
+						<div id="successAlert"
+							 class="alert alert-success alert-dismissible fade show"
+							 >
+							  <strong>Success!</strong> Additional user created Successfully.
+							  <button
+									  type="button"
+									  class="close"
+									  onclick="{!c.hideBootstrapErrors}"
+									  name="successmsg"
+									  >&times;</button
+								  >
+						</div>                 
+					</aura:if>
+					  
+					<aura:if isTrue="{!v.companyNameError}">
+						  <div id="companyNameErrorAlert"
+							   class="alert alert-danger alert-dismissible fade show"
+							   >
+							  <strong>Error!</strong> Company name is mandatory.
+							  <button
+									  type="button"
+									  class="close"
+									  onclick="{!c.hideBootstrapErrors}"
+									  name="companyName"
+									  >&times;</button
+								  >
+						  </div>                 
+					  </aura:if>
+					
+					<aura:if isTrue="{!v.companyPhoneError}">
+						  <div
+							   id="companyPhoneErrorAlert"
+							   class="alert alert-danger alert-dismissible fade show"
+							   >
+							  <strong>Error!</strong> Company phone is mandatory.
+							  <button
+									  type="button"
+									  class="close"
+									  onclick="{!c.hideBootstrapErrors}"
+									  name="companyPhone"
+									  >&times;</button
+								  >
+						  </div>                 
+					  </aura:if>
+					
+					<aura:if isTrue="{!v.titleError}">
+						  <div
+							   id="titleErrorErrorAlert"
+							   class="alert alert-danger alert-dismissible fade show"
+							   >
+							  <strong>Error!</strong> Please select the valid title.
+							  <button
+									  type="button"
+									  class="close"
+									  onclick="{!c.hideBootstrapErrors}"
+									  name="title"
+									  >&times;</button
+								  >
+						  </div>                 
+					  </aura:if>
+					  
+					<aura:if isTrue="{!v.firstNameError}">
+							  <div
+								   id="firstNameErrorAlert"
+								   class="alert alert-danger alert-dismissible fade show"
+								   >
+								  <strong>Error!</strong> First Name is mandatory.
+								  <button
+										  type="button"
+										  class="close"
+										  onclick="{!c.hideBootstrapErrors}"
+										  name="firstName"
+										  >&times;</button
+									  >
+							  </div>                 
+						  </aura:if>                
+					
+					<aura:if isTrue="{!v.surNameError}">  
+							<div
+							  id="SurNameErrorAlert"
+							  class="alert alert-danger alert-dismissible fade show"
+							>
+							  <strong>Error!</strong> Surname is mandatory.
+							  <button
+								type="button"
+								class="close"
+								onclick="{!c.hideBootstrapErrors}"
+								name="surName"
+								>&times;</button
+							  >
+						</div>
+						</aura:if> 
+					  
+					<aura:if isTrue="{!v.emailError}">  
+						  <div
+							   id="EmailErrorAlert"
+							   class="alert alert-danger alert-dismissible fade show"
+							   >
+							  <strong>Error!</strong> Email is mandatory.
+							  <button type="button" class="close"
+									  onclick="{!c.hideBootstrapErrors}"
+									  name="emailOfUser"
+									  >&times;</button
+								  >
+						  </div>
+					  </aura:if> 	
+					  
+					<aura:if isTrue="{!v.telephoneNumError}">        
+							<div
+							  id="MobileNumberErrorAlert"
+							  class="alert alert-danger alert-dismissible fade show"
+							>
+							  <strong>Error!</strong> Telephone Number is mandatory.
+							  <button type="button" class="close"
+									  onclick="{!c.hideBootstrapErrors}"
+										  name="telephoneNumber"
+								>&times;</button
+							  >
+							</div>
+					  </aura:if>    
+
+					<aura:if isTrue="{!v.registrationNumError}">  
+						  <div
+							   id="LandlineNumberErrorAlert"
+							   class="alert alert-danger alert-dismissible fade show"
+							   >
+							  <strong>Error!</strong> Registration Number doesn't matches the required pattern.
+							  <button type="button" class="close"
+									  onclick="{!c.hideBootstrapErrors}"
+									  name="registrationNumber"
+									  >&times;</button
+								  >
+						  </div>
+					  </aura:if>
+					
+					<aura:if isTrue="{!v.isAddressValidError}">  
+						  <div
+							   id="LandlineNumberErrorAlert"
+							   class="alert alert-danger alert-dismissible fade show"
+							   >
+							  <strong>Error!</strong> Please enter valid address.
+							  <button type="button" class="close"
+									  onclick="{!c.hideBootstrapErrors}"
+									  name="validAddress"
+									  >&times;</button
+								  >
+						  </div>
+					  </aura:if>
+					  
+					<!-- <aura:if isTrue="{!v.duplicateemailerror}">  
+						  <div
+							   id="LandlineNumberErrorAlert"
+							   class="alert alert-danger alert-dismissible fade show"
+							   >
+							  <strong>Error!</strong> User already Registered with this email.
+							  <button type="button" class="close"
+									  onclick="{!c.hideBootstrapErrors}"
+									  name="duplicateEmail"
+									  >&times;</button
+								  >
+						  </div>
+					  </aura:if> -->
+					
+				<!-- Bootstrap Error messages End -->
+                
+				<div class="modal-body">
+                    <div class="sf-custom-form">
+                        <form>
+                            
+                            <h5 >Is the landlord an organisation?</h5> <br />
+                            
+                            <div class="form-row">
+                                <div class="form-group col-md-12 text-right">
+                                    <lightning:button variant="brand-outline" label="Yes" onclick="{!c.handleYes}" class="see-all"/>
+                                    <lightning:button variant="brand-outline" label="No" onclick="{!c.handleNo}" class="see-all"/>
+                                </div>
+                            </div>
+                            
+                            <aura:renderIf isTrue="{!v.OrgUser}">
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <lightning:input aura:id="compNameId" 
+                                                         label="Company Name" 
+                                                         name="companyName" 
+                                                         value="{!v.companyName}" 
+                                                         placeholder="Enter Company Name"
+                                                         />
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <lightning:input aura:id="compPhoneId" 
+                                                         label="Company Phone" 
+                                                         name="companyPhone" 
+                                                         type="tel"
+                                                         value="{!v.companyPhone}" 
+                                                         placeholder="Enter Company Phone"
+                                                         />
+                                    </div>
+                                </div>
+                        </aura:renderIf>
+                            
+                            <div class="form-row">
+                            	<div class="form-group col-md-6">
+                                    <label for="selectTitle">Title</label>
+                                    <select class="form-control"
+                                            id="titleId"
+                                            name="userTitle" 
+                                            label="Title" 
+                                    		value="{!v.Title}" 
+                                    >
+                                        <option value="">-- Please Select --</option>
+                                        <option value="Mr.">Mr.</option>
+                                        <option value="Ms.">Ms.</option>
+                                        <option value="Mrs.">Mrs.</option>
+                                        <option value="Dr.">Dr.</option>
+                                        <option value="Prof.">Prof.</option>
+                                    	<option value="Mx.">Mx.</option>
+                                	</select>
+                            	</div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <!-- <label for="inputFirstName">First Name</label>
+                                    <input type="text" class="form-control" id="inputFirstName" 
+                                           placeholder="Enter your first name" /> -->
+                                    <lightning:input aura:id="firstNameId" 
+                                                     label="First Name" 
+                                                     value="{!v.firstName}" 
+                                                     name="firstName" 
+                                                     placeholder="Enter your first name"
+                                                     />
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <!-- <label for="inputSurname">Surname</label>
+                                    <input type="text" class="form-control" id="inputSurname" 
+                                           placeholder="Enter your surname" /> -->
+                                    <lightning:input aura:id="surNameId" 
+                                                     label="Surname" 
+                                                     value="{!v.lastName}" 
+                                                     name="lastName" 
+                                                     placeholder="Enter your surname"
+                                                     />
+                                </div>
+                        </div>
+                            
+                            <div class="form-row">
+                        	<div class="form-group col-12">
+                            	<!-- <label for="inputemail">Email</label>
+                                <input type="email" class="form-control" id="inputemail" 
+                                	   placeholder="Enter email adddress" /> -->
+                                <lightning:input aura:id="emailID" 
+                                                 label="Email" 
+                                                 name="Email" 
+                                                 value="{!v.Email}" 
+                                                 placeholder="Enter email adddress"
+                         						 pattern="^((([a-z]|\d|[!#\$%'&amp;''\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&amp;'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))$"
+                                                 />
+                            </div>
+                        </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group col-12">
+                                <!--<label for="inputTelephone">Telephone number</label>
+                                <input type="number" class="form-control" id="inputTelephone" 
+                                       placeholder="Enter telephone number" />-->
+                                <lightning:input aura:id="telephoneNumberId" 
+                                                 type="tel" 
+                                                 label="Telephone number" 
+                                                 name="Phone" 
+                                                 value="{!v.Phone}" 
+                                                 placeholder="Enter telephone number"
+                                                 />
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                    <div class="form-group col-12">
+                                        <!--<label for="inputTelephone">Telephone number</label>
+                                        <input type="number" class="form-control" id="inputTelephone" 
+                                               placeholder="Enter telephone number" />-->
+                                        <lightning:input aura:id="regNumberId" 
+                                                         label="Landlord Registration Number" 
+                                                         value="{!v.LandRegNumber}" 
+                                                         name="Landlord Registeration Number" 
+                                                         placeholder="Enter landlord Registration Number"
+                                                         /> 
+                                    </div>
+                            </div>
+                            
+                            <br/><br/>
+                            
+                            <div class="form-row">
+                                    <div class="form-group col-12">
+                                        <h5>Contact address</h5>
+                                        <c:Register aura:id="compB" method="{!c.parentPress}" />
+                                        <!-- <label for="inputAddress">Address search</label>
+                                        <input type="text" class="form-control" id="inputAddress" 
+                                                   placeholder="Start typing your address’" /> 
+                                        <a href="#" class="look-up">search</a>
+                                        <span class="manual_entery">Enter Manually</span>-->
+                                    </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group col-md-12 text-right">
+                                    <button type="button" class="learn-more" data-dismiss="modal" 
+                                            onclick="{!c.handleCancel}">Cancel</button>
+                                    <!-- <button class="see-all">Save</button> -->
+                                    <lightning:button label="Save"
+                                                      title="Save" 
+                                                      onclick="{!c.clickCreate}" 
+                                                      class="see-all" />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Popup form HTMl end-->
+    
+</aura:component>

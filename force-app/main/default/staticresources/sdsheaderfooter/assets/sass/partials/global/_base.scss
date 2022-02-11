@@ -1,0 +1,20 @@
+body {
+	font-family: $AllerRegular;
+}
+
+.container {
+	max-width: $container_size !important;
+	width: 100% !important; 
+}
+
+.container-fluid {
+	@include space(padding, all, $zero);
+}
+
+.search-overlay {
+	@include position_fixed(0, 0, 0, 0);
+	height: 100vh;
+	background-color: rgba(0, 0, 0, 0);
+    z-index: 9;
+    display: none;
+}

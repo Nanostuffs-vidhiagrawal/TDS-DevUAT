@@ -1,0 +1,164 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" 
+                access="global" controller="EI_ZD_HomePage">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="WrapperList" type="list"/>
+    <aura:attribute name="Postcode" type="string" />
+    <aura:attribute name="invalidPostcode" type="boolean" />
+    <aura:attribute name="attemptLeft" type="integer" />
+    <aura:attribute name="unauthorizedUser" type="boolean"/>
+    <aura:attribute name="ConfirmTenancy" type="boolean" default="false" />
+    <aura:attribute name="ConfirmTenancyID" type="string"/>
+    <aura:attribute name="viewTenancyID" type="string"/>
+    <aura:attribute name="viewClaim" type="boolean" default="false" />
+    
+    <aura:handler event="aura:doneWaiting" action="{!c.doneWaiting}"></aura:handler>
+    <aura:attribute name="PageSpinner" type="Boolean" default="true"></aura:attribute>
+    <!-- <div class="exampleHolder">
+        <lightning:spinner aura:id="mySpinner" variant="brand" size="large" />
+    </div> -->
+    <aura:renderIf isTrue="{!v.PageSpinner}">
+        <div aura:id="ring" class="lds-dual-ring"></div>
+        <aura:set attribute="else"> 
+    
+    <c:EI_ZD_CommonHeader />
+      
+    <div class="tab-content custom-tab-content" id="sf-tabContent">            
+        <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+        </div>
+    </div>
+    <aura:if isTrue="{!v.WrapperList[0].Caseparticipant[0].Is_Active__c ==false}">
+        <div class="ZD_theme">
+            <div class="tab-content custom-tab-content" id="sf-tabContent">
+                
+                <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+                    <!-- Resolution Section HTML Start -->
+                    <section class="resolution_section">
+                        <div class="container">
+                            <div>
+                                <h3>My account</h3>
+                                <p>Your email address is linked to the following tenancy - please confirm that you are the tenant</p>
+                            </div>
+                            <img src="{!$Resource.EI_ZD_Assets  + '/img/resolution.png'}" alt="Resolution" />
+                        </div>
+                    </section>
+                    <!-- Resolution Section HTML End -->
+                    
+                    <div class="container">
+                        <aura:if isTrue="{!v.WrapperList[0].usr.Profile.Name=='ZD_Tenant'}"> 
+                            <!-- <div style="float:right;"><lightning:button variant="brand" label="Contact Zero Deposit" onclick="{!c.contactZD}" /></div> -->
+                            
+                            <!-- Table HTML Start -->
+                            <div class="table-container account_table no_navigation">
+                                <table id="example-1" class="display scrollbar" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Address</th>
+                                            <th>Claim number</th>
+                                            <th>Tenants</th>
+                                            <th class="text-right"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <aura:iteration items="{!v.WrapperList[0].Caseparticipant}" var="obj">
+                                            <tr>
+                                                <td>{!obj.Case__r.Deposit_Account_Number__r.Property__r.Street__c}</td>
+                                                <td>{!obj.Case__r.External_ID__c}</td>
+                                                <td>{!obj.Case__r.No_of_Tenants__c}</td>
+                                                <!-- <aura:if isTrue="{!obj.Is_Active__c}">
+                                                <td class="text-right" onclick="{!c.viewTenancy}" data-myid="{!obj.Case__c}"><span class="see-all ">View Tenancy</span></td>
+                                            <lightning:button variant="brand" label="View Tenancy" value="{!obj.Case__c}"
+                                                              onclick="{!c.viewTenancy}" />
+                                            <aura:set attribute="else"> -->
+                                                <aura:if isTrue="{!obj.No_of_Attempt__c >=3}">
+                                                    You have used up all your attempts to confirm your tenancy details. Please contact <a href="https://www.zerodeposit.com/contact/" target="_blank">Zero Deposit</a> to gain access.
+                                                    <aura:set attribute="else">
+                                                        <td class="text-right" onclick="{!c.viewConfirm}" data-myid="{!obj.Id}"><span class="see-all confirm_tenancy"><img src="{!$Resource.EI_ZD_Assets  + '/img/feather-edit.png'}" alt="View Icon" />Confirm tenancy</span></td>
+                                                    </aura:set>
+                                                </aura:if>
+                                                <!-- </aura:set>
+                                        </aura:if>   -->
+                                            </tr>
+                                            
+                                        </aura:iteration>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- Table HTML End -->
+                            
+                            
+                            <aura:set attribute="else">
+                                You Don't have access for this page.
+                            </aura:set>
+                        </aura:if>
+                        
+                        
+                        <aura:if isTrue="{!v.ConfirmTenancy}">
+                            <section class="deposit_steps">       
+                                <div  class="deposit_steps_detail">
+                                    <form>
+                                        <div class="form-group row">
+                                            <div class="col-sm-9 col-md-5">
+                                                <p><b>Please confirm the postcode of your tenancy address to see details of the claim.</b> </p>
+                                                <label for="Postcode" class="col-form-label">Postcode</label>
+                                                <ui:inputText placeholder="Please enter your postcode" value="{!v.Postcode}" />
+                                                <aura:if isTrue="{!v.invalidPostcode}">
+                                                    <div class="error-msg">Invalid postcode. Please try again. You have {!3-v.attemptLeft} attempts left.</div>
+                                                </aura:if>
+                                                <aura:if isTrue="{!v.WrapperList[0].Caseparticipant.No_of_Attempt__c >=3}">
+                                                    <div class="error-msg">Invalid postcode. You have used up all of your attempts to confirm your tenancy details. Please contact Zero Deposit to gain access.</div>
+                                                </aura:if>
+                                            </div>
+                                        </div>
+                                        <div  class="form-group row">
+                                            <div class="col-sm-12 col-md-5 text-right">
+                                                <lightning:button variant="brand" class="see-all" label="Submit" title="title"
+                                                                  onclick="{! c.doConfirmTenancy}" />
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </section>
+                        </aura:if>
+                        
+                    </div>
+                    <div id="scrollView"/>
+                </div>
+            </div>
+            
+            <!-- Tabs HTML End -->
+            
+        </div>
+        
+    </aura:if> 
+    
+    <aura:if isTrue="{!v.viewClaim}">
+        <c:EI_ZD_TenantRespondToClaim WrapperList="{!v.WrapperList}"  aura:id="childCmp"  />
+    </aura:if>
+    
+    
+    
+    
+    
+    <c:EI_ZD_CommonFooter />
+    <!--<ltng:require scripts="{!$Resource.EI_ZD_Assets + '/js/plugin.min.js'}" />   
+    <ltng:require scripts="{!$Resource.EI_ZD_Assets + '/js/jquery.dataTables.min.js'}" />
+    <ltng:require scripts="{!$Resource.EI_ZD_Assets + '/js/dataTables.responsive.js'}" />
+    <ltng:require scripts="{!$Resource.EI_ZD_Assets + '/js/datepicker.js'}" />
+     <ltng:require scripts="{!$Resource.EI_ZD_Assets + '/js/custom.js'}" /> -->
+   <!-- <ltng:require
+                  scripts="{!join(',',
+                           $Resource.EI_ZD_Assets + '/js/plugin.min.js',
+                           $Resource.EI_ZD_Assets + '/js/jquery.dataTables.min.js',
+                           $Resource.EI_ZD_Assets + '/js/dataTables.responsive.js',
+                           $Resource.EI_ZD_Assets + '/js/datepicker.js',
+                           $Resource.EI_ZD_Assets + '/js/custom.js')}"/> -->
+    
+    <ltng:require
+                  scripts="{!join(',',
+                           $Resource.EI_ZD_Assets + '/js/plugin.min.js',
+                           $Resource.EI_ZD_Assets + '/js/jquery.dataTables.min.js',
+                           $Resource.EI_ZD_Assets + '/js/dataTables.responsive.js')}"/>
+    <!-- -->
+        </aura:set>
+    </aura:renderIf>
+</aura:component>

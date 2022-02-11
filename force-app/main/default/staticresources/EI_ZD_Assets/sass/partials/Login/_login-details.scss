@@ -1,0 +1,24 @@
+.login-details {
+	@include respond-below(sm) {
+		@include flexbox;
+		height: 100vh;
+		@include flex_properties(center, center, wrap);
+	}
+	.container-fluid {
+		.row {
+			@include space(margin, all, $zero);
+			align-items: center;
+
+			& > .col-md-6 {
+				@include space(padding, all, $zero);
+			}
+		}
+	}
+
+	.signUp {
+		@include respond-above(sm) {
+			max-height: 100vh;
+			overflow: auto;
+		}
+	}
+} 

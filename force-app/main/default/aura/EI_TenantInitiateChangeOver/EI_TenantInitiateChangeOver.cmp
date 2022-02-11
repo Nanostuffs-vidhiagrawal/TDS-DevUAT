@@ -1,0 +1,543 @@
+<aura:component implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" 
+                controller="EI_TenentChangeoverApx" access="global" >
+    <aura:handler access="public"  name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="depositDetails" type="Deposit_Allocation__c"  />
+    <aura:attribute name="bankDetails" type="Bank_Account__c[]"  />
+    <lightning:navigation aura:id="navService" />
+    <aura:attribute name="firstOption" type="boolean" default="true"/>
+    <aura:attribute name="showBankDetails" type="boolean" default="false"/>
+    
+    <aura:attribute name="secondOption" type="boolean" default="false"/>
+    <aura:attribute name="bankOption" type="boolean" default="false"/>
+    <aura:attribute name="noBankDetails" type="boolean" default="true"/>
+    <aura:attribute name="fieldBankDetailsEdit" type="Boolean" default="true" />
+    <aura:attribute name="toggleBankDetails" type="Boolean" default="true" />
+    <aura:attribute name="fieldInternationalBankDetailsEdit" type="Boolean" default="true" />
+    <aura:attribute name="toggleInternationalBankDetails" type="Boolean" default="true" />
+    
+    <aura:attribute name="updateBankDetails" type="Boolean" default="true" />
+    
+    <!--International Bank Details Variables-->
+    <aura:attribute name="bankIntName" type="string"  /> 
+    <aura:attribute name="bankIntAddress" type="string"  /> 
+    <aura:attribute name="bankIdentificationCode" type="string"  /> 
+    <aura:attribute name="bankSwiftCode" type="string"  />
+    <aura:attribute name="IBAN" type="string"  /> 
+    <aura:attribute name="nameOnAccount" type="string"  />
+    
+    <!--Bank Details Variables-->
+    <aura:attribute name="bankAccountName" type="string"  /> 
+    <aura:attribute name="accountNumber" type="string"  /> 
+    <aura:attribute name="sortCode" type="string"  />
+    <aura:attribute name="bankName" type="string"  />
+    
+    <!-- Bank Details Add or Edit Error messages -->
+    <aura:attribute name="bankSuccessMessage" type="boolean" default="false"/>
+    <aura:attribute name="bankErrorMessage" type="boolean" default="false"/>
+    <aura:attribute name="nameOnAccountBlankError" type="boolean" default="false"/>
+    <aura:attribute name="accountNumberBlankError" type="boolean" default="false"/>
+    <aura:attribute name="invalidAccountNumberError" type="boolean" default="false"/>
+    <aura:attribute name="sortCodeBlankError" type="boolean" default="false"/>
+    <aura:attribute name="invalidSortCodeError" type="boolean" default="false"/>
+    <aura:attribute name="bankOfAmericaSortCode" type="Boolean" default="false"/>
+    
+    <aura:attribute name="intbankSuccessMessage" type="boolean" default="false"/>
+    <aura:attribute name="intbanknameerror" type="boolean" default="false"/>
+    <aura:attribute name="intbankaccounterror" type="boolean" default="false"/>
+    
+    
+    
+    <!-- BootStrap Errors using Aura:if-->
+    <aura:attribute name="invalidamounterror" type="boolean" default="false" />
+    <aura:attribute name="accessamounterror" type="boolean" default="false" />
+    <aura:attribute name="noBankDetailsFoundError" type="boolean" default="false" />
+    
+    <aura:attribute name="currentUser" type="User" />
+    <aura:attribute name="showsecondbuttons" type="boolean" default="false"/>
+    <force:recordData aura:id="recordLoader" recordId="{!$SObjectType.CurrentUser.Id}"  fields="Name,ContactId,AccountId,User_Role__c,Addition_Permission__c" targetFields="{!v.currentUser}"/>
+    <aura:attribute name="depositDetailslist" type="Deposit_Allocation__c[]"  />
+    <aura:attribute name="showanothertenant" type="boolean" default="false"/>
+    <aura:attribute name="showrepaymentmessage" type="boolean" default="false"/>
+    <aura:attribute name="firstyesselect" type="boolean" default="false"/>
+    <aura:attribute name="firstnoselect" type="boolean" default="false"/>
+    <aura:attribute name="showSubmitButton" type="boolean" default="false"/>   
+    
+    <!--Error Messages Attribut-->
+   <!-- <aura:attribute name="addRepButtonErrorNew" type="String" />--> 
+    <aura:attribute name="addNumberErrorNew" type="String" /> 
+    <aura:attribute name="addsortcodeErrorNew" type="String" /> 
+   	<aura:attribute name="errorList" type="Error_Message__mdt[]"/>  
+    
+    
+    <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+        
+        <div class="container">
+            <div class="row">
+                <div class="col-md-9" style="margin-bottom:-30px">
+                    <h2>Tenant changeover</h2>
+                </div>             
+            </div>
+        </div>
+        
+        <div class="deposit-agent">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <a href="deposite_summary.html" class="go-back" onclick="{!c.backonfirst}"><img src="{!$Resource.TDSTheme + '/assets/img/md-arrow-dropleft.png'}" alt="Back Icon"/> Go back</a>
+                        
+                        <!-- Deposit Steps HTML Start -->
+                        <section class="deposit_steps tf-other-prop">
+                            <div class="deposit_steps_detail">
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-12 col-lg-8">
+                                        <div class="deposit_box_container">
+                                            <div class="deposit_box bg-blue-light">
+                                                <div>
+                                                    <h5 class="text-secondary">Total deposit held:</h5>
+                                                    <!-- <h6>&pound;{!v.depositDetails.Deposit__r.Deposit_Amount__c}</h6> -->
+                                                    <h6>&pound;{!v.depositDetails.Deposit__r.Protected_Amount__c}</h6>
+                                                </div>
+                                                <img src="{!$Resource.TDSTheme + '/assets/img/pound_icon.png'}" alt=""/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <aura:if isTrue="{!v.invalidamounterror}">
+                                    <div
+                                         id="titleErrorErrorAlert"
+                                         class="alert alert-danger alert-dismissible fade show"
+                                         >
+                                        <strong>Error!</strong> Please select the valid amount for selected tenant(s).
+                                        <button
+                                                type="button"
+                                                class="close"
+                                                onclick="{!c.hideBootstrapErrors}"
+                                                name="invalidamount"
+                                                >&times;</button
+                                            >
+                                    </div>
+                                </aura:if>
+                                
+                                
+                                
+                                <form>
+                                    
+                                    <div class="form-group row">
+                                        <p class="col-sm-10 col-lg-8">Please enter in the fields below how much of the deposit you want to receive</p>
+                                        <aura:iteration items="{!v.depositDetailslist}" var="item">
+                                            <aura:if isTrue="{!item.Deposit_Holder__c == v.currentUser.AccountId}">
+                                                <div class="col-sm-10 col-lg-6">
+                                                   <!-- <label class="col-form-label" for="LadyName">{!item.Deposit_Holder__r.Name}</label>-->
+                                                    <!--<input type="text" class="form-control" id="LadyName" placeholder="&#163;"/>-->
+                                                    <lightning:input type="number" placeholder="£" formatter="currency" step="0.01" name="changeoveramount" 
+                                                                     label="{!item.Deposit_Holder__r.Name}" value="{!item.Tenencychangeoveramount__c}"   />
+                                                </div>
+                                            </aura:if>
+                                        </aura:iteration>
+                                    </div>
+                                    
+                                    
+                                    <aura:if isTrue="{!!v.showanothertenant}">
+                                   <aura:if isTrue="{!v.accessamounterror}">
+                                            <div class="form-group row">
+                                                <p class=" col-sm-10 col-lg-6 error-msg">
+                                                    You can only request an amount less than the total deposit amount.
+                                                    If you require the entire deposit amount, you must request repayment of your deposit by going back to the deposit summary page and clicking 'Request repayment of deposit'.
+                                                </p>
+                                            </div>
+                                        </aura:if>
+                                    </aura:if>
+                                    
+                                    <!-- Bank details section Start -->
+                                    <aura:if isTrue="{!v.noBankDetails}">
+                                        <aura:if isTrue="{!v.noBankDetailsFoundError}">
+                                            <a href="" class="see-all danger" onclick="{!c.addBankDetails}"> 
+                                                <!-- <img src="../assets/img/add-circle.svg" alt="Add Icon" /> -->
+                                                <img src="{!$Resource.TDSTheme+'/assets/img/add-circle.svg'}" />
+                                                Add repayment details for {!v.depositDetails.Deposit_Holder__r.Name}
+                                            </a>
+                                            <p class="error-msg">
+                                                You must provide your payment details before you can submit your response. 
+                                                SafeDeposits Scotland will then make payment to you.
+                                             <!--   {!v.addRepButtonErrorNew}-->
+                                            </p>
+                                            <aura:set attribute="else">
+                                                <a href="" class="see-all" onclick="{!c.addBankDetails}"> 
+                                                    <img src="{!$Resource.TDSTheme+'/assets/img/add-circle.svg'}" />
+                                                    <!--<img src="../assets/img/add-circle.svg" alt="Add Icon" />--> 
+                                                    Add repayment details for {!v.depositDetails.Deposit_Holder__r.Name}</a>
+                                                <br /><br />
+                                            </aura:set>
+                                        </aura:if>
+                                        
+                                        <aura:set attribute="else">
+                                            <a href="" class="see-all" onclick="{!c.addBankDetails}"> 
+                                                <img src="{!$Resource.TDSTheme+'/assets/img/edit-icon1.svg'}" />
+                                                <!-- <img src="../assets/img/edit-icon1.svg" alt="Edit Icon" /> --> 
+                                                Edit repayment details for {!v.depositDetails.Deposit_Holder__r.Name}</a>
+                                            <br /><br />
+                                        </aura:set>
+                                    </aura:if>
+                                    
+                                    <!-- <div class="form-group">
+                                        <a href="" class="see-all" onclick="{!c.addBankDetails}"> <img src="{!$Resource.TDSTheme + '/assets/img/add-circle.svg'}" alt="Add Icon"/> 
+                                            Add repayment details for {!v.depositDetails.Deposit_Holder__r.Name}
+                                        </a>
+                                    </div> -->
+                                    <!-- Bank details section End -->
+                                    
+                                    <div class="form-group">
+                                        <div class="col-sm-10 col-lg-6">
+                                        <!-- Add/Edit bank detail section START -->
+                                        <aura:if isTrue="{!v.showBankDetails}">
+                                            
+                                            <div class="organization-details" id="payment-details">
+                                                <h5>Payment details</h5>                                                                                
+                                                <aura:if isTrue="{!v.bankSuccessMessage}">
+                                                    <div
+                                                         id="bankSuccessMessage"
+                                                         class="alert alert-success alert-dismissible fade show"
+                                                         >
+                                                        <strong>Success!</strong> Bank account updated successfully.
+                                                        <button
+                                                                type="button"
+                                                                class="close"
+                                                                onclick="{!c.hideBootstrapErrors}"
+                                                                name="bankSuccessMessage"
+                                                                >&times;</button
+                                                            >
+                                                    </div>
+                                                </aura:if>
+                                                
+                                                <aura:if isTrue="{!v.bankErrorMessage}">
+                                                    <div
+                                                         id="bankErrorMessage"
+                                                         class="alert alert-danger alert-dismissible fade show"
+                                                         >
+                                                        <strong>Error!</strong> Bank account cannot be Updated.
+                                                        <button
+                                                                type="button"
+                                                                class="close"
+                                                                onclick="{!c.hideBootstrapErrors}"
+                                                                name="bankErrorMessage"
+                                                                >&times;</button
+                                                            >
+                                                    </div>
+                                                </aura:if>
+                                                
+                                                <aura:if isTrue="{!v.nameOnAccountBlankError}">
+                                                    <div
+                                                         id="nameOnAccountBlankError"
+                                                         class="alert alert-danger alert-dismissible fade show"
+                                                         >
+                                                        <strong>Error!</strong> Name on account cannot be blank.
+                                                        <button
+                                                                type="button"
+                                                                class="close"
+                                                                onclick="{!c.hideBootstrapErrors}"
+                                                                name="nameOnAccountBlankError"
+                                                                >&times;</button
+                                                            >
+                                                    </div>
+                                                </aura:if>
+                                                
+                                                <aura:if isTrue="{!v.accountNumberBlankError}">
+                                                    <div
+                                                         id="accountNumberBlankError"
+                                                         class="alert alert-danger alert-dismissible fade show"
+                                                         >
+                                                       <!-- <strong>Error!</strong> Account number cannot be blank.-->
+                                                        {!v.addNumberErrorNew}
+                                                        <button
+                                                                type="button"
+                                                                class="close"
+                                                                onclick="{!c.hideBootstrapErrors}"
+                                                                name="accountNumberBlankError"
+                                                                >&times;</button
+                                                            >
+                                                    </div>
+                                                </aura:if>
+                                                
+                                                <aura:if isTrue="{!v.invalidAccountNumberError}">
+                                                    <div
+                                                         id="invalidAccountNumberError"
+                                                         class="alert alert-danger alert-dismissible fade show"
+                                                         >
+                                                        <strong>Error!</strong> This account number is invalid. Please enter valid account number.
+                                                        <button
+                                                                type="button"
+                                                                class="close"
+                                                                onclick="{!c.hideBootstrapErrors}"
+                                                                name="invalidAccountNumberError"
+                                                                >&times;</button
+                                                            >
+                                                    </div>
+                                                </aura:if>
+                                                
+                                                <aura:if isTrue="{!v.sortCodeBlankError}">
+                                                    <div
+                                                         id="sortCodeBlankError"
+                                                         class="alert alert-danger alert-dismissible fade show"
+                                                         >
+                                                       <!-- <strong>Error!</strong> Sort code cannot be blank.-->
+                                                        {!v.addsortcodeErrorNew}
+                                                        <button
+                                                                type="button"
+                                                                class="close"
+                                                                onclick="{!c.hideBootstrapErrors}"
+                                                                name="sortCodeBlankError"
+                                                                >&times;</button
+                                                            >
+                                                    </div>
+                                                </aura:if>
+                                                <aura:if isTrue="{!v.bankOfAmericaSortCode}">
+                                                    <div
+                                                      id="bankOfAmericaSortCode"
+                                                      class="alert alert-danger alert-dismissible fade show"
+                                                    >
+                                                      <strong>Error!</strong> We do not support payments to Bank of America.
+                                                      <button
+                                                        type="button"
+                                                        class="close"
+                                                        onclick="{!c.hideBootstrapErrors}"
+                                                        name="bankOfAmericaSortCode"
+                                                        >&times;</button
+                                                      >
+                                                    </div>
+                                                </aura:if>
+                                                <aura:if isTrue="{!v.invalidSortCodeError}">
+                                                    <div
+                                                         id="invalidSortCodeError"
+                                                         class="alert alert-danger alert-dismissible fade show"
+                                                         >
+                                                        <strong>Error!</strong> This sort code is invalid. Please enter valid sort code.
+                                                        <button
+                                                                type="button"
+                                                                class="close"
+                                                                onclick="{!c.hideBootstrapErrors}"
+                                                                name="invalidSortCodeError"
+                                                                >&times;</button
+                                                            >
+                                                    </div>
+                                                </aura:if>
+                                                
+                                                <form class="sf-custom-form">
+                                                    
+                                                    <div class="form-row">
+                                                        <div class="form-group col-md-6">
+                                                            <span onkeypress="{!c.NumSplCharsCheck}">
+                                                            <lightning:input aura:id="bankAccountName" class="lightInput"  label="Name on account" maxlength="64"  
+                                                                             placeholder="Enter account name" value="{!v.bankAccountName}" title="Name must appear exactly as it does on bank account (e.g. Bob OBrien rather than Bob O’Brien)."/> 
+                                                            </span>
+                                                        </div>
+                                                        <div class="form-group col-md-6">
+                                                            <lightning:input aura:id="accountNumber" class="lightInput" label="Account number" minlength="8" maxlength="8" 
+                                                                             messageWhenTooShort="You must provide eight numbers." placeholder="Enter account number"
+                                                                             pattern="[0-9]*" messageWhenPatternMismatch="You must provide a valid account number." 
+                                                                             value="{!v.accountNumber}"/>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="form-row">
+                                                        <div class="form-group col-md-6">
+                                                            <lightning:input aura:id="sortCode" class="lightInput"  label="Sort code" minlength="6" maxlength="6" 
+                                                                             messageWhenTooShort="You must provide six numbers." placeholder="Enter sort code" 
+                                                                             pattern="[0-9]*" messageWhenPatternMismatch="You must provide a valid sort code." 
+                                                                             value="{!v.sortCode}"/>
+                                                        </div>
+                                                        <div class="form-group col-md-6">
+                                                            <lightning:input aura:id="bankName" disabled="true" label="Bank name" placeholder="Enter bank name" 
+                                                                             value="{!v.bankName}"/>
+                                                            
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="text-right">
+                                                        <!--<button class="see-all" onclick="{!c.updateBankDetails }">Save</button>-->
+                                                        <lightning:button class="see-all" variant="brand" label="Submit" title="Save"
+                                                                          onclick="{!c.updateBankDetails }" />
+                                                        <lightning:button class="see-all" variant="brand" label="Cancel" title="Cancel"
+                                                                          onclick="{!c.cancelBankDetails }" />
+                                                    </div>
+                                                    
+                                                </form>
+                                                
+                                            </div>
+                                            
+                                            <div class="organization-details" id="internationalpayment-details">
+                                                <h5>International payment details</h5><br/>
+                                                <p>If you provide SafeDeposits Scotland with international payment details, we will assume that you would like any payments that need to be made to you to be made to this bank account. If you would like to be paid to your UK bank account, please remove any international payment details using the form provided.</p>
+                                                
+                                                <aura:if isTrue="{!v.intbankSuccessMessage}">
+                                                    <div
+                                                         id="interbankSuccessMessage"
+                                                         class="alert alert-success alert-dismissible fade show"
+                                                         >
+                                                        <strong>Success!</strong> International bank account updated successfully.
+                                                        <button
+                                                                type="button"
+                                                                class="close"
+                                                                onclick="{!c.hideBootstrapErrors}"
+                                                                name="intbankSuccess"
+                                                                >&times;</button
+                                                            >
+                                                    </div>
+                                                </aura:if>                                                    
+                                                
+                                                <aura:if isTrue="{!v.intbanknameerror}">
+                                                    <div
+                                                         id="intbanknameerror"
+                                                         class="alert alert-danger alert-dismissible fade show"
+                                                         >
+                                                        <strong>Error!</strong> You must provide bank name.
+                                                        <button
+                                                                type="button"
+                                                                class="close"
+                                                                onclick="{!c.hideBootstrapErrors}"
+                                                                name="intbankname"
+                                                                >&times;</button
+                                                            >
+                                                    </div>
+                                                </aura:if>
+                                                
+                                                <aura:if isTrue="{!v.intbankaccounterror}">
+                                                    <div
+                                                         id="intbankaccounterror"
+                                                         class="alert alert-danger alert-dismissible fade show"
+                                                         >
+                                                        <strong>Error!</strong> You must provide account name.
+                                                        <button
+                                                                type="button"
+                                                                class="close"
+                                                                onclick="{!c.hideBootstrapErrors}"
+                                                                name="intbankaccount"
+                                                                >&times;</button
+                                                            >
+                                                    </div>
+                                                </aura:if>
+                                                
+                                                <form class="sf-custom-form">
+                                                    <div class="form-row">
+                                                        <div class="form-group col-md-6">
+                                                            <lightning:input aura:id="bankIntName" class="lightInput" label="Bank Name" maxlength="64" 
+                                                                             placeholder="Enter bank name" value="{!v.bankIntName}"/>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-row">
+                                                        <div class="form-group col-md-6">
+                                                            <lightning:input aura:id="bankIdentificationCode" class="lightInput" label="Bank identification code" 
+                                                                             placeholder="Enter bank identification code" value="{!v.bankIdentificationCode}"/>
+                                                        </div>
+                                                        <div class="form-group col-md-6">
+                                                            <lightning:input aura:id="bankSwiftCode" class="lightInput" label="Swift code" 
+                                                                             placeholder="Enter swift code"  value="{!v.bankSwiftCode}"/>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-row">
+                                                        <div class="form-group col-md-6">
+                                                            <lightning:input aura:id="IBAN" class="lightInput" label="IBAN" placeholder="Enter IBAN" 
+                                                                             value="{!v.IBAN}"/>
+                                                            
+                                                        </div>
+                                                        <div class="form-group col-md-6">
+                                                            <span onkeypress="{!c.NumSplCharsCheck}">
+                                                            <lightning:input aura:id="bankIntAccountName" class="lightInput" label="Name on account" 
+                                                                             placeholder="Enter account name" value="{!v.nameOnAccount}" maxlength="64" title="Name must appear exactly as it does on bank account (e.g. Bob OBrien rather than Bob O’Brien)."/>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="text-right">
+                                                        <!--<button class="see-all" onclick="{!c.updateBankDetails }">Save</button>-->
+                                                        <lightning:button class="see-all" variant="brand" label="Submit" title="Save"
+                                                                          onclick="{!c.updateInternationalBankDetails }" />
+                                                        <lightning:button class="see-all" variant="brand" label="Cancel" title="Cancel"
+                                                                          onclick="{!c.cancelBankDetails }" />
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            
+                                        </aura:if>	
+                                        <!-- Add/Edit bank detail section END -->
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group row">
+                                        <div class="col-sm-10 col-lg-6">
+                                            <label>Are you the only tenant moving out?</label>
+                                            <div>
+                                                <lightning:button class="learn-more " aura:id="firstyes"  label="Yes" title="Yes"  onclick="{!c.onfirstYes }"/>
+                                                <lightning:button class="learn-more " aura:id="firstno" label="No" title="No"  onclick="{!c.onfirstNo }"/>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <aura:if isTrue="{!v.showsecondbuttons}">
+                                            <div class="col-sm-10 col-lg-6">
+                                                <label>Are all the tenants moving out?</label>
+                                                <div>
+                                                    <lightning:button class="learn-more " aura:id="secondyes"  label="Yes" title="Yes" onclick="{!c.onsecondYes }" />
+                                                    <lightning:button class="learn-more " aura:id="secondno"    label="No" title="No"   onclick="{!c.onsecondNo }" />                                                
+                                                </div>
+                                            </div>
+                                        </aura:if>
+                                    </div>
+                                    <aura:if isTrue="{!v.showanothertenant}">
+                                    <div class="form-group row">
+                                        <p class="col-sm-10 col-lg-6">Please select which tenant(s) is/are moving out and enter in the fields below how much of the deposit you want to be paid to the tenant(s).</p>
+                                    </div>
+                                    
+                                    
+                                    <aura:iteration items="{!v.depositDetailslist}" var="item">
+                                        <aura:if isTrue="{!item.Deposit_Holder__c != v.currentUser.AccountId}">
+                                            <div class="form-group row">
+                                                <input type="checkbox" id="checkboxstatus" checked="{!item.Istenantmoved__c}" onchange="{!c.handleSelectedtenents}" value="{!item.Deposit_Holder__c}"  class="col-sm-2 col-lg-1"/>
+                                                <!--   <ui:inputCheckbox aura:id="checkContact" class="col-sm-2 col-lg-1" change="{!c.handleSelectedtenents}" value=" " text="{!item.Deposit_Holder__c}"/>-->
+                                                <div class="col-sm-10 col-lg-5">
+                                                 <!--   <label class="col-form-label" for="LadyName">{!item.Deposit_Holder__r.Name}</label>-->
+                                                    <!--<input type="text" class="form-control" id="LadyName" placeholder="&#163;"/>-->
+                                                    <lightning:input type="number" placeholder="£" formatter="currency" step="0.01" name="changeoveramount"
+                                                                     label="{!item.Deposit_Holder__r.Name}" value="{!item.Tenencychangeoveramount__c}"   />
+                                                </div>
+                                            </div>
+                                        </aura:if>
+                                    </aura:iteration>
+                                        
+                                        <aura:if isTrue="{!v.showanothertenant}">
+                                        <aura:if isTrue="{!v.accessamounterror}">
+                                            <div class="form-group row">
+                                                <p class=" col-sm-10 col-lg-6 error-msg">
+                                                    You can only request an amount less than the total deposit amount.
+                                                    If you require the entire deposit amount, you must request repayment of your deposit by going back to the deposit summary page and clicking 'Request repayment of deposit'.
+                                                </p>
+                                            </div>
+                                        </aura:if>
+                                        </aura:if>    
+                                        
+                                     <aura:if isTrue="{!v.showrepaymentmessage}">
+                                     <div class="form-group row">
+                                        <p class="col-sm-10 col-lg-6 error-msg">If all tenants are moving out, you must request repayment of your deposit. Please do this by returning to your deposit summary page and clicking 'Request repayment of deposit'.</p>
+                                    </div>   
+                                        </aura:if>    
+                                    </aura:if>
+                                    
+                                    <aura:if isTrue="{!v.showSubmitButton}">
+                                        <div class="form-group row">
+                                            <div class="col-sm-10 col-lg-8">
+                                                <lightning:button class="see-all" label="Submit" title="Submit" onclick="{!c.getsubmitdetails}" /> 
+                                            </div>
+                                        </div>
+                                    </aura:if>
+                                    
+                                </form>
+                            </div>
+                        </section>
+                        <!-- Deposit Steps HTML End -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  
+</aura:component>

@@ -1,0 +1,56 @@
+.user_creation_nnp {
+  .options-box {
+    width: calc(100% - 25px);
+    height: 225px;
+    display: inline-block;
+    overflow: hidden;
+    @include border(1px, solid, map-get($color, light_border));
+    li {
+      padding: $s10;
+      color: map-get($color, white);
+      cursor: pointer;
+      background-color: map-get($color, light_blue);
+      margin-bottom: $s05;
+    }
+  }
+  button{
+      background-color: map-get($color, blue);
+      color: white;
+  }
+  label {
+    font-size: $s15;
+  }
+  .form-control {
+    height: $s40;
+    font-size: $s15;
+  }
+  select.form-control {
+    height: auto;
+  }
+  .arrow-bar {
+    width: $s25;
+    text-align: right;
+    display: inline-block;
+    img {
+      width: 6px;
+    }
+  }
+}
+
+.modal-backdrop{
+    display: block !important;
+}
+.rotate-left {
+  transform: rotate(180deg);
+  transform-origin: right;
+}
+
+.rotate-up {
+  transform: rotate(-90deg);
+  transform-origin: right;
+}
+
+.rotate-bottom {
+  transform: rotate(90deg);
+  transform-origin: right;
+}

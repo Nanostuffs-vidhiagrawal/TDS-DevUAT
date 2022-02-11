@@ -1,0 +1,51 @@
+<aura:component controller="ManageProperties" implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <lightning:overlayLibrary aura:id="overlayLibDemo1"/>
+    <lightning:notificationsLibrary aura:id="notifLib"/>
+    
+    <!-- Address Fields-->
+    <aura:attribute access="public"  name="Street" type="String"  />
+    <aura:attribute access="public"  name="Town" type="String"  />
+    <aura:attribute access="public"  name="PostCode" type="String"  />
+    <aura:attribute access="public"  name="Country" type="String"  />
+    <aura:attribute access="public"  name="County" type="String"  />
+    <aura:attribute access="public" name="localAuthorityArea" type="String" />
+    
+    
+    <aura:attribute name="Propobj" type="Property__c" default="{ 'sobjectType': 'Property__c'}"/>
+    <div class="slds-grid">
+        <lightning:card title="New Property" >
+            <!-- Body -->
+            <p class="slds-p-horizontal_small">
+                <!--<c:addressFinder aura:id="compB" IsEditMode="true" method="{!c.parentPress}"/>-->
+                <c:Register aura:id="compB" method="{!c.parentPress}" />
+                <!--<lightning:input aura:id="Newid" label="City" type="String" required="true" value="{!v.Propobj.City__c}"/>
+                <lightning:input aura:id="Newid" label="Country" required="true" type="String" value="{!v.Propobj.Country__c}"/>
+                <lightning:input aura:id="Newid" label="Postcode" required="true" type="string" value="{!v.Propobj.Postal_Code__c}"/>'
+                <lightning:input aura:id="Newid" label="street address" type="String" required="true" value="{!v.Propobj.Street__c}"/>
+                <lightning:input aura:id="Newid" label="County" type="String" required="true" value="{!v.Propobj.County__c}"/>-->
+                <!-- <lightning:input aura:id="Newid" label="Town" type="String" required="true" value="{!v.Propobj.Town__c}"/> -->
+                <lightning:input aura:id="furnishing"
+                                 label="Is furnished"
+                                 type="Checkbox"
+                                 checked="{!v.Propobj.Is_Furnished__c}"/>
+                <lightning:input aura:id="Badroom"
+                                 label="No. of Bedrooms"
+                                 type="String"
+                                 value="{!v.Propobj.No_of_bedrooms__c}"/>
+                <lightning:input aura:id="Livingroom"
+                                 label="No of livingrooms"
+                                 type="String"
+                                 value="{!v.Propobj.No_of_living_rooms__c}"/>
+                <br/>
+                <div>
+                    <lightning:button aura:id="saveId"
+                                      label="Save" variant="Brand"   
+                                      onclick="{!c.doSave}"/> 
+                </div>
+                
+            </p>
+            
+            <!--/ Body -->
+        </lightning:card>
+    </div> 
+</aura:component>

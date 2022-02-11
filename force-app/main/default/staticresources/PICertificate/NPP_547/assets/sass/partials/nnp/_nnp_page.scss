@@ -1,0 +1,146 @@
+.user_creation_nnp {
+  .options-box {
+    width: calc(100% - 25px);
+    height: 225px;
+    display: inline-block;
+    overflow: hidden;
+    @include border(1px, solid, map-get($color, light_border));
+    li {
+      padding: $s10;
+      color: map-get($color, white);
+      cursor: pointer;
+      background-color: map-get($color, light_blue);
+      margin-bottom: $s05;
+    }
+  }
+  button{
+      background-color: map-get($color, blue);
+      color: white;
+  }
+  label {
+    font-size: $s15;
+  }
+  .form-control {
+    height: $s40;
+    font-size: $s15;
+  }
+  select.form-control {
+    height: auto;
+  }
+  .arrow-bar {
+    width: $s25;
+    text-align: right;
+    display: inline-block;
+    img {
+      width: 6px;
+    }
+  }
+}
+
+.modal-backdrop{
+    display: block;
+}
+.rotate-left {
+  transform: rotate(180deg);
+  transform-origin: right;
+}
+
+.rotate-up {
+  transform: rotate(-90deg);
+  transform-origin: right;
+}
+
+.rotate-bottom {
+  transform: rotate(90deg);
+  transform-origin: right;
+}
+
+.border-blue {
+  @include border(4px, solid, map-get($color, blue));
+
+  .agree-box {
+    @include border(1px, solid, map-get($color, blue));
+    color: map-get($color, blue);
+    @include font_size($base);
+    @include space(padding, all, $s10);
+    display: inline-block;
+    min-width: 163px;
+    text-align: center;
+    outline: $zero;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
+
+
+.pdf_wrapper {
+    @include space(padding, top, $s60);
+    @include space(padding, bottom, $s60);
+
+    @include respond-below(sm) {
+        @include space(padding, top, $s30);
+        @include space(padding, bottom, $s30);
+    }
+
+    p {
+        font-family: arial;
+        font-weight: bold;
+        @include font_size($base);
+        color: map-get($color, black);
+
+        i {
+            display: block;
+        }
+    }
+
+    .row {
+        p {
+            i {
+                font-weight: normal;
+            }
+        }
+    }
+
+    h6 {
+        font-family: arial;
+        @include font_size($base);
+        font-weight: bold;
+        text-transform: uppercase;
+        @include space(margin, bottom, $zero);
+    }
+
+    .detail {
+        font-family: arial;
+        @include font_size($base);
+        color: map-get($color, black);
+        border: 2px solid #8FCDF1;
+        @include space(padding, all, $s30);
+        @include space(margin, bottom, $s15);
+        @include space(margin, top, $s10);
+
+        @include respond-below(sm) {
+            @include space(padding, all, $s15);
+        }
+
+        p {
+            font-weight: normal;
+        }
+
+        ul {
+            @include space(padding, left, $s15);
+            list-style: disc;
+        }
+    }
+
+    .footer-text {
+        max-width: 81rem;
+        font-weight: normal;
+        margin: 0 auto;
+
+        a {
+            text-decoraton: underline;
+        }
+    }
+}

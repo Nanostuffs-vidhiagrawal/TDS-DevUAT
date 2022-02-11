@@ -1,0 +1,30 @@
+.thank_you {
+	text-align: center;
+	@include space(padding, top, $s50);
+	@include space(padding, bottom, $s50);
+
+	@include respond-below(sm) {
+		@include space(padding, top, $s30);
+		@include space(padding, bottom, $s30);
+	}
+
+	h2 {
+		color: map-get($color, dark_green);
+		@include space(padding, top, $s15);
+	}
+
+	p {
+		@include font_size($above_base);
+		@include space(margin, bottom, $zero);
+		max-width: 62rem;
+		margin: 0 auto;
+	}
+
+	.see-all {
+		@include space(margin, top, $s40);
+	}
+
+	@include respond-below(sm) {
+		@include space(margin, top, $s20);
+	}
+}

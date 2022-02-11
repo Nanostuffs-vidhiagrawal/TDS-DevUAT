@@ -1,0 +1,244 @@
+<apex:page readOnly="true" controller="EI_Prescribeinformationapx" applyHtmlTag="false" sidebar="false" showHeader="false"     
+           cache="true" renderAs="pdf">
+    <head>    
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />    
+        <style type="text/css">    
+            
+            @page {    
+            size: A4 landscape;    
+            border: 2px solid black;
+            
+            }    
+            td {    
+            text-align: center;    
+            font-size: 16px; 
+            border-collapse: collapse;
+            }
+            tr {    
+            text-align: center;    
+            font-size: 16px;
+            
+            }
+           
+        </style>    
+    </head> 
+    <table border="1" width="100%">
+        
+        <thead>
+            <tr>
+                <th colspan="2" bgcolor="black" style="color:white;" >Prescribe information<br/><Strong>DETAILS OF THE PRIMARY LANDLORD</Strong></th>
+            </tr>
+        </thead>
+        <tbody>
+        <apex:repeat value="{!deplist}" var="con">
+            <tr>
+                <td width="50%">Landlord's full name</td>
+                <td width="50%">{!con.customer__r.Name}</td>
+            </tr>
+                   <tr >
+            <td width="50%">Landlord's address</td>
+            <td width="50%">{!con.Customer__r.PersonMailingStreet},{!con.Customer__r.PersonMailingcity}<br/>{!con.Customer__r.PersonMailingstate},{!con.Customer__r.PersonMailingcountry}</td> 
+        </tr>
+        <tr >
+            <td width="50%">Landlord's alternate telephone number</td>
+            <td width="50%">{!con.customer__r.PersonOtherPhone}</td>
+        </tr>
+        <tr >
+            <td width="50%">Landlord's email address</td>
+            <td width="50%">{!con.customer__r.PersonEmail}</td>
+        </tr>
+        <tr >
+            <td width="50%">Landlord's fax number</td>
+            <td width="50%"></td>
+        </tr>
+        <tr >
+            <td width="50%">Landlord's correspondence address (if different)</td>
+            <td width="50%"></td>
+        </tr>
+        </apex:repeat>
+        </tbody>
+        <thead>
+        <tr>
+            <th colspan="2" bgcolor="black" style="color:white;"><Strong>DETAILS OF ANY AGENT ACTING ON THE LANDLORD'S BEHALF</Strong></th>
+        </tr>
+        </thead>
+        <tbody>
+         <apex:repeat value="{!agentinfolist}" var="alist">
+        <tr>
+            <td width="50%">Agent name and address </td>
+            <td width="50%">{!alist.Account.Name},{!alist.Account.PersonMailingStreet},{!alist.Account.PersonMailingCity}<br/>{!alist.Account.PersonMailingState},{!alist.Account.PersonMailingCountry},{!alist.Account.PersonMailingPostalCode}</td>
+        </tr>
+        <tr>
+            <td width="50%">Telephone number</td>
+            <td width="50%">{!alist.Account.PersonMobilePhone}</td>
+        </tr>
+        <tr>
+            <td width="50%">Email address </td>
+            <td width="50%">{!alist.Account.PersonEmail}</td>
+        </tr>
+        </apex:repeat>
+        </tbody>
+        <thead>
+        <tr>
+            <th colspan="2" bgcolor="black" style="color:white;"><Strong>DETAILS OF THE LEAD TENANT</Strong></th>
+        </tr>
+        </thead>
+        <tbody>
+        <apex:repeat value="{!depallistlead}" var="tenlead">
+        <tr>
+            <td width="50%">Tenant name</td>
+            <td width="50%">{!tenlead.Deposit_Holder__r.Name}</td>
+        </tr>
+         <tr>
+            <td width="50%">address</td>
+            <td width="50%">{!tenlead.Deposit_Holder__r.PersonMailingStreet},{!tenlead.Deposit_Holder__r.PersonMailingcity}<br/>{!tenlead.Deposit_Holder__r.PersonMailingstate},{!tenlead.Deposit_Holder__r.PersonMailingcountry}</td>
+        </tr>
+        <tr>
+            <td width="50%">Email address</td>
+            <td width="50%">{!tenlead.Deposit_Holder__r.PersonEmail}</td>
+        </tr>
+        <tr>
+            <td width="50%">Telephone number</td>
+            <td width="50%"></td>
+        </tr>
+        <tr>
+            <td width="50%">Mobile number</td>
+            <td width="50%">{!tenlead.Deposit_Holder__r.Phone}</td>
+        </tr>
+       </apex:repeat>    
+        </tbody>
+        
+        <apex:repeat value="{!depallist}" var="ten">
+        <thead>
+        <tr>
+            <th colspan="2" bgcolor="black" style="color:white;"><Strong>DETAILS OF ANY OTHER JOINT TENANTS</Strong></th>
+        </tr>
+        </thead>    
+         <tbody>  
+        <tr>
+            <td width="50%">Tenant name </td>
+            <td width="50%">{!ten.Deposit_Holder__r.Name}</td>
+        </tr>
+        <tr>
+            <td width="50%">Email address  </td>
+            <td width="50%">{!ten.Deposit_Holder__r.PersonEmail}</td>
+        </tr>
+        <tr>
+            <td width="50%">Mobile number </td>
+            <td width="50%"> {!ten.Deposit_Holder__r.Phone}</td>
+        </tr>
+            </tbody>
+        </apex:repeat>
+          <thead>
+        <tr>
+            <th colspan="2" bgcolor="black" style="color:white;"><Strong>TENANCY DETAILS</Strong></th>
+        </tr>
+        </thead>
+         <tbody>
+         <apex:repeat value="{!deplist}" var="con">
+        <tr>
+            <td width="50%">Address of the property to which the tenancy relates</td>
+            <td width="50%">{!con.Property_Address__c}</td>
+        </tr>
+        </apex:repeat>
+        </tbody>
+        <thead>
+       <tr>
+           <th colspan="2" bgcolor="black" style="color:white;"><Strong>THE DEPOSIT</Strong></th>
+        </tr> 
+        </thead>
+        <tbody>
+        <apex:repeat value="{!deplist}" var="con">
+        <tr>
+            <td width="50%">Amount of deposit protected: </td>
+            <td width="50%">£{!con.Amount_of_Deposit_Protected_by_TDS__c}</td>
+        </tr>
+        <tr>
+            <td width="50%">Date received by the landlord (or their representative) </td>
+            <td width="50%">{!receiveddepositdate}</td>
+        </tr>
+        <tr>
+            <td width="50%">Date deposit/deposit protection fee paid by the landlord (or
+                their representative) to TDS Custodial</td>
+            <td width="50%">{!protectiondate}</td>
+        </tr>
+            </apex:repeat>
+        </tbody>
+         <thead>
+       <tr>
+           <th colspan="2" bgcolor="black" style="color:white;">HOW THE DEPOSIT WILL BE RETURNED AND THE CIRCUMSTANCES<br/>UNDER WHICH SOME OR ALL OF THE DEPOSIT MAY BE RETAINED</th>
+        </tr> 
+        </thead>
+        <thead>
+                <tr >
+            <th colspan="2" align="left" style="font-weight:normal">At the end of the tenancy the deposit will be allocated between the tenant and landlord in accordance with the procedures
+                set down in the tenancy agreement. The tenancy agreement sets out the circumstances under which the landlord may
+                retain some or all of the deposit. These are to be found in the following sections of the tenancy agreement:</th>
+        </tr>
+        </thead>
+        
+        <thead>
+        <tr >
+            <th colspan="2" align="left" style="font-weight:normal">2. The Tenant pays the Deposit as security for the performance of the Tenant's obligations and to pay and compensate the
+                Landlord for the reasonable costs of any breach of those obligations. It is specifically agreed that this money is not to be
+                used by the Tenant as payment for any rent due under this agreement. No interest shall be payable on this Deposit. The
+                balance of the Deposit to be paid to the Tenant as soon as reasonably possible after conclusion of the tenancy, less any
+                reasonable costs incurred for the breach of any obligation as agreed by the appropriate deposit scheme, details of which
+                are contained in the scheme’s deposit information leaflet and website.” (3.3) That in the case of a breach of the terms of
+                the tenancy by the Tenant, a reasonable administration charge may be made in addition to the costs of any remedial work,
+                in order to compensate the Landlord or Agent his reasonable expenses
+            </th>
+        </tr>
+        </thead>
+        
+         <thead>
+        <tr>
+            <th colspan="2" align="left" style="font-weight:normal">In the custodial scheme, the landlord will apply to the Scheme to seek the repayment of the deposit. If the tenant agrees,
+                the Scheme will repay the deposit in accordance with that agreement. If the parties disagree, then the matter may be
+                referred to the dispute resolution mechanism and an adjudicator will decide how the deposit should be repaid.
+            </th>
+        </tr>
+         </thead>
+        
+        <thead>
+        <tr >
+            <th colspan="2" bgcolor="black" style="color:white;">DETAILS OF THE SCHEME AND DISPUTE RESOLUTION MECHANISM</th>
+        </tr>
+        </thead>
+        
+        <thead>
+         <tr >
+                        <th colspan="2" align="left" style="font-weight:normal">
+            TDS Custodial provides an independent dispute resolution mechanism in the event that the landlord and tenant fail to
+agree the allocation of the deposit at the end of the tenancy. Further details are contained in the ‘What is the TDS Custodial
+                scheme?’ leaflet supplied.<br/>
+The Scheme can be contacted at:<br/><br/>
+TDS Custodial<br/>
+PO Box 1255<br/>
+Hemel Hempstead<br/>
+Herts<br/>
+HP1 9GN<br/>
+info@tenancydepositscheme.com<br/>
+www.tenancydepositscheme.com<br/>
+Procedures that apply when the tenant is not contactable at the end of the tenancy<br/><br/>
+If the tenant does not respond to the landlords repayment request, the landlord must complete a statutory declaration before
+TDS Custodial can repay the deposit.<br/>
+The statutory declaration is a sworn legal document confirming that the other party cannot be contacted, and confirms any
+claims made on the deposit and the amounts to be repaid to each party.
+TDS Custodial provides a simple template to use for this process</th>
+        </tr>
+        </thead>
+    </table>
+Certification by the landlord/agent<br/><br/>
+I certify that the written information provided is correct to my knowledge and belief.<br/>
+I have given the tenant the opportunity to sign this document to confirm that the information is accurate to the best of their<br/>
+knowledge and belief.<br/>
+Name:<br/>
+Signature:<br/>
+Date:<br/><br/>
+Certification by tenants<br/><br/>
+I certify that the written information provided is correct to my knowledge and belief.<br/>
+Name(s):<br/>
+Signature(s):<br/>
+Date:<br/>
+</apex:page>

@@ -1,0 +1,264 @@
+<apex:page controller="DPCController" readOnly="true"  
+           applyHtmlTag="false"     
+           sidebar="false"     
+           showHeader="false"     
+           cache="true" renderAs="pdf"
+          >
+
+
+<apex:styleSheet value="{!URLFOR($Resource.CertificatePage,'/assets/css/custom.css')}" />
+   <apex:includeScript value="{!URLFOR($Resource.CertificatePage,'/assets/js/plugin.min.js')}"/>
+         <apex:includeScript value="{!URLFOR($Resource.CertificatePage,'/assets/js/custom.js')}"/>
+
+<head>
+ <style type="text/css">
+    @page  {
+  width:992px;
+      margin: .4cm;
+     size: 8.5in 11.8in;
+}
+.rectBox{
+     font-weight: bold;
+    color: #000;
+    border-radius: 12px;
+    font-size: 16px;
+    border: 2px solid #3A7BBF;
+    margin-bottom: 15px;
+    padding: 1rem; 
+     }
+  .rowClass{
+         display: flex;
+    flex-wrap: wrap;
+     }
+  .colSize8{   
+     flex: 0 0 66.6666666667%;
+    max-width: 66.6666666667%;
+   }  
+     .colored{
+     color: #3A7BBF;}
+     .colSize4{
+     padding-top: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+     flex: 0 0 33.3333333333%;
+    max-width: 33.3333333333%;
+       border: 2px solid #3A7BBF;
+     }
+ .innerLable{
+     padding-top: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+     background-color: #3A7BBF;
+    color: #fff;
+     border: 2px solid #3A7BBF;
+     }
+     p {
+     margin-bottom:0;
+     font-size: 16px;
+    line-height: 24px;
+    color: #4D4C4C;
+     }
+    </style>
+        </head>
+        
+               <body>
+                 <table>
+                    <tr>
+                    <td style="width: 65%;">
+                    <table>
+                         <tr><td>
+                          <div style="width: 550px;border-bottom: 1px dashed #3A7BBF;margin-bottom:20px;">
+                             <img style="width: 350px;" src="{!URLFOR($Resource.CertificatePage, '/assets/img/Log_high_res.jpg')}" alt="Logo" title="SDS Logo"/>
+                          <div style="height:10px">
+                         </div>
+                        </div>
+                        </td></tr>
+                        
+                        <tr><td>
+                        <table style="width:100%;" class="rectBox">
+                                    <tr>
+                                        <td style="width:62%;" class="innerLable colSize8"><div>Amount of deposit protected</div></td>
+                                        <td style="width:38%;" class="colSize4"><p>£{!deptObj.Protected_Amount__c }</p></td> 
+                                    </tr>
+                                </table>
+
+                       
+                             </td></tr>
+                        
+                        <tr><td>  
+                            <table style="width:100%;" class="rectBox">
+                                    <tr>
+                                        <td style="width:62%;" class="innerLable colSize8"><div >Date SafeDeposits received the deposit</div></td>
+                                        <td style="width:38%;" class="colSize4"> 
+                                        <p> <apex:outputText value="{0, date,  dd / MM / yyyy}">
+                                        <apex:param value="{!deptObj.Date_Deposit_Received__c}" /> </apex:outputText></p>
+                                        </td>
+                                    </tr>
+                                </table>
+                         
+                             </td></tr>
+                        
+                        <tr><td> 
+                            
+                             <table style="width:100%;" class="rectBox">
+                                    <tr>
+                                        <td style="width:38%;" class="innerLable colSize8"><div >Address of the property to which the tenancy deposit relates</div></td>
+                                        <td style="width:62%;" class="colSize4">
+                                            <p>{!deptObj.Property__r.House_No__c}/{!deptObj.Property__r.Street__c}</p>
+                                            <p>{!deptObj.Property__r.City__c}</p>
+                                            <p>{!deptObj.Property__r.State__c}</p>
+                                            <p>{!deptObj.Property__r.Country__c}</p>
+                                            </td>
+                                    </tr>
+                                </table>
+                
+                             </td></tr>
+                        
+                        <tr><td>
+                             <table style="width:100%;" class="rectBox">
+                                    <tr>
+                                        <td style="width:38%;" class="innerLable colSize8"><div >Name of tenant(s)</div></td>
+                                        <td style="width:62%;" class="colSize4"><p>{!deptObj.Tenants_Name__c}</p></td>
+                                    </tr>
+                                </table>
+                           
+                             </td></tr>
+                        
+                        <tr><td>
+                            <table style="width:100%;" class="rectBox">
+                                    <tr>
+                                        <td style="width:38%;" class="innerLable colSize8"><div >Name and contact details of the landlord</div></td>
+                                        <td style="width:62%;" class="colSize4"> 
+                                        <p>{!deptObj.Customer__r.Name}</p>
+                                        <p>{!deptObj.Customer__r.BillingStreet}</p>
+                                        <p>{!deptObj.Customer__r.BillingCity}</p>
+                                        <p>{!deptObj.Customer__r.BillingState}</p>
+                                        <p>{!deptObj.Customer__r.BillingPostalCode}</p>
+                                        <p>{!deptObj.Customer__r.BillingCountry}</p>
+                                        <p></p></td>
+                                    </tr>
+                                </table>
+                           
+                             </td></tr>
+                        
+                        <tr><td>
+                             <table style="width:100%;" class="rectBox">
+                                    <tr>
+                                        <td style="width:62%;" class="innerLable colSize8"><div >SafeDeposits DAN No.</div></td>
+                                        <td style="width:38%;" class="colSize4"><p>{!deptObj.Name}</p></td>
+                                    </tr>
+                                </table>
+                          
+                             </td></tr>
+                        
+                        <tr><td>
+                                <table style="width:100%;" class="rectBox">
+                                    <tr>
+                                        <td style="width:62%;" class="innerLable colSize8"><div >Amount of deposit in the tenancy agreement</div></td>
+                                        <td style="width:38%;" class="colSize4"><p>£{!deptObj.Amount_of_Deposit_in_Tenancy_Agreement__c }</p></td>
+                                    </tr>
+                                </table>
+                         
+                             </td></tr>
+                        
+                        <tr><td>
+                            <table style="width:100%;" class="rectBox">
+                                    <tr>
+                                        <td style="width:38%;" class="innerLable colSize8"><div >Agent's contact details</div></td>
+                                        <td style="width:62%;" class="colSize4"><p></p>
+                                    <p></p>
+                                    <p></p>
+                                    <p></p></td>
+                                    </tr>
+                                </table>
+                            
+                            
+                             </td></tr>
+                        
+                        <tr><td>
+                             <table style="width:100%;" class="rectBox">
+                                    <tr>
+                                        <td style="width:38%;" class="innerLable colSize8"><div >Signature</div></td>
+                                        <td style="width:62%;" class="colSize4"> <img src="{!URLFOR($Resource.CertificatePage, '/assets/img/cf_sign.PNG')}" alt="Signature"/></td>
+                                    </tr>
+                                </table>
+                            
+
+                             </td></tr>
+                        
+                        <tr><td>
+                             <table style="width:100%;" class="rectBox">
+                                    <tr ><td class="colored">
+                                      Signed by Carol Bradburn, Client Account Manager, SafeDeposits Scotland Ltd. 
+                                    </td></tr>
+                                 <tr ><td>
+                                     SafeDeposits Scotland, Lower Ground, 250 West George Street, Glasgow, G2 4QY  
+                                    </td></tr>
+                                 <tr><td>
+                                       <span class="colored">t:</span> <a style="color:black" href="tel:03333 213136">03333 213136</a>
+                            <span class="colored">e:</span> <a style="color:black" href="mailTo:info@safedepositsscotland.com"> info@safedepositsscotland.com</a> 
+                            <a class="colored" href="https://www.safedepositsscotland.com/" target="_blank">safedepositsscotland.com</a> 
+                                 </td>   </tr>
+                                </table>
+                            
+
+                             </td></tr>
+                        </table>  
+                   
+                      </td>
+                   <td style="width: 35%;">  
+                       <div style="margin-left:-60px;margin-bottom: 200px;">
+                          <table style="width:50%;">
+                           <tr>
+                           <td>
+                                  <img style="width: 200px;text-align: center;" src="{!URLFOR($Resource.CertificatePage, '/assets/img/Certificate.png')}" alt="Certificate"/>
+                       
+                               </td>
+                              </tr>
+                          <tr style="margin-left:-200px">
+                           <td > 
+                              <div style="margin-top:10px;font-family: arial;font-weight: bold;color: #3A7BBF;font-size: 16px;line-height: 24px;margin-bottom: 15px;">
+                                  
+                               The Tenancy Deposit Schemes (Scotland) Regulations 2011 require all landlords who have to register with their local authority to transfer their tenancy deposits to an approved tenancy deposit scheme.
+                            </div>
+                            <div style="font-size: 14px;line-height: 20px;color: #000;">
+                                
+                              This certificate confirms that your landlord has paid your deposit to us (which means that we will safeguard your deposit during the tenancy) and gives you key information about the protection of your deposit, in accordance with Regulation 22(2). SafeDeposits Scotland is a tenancy deposit protection scheme approved by the Scottish Ministers.
+                                 <div style="margin-top:10px;">Please read this certificate alongside the letter/email which accompanies it. </div>
+                                </div>
+                               </td>
+                              </tr>
+                           </table> 
+                          
+                       
+                       </div>
+                     
+                
+                 
+                  </td>
+                </tr>
+   
+                    </table>
+                    <!-- Certificate HTML End -->
+
+        <!-- Certificate Footer HTML Start 
+        <footer class="certificate-detail-footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-9">
+                        <p class="colored">Signed by Carol Bradburn, Client Account Manager, SafeDeposits Scotland Ltd.</p>
+                        <p>SafeDeposits Scotland, Lower Ground, 250 West George Street, Glasgow, G2 4QY</p>
+                        <p><span class="colored">t:</span> <a href="tel:03333 213136">03333 213136</a>
+                            <span class="colored">e:</span> <a href="mailTo:info@safedepositsscotland.com"> info@safedepositsscotland.com</a> 
+                            <a class="colored" href="https://www.safedepositsscotland.com/" target="_blank">safedepositsscotland.com</a> 
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </footer>-->
+   
+    </body>
+
+</apex:page>

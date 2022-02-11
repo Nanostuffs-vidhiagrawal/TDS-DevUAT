@@ -1,0 +1,33 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+<!-- 1.attribute to store return value and show on component. -->
+    <aura:attribute name="gridData" type="Object"/>
+    <!-- 2.handler to call method "doInit" of jsCOntroller on loading of component. -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/> 
+    <div class="slds-m-around--xx-large">     
+        <button class="slds-button slds-button--brand" onclick="{!c.downloadCSV}">Download As CSV</button> <br/><br/>
+        <table class="slds-table slds-table--bordered" id="pbId">
+            <!-- 3.Header of table. -->
+            <thead>
+                <tr class="slds-text-heading--label">            	
+                    <aura:iteration items="{!v.gridData}" var="col">                             
+                        <th class="{!col.cssClass}"> {!col.title} </th>
+                    </aura:iteration>             
+                </tr>        	
+            </thead>
+            <!-- 4.Body of table. -->
+            <tbody>
+                <!-- Limitation - we cannot use indexvar of iterator control to refer header json information else, instead of defining css class for each column, we could have used it from header only -->
+                <aura:iteration items="{!v.gridData.rows}" var="row">
+                    <tr class="slds-hint-parent">
+                        <aura:iteration items="{!row.vals}" var="col" indexVar="idx">                       
+                            <td id="{!'theTd__' + idx}" class="{!col.cssClass}">{!col.val}</td>
+                        </aura:iteration>
+                    </tr>
+                </aura:iteration>           
+            </tbody>   
+        </table>
+    </div>	
+    
+    
+    
+</aura:component>

@@ -1,0 +1,20 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	
+    
+    
+    
+    <ul class="headeNav__notification ">
+        <li>
+            <a href=""  data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                <img src="{!$Resource.TDSTheme + '/assets/img/notify-icon.png'}" alt="Notification Icon"/> 
+                
+                <span class="badge">2</span></a>
+            <!-- <ul class="dropdown-menu">
+                                    <li><a href="#" title="My Profile">Notification 1</a></li>
+                                    <li><a href="#" title="Notification 13">Notification 2</a></li>
+                                </ul>-->
+        </li>
+    </ul>  
+    
+    
+</aura:component>

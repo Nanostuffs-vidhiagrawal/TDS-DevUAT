@@ -1,0 +1,108 @@
+<aura:component implements="lightning:isUrlAddressable,forceCommunity:themeLayout,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:method name="mandatoryMethod" action="{!c.showMandatory}" >
+        <aura:attribute name="flagvalue" type="boolean" default="true"/>
+    </aura:method>
+    <aura:attribute access="public"  name="IsEditMode" type="Boolean"  />
+    <aura:attribute access="public"  name="AddressLine1" type="String"  />
+    <aura:attribute access="public"  name="Street" type="String"  />
+ <!--   <aura:attribute access="public"  name="houseNo" type="String"  />-->
+    <aura:attribute access="public"  name="Town" type="String"  />
+    <aura:attribute access="public"  name="County" type="String"  />
+    <aura:attribute access="public"  name="PostCode" type="String"  />
+    <aura:attribute access="public"  name="Country" type="String"  />
+    <aura:handler access="public"  name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute access="public"  name="method" type="Aura.action"/>
+     <aura:attribute name="showhouseNo" type="Boolean" access="global" default="false"/>
+    <aura:attribute name="flagMandatory" type="Boolean" access="global" default="true"/>
+	<aura:attribute access="public" name="localAuthorityArea" type="String" />  
+    	<aura:attribute access="public" name="houseNo" type="String" />  
+    <div class=" slds-grid slds-gutters slds-form-element">
+        <div class="slds-col">
+            
+        </div>
+        <div class="slds-col" style="">
+            <div class="content">
+                <div class="fieldWrap">
+                    <aura:if isTrue="{!v.flagMandatory}">
+                        <label style="margin-bottom:10px;" for="searchBox">&nbsp;&nbsp;&nbsp;Address</label>
+                        <aura:set attribute="else">
+                            <label for="searchBox" style="margin-left: 8px!important;">
+                                Address</label>
+                        </aura:set>
+                    </aura:if>
+                    <div style="margin-top: 10px;">
+                        
+                        <input onkeyup="{!c.findAddress1}" required="true" type="text" name="search" style="margin-top: -14px;margin-right: 36px;font-family: Aller_regular!important;width: 90%!important;font-size: 1.6rem!important;" class="addressFind" id="searchBox" placeholder="Please enter postcode and press search"  />
+                        <div class="clear" id="clearButton" onclick="{!c.clearSearch}">X</div><br/><br/>
+                   <!--         <button class="lookupbtn" style="font-family: Aller_regular!important;"  onclick="{!c.findAddress1}">Search</button>-->
+                 <lightning:button aura:id="srchButton" label="Search" class="lookupbtn" variant="brand" onclick="{!c.findAddress1}"
+          />
+                    </div>  
+                    <!--<lightning:button label="Search"
+                              class="btn"
+                              variant="brand"
+                              onclick="{!c.findAddress1}"/>-->                    
+                </div>
+                
+                <div class="fieldWrap">
+                    <div class="error" id="errorMessage"></div>
+                </div>
+                
+                <div class="fieldWrap">
+                    <div style="width: 90%!important;font-family: Aller_regular!important;" id="result"></div>
+                </div>	
+                
+                <div class="seperator" id="seperator"></div> 
+                <br/>
+                <div class="fieldWrap">
+                    <a class="EnterLink" style="color: #32669E;font-family: Aller_regular;" id ="EnterButton" onclick="{!c.enterManually}">Enter manually</a>
+                    <div class="outputArea" style="font-family: Aller_regular;!important" id="output"></div>
+                    
+                </div>
+                <div id="manualAddress" class="ManualAddress">
+                      <aura:if isTrue="{!v.showhouseNo}">
+                    <lightning:input class="houseNo" onclick="{!c.enterManually}"  access="public" aura:id="fieldState" label="House No."
+                                     name="town"
+                                     placeholder="Enter house no."
+                                     value="{!v.houseNo}"
+                                     />
+                            <br></br>
+                          </aura:if>
+                    <lightning:textarea class="textarea" onclick="{!c.enterManually}"  access="public"  aura:id="fieldId"
+                                        label="Street name"
+                                        placeholder="Enter street name"
+                                        name="addressLine1" 
+                                        value="{!v.AddressLine1}"
+                                       
+                                        />
+                    
+                     <br></br>
+                    <lightning:input class="addressHeading" onclick="{!c.enterManually}"  access="public" aura:id="fieldState" label="Town/City"
+                                     name="town"
+                                     placeholder="Enter town"
+                                     value="{!v.Town}"
+                                     /> <br></br>
+                    <lightning:input class="addressHeading" onclick="{!c.enterManually}"  access="public" aura:id="fieldState" label="County"
+                                     name="County"
+                                     placeholder="Enter county"
+                                     value="{!v.County}"
+                                    />     <br></br>
+                    <lightning:input class="addressHeading" onclick="{!c.enterManually}"  access="public" aura:id="fieldPostCode" label="Postcode"
+                                     name="PostCode"
+                                     placeholder="Enter postcode"
+                                     value="{!v.PostCode}"
+                                     /> <br></br>
+                    <lightning:input class="addressHeading" onclick="{!c.enterManually}"  access="public" aura:id="fieldCountry" label="Country"
+                                     name="Country"
+                                     placeholder="Enter country"
+                                     value="{!v.Country}"
+                                    
+                                     />
+                    
+                </div>
+            </div>
+            <div class="slds-col">  
+            </div>
+        </div>
+    </div>    
+</aura:component>

@@ -1,0 +1,56 @@
+.THIS .slds-textarea {
+    height:100px !important;
+}
+.THIS .slds-file-selector__dropzone .file_section input{height:18.5rem !important;}
+.THIS .slds-assistive-text{position: unset !important;width: 100% !important;}   
+.THIS .slds-file-selector__dropzone{border:none;}
+.THIS .blue-clr{
+    color: #32669e !important
+}
+.THIS .slds-form-element__help
+{
+    font-size: 115% !important;
+}
+.THIS .lowercase
+{ text-transform: lowercase; }
+
+.THIS .agree-container .agree-detail .dispute-section .form-group input 
+ 
+{
+    background-color: #32669e !important;
+    color: #fff !important;
+}
+
+.THIS .slds-required{
+    display : none;
+}
+
+.THIS #textarea {
+    -moz-appearance: textfield-multiline;
+    -webkit-appearance: textarea;
+    border: 1px solid #C7C7C7;
+    font: medium -moz-fixed;
+    font: -webkit-small-control;
+    overflow: auto;
+    padding: 2px;
+    resize: both;
+    width: 100%;
+    cursor: no-drop;
+    height: 82px;
+    margin-top: 7%;
+    background-color: #F9F9F9;
+    font-size: 1.4rem;
+}
+.THIS #ptag
+{
+    text-align: right;
+    opacity: 0.6;
+    font-size: 1.4rem;
+    color: var(--lwc-colorTextInputDisabled,rgb(107, 109, 112));
+}
+
+
+.THIS input
+{
+    background-color: #F9F9F9 !important;
+}

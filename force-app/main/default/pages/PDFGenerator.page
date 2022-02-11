@@ -1,0 +1,24 @@
+<apex:page renderAs="pdf">
+    
+    <apex:styleSheet value="{!URLFOR($Resource.CertificatePage,'/assets/css/custom.css')}" />
+   <apex:includeScript value="{!URLFOR($Resource.CertificatePage,'/assets/js/plugin.min.js')}"/>
+         <apex:includeScript value="{!URLFOR($Resource.CertificatePage,'/assets/js/custom.js')}"/>
+ 
+        <div class="certificate-detail">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-9 certificate_left-part">
+                       <div Class="rectangle_box"> 
+                            <div class="row">
+                                <div class="col-sm-8 colored">Amount of deposit protected</div>
+                                <div class="col-sm-4">
+                                    <p>£1275.00</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+         </div>
+    </div>
+    
+</apex:page>

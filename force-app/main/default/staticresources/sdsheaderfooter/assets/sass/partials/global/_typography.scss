@@ -1,0 +1,47 @@
+h1 {
+	
+}
+
+h2 {
+	
+}
+
+h3 {
+	@include font_size($h3-font);
+	@include line_height($x_lg);
+	font-family: $Aller_Bold;
+	color: map-get($color, light-black);
+	@include space(margin, bottom, $s15);
+
+	@include respond-below(sm) {
+		@include font_size($base);
+		@include line_height($lg);
+	}
+}
+
+p {
+	@include font_size($base);
+	@include line_height($lg);
+	color: map-get($color, light-black);
+	@include space(margin, bottom, $s10);
+}
+
+ul {
+	@include space(padding, all, $zero); 
+	list-style: none;
+
+	li {
+		@include font_size($base);
+		@include line_height($lg);
+		@include space(padding, bottom, $s10);
+
+		a {
+			text-decoration: none !important;
+			color: map-get($color, gray);
+
+			&:hover {
+				color: map-get($color, blue);
+			}
+		}
+	}
+}

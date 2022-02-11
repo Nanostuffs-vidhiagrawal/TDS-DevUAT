@@ -1,0 +1,27 @@
+.login-banner {
+	background-repeat: no-repeat;
+	background-size: cover;
+	height: 100vh;
+	background-position: center;
+	&__text {
+		@include respond-above(lg) {
+			@include space(padding, left, $s140);
+			@include space(padding, right, $s60);
+		}
+		@include respond-below(md) {
+			@include space(padding, left, $s50);
+			@include space(padding, top, $s50);
+		}
+		@include space(padding, top, $s110);
+		@include space(padding, left, $s70);
+		@include space(padding, right, $s30);
+		p {
+			@include font_size($above_base);
+			@include line_height($xx_lg);
+		}
+
+		h2 {
+			@include font_size(40);
+		}
+	}
+}

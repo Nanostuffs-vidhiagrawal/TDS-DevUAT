@@ -1,0 +1,35 @@
+<aura:component controller="ManageProperties" implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <lightning:overlayLibrary aura:id="overlayLibDemo1"/>
+    <lightning:notificationsLibrary aura:id="notifLib"/>
+    
+    <!-- Address Fields-->
+    <aura:attribute access="public"  name="Street" type="String"  />
+    <aura:attribute access="public"  name="Town" type="String"  />
+    <aura:attribute access="public"  name="PostCode" type="String"  />
+    <aura:attribute access="public"  name="Country" type="String"  />
+    <aura:attribute access="public"  name="County" type="String"  />
+    
+    
+    <aura:attribute name="Propobj" type="Property__c" default="{ 'sobjectType': 'Property__c'}"/>
+    
+    
+    <div class="slds-grid">
+       
+            <!-- Body -->
+            <p class="slds-p-horizontal_small">
+               
+                <c:Register aura:id="compB" method="{!c.parentPress}" />
+
+                <br/>
+                <div>
+                    <lightning:button aura:id="saveId"
+                                      label="Save" variant="Brand"   
+                                      onclick="{!c.doSave}"/> 
+                </div>
+                
+            </p>
+            
+           
+     
+    </div> 
+</aura:component>

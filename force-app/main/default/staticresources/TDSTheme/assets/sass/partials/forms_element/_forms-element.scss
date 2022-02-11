@@ -1,0 +1,70 @@
+.form-control {
+	&:focus {
+		@include border(1px, solid, map-get($color, blue));
+		box-shadow: 0 0 0 0.2rem rgba(50, 102, 158, 0.25)
+	}
+}
+
+// Input Style
+.search-input {
+	@include font_size($lg);
+	border: none;
+	@include space(padding, all, $zero);
+	@include position_absolute(auto, auto, auto, 15%);
+	transition: all 0.3s;
+	height: $s50;
+
+	&:focus {
+		box-shadow: none;
+		border: none;
+		border-bottom: 1px solid map-get($gray_shade, gray04);
+	}
+
+	@include respond-below(md) {
+		@include position_absolute($s15, auto, auto, $s15);
+	}
+
+	@include respond-below(sm) {
+		@include font_size($base);
+	}
+}
+
+.banner_form-expand__tab {
+	
+	input, select {
+		background-color: transparent !important;
+		border: none;
+		border-bottom: 1px solid rgba(255,255,255,0.4);
+		@include font_size($below_base);
+		color: map-get($banner-form-color, light-gray);
+		@include space(padding, left, $zero);
+		@include space(padding, right, $zero);
+		@include space(padding, top, $zero);
+
+		@include respond-below(sm) {
+			@include font_size($sm);
+		}
+
+		&:focus {
+			border: none;
+			border-bottom: 1px solid rgba(255,255,255,0.8);
+			box-shadow: none;
+			color: map-get($color, white);
+		}
+
+		option {
+			color: map-get($color, gray);
+		}
+	}
+
+	select {
+		@include space(padding, bottom, $s10);
+		height: auto;
+	}
+
+	label {
+		@include respond-below(sm) {
+			@include font_size($sm);
+		}
+	}
+}

@@ -1,0 +1,219 @@
+.banner_form-expand {
+	display: none;
+	@include respond-above(sm) {
+		width: 60rem;
+	}
+	
+	width: 100%;
+	text-align: left;
+
+	&__heading {
+		@include font_size($base);
+		text-transform: uppercase;
+		@include space(padding, top, $s10);
+		@include space(padding, bottom, $s10);
+		@include space(padding, left, $s25);
+		@include space(padding, right, $s25);
+		@include Single_side_Border_radius(2rem, 2rem, 0, 0);
+
+		@include respond-below(xs) {
+			@include space(padding, left, $s15);
+			@include space(padding, right, $s15);
+			@include font_size($below_base);
+		} 
+
+		figure {
+			cursor: pointer;
+			display: inline-block;
+			img {
+				@include space(padding, right, $s10);
+			}
+		}
+		
+
+		&--sort-desc {
+			@include font_size($below_base);
+			color: map-get($banner-form-color, light-sky-blue);
+			text-transform: none;
+			@include space(padding, left, $s35);
+
+			@include respond-below(xs) {
+				@include font_size($sm);
+			}
+		}
+	}
+
+	&__tab {
+		display: none;
+		@include font_size($below_base);
+		border-bottom: 1px solid map-get($banner-form-color, sky-blue);
+
+		@include respond-below(xs) {
+			@include space(padding, top, $s05);
+		}
+
+		&.other_info {
+			display: block; 
+		}
+
+		.form-check-inline {
+			@include space(margin, right, $s25);
+
+			input, label {
+				cursor: pointer;
+			}
+			cursor: pointer;
+
+			input {
+				@include space(margin, right, 0.7rem);
+				height: $s15;
+    			width: $s15;
+			}
+		}
+
+		form {
+			@include space(padding, top, $s20);
+			@include space(padding, bottom, $s15);
+			@include space(padding, left, $s25);
+			@include space(padding, right, $s25);
+
+			@include respond-below(sm) {
+				@include space(padding, top, $s10);
+				@include space(padding, bottom, $s10);
+				@include space(padding, left, $s15);
+				@include space(padding, right, $s15);
+			}
+
+			label {
+				@include space(margin, bottom, $zero);
+			}
+
+			.date-picker {
+				.input-group-prepend {
+					.input-group-text  {
+						@include space(padding, all, $zero);
+					}
+				}
+			}
+		}
+
+		&.other_info {
+			.other_info-wrapper {
+				@include flexbox();
+				@include flex_properties(space-around, center, wrap);
+				.other-or {
+					height: $s45;
+					width: $s45;
+					color: map-get($color, light-black);
+					@include font_size($base);
+					font-family: $Aller_Bold;
+					@include flexbox();
+					@include flex_properties(center, center, wrap);
+					@include border_radius($half);
+					background: #DCF4FF;
+					@include border(2px solid #366876);
+				}
+				.other-info {
+					text-decoration: underline;
+					cursor: pointer;
+				}
+			}
+		}
+	}
+
+	hr {
+		// border-bottom: 1px solid map-get($banner-form-color, light-sky-blue);
+		// @include space(margin, bottom, $s10);
+		// @include space(margin, top, $s05);
+	}
+
+	.form-button {
+		@include flexbox;
+		@include flex_properties(space-between, center, wrap);
+
+		@include respond-below(sm) {
+			@include flex_properties(flex-end, center, wrap);
+		}
+	}
+
+	&.tanent {
+		.banner_form-expand__heading {
+			background-color: map-get($color, blue);
+		}
+
+		.banner_form-expand__tab {
+			form {
+				background-color: map-get($banner-form-color, dark-gray);
+			}
+			
+		}
+	}
+
+	&.agent {
+		.banner_form-expand__heading {
+			background-color: map-get($color, light_blue);
+		}
+
+		.banner_form-expand__tab {
+			form {
+				background-color: map-get($banner-form-color, gray);
+			}
+		}
+	}
+
+	&.depo_msg {
+		display: block;
+
+		.banner_form-expand__tab {
+			display: block;
+
+			h6 {
+				color: map-get($color, white);
+				@include font_size($below_base);
+				opacity: 0.8;
+				@include space(margin, bottom, $s10);
+			}
+
+			p {
+				color: map-get($color, white);
+				@include font_size($sm);
+				@include line_height($lg);
+				opacity: 0.7;
+				@include space(margin, bottom, $s05);
+
+				&:last-child {
+					@include space(margin, bottom, $zero);
+				}
+			}
+		}
+	}
+}
+
+.banner_form-expand__tab_message {
+	&.depo_msg {
+		display: block;
+
+		.banner_form-expand__tab {
+			display: block;
+
+			h6 {
+				color: map-get($color, white);
+				@include font_size($below_base);
+				opacity: 0.8;
+				@include space(margin, bottom, $s10);
+			}
+
+			p {
+				color: map-get($color, white);
+				@include font_size($sm);
+				@include line_height($lg);
+				opacity: 0.7;
+				@include space(margin, bottom, $s05);
+
+				&:last-child {
+					@include space(margin, bottom, $zero);
+				}
+			}
+		}
+	}
+}

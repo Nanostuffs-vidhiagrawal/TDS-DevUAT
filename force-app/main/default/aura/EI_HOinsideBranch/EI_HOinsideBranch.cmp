@@ -1,0 +1,82 @@
+<aura:component
+    implements="lightning:isUrlAddressable,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes"
+    controller="EI_getBranch" access="global">
+
+    <!-- Attributes for card label-->
+    <aura:attribute name="depositTitle" type="String" default="View Deposits" />
+    <aura:attribute name="disputeLabel" type="String" default="Dispute Management" />
+    <aura:attribute name="portfolioLabel" type="String" default="My Portfolio" />
+    <aura:attribute name="reportLabel" type="String" default="Reporting" />
+
+    <!-- Attributes -->
+    <aura:attribute name="branchId" type="String" />
+    <aura:attribute name="branchName" type="String" />
+
+    <!-- Navigation Service -->
+    <lightning:navigation aura:id="navService" />
+
+    <!-- Handlers -->
+    <aura:handler name='init' value='{!this}' action='{!c.doInit}' />
+
+
+    <!-- Branch Header -->
+    <center>
+        <div>
+            <lightning:card>
+                <div style="text-align: left;">
+                    &nbsp; &nbsp;
+                    <lightning:avatar src="/bad/image/url.jpg" fallbackIconName="utility:broadcast"
+                        alternativeText="Branch" class="slds-m-right_small" />
+                    {! v.branchName}
+
+                </div>
+            </lightning:card>
+        </div>
+    </center>
+    <br />
+    <div class="slds-grid slds-gutters">
+        <!-- Deposit Management -->
+
+        <div class="slds-col slds-size_1-of-4">
+            <lightning:card iconName="custom:custom17">
+                <p class="slds-p-horizontal_small">
+                    <lightning:button variant="destructive" label="{! v.depositTitle }" title="{! v.depositTitle }"
+                        onclick="{! c.openDepositPage }" />
+                </p>
+            </lightning:card>
+        </div>
+
+        <!-- Dispute Management -->
+
+        <div class="slds-col slds-size_1-of-4">
+            <lightning:card iconName="custom:custom82">
+                <p class="slds-p-horizontal_small">
+                    <lightning:button variant="destructive" label="{! v.disputeLabel }" title="{! v.disputeLabel }"
+                        onclick="{! c.openDisputePage }" />
+                </p>
+            </lightning:card>
+        </div>
+
+        <div class="slds-col slds-size_1-of-4">
+            <!-- My Portfolio -->
+            <lightning:card iconName="custom:custom101">
+                <p class="slds-p-horizontal_small">
+                    <lightning:button variant="destructive" label="{! v.portfolioLabel }" title="{! v.portfolioLabel }"
+                        onclick="{! c.openMyPortfolio }" />
+                </p>
+            </lightning:card>
+        </div>
+
+        <div class="slds-col slds-size_1-of-4">
+            <!-- Reporting -->
+            <lightning:card iconName="standard:report">
+                <p class="slds-p-horizontal_small">
+                    <lightning:button variant="destructive" label="{! v.reportLabel }" title="{! v.reportLabel }"
+                        onclick="{! c.openReport }" />
+                </p>
+            </lightning:card>
+        </div>
+    </div>
+
+
+</aura:component>

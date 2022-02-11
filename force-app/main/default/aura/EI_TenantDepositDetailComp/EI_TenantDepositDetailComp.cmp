@@ -1,0 +1,20 @@
+<aura:component implements="forceCommunity:themeLayout,forceCommunity:availableForAllPageTypes" access="global"
+    controller="EI_TenantRespondToRepayment">
+
+    <!-- Attributes -->
+    <aura:attribute name="showRespondBtn" type="Boolean" default="false" />
+    <aura:attribute name="depositId" type="String" />
+
+    <!-- Handlers -->
+    <aura:handler name='init' value='{!this}' action='{!c.doInit}' />
+
+    <!-- Navigation Service -->
+    <lightning:navigation aura:id="navService" />
+
+
+    <aura:if isTrue="{!v.showRespondBtn}">
+        <lightning:button variant="brand" label="Respond To Repayment" title="Respond To Repayment"
+            onclick="{! c.moveToRepaymentPage }" />
+    </aura:if>
+
+</aura:component>

@@ -1,0 +1,786 @@
+.ZD_theme {
+	
+  .custom-nav {
+    @include space(padding, top, $s10);
+    .navbar-collapse {
+      justify-content: flex-end;
+
+      .navbar-text {
+        display: flex;
+        align-items: center;
+        @include font_size($above_base);
+        @include line_height($above_base);
+        @include space(margin, right, $s15);
+
+        a {
+          color: map-get($color, gray);
+        }
+
+        span {
+          @include font_size($base);
+          color: map-get($color, ZD_red);
+          border-left: 2px solid map-get($gray_shade, gray01);
+          @include space(margin, left, $s10);
+          @include space(padding, left, $s10);
+        }
+      }
+
+      .navbar-nav {
+        .nav-item {
+          .dropdown-menu {
+            left: $zero;
+          }
+        }
+      }
+    }
+
+    .navbar-brand {
+      img {
+        width: $s110;
+
+        @include respond-below(md) {
+          width: $s65;
+        }
+      }
+    }
+
+    .nav-link {
+      &:hover {
+        color: map-get($color, gray) !important;
+      }
+
+      &.dropdown-toggle {
+        background-position-x: 92% !important;
+      }
+    }
+  }
+
+  .resolution_section {
+    .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+      //@include space(padding, top, $s25);
+      @include space(padding, bottom, $s25);
+      @include space(margin, bottom, $s50);
+
+      @include respond-below(sm) {
+        @include space(padding, bottom, $s15);
+        @include space(margin, bottom, $s10);
+      }
+
+      @include respond-below(xs) {
+        display: block;
+      }
+
+      .see-all, .go-back {
+        @include respond-below(sm) { 
+          @include space(margin, bottom, $s10);
+        }
+      }
+
+      h3 {
+        @include space(margin, bottom, $s05);
+      }
+
+      img {
+        @include respond-below(sm) {
+          max-width: 18rem; 
+        }
+      }
+    }
+
+    &.image-only {
+      .container {
+        justify-content: flex-end;
+      }
+    }
+  }
+
+  footer {
+    .container {
+      background-color: map-get($gray_shade, gray02);
+      @include space(padding, top, $s50);
+      @include space(padding, bottom, $s50);
+      @include space(padding, left, $s50);
+      @include space(padding, right, $s50);
+
+      @include respond-below(sm) {
+        @include space(padding, top, $s15);
+        @include space(padding, bottom, $s15);
+        @include space(padding, left, $s15);
+        @include space(padding, right, $s15);
+      }
+
+      ul {
+        @include space(margin, bottom, $zero);
+        li {
+          @include space(padding, bottom, $s25);
+
+          @include respond-below(sm) {
+            @include space(padding, bottom, $s15);
+          }
+
+          a {
+            @include font_size($base);
+
+            &:hover {
+              color: map-get($color, ZD_red);
+            }
+          }
+
+          &:last-child {
+            @include space(padding, bottom, $zero);
+          }
+        }
+      }
+    }
+  }
+
+  .custom-model {
+    .modal-dialog {
+      .modal-header {
+        display: block;
+        text-align: center;
+        position: relative;
+        @include space(padding, top, $s50);
+
+        @include respond-below(sm) {
+          @include space(padding, top, $s25);
+        }
+
+        p,
+        h4 {
+          color: map-get($color, ZD_red);
+        }
+
+        h4 {
+          @include space(padding, bottom, $s10);
+        }
+
+        p {
+          @include font_size($lg);
+        }
+
+        button {
+          position: absolute;
+          top: $s15;
+          right: $s15;
+        }
+      }
+
+      .modal-body {
+        background-color: map-get($gray_shade, gray02);
+
+        p {
+          @include font_size($below_base);
+        }
+
+        a {
+          color: map-get($color, ZD_red);
+        }
+
+        h5 {
+          color: map-get($color, light-black);
+        }
+      }
+
+      .model-footer {
+        text-align: center;
+        @include space(padding, top, $s30);
+        @include space(padding, bottom, $s30);
+
+        @include respond-below(sm) {
+          @include space(padding, top, $s15);
+          @include space(padding, bottom, $s15);
+        }
+      }
+    }
+  }
+
+  .custom-tab {
+    @include space(margin, top, $zero);
+
+    @include respond-below(sm) {
+      @include space(margin, top, $zero);
+    }
+
+    .nav-tabs {
+      a {
+        &.nav-link {
+          &.active,
+          &:hover {
+            color: map-get($color, ZD_red);
+            border-bottom: 4px solid map-get($color, ZD_red);
+          }
+        }
+      }
+    }
+  }
+
+  .tenant_cover_table {
+    @include space(padding, top, $s15);
+    .form-check-inline {
+      label {
+        @include space(padding, left, $s35);
+        @include space(margin, bottom, $zero);
+        @include font_size($below_base);
+      }
+
+      .main {
+        .geekmark {
+          border-color: map-get($color, ZD_red);
+
+          &:after {
+            border-color: map-get($color, white);
+          }
+        }
+
+        input:checked {
+          & ~ .geekmark {
+            background-color: map-get($color, ZD_red);
+          }
+        }
+      }
+    }
+  }
+
+  .other_tab {
+    display: none;
+  }
+
+  textarea {
+    @include font_size($below_base);
+    @include space(padding, top, $s10);
+    @include space(padding, bottom, $s10);
+    @include space(padding, left, 1.2rem);
+    @include space(padding, right, 1.2rem);
+  }
+
+  .tenancy_confirm {
+    display: none;
+
+    @include space(padding, top, $s35);
+
+    @include respond-below(sm) {
+      @include space(padding, top, $s20);
+    }
+
+    p {
+      @include space(padding, bottom, $s25);
+      color: map-get($color, light-black);
+
+      @include respond-below(sm) {
+        @include space(padding, bottom, $s15);
+      }
+    }
+  }
+
+  .table-container {
+    .see-all {
+      img {
+        @include space(margin, right, $s05);
+        @include space(margin, right, 0.6rem);
+      }
+    }
+  }
+
+  .deposit-agent {
+    @include space(padding, top, $zero);
+
+    .info-right-tab {
+      @include space(margin, top, $zero);
+      border-color: map-get($color, ZD_red);
+
+      @include respond-below(md) {
+        @include space(margin, top, $s15);
+      }
+    }
+  }
+
+  .ZD_custom_table {
+    @include font_size($below_base);
+    @include space(margin, top, $s30);
+    @include space(margin, bottom, $s30);
+
+    @include respond-below(sm) {
+      @include space(margin, top, $s20);
+      @include space(margin, bottom, $s20);
+    }
+
+    tr {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+      td {
+        @include space(padding, top, $s15);
+        @include space(padding, bottom, $s15);
+        @include space(padding, left, $s05);
+        @include space(padding, right, $s05);
+      }
+    }
+  }
+
+  .options-block {
+    .agree-box {
+      @include font_size($below_base);
+      color: map-get($color, gray);
+      @include border(1px, solid, rgba(0, 0, 0, 0.08));
+      @include space(padding, all, $s20);
+      @include space(margin, top, $s25);
+      text-decoration: none;
+      display: inline-block;
+      cursor: pointer;
+      transition: 0.3s;
+
+      @include respond-below(sm) {
+        @include space(padding, all, $s10);
+        @include space(margin, top, $s10);
+      }
+
+      &:hover,
+      &.active {
+        @include border(1px, solid, map-get($color, ZD_red));
+        color: map-get($color, ZD_red);
+      }
+
+      &:first-child {
+        @include space(margin, right, $s15);
+      }
+    }
+
+    .property_yes {
+      display: none;
+      @include space(margin, top, $s35);
+
+      @include respond-below(sm) {
+        @include space(margin, top, $s20);
+      }
+
+      p {
+        @include font_size($below_base);
+      }
+    }
+
+    .see-all {
+      @include space(margin, top, $s35);
+
+      @include respond-below(sm) {
+        @include space(margin, top, $s20);
+      }
+    }
+  }
+
+  .not_agree_detail {
+    form {
+      @include space(margin, top, $s25);
+
+      & > .form-group {
+        @include space(margin, bottom, $zero);
+      }
+
+      .request-section {
+        & > label {
+          @include space(margin, bottom, $s15);
+        }
+
+        .form-group {
+          &:last-child {
+            @include space(margin, bottom, $zero);
+          }
+        }
+      }
+
+      .response-section {
+        & > label {
+          @include space(margin, bottom, $s15);
+          color: map-get($color, ZD_red);
+
+          @include respond-below(xs) {
+            @include space(margin, top, $s30);
+          }
+        }
+
+        .form-group {
+          label {
+            visibility: hidden;
+
+            @include respond-below(xs) {
+              visibility: visible;
+            }
+          }
+
+          &:last-child {
+            @include space(margin, bottom, $zero);
+          }
+        }
+      }
+    }
+  }
+
+  .payment-estimate {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    background-color: rgba(0, 0, 0, 0.07) !important;
+    @include space(padding, all, $s15);
+    display: flex;
+    justify-content: space-between;
+    @include font_size($below_base);
+    font-family: $Aller_Bold;
+  }
+
+  .see-all {
+    background-color: map-get($color, ZD_red);
+    cursor: pointer;
+    text-transform: initial;
+  }
+
+  .go-back {
+    background-color: transparent;
+    cursor: pointer;
+    text-transform: initial;
+    color: map-get($color, ZD_red);
+    @include border(1px, solid, map-get($color, ZD_red));
+  }
+
+  .error-msg {
+    color: map-get($color, ZD_red);
+    @include font_size($sm);
+    @include line_height($base);
+  }
+
+  .info-msg {
+    @include font_size($sm);
+    @include line_height($base);
+    @include space(padding, top, $s15);
+  }
+
+  .calander-icon {
+    background-color: map-get($color, ZD_red);
+  }
+
+  .form-control {
+    &:disabled {
+      background-color: #e9ecef !important;
+    }
+  }
+
+  .claim-summary_gray-panel {
+    background-color: map-get($gray_shade, gray02);
+    @include border-radius($s05);
+    @include space(padding, all, $s15);
+    @include space(margin, bottom, $s35); 
+
+    @include respond-below(sm) {
+      @include space(margin, bottom, $s25); 
+    }
+
+    .form-control {
+      &:disabled {
+        background-color: #fff !important;
+        opacity: 1;
+      }
+    }
+
+    .slds-input[disabled], .slds-input.slds-is-disabled {
+        background-color: #fff !important;
+        opacity: 1;
+    }
+
+    h5, p {
+      color: map-get($color, black);
+    }
+
+    p {
+        @include space(margin, bottom, $s15);
+
+        &.text-right {
+          @include respond-below(xs) {
+            text-align: left !important;
+          }
+        }
+    }
+
+    h6 {
+        @include font_size($lg);
+    }
+
+    &.border {
+        border: 2px solid map-get($color, light-black) !important;
+        @include space(padding, all, $s25);
+
+        @include respond-below(sm) {
+          @include space(padding, all, $s15);
+        }
+
+        &.error {
+            border: 2px solid map-get($color, ZD_red) !important;
+        }
+    }
+  }
+
+  .form-control {
+    height: auto;
+    @include space(padding, top, $s15);
+    @include space(padding, right, $s15);
+    @include space(padding, bottom, $s15);
+    @include space(padding, left, $s15);
+    font-size: $s15;
+    border-radius: $s05;
+    &::-webkit-input-placeholder {
+      /* Chrome/Opera/Safari */
+      //text-align: right;
+      color: map-get($color, black);
+      font-weight: 300;
+    }
+    &::-moz-placeholder {
+      /* Firefox 19+ */
+      //text-align: right;
+      color: map-get($color, black);
+      font-weight: 300;
+    }
+    &:-ms-input-placeholder {
+      /* IE 10+ */
+      //text-align: right;
+      color: map-get($color, black);
+      font-weight: 300;
+    }
+    &:-moz-placeholder {
+      /* Firefox 18- */
+      //text-align: right;
+      color: map-get($color, black);
+      font-weight: 300;
+    }
+  }
+
+    .sds_panel {
+        border: 5px solid map-get($color, ZD_red) !important;
+    }
+
+    .custom-list {
+        li {
+            &::before {
+                content: "•"; 
+                color: map-get($color, ZD_red);
+            }
+        }
+    }
+
+    .deposit_steps {
+        .deposit_steps_detail {
+            .learn-more, .learn-less {
+                &:hover, &.active {
+                    border-color: map-get($color, ZD_red);
+                }
+            }
+        }
+
+        .deposit_steps_count {
+            .state-indicator {
+                &.active {
+                    .circle {
+                        background-color: map-get($color, ZD_red);
+                        border-color: map-get($color, ZD_red);
+                    }
+
+                    p {
+                        color: map-get($color, ZD_red);
+                    }
+                }
+            }
+        }  
+    }
+
+    .agree-container {
+        .agree-detail {
+            .dispute-section {
+                .form-group {
+                    input {
+                        background-color: map-get($color, ZD_red) !important;
+                        color: map-get($color, white) !important;
+                    }
+                }
+            }
+        }
+    }
+
+    .blue-clr {
+        color: map-get($color, ZD_red);
+    } 
+
+    .file_section {
+        border: 4px dashed map-get($color, ZD_red);
+
+        .custom_file {
+            img {
+                transform: rotate(0deg);
+            }
+        } 
+
+        &.no_border {
+            border: none;
+        }
+
+        .select_file_section {
+            .no_file {
+                & > span {
+                    background-color: map-get($color, ZD_red);
+                }
+            }
+
+            &.success {
+                .no_file {
+                    & > span {
+                        background-color: map-get($color, green);
+                    }
+                }
+            }
+
+            &.none {
+                .no_file {
+                    & > span {
+                        background-color: transparent;
+                        border: 1px dashed map-get($color, ZD_red);
+                    }
+                }
+            }
+
+            .upload_range_part {
+                .upload_range, .success_upload {
+                    background-color: map-get($color, ZD_red);
+                }
+
+                .upload_btns {
+                    .close {
+                        color: map-get($color, ZD_red);
+                    }
+                } 
+            } 
+        } 
+    }
+
+    .learn-more, .learn-less {
+        color: map-get($color, ZD_red);
+
+        &:hover {
+          border-color: map-get($color, ZD_red);
+        }
+    }
+
+    .evi_label {
+        & ~ .learn-more {
+            &:hover, &.active {
+                background-color: map-get($color, ZD_red);
+                color: map-get($color, white);
+            }
+        }
+    }
+
+    .get_In_Touch_form {
+      input, select {
+        @include space(padding, top, $zero);
+        @include space(padding, left, $zero);
+        @include space(padding, right, $zero);
+        height: calc(1.5em + .75rem + 2px);
+      }
+
+      input[type='checkbox'] {
+        height: auto;
+      }
+    }
+
+    .look-up {
+      border-color: map-get($color, ZD_red);
+      color: map-get($color, ZD_red);
+
+      &:hover {
+        background-color: map-get($color, ZD_red);
+        color: map-get($color, white);
+      }
+    }
+
+    .secondary-tab-container {
+      .left-custom-tab {
+        .nav {
+          .nav-link {
+            &.active {
+              background-color: map-get($color, ZD_red);
+            }
+          }
+          ul {
+            &.org-detail-list {
+              background-color: rgba(244, 83, 114, 0.8);
+            }
+          }
+        }
+      }
+    }  
+}
+
+.list_of_btns {
+    @include space(margin, top, $s45);
+    @include space(margin, bottom, $s35);
+
+    @include respond-below(sm) {
+        @include space(margin, top, $s25);
+        @include space(margin, bottom, $s15);
+        flex-wrap: wrap;
+    }
+    display: flex;
+
+    .accept_btn {
+        width: 33%;
+        @include space(padding, top, $s10);
+        @include space(padding, bottom, $s10);
+        @include space(padding, left, $s40);
+        @include space(padding, right, $s40);
+
+         @include respond-below(sm) {
+            @include space(margin, bottom, $s15);
+            @include space(margin, left, $zero);
+            width: 100%;
+         }
+    }
+}
+
+.no-bg {
+    background: transparent !important;
+}
+
+
+.claim-summary_gray-panel {
+    background-color: map-get($gray_shade, gray02);
+    @include border-radius($s05);
+    @include space(padding, all, $s15);
+    @include space(margin, bottom, $s35); 
+
+    @include respond-below(sm) {
+      @include space(margin, bottom, $s25); 
+    }
+
+    h5, p {
+      color: map-get($color, black);
+    }
+
+    p {
+        @include space(margin, bottom, $s15);
+    }
+
+    h6 {
+        @include font_size($lg);
+    }
+
+    &.border {
+        border: 2px solid map-get($color, light-black) !important;
+        @include space(padding, all, $s25);
+
+        &.error {
+            border: 2px solid map-get($color, ZD_red) !important;
+        }
+    }
+  }
+
+.comm-layout-column {
+  @include space(padding, all, $zero);
+}

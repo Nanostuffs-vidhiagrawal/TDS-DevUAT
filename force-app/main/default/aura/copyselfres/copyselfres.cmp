@@ -1,0 +1,1191 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" 
+                controller="EI_selfresolutionsummaryviewtenant" access="global" >
+    
+    <!-- Attribute to store the data -->
+    <aura:attribute name="caseObject" type="case"/>
+    <aura:attribute name="disputeItemList" type="List"/>
+    <aura:attribute name="isLeadTenant" type="boolean" default="false" />
+    <aura:attribute name="profileName" type="String"/>
+    <aura:attribute name="isAgree" type="boolean" default="false"/>
+    <aura:attribute name="isSubmit" type="boolean" default="false"/>
+    <aura:attribute name="adjustRePayment" type="boolean" default="false"/>
+    <aura:attribute name="settlementComment" type="boolean" default="false"/>
+    <aura:attribute name="makeAnOffer" type="boolean" default="false"/>
+    <aura:attribute name="madeAnOffer" type="boolean" default="false"/> 
+    <aura:attribute name="acceptOffer" type="boolean" default="false"/>
+    <aura:attribute name="rejectOffer" type="boolean" default="false"/>
+    <aura:attribute name="counterOffer" type="boolean" default="false"/>
+    <aura:attribute name="submitBtn" type="boolean" default="true"/>
+    <aura:attribute name="isDisabledBtn" type="boolean" default="false"/>
+    <aura:attribute name="cancelOffer" type="boolean" default="false"/>
+    <aura:attribute name="changeTextOnAdjust" type="boolean" default="false"/>
+    <aura:attribute name="exceedamount" type="boolean" default="false"/>
+    <aura:attribute name="exceedamounttenant" type="boolean" default="false"/>
+    <aura:attribute name="lessamounttenant" type="boolean" default="false"/>
+    <aura:attribute name="moreamountagllrequest" type="boolean" default="false"/>
+    <aura:attribute name="undefinedamount" type="boolean" default="false"/>
+    
+    
+    <aura:attribute name="disputeOldRecMap" type="Map" default="" />
+    <aura:attribute name="totalTenantAmount" type="decimal" default="0"/>
+    <aura:attribute name="totalAGLLAmount" type="decimal" default="0"/>
+    <aura:attribute name="showError" type="string" default=""/>
+    <aura:attribute name="errorMessage" type="string" default=""/>
+    
+    <aura:attribute name="totalprotectedamount" type="decimal" default="0" />
+    <aura:attribute name="offeramounttotenant" type="decimal" default=" " />
+    <aura:attribute name="offeramounttoagentlandlord" type="decimal" default=" " />
+    
+    
+    <aura:attribute name="iconName" type="String" default=""/>
+    <aura:attribute name="backgroundColor" type="String" 
+                    default="background-color: #EFEFEF;"/>
+    <aura:attribute name="btnBackgroundColor" type="String"/>
+    
+    <aura:attribute name="isModal" type="boolean" default="false"/>                
+    
+    <!--This attribute is used for handle error msg -->
+    <aura:attribute name="isError" type="boolean" default="false"/>
+    <aura:attribute name="errorMsg" type="String" default="There is some issue with submitting this data. Please contact SafeDeposits Scotland support"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <lightning:navigation aura:id="navService" />
+    
+    <ltng:require styles="{!$Resource.TDSTheme+'/assets/css/custom.css'}"
+                  scripts="{!join(',',
+                           $Resource.TDSTheme+'/assets/js/plugin.min.js',
+                           $Resource.TDSTheme+'/assets/js/custom.js',
+                           $Resource.TDSTheme+'/assets/js/plugin.min.js',
+                           $Resource.TDSTheme+'/assets/js/jquery.dataTables.min.js',
+                           $Resource.TDSTheme+'/assets/js/datepicker.js'
+                           )}"/>
+    
+    
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+        
+        <link rel="stylesheet" href="../assets/css/custom.css"/>
+        
+        <title>TDS</title>
+    </head>
+    <aura:if isTrue="{!v.isSubmit}">
+        <aura:if isTrue="{!v.acceptOffer}">
+            <div class="tab-content custom-tab-content" id="sf-tabContent">
+                <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+                    <div class="deposit-agent">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-9">
+                                    <section class="deposit_steps">
+                                        <div class="deposit_steps_detail">
+                                            <div class="claim-summary_gray-panel sds_panel">
+                                                <aura:if isTrue="{!v.rejectOffer}">
+                                                    <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                        <h6>You have declined the agent/landlord's offer</h6>
+                                                        <aura:set attribute="else">
+                                                            <h6>You have declined the tenant's offer</h6>
+                                                        </aura:set>
+                                                    </aura:if>
+                                                	<aura:set attribute="else">
+                                                        <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                            <h6>You have accepted the agent/landlord's offer!</h6>
+                                                            <aura:set attribute="else">
+                                                            	<h6>You have accepted the tenant's offer!</h6>
+                                                            </aura:set>
+                                                        </aura:if>
+                                                    </aura:set>
+                                                </aura:if>
+                                                <div class="form-group row">
+                                                    <div class="col-6 col-md-5">
+                                                        <aura:if isTrue="{!v.rejectOffer}">
+                                                            <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                <label>Settlement offer from agent/landlord</label>
+                                                                <p>This is the amount they are willing to accept</p>
+                                                                <aura:set attribute="else">
+                                                                    <label>Settlement offer from tenant</label>
+                                                                    <p>This is the amount they are willing to pay</p>
+                                                                </aura:set>
+                                                            </aura:if>
+                                                        	<aura:set attribute="else">
+                                                                <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                    <label>Settlement offer from agent/landlord</label>
+                                                                    <p>This is the amount you are willing to accept</p>
+                                                                    <aura:set attribute="else">
+                                                                        <label>Settlement offer from tenant</label>
+                                                                        <p>This is the amount they are willing to pay</p>
+                                                                    </aura:set>
+                                                                </aura:if>
+                                                            </aura:set>
+                                                        </aura:if>
+                                                    </div>
+                                                    <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                        <div class="col-6 col-md-5">
+                                                            <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!v.caseObject.TT_Offer_Amount__c}"/>
+                                                        </div>
+                                                        <aura:set attribute="else">
+                                                            <div class="col-6 col-md-5">
+                                                                <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!v.caseObject.AGLL_Offer_Amount__c}"/>
+                                                            </div>
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <div class="col-6 col-md-5">
+                                                        <aura:if isTrue="{!v.rejectOffer}">
+                                                            <label>This means you would receive</label>
+                                                        	<aura:set attribute="else">
+                                                            	<label>This means you will receive</label>
+                                                            </aura:set>
+                                                        </aura:if>
+                                                    </div>
+                                                    <!--- new code added for offer accept himanshu modi  3 august start -->
+                                                    <div class="col-6 col-md-5">
+                                                        <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                            <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!sub(v.totalprotectedamount, v.caseObject.TT_Offer_Amount__c)}"/>
+                                                            <aura:set attribute="else"> 
+                                                                <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!sub(v.totalprotectedamount, v.caseObject.AGLL_Offer_Amount__c)}"/>
+                                                            </aura:set>
+                                                        </aura:if>
+                                                    </div>
+                                                     <!--- new code added for offer accept himanshu modi  3 august end -->
+                                                 
+                                                    <!--  <div class="col-6 col-md-5">
+                                                        <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!sub(v.caseObject.Total_Agreed_by_AG_LL__c, v.caseObject.Total_Agreed_by_Tenant__c)}"/>
+                                                    </div>-->
+                                                </div>
+                                                <aura:if isTrue="{!v.rejectOffer}">
+                                                    <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                        <p>Thank you for responding to the agent/landlord's offer. We will notify them that you do not accept it and invite them to respond to your repayment request.</p>
+                                                        <p>Please continue to try to reach an agreement. You can here at any time within the 10 working day period to make an offer of your own, adjust your repayment request, or tell us it has not been possible to reach an agreement.</p>
+                                                        <aura:set attribute="else">
+                                                            <p>Thank you for responding to the tenant's offer. We will notify them that you do not accept it and invite them to respond to your repayment request.</p>
+                                                            <p>Please continue to try to reach an agreement. You can return. here at any time within the 10 working day period to make an offer of your own, adjust your repayment request, or tell us it has not been possible to reach an agreement.</p>
+                                                        </aura:set>
+                                                    </aura:if>
+                                                	<aura:set attribute="else">
+                                                        <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                            <p>Thank you for agreeing to the agent/landlord's offer. We will make payment within 5 working days.</p>
+                                                            <aura:set attribute="else">
+                                                            	<p>Thank you for agreeing to the tenant's offer. We will make payment within 5 working days.</p>
+                                                            </aura:set>
+                                                        </aura:if>
+                                                    </aura:set>
+                                                </aura:if>
+                                            </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <a href="" class="see-all mw-auto" onclick="{!c.goToDepositSummary}"> Go to deposit summary</a>
+                                        </div>
+                                    </section>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <aura:set attribute="else">
+                <aura:if isTrue="{!v.makeAnOffer}">
+                    <div class="tab-content custom-tab-content" id="sf-tabContent">
+                        <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+                            <div class="deposit-agent">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-md-9">
+                                            <section class="deposit_steps">
+                                                <div class="deposit_steps_detail">
+                                                    <div class="claim-summary_gray-panel sds_panel">
+                                                        <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                            <h6>Why not make the agent/landlord an offer?</h6>
+                                                        </aura:if>
+                                                        <aura:if isTrue="{!or(v.profileName == 'Landlord',v.profileName == 'Agent')}">
+                                                            <h6>Why not make the tenant an offer?</h6>
+                                                        </aura:if>
+                                                        <div class="form-group row">
+                                                            <div class="col-6 col-md-5">
+                                                                <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                    <label>Settlement offer to agent/landlord</label>
+                                                                    <p>This is the amount you are willing to pay</p>
+                                                                </aura:if>
+                                                                <aura:if isTrue="{!or(v.profileName == 'Landlord',v.profileName == 'Agent')}">
+                                                                    <label>Settlement offer to tenant</label>
+                                                                    <p>This is the amount you are willing to accept</p>
+                                                                </aura:if>
+                                                            </div>
+                                                            <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                  <div class="col-6 col-md-5">
+                                                                     <!--   <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!v.caseObject.AGLL_Offer_Amount__c}"/>-->
+                                                                      <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!v.caseObject.AGLL_Offer_Amount__c}"/>
+                                                                    </div>
+                                                                </aura:if>
+                                                                <aura:if isTrue="{!or(v.profileName == 'Landlord',v.profileName == 'Agent')}">
+                                                                    <div class="col-6 col-md-5">
+                                                                    <!--    <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!v.caseObject.TT_Offer_Amount__c}"/>-->
+                                                                        <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!v.caseObject.TT_Offer_Amount__c}"/>
+                                                                    </div>
+                                                                </aura:if>
+                                                            
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <div class="col-6 col-md-5">
+                                                                <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                    <label>This means you will receive</label>
+                                                                </aura:if>
+                                                                <aura:if isTrue="{!or(v.profileName == 'Landlord',v.profileName == 'Agent')}">
+                                                                    <label>This means the tenant would receive</label>
+                                                                </aura:if>
+                                                            </div>
+                                                            
+                                                            <!--make offer functionality added by himanshu 2 august start -->
+                                                             <div class="col-6 col-md-5">
+                                                                 <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!(v.totalprotectedamount-v.offeramounttoagentlandlord)}"/>
+                                                                <aura:set attribute="else">
+                                                                <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!(v.totalprotectedamount-v.offeramounttotenant)}"/>
+                                                                 </aura:set>
+                                                                 </aura:if>
+                                                                 </div>
+                                                            <!--make offer functionality added by himanshu 2 august end -->
+                                                            
+                                                           <!-- <div class="col-6 col-md-5">
+                                                                <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!sub(v.caseObject.Total_Agreed_by_AG_LL__c, v.caseObject.Total_Agreed_by_Tenant__c)}"/>
+                                                            </div>-->
+                                                        </div>
+                                                        <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                            <p>You can make an offer to the agent/landlord to try to reach a quick and easy settlement. If the agent/landlord accepts it. we will release the deposit detailed above within 5 working days.</p>
+                                                            <p>The offer is non-binding so if they reject it the unresolved amount will remain per the repayment summary above and you can continue to try to negotiate.</p>
+                                                        </aura:if>
+                                                        <aura:if isTrue="{!or(v.profileName == 'Landlord',v.profileName == 'Agent')}">
+                                                            <p>You can make an offer to the tenant to try to reach a quick and easy settlement. If the tenant accept it. we will release the deposit detailed above within 5 working days.</p>
+                                                            <p>The offer is non-binding so if they reject it the unresolved amount will remain per the repayment above and you can continue to try to negotiate.</p>
+                                                        </aura:if>
+                                                    </div>
+                                                    <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                        <h6>Thank you for making the agent/landlord an offer. We will invite the agent/landlord to agree to your offer. If they reject it,you can return here to continue to negotiate</h6>
+                                                    </aura:if>
+                                                    <aura:if isTrue="{!or(v.profileName == 'Landlord',v.profileName == 'Agent')}">
+                                                        <h6>Thank you for making the tenant an offer. We will invite the tenant to agree to your offer. If they reject it,you can return here to continue to negotiate</h6>
+                                                    </aura:if>
+                                                    <div class="text-right">
+                                                        <a href="" class="see-all mw-auto" onclick="{!c.goToDepositSummary}"> Go to deposit summary</a>
+                                                    </div>
+                                                </div>
+                                            </section>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <aura:set attribute="else">
+                        <aura:if isTrue="{!v.settlementComment}">
+                            <div class="tab-content custom-tab-content" id="sf-tabContent">
+                                <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+                                    <div class="deposit-agent">
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col-md-9">
+                                                    <section class="deposit_steps">
+                                                        <div class="deposit_steps_detail">
+                                                            <div class="claim-summary_gray-panel no-bg">
+                                                                <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                    <h6>Thank you for telling us that it has not been possible to reach an agreement.</h6> 
+                                                                    <h6>Did you know that most unresolved amounts are agreed by the agent/landlord and tenants directly, without the need for formal adjudication?</h6> 
+                                                                    <h6>We encourage you to continue to attempt to resolve the dispute directly with the other party within 10 working day period.</h6>
+                                                                    <h6>You can return here at any time to reduce your claim, make the agent/landlord a settlement offer or update what you have done to try to resolve the disagreement.</h6>
+                                                                    <h6>This window to reach an agreement will remain open for the 10 working day period and it is not possible to move your case on before that time. After the end of the 10 working day period, we will review what you and the agent/landlord have done to try to reach an agreement. If we are satisfied that attempts have been made, we will move forward to formal adjudication and invite the agent/landlord, in the first instance, to submit evidence to support your claim.</h6>
+                                                                	<aura:set attribute="else">
+                                                                        <h6>Thank you for telling us that it has not been possible to reach an agreement.</h6> 
+                                                                        <h6>Did you know that most unresolved amounts are agreed by the agent/landlord and tenants directly, without the need for formal adjudication?</h6> 
+                                                                        <h6>We encourage you to continue to attempt to resolve the dispute directly with the other party within 10 working day period.</h6>
+                                                                        <h6>You can return here at any time to reduce your claim, make the tenant a settlement offer or update what you have done to try to resolve the disagreement.</h6>
+                                                                        <h6>This window to reach an agreement will remain open for the 10 working day period and it is not possible to move your case on before that time. After the end of the 10 working day period, we will review what you and the tenant have done to try to reach an agreement. If we are satisfied that attempts have been made, we will move forward to formal adjudication and invite you, in the first instance, to submit evidence to support your claim.</h6>
+                                                                    </aura:set>
+                                                                </aura:if>
+                                                            </div>
+                                                            <div class="text-right">
+                                                                <a href="" class="see-all mw-auto" onclick="{!c.goToDepositSummary}"> Go to deposit summary</a>
+                                                            </div>
+                                                        </div>
+                                                    </section>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <aura:set attribute="else">
+                                <div class="tab-content custom-tab-content" id="sf-tabContent">
+                                    <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+                                        <div class="deposit-agent">
+                                            <div class="container">
+                                                <div class="row">
+                                                    <div class="col-md-9">
+                                                        <section class="deposit_steps">
+                                                            <div class="deposit_steps_detail">
+                                                                <div class="claim-summary_gray-panel sds_panel">
+                                                                    <aura:if isTrue="{!v.adjustRePayment}">
+                                                                        <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                            <h6>Based on your amendment,this is how the deposit would be repaid if agreed by the agent/landloard</h6>
+                                                                            <aura:set attribute="else">
+                                                                                <h6>Based on your amendment,this is how the deposit would be repaid if agreed by the tenant</h6>
+                                                                            </aura:set>
+                                                                        </aura:if>
+                                                                        <aura:set attribute="else">
+                                                                            <h6>Based on your selection, this is how the deposit will be repaid</h6>
+                                                                        </aura:set>
+                                                                    </aura:if>
+                                                                    
+                                                                    
+                                                                    <!--add by himanshu start NPP-38   30 july -->  
+                                                                    <aura:if isTrue="{!v.isAgree}">
+                                                                        <aura:if isTrue="{!v.profileName == 'Tenant'}">    
+                                                                            <div class="form-group row">
+                                                                                <div class="col-6 col-md-6">
+                                                                                    <label>Amount to be paid to agent/landlord</label>
+                                                                                </div>
+                                                                                <div class="col-6 col-md-5">
+                                                                                    <!--  <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!v.caseObject.totalAgreebyTenant}"/>-->
+                                                                                    <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!v.totalAGLLAmount}"/>
+                                                                                </div>
+                                                                            </div> 
+                                                                            <div class="form-group row">
+                                                                                <div class="col-6 col-md-6">
+                                                                                    <label>Amount to be paid to tenant(s)</label>
+                                                                                </div>
+                                                                                <div class="col-6 col-md-5">
+                                                                                    <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!(v.totalprotectedamount-v.totalAGLLAmount)}"/>
+                                                                                </div>
+                                                                            </div>
+                                                                        </aura:if>
+                                                                        <aura:if isTrue="{!v.profileName != 'Tenant'}">
+                                                                            <div class="form-group row">
+                                                                                <div class="col-6 col-md-6">
+                                                                                    <label>Amount to be paid to agent/landlord</label>
+                                                                                </div>
+                                                                                <div class="col-6 col-md-5">
+                                                                                    
+                                                                                    <!--  <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!v.caseObject.totalAgreebyTenant}"/>-->
+                                                                                    <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!v.totalTenantAmount}"/>
+                                                                                </div>
+                                                                            </div> 
+                                                                            <div class="form-group row">
+                                                                                <div class="col-6 col-md-6">
+                                                                                    <label>Amount to be paid to tenant(s)</label>
+                                                                                </div>
+                                                                                <div class="col-6 col-md-5">
+                                                                                    <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!(v.totalprotectedamount-v.totalTenantAmount)}"/>
+                                                                                </div>
+                                                                            </div>
+                                                                        </aura:if>
+                                                                    
+                                                                      <!--added by himanshu end NPP-38 30 july    -->   
+                                                                        <aura:set attribute="else">
+                                                                    <div class="form-group row">
+                                                                        <div class="col-6 col-md-5">
+                                                                            <label>Amount to be paid to agent/landlord</label>
+                                                                        </div>
+                                                                        <div class="col-6 col-md-5">
+                                                                           <!-- <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!v.caseObject.totalAgreebyTenant}"/>-->
+                                                                         <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!v.totalAGLLAmount}"/>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group row">
+                                                                        <div class="col-6 col-md-5">
+                                                                            <label>Amount to be paid to tenant(s)</label>
+                                                                        </div>
+                                                                        <div class="col-6 col-md-5">
+                                                                            <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!v.caseObject.sumOfDisputeLandlord}"/>
+                                                                        </div>
+                                                                    </div>
+                                                                        </aura:set>
+                                                                    </aura:if>    
+                                                                    
+                                                                    <aura:if isTrue="{!v.adjustRePayment}">
+                                                                        <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                            <p>Thank you for amending your repayment request. We will invite the agent/landlord to agree to your request and let you know if they claim.</p>
+                                                                            <aura:set attribute="else">
+                                                                                <p>Thank you for amending your repayment request. We will invite the tenant to agree to your request and let you know if they respond.</p>
+                                                                            </aura:set>
+                                                                        </aura:if>
+                                                                        <p>We encourage you to continue to attempt to reach an agreement and can return here at any time during the 10 working day period to make further adjustments to your response.</p>
+                                                                    </aura:if>
+                                                                    <aura:if isTrue="{! !v.adjustRePayment}">
+                                                                        <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                            <h6>Thank you for agreeing to the agent/landlord's repayment request. We will make payment within 5 working days.</h6>
+                                                                        </aura:if>
+                                                                        <aura:if isTrue="{!or(v.profileName == 'Landlord',v.profileName == 'Agent')}">
+                                                                            <h6>Thank you for agreeing to the tenants's repayment request. We will make payment within 5 working days.</h6>
+                                                                        </aura:if>
+                                                                    </aura:if>
+                                                                </div>
+                                                                <div class="text-right">
+                                                                    <a href="" class="see-all mw-auto" onclick="{!c.goToDepositSummary}"> Go to deposit summary</a>
+                                                                </div>
+                                                            </div>
+                                                        </section>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </aura:set>
+                        </aura:if>
+                    </aura:set>
+                </aura:if>
+            </aura:set>
+        </aura:if>
+        
+        <aura:set attribute="else">
+            <aura:if isTrue="{!v.caseObject}">
+                <body class="SDS_default_theme">
+                    <div class="tab-content custom-tab-content" id="sf-tabContent">
+                        <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+                            <section class="resolution_section">
+                                <div class="container">
+                                    <div>
+                                        <a href="" class="go-back" onclick="{!c.goToDepositSummary}"
+                                           ><img
+                                                 src="{!$Resource.TDSTheme + '/assets/img/md-arrow-dropleft.png'}"
+                                                 alt="Back Icon"
+                                                 />
+                                            Go back</a
+                                            >
+                                    </div>
+                                </div>
+                            </section>
+                            <div class="deposit-agent">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-md-9">
+                                            <aura:if isTrue="{!v.isError}">
+                                                <div id="errorDepositCreation" class="alert alert-danger alert-dismissible fade show">
+                                                    <strong>Error!</strong>{!v.errorMsg}.
+                                                    <button
+                                                            type="button"
+                                                            class="close"
+                                                            onclick="{!c.handleErrorMsg}"
+                                                            name=""
+                                                            >&times;</button
+                                                        >
+                                                </div>
+                                            </aura:if>
+                                            <section class="deposit_steps">
+                                                <div class="deposit_steps_detail">
+                                                    <aura:if isTrue="{!v.cancelOffer}">
+                                                        <div class="claim-summary_gray-panel sds_panel">
+                                                            <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                <h6>You have made the agent/landlord an offer!</h6>
+                                                                <aura:set attribute="else">
+                                                                    <h6>You have made the tenant an offer!</h6>
+                                                                </aura:set>
+                                                            </aura:if>
+                                                            <div class="form-group row">
+                                                                <div class="col-6 col-md-5">
+                                                                    <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                        <label>Settlement offer to agent/landlord</label>
+                                                                        <p>This is the amount you are willing to pay</p>
+                                                                        <aura:set attribute="else">
+                                                                            <label>Settlement offer from agent/landlord</label>
+                                                                            <p>This is the amount you are willing to accept</p>
+                                                                        </aura:set>
+                                                                    </aura:if>
+                                                                </div>
+                                                                <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                    <div class="col-6 col-md-5">
+                                                                        <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!v.caseObject.AGLL_Offer_Amount__c}"/><span style="margin-left: 311px;"><lightning:button  class="accept_btn" label="Cancel offer" onclick="{!c.handleCancelOffer}"/></span>
+                                                                    </div>
+                                                                    <aura:set attribute="else">
+                                                                        <div class="col-6 col-md-5">
+                                                                            <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!v.caseObject.TT_Offer_Amount__c}"/><span style="margin-left: 311px;"><lightning:button class="accept_btn" label="Cancel offer" onclick="{!c.handleCancelOffer}"/></span>
+                                                                        </div>
+                                                                    </aura:set>
+                                                                </aura:if>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <div class="col-6 col-md-5">
+                                                                    <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                        <label>This means you tenant would receive</label>
+                                                                        <aura:set attribute="else">
+                                                                            <label>This means the tenant would receive</label>
+                                                                        </aura:set>
+                                                                    </aura:if>
+                                                                </div>
+                                                                <!--make offer functionality added by himanshu 2 august start -->
+                                                               
+                                                                <div class="col-6 col-md-5">
+                                                                    <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                        <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!sub(v.totalprotectedamount,v.caseObject.AGLL_Offer_Amount__c)}"/>
+                                                                        <aura:set attribute="else">
+                                                                            <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!sub(v.totalprotectedamount,v.caseObject.TT_Offer_Amount__c)}"/>
+                                                                        </aura:set>
+                                                                    </aura:if>
+                                                                </div>
+                                                               
+                                                                <!--make offer functionality added by himanshu 2 august end -->
+                                                             <!--  <div class="col-6 col-md-5">
+                                                                    <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!sub(v.totalprotectedamount,v.caseObject.TT_Offer_Amount__c)}"/>
+                                                                </div>-->
+                                                            </div>
+                                                            <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                <p>This offer has been made by you to try to reach a quick and easy settlement. if the agent/landloard accepts it,we will release the deposit as detailed avove within 5 working days.</p>
+                                                                <p>The offer is non-binding so if they reject,it or you cancel it,the unresolved amount will remain per the repayment summary below and you can continue to try to negotiate. </p>
+                                                                <aura:set attribute="else">
+                                                                    <p>This offer has been made by you to try to reach a quick and easy settlement. if the tenant accepts it,we will release the deposit as detailed avove within 5 working days.</p>
+                                                                    <p>The offer is non-binding so if they reject,it or you cancel it,the unresolved amount will remain per the repayment summary below and you can continue to try to negotiate. </p>
+                                                                </aura:set>
+                                                            </aura:if>
+                                                        </div>
+                                                        <aura:set attribute="else">
+                                                            <aura:if isTrue="{!v.madeAnOffer}">
+                                                                <div class="claim-summary_gray-panel sds_panel">
+                                                                    <aura:if isTrue="{!v.profileName == 'Tenant' }">
+                                                                        <h6>The agent/landlord has made an offer!</h6>
+                                                                    </aura:if>
+                                                                    <aura:if isTrue="{!or(v.profileName == 'Landlord',v.profileName == 'Agent')}">
+                                                                        <h6>The tenant has made an offer!</h6>
+                                                                    </aura:if>
+                                                                    <div class="form-group row">
+                                                                        <div class="col-6 col-md-5">
+                                                                            <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                                <label>Settlement offer from agent/landlord</label>
+                                                                                <p>This is the amount you are willing to accept</p>
+                                                                            </aura:if>
+                                                                            <aura:if isTrue="{!or(v.profileName == 'Landlord',v.profileName == 'Agent')}">
+                                                                                <label>Settlement offer from tenant</label>
+                                                                                <p>This is the amount they are willing to pay</p>
+                                                                            </aura:if>
+                                                                        </div>
+                                                                        <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                            <div class="col-6 col-md-5">
+                                                                               <!-- <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!v.caseObject.AGLL_Offer_Amount__c}"/>-->
+                                                                                <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!v.caseObject.TT_Offer_Amount__c}"/>
+                                                                            </div>
+                                                                            <aura:set attribute="else">
+                                                                                <div class="col-6 col-md-5">
+                                                                                   <!-- <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!v.caseObject.TT_Offer_Amount__c}"/>-->
+                                                                                    <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!v.caseObject.AGLL_Offer_Amount__c}"/>
+                                                                                </div>
+                                                                            </aura:set>
+                                                                        </aura:if>
+                                                                    </div>
+                                                                    <div class="form-group row">
+                                                                        <div class="col-6 col-md-5">
+                                                                            <label>This means you will receive</label>
+                                                                        </div>
+                                                                        <div class="col-6 col-md-5">
+                                                                            <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                             <!--   <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!sub(v.caseObject.Total_Agreed_by_AG_LL__c, v.caseObject.Total_Agreed_by_Tenant__c)}"/>-->
+                                                                                   <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!sub(v.totalprotectedamount,v.caseObject.TT_Offer_Amount__c)}"/>
+                                                                                <aura:set attribute="else">
+                                                                                 <!--   <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!sub(v.caseObject.Total_Agreed_by_AG_LL__c, v.caseObject.Total_Agreed_by_Tenant__c)}"/>-->
+                                                                                <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!sub(v.totalprotectedamount,v.caseObject.AGLL_Offer_Amount__c)}"/>
+                                                                                </aura:set>
+                                                                            </aura:if>
+                                                                            
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group row">
+                                                                        <div class="col-6 col-md-5">
+                                                                            <aura:if isTrue="{!!v.isLeadTenant}">
+                                                                            <lightning:buttonGroup>
+                                                                                <lightning:button class="accept_btn" label="Accept offer" onclick="{!c.handleAcceptOffer}"/><br/>
+                                                                                <lightning:button class="accept_btn" label="Reject offer" onclick="{!c.handleRejectOffer}"/><br/>
+                                                                                <lightning:button class="accept_btn" label="Make counter-offer" onclick="{!c.handleWantToMakeAnOffer}"/>
+                                                                            </lightning:buttonGroup>
+                                                                            </aura:if>
+                                                                        </div>
+                                                                    </div>
+                                                                    <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                        <p>This Offer has been made by the agent/landlord to try to reach a quick and easy settlement. If you accept it, we will release the deposit as detailed above within 5 working days.</p>
+                                                                        <p>The offer is non-binding on the agent/landlord so if you reject it the unresolved amount will remain per the repayment summary below and you can continue to try to negotiate.</p>
+                                                                    </aura:if>
+                                                                    <aura:if isTrue="{!or(v.profileName == 'Landlord',v.profileName == 'Agent')}">
+                                                                        <p>This offer has been made by the tenant to try to reach a quick and easy settlement. If you accept it, we will release the deposit as detailed above within 5 working days.</p>
+                                                                        <p>The offer is non-binding on the tenant so if you reject it the unresolved amount will remain per the repayment summary below and you can continue to try to negotiate.</p>
+                                                                    </aura:if>
+                                                                </div>
+                                                            </aura:if>
+                                                        </aura:set>
+                                                    </aura:if>
+                                                    
+                                                    <div class="claim-summary_gray-panel">
+                                                        <h5>Repayment summary</h5>
+                                                        <div class="row">
+                                                            <div class="col-lg-6 col-sm-6">
+                                                                <p>Amount requested by agent/landlord</p>
+                                                            </div>
+                                                            <div class="col-lg-6 col-sm-3">
+                                                                <p>&pound;{!v.caseObject.Total_Agreed_by_AG_LL__c}.00</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row my-4">
+                                                            <div class="col-lg-6 col-sm-9">
+                                                                <p class="text-right">- Of which is agreed by tenant</p>
+                                                            </div>
+                                                            <div class="col-lg-6 col-sm-3">
+                                                                <p>(&pound;{!v.caseObject.Total_Agreed_by_Tenant__c}.00)</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-lg-6 col-sm-9">
+                                                                <p><b>Unresolved amount</b></p>
+                                                            </div>
+                                                            <div class="col-lg-6 col-sm-3">
+                                                                <p><b>&pound;{!sub(v.caseObject.Total_Agreed_by_AG_LL__c, v.caseObject.Total_Agreed_by_Tenant__c)}.00</b></p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <h6>You have until <ui:outputDate format="DD-MM-YYYY" value="{!v.caseObject.Respond_Date__c}" /> to try to reach a resolution. Please indicate how you wish to proceed below.</h6>
+                                                    <div class="row">
+                                                        <div class="col-lg-12 col-md-12">
+                                                            <div class="agree-container">
+                                                                <div class="agree-detail" style="display: block;">
+                                                                    <div class="form-group row">
+                                                                        <div class="col-sm-4">
+                                                                            <div class="request-section">
+                                                                                <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                                    <label>Requested by agent/landlord</label>
+                                                                                </aura:if>
+                                                                                <aura:if isTrue="{!or(v.profileName == 'Landlord',v.profileName == 'Agent')}">
+                                                                                    <label>Requested by you</label>
+                                                                                </aura:if>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-sm-4">
+                                                                            <div class="response-section">
+                                                                                <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                                    <label>Previously agreed by you</label>
+                                                                                </aura:if>
+                                                                                <aura:if isTrue="{!or(v.profileName == 'Landlord',v.profileName == 'Agent')}">
+                                                                                    <label>Previously agreed by tenant</label>
+                                                                                </aura:if>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-sm-4">
+                                                                            <div class="response-section">
+                                                                            </div>
+                                                                        </div>
+                                                                        <aura:iteration items="{!v.disputeItemList}" var="item" indexVar="index">
+                                                                            <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                                <div class="col-sm-4">
+                                                                                    <div class="request-section">
+                                                                                        <div class="form-group">
+                                                                                            <label for="Cleaning" class=" col-form-label">{!item.Type__c}</label>
+                                                                                            <aura:if isTrue="{!item.Type__c == 'Other'}">
+                                                                                                <div class="slds-form-element slds-p-left_xxx-small">
+                                                                                                    <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
+                                                                                                        <lightning:icon class="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default" size="medium" />
+                                                                                                        <lightning:textarea style="background-color: #EFEFEF;" variant="label-hidden" name="{!index}" disabled="true" value="{!item.other}" onchange="{!c.handleinputchange}"/>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <aura:set attribute="else">
+                                                                                                    <div class="slds-form-element slds-p-left_xxx-small">
+                                                                                                        <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
+                                                                                                            <lightning:icon class="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default" size="medium" />
+                                                                                                            <lightning:input style="background-color: #EFEFEF;" variant="label-hidden" name="{!index}" max="{!item.Claimed_by_Landlord__c}" type="number" disabled="true" placeholder="£" formatter="currency" step="0.01" onchange="{!c.handleinputchange}" value="{!item.Agreed_by_AGLL__c}"/>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </aura:set>
+                                                                                            </aura:if>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-sm-4">
+                                                                                    <div class="response-section">
+                                                                                        <div class="form-group">
+                                                                                            <label class="col-form-label">Tenant</label>
+                                                                                            <div class="slds-form-element slds-p-right_xxx-small">
+                                                                                                <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
+                                                                                                    <lightning:icon class="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default" iconName="{!v.iconName}" size="medium" />
+                                                                                                  <!--  <lightning:input style="{!v.backgroundColor}" variant="label-hidden" type="number" name="{!index}" min="{!item.Tenant_Response__c}" max="{!item.Claimed_by_Landlord__c}" disabled="{!or(!v.adjustRePayment,v.isDisabledBtn)}" placeholder="£" formatter="currency" step="0.01" onchange="{!c.handleinputchange}" value="{!item.Agreed_by_Tenant__c}"/>-->
+                                                                                                    <lightning:input style="{!v.backgroundColor}" variant="label-hidden" type="number" name="{!index}"  disabled="{!or(!v.adjustRePayment,v.isDisabledBtn)}" placeholder="£" formatter="currency" step="0.01" onchange="{!c.handleinputchange}" value="{!item.Agreed_by_Tenant__c}"/>
+                                                                                                </div>
+                                                                                                <aura:if isTrue="{!item.Id == v.showError}">
+                                                                                                    <p class="error-msg" >
+                                                                                                        {!v.errorMessage}
+                                                                                                    </p>
+                                                                                                </aura:if>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <aura:set attribute="else">
+                                                                                    <div class="col-sm-4">
+                                                                                        <div class="request-section">
+                                                                                            <div class="form-group">
+                                                                                                <label for="Cleaning" class=" col-form-label">{!item.Type__c}</label>
+                                                                                                <aura:if isTrue="{!item.Type__c == 'Other'}">
+                                                                                                    <div class="slds-form-element slds-p-left_xxx-small">
+                                                                                                        <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
+                                                                                                            <lightning:icon class="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default" iconName="{!v.iconName}" size="medium" />
+                                                                                                            <lightning:textarea style="{!v.backgroundColor}" variant="label-hidden" name="{!index}" disabled="{!or(!v.adjustRePayment,v.isDisabledBtn)}" value="{!item.other}" onchange="{!c.handleinputchange}"/>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                    <aura:set attribute="else">
+                                                                                                        <div class="slds-form-element slds-p-left_xxx-small">
+                                                                                                            <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
+                                                                                                                <lightning:icon class="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default" iconName="{!v.iconName}" size="medium" />
+                                                                                                          <!--      <lightning:input style="{!v.backgroundColor}" variant="label-hidden" name="{!index}" max="{!item.Claimed_by_Landlord__c}" type="number"  disabled="{!or(!v.adjustRePayment,v.isDisabledBtn)}" placeholder="£" formatter="currency" step="0.01" onchange="{!c.handleinputchange}" value="{!item.Agreed_by_AGLL__c}"/>-->
+                                                                                                                <lightning:input style="{!v.backgroundColor}" variant="label-hidden"  name="{!index}"  type="number"  disabled="{!or(!v.adjustRePayment,v.isDisabledBtn)}" placeholder="£" formatter="currency" step="0.01" onchange="{!c.handleinputchange}" value="{!item.Agreed_by_AGLL__c}"/>
+                                                                                                            </div>
+                                                                                                        
+                                                                                                          <aura:if isTrue="{!item.Id == v.showError}">
+                                                                                                                <p class="error-msg" >
+                                                                                                                    {!v.errorMessage}
+                                                                                                                </p>
+                                                                                                            </aura:if>
+                                                                                                            </div>
+                                                                                                    </aura:set>
+                                                                                                </aura:if>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-sm-4">
+                                                                                        <div class="response-section">
+                                                                                            <div class="form-group">
+                                                                                                <label class="col-form-label">Tenant</label>
+                                                                                                <div class="slds-form-element slds-p-right_xxx-small">
+                                                                                                    <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+                                                                                                        <lightning:icon class="slds-icon slds-input__icon slds-input__icon_right slds-icon-text-default" size="medium" />
+                                                                                                        <lightning:input style="background-color: #EFEFEF;" variant="label-hidden" type="number" name="{!index}" max="{!item.Tenant_Response__c}" disabled="true" placeholder="£" formatter="currency" step="0.01" onchange="{!c.handleinputchange}" value="{!item.Agreed_by_Tenant__c}"/>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </aura:set>
+                                                                            </aura:if>
+                                                                            <div class="col-sm-3">
+                                                                                <div class="range-section slds-p-right_x-small">
+                                                                                    <div class="form-group range_form_group ">
+                                                                                        <aura:if isTrue="{!v.adjustRePayment}">
+                                                                                            <label class="col-form-label">Range</label>
+                                                                                            
+                                                                                            <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                                           <div class="form-group range_form_group">
+                                                                                        <label class="col-form-label">{!item.Type__c}</label>
+                                                                                        <input style="margin-top: -24px;" type="range" id="{!item.Id}" disabled="{!or(!v.adjustRePayment,v.isDisabledBtn)}" class="rangeBar form-control input_range" onchange="{!c.sliderMethod}" value="{!item.Adjustment_Percentage_by_TT__c}"/>
+                                                                                        <span class="slds-slider__value"  style="margin-right: -47px;margin-top: -4px;" aria-hidden="true"><lightning:formattedNumber value="{!item.Adjustment_Percentage_by_TT__c}" maximumFractionDigits="2"/>% </span> 
+                                                                                   			 </div>	
+               
+                                                                                                
+                                                    						<!--        <lightning:input variant="label-hidden"  name="{!index}" max="100" type="range" disabled="{!or(!v.adjustRePayment,v.isDisabledBtn)}" placeholder="£" formatter="currency" onchange="{!c.handleSliderchange}" value="{!item.Adjustment_Percentage_by_TT__c}"/>
+                                                                                             <span class="slds-slider__value" style="margin-right: -47px;margin-top: -4px;" aria-hidden="true"><lightning:formattedNumber value="{!item.Adjustment_Percentage_by_TT__c}" maximumFractionDigits="2"/>%</span> 
+                                                                                              -->  <aura:set attribute="else">
+                                                                                                <div class="form-group range_form_group">
+                                                                                        <label class="col-form-label">{!item.Type__c}</label>
+                                                                                        <input style="margin-top: -24px;" type="range" id="{!item.Id}" disabled="{!or(!v.adjustRePayment,v.isDisabledBtn)}" class="rangeBar form-control input_range" onchange="{!c.sliderMethod2}" value="{!item.Adjustment_Percentage_by_AGLL__c}"/>
+                                                                                        <span class="slds-slider__value"  style="margin-right: -47px;margin-top: -4px;" aria-hidden="true"><lightning:formattedNumber value="{!item.Adjustment_Percentage_by_AGLL__c}" maximumFractionDigits="2"/>% </span> 
+                                                                                   			 </div>	   
+                                                                                                
+                                                                                              <!--  <lightning:input variant="label-hidden"  name="{!index}" max="100" type="range" disabled="{!or(!v.adjustRePayment,v.isDisabledBtn)}" placeholder="£" formatter="currency" onchange="{!c.handleSliderchange}" value="{!item.Adjustment_Percentage_by_AGLL__c}"/>
+                                                                                                  <span class="slds-slider__value" style="margin-right: -47px;margin-top: -4px;" aria-hidden="true"><lightning:formattedNumber value="{!item.Adjustment_Percentage_by_AGLL__c}" maximumFractionDigits="2"/>%</span>
+                                                                                              -->  </aura:set>
+                                                                                            </aura:if>
+                                                                                            
+                                                                                        </aura:if>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </aura:iteration>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <aura:if isTrue="{!!v.adjustRePayment}">
+                                                        <aura:if isTrue="{!!v.makeAnOffer}">
+                                                            <div class="row">
+                                                                <div class="col-lg-11 col-md-12">
+                                                                    <div class="list_of_btns">
+                                                                        <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                            <button type="button" style="{!v.btnBackgroundColor}" class="accept_btn" disabled="{!or(or(v.cancelOffer,v.madeAnOffer),v.isLeadTenant)}" onclick="{!c.handleAgreeTenantAndAgentRepayment}">I agree with the agent/landlord’s repayment request</button>
+                                                                            <button type="button" style="{!v.btnBackgroundColor}" class="accept_btn" disabled="{!or(or(v.cancelOffer,v.madeAnOffer),v.isLeadTenant)}" onclick="{!c.handleAdjustRepayment}">I disagree with some or all of the agent/landlord’s repayment request</button>
+                                                                        </aura:if>
+                                                                        <aura:if isTrue="{!or(v.profileName == 'Landlord',v.profileName == 'Agent')}"> 
+                                                                            <button type="button" style="{!v.btnBackgroundColor}" class="accept_btn" disabled="{!or(v.cancelOffer,v.madeAnOffer,v.isLeadTenant)}" onclick="{!c.handleAgreeTenantAndAgentRepayment}">I agree with the tenant's repayment request</button>
+                                                                            <button type="button" style="{!v.btnBackgroundColor}" class="accept_btn" disabled="{!or(v.cancelOffer,v.madeAnOffer,v.isLeadTenant)}" onclick="{!c.handleAdjustRepayment}">I want to adjust my repayment request</button>
+                                                                        </aura:if>
+                                                                        <button type="button" style="{!v.btnBackgroundColor}" class="accept_btn" disabled="{!or(or(v.cancelOffer,v.madeAnOffer),v.isLeadTenant)}" onclick="{!c.handleWantToMakeAnOffer}">I want to make an offer</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </aura:if>
+                                                    </aura:if>
+                                                    <aura:if isTrue="{!v.isAgree}">
+                                                        <div class="row">
+                                                            <div class="col-lg-12 col-md-12">
+                                                                <div class="claim-summary_gray-panel sds_panel">
+                                                                    <aura:if isTrue="{!v.makeAnOffer}">
+                                                                        <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                            <h6>Why not make the agent/landlord an offer?</h6>
+                                                                        </aura:if>
+                                                                        <aura:if isTrue="{!or(v.profileName == 'Landlord',v.profileName == 'Agent')}">
+                                                                            <h6>Why not make the tenant an offer?</h6>
+                                                                        </aura:if>
+                                                                        <aura:set attribute="else">
+                                                                            <aura:if isTrue="{!v.adjustRePayment}">
+                                                                                <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                                    <h6>Based on your input above, this is how the deposit would be repaid if agreed by the agent/landloard</h6>
+                                                                                    <aura:set attribute="else">
+                                                                                        <h6>Based on your input above, this is how the deposit would be repaid if agreed by the tenant</h6>
+                                                                                    </aura:set>
+                                                                                </aura:if>
+                                                                                <aura:set attribute="else">
+                                                                                    <h6>Based on your selection, this is how the deposit will be repaid</h6>
+                                                                                </aura:set>
+                                                                            </aura:if>
+                                                                        </aura:set>
+                                                                    </aura:if>
+                                                                    <aura:if isTrue="{!v.makeAnOffer}">
+                                                                        <div class="form-group row">
+                                                                            <div class="col-6 col-md-4">
+                                                                                <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                                    <label>Settlement offer to agent/landlord</label>
+                                                                                    <p>This is the amount you are willing to pay</p>
+                                                                                </aura:if>
+                                                                                <aura:if isTrue="{!or(v.profileName == 'Landlord',v.profileName == 'Agent')}">
+                                                                                    <label>Settlement offer to tenant</label>
+                                                                                    <p>This is the amount you are willing to accept</p>
+                                                                                </aura:if>
+                                                                            </div>
+                                                                            <div class="col-6 col-md-4">
+                                                                              <!--make offer functionality added by himanshu 2 august start -->
+                                                                                 <aura:if isTrue ="{!v.profileName == 'Tenant'}">
+                                                                                <lightning:input variant="label-hidden" type="number" style="background-color: white;" aura:id="makeAnOfferId" placeholder="£" formatter="currency" step="0.01" value="{!v.offeramounttoagentlandlord}"/> 
+                                                                                <aura:set attribute="else">
+                                                                                 <lightning:input variant="label-hidden" type="number" style="background-color: white;" aura:id="makeAnOfferId" placeholder="£" formatter="currency" step="0.01" value="{!v.offeramounttotenant}"/>    
+                                                                                     </aura:set>
+                                                                                </aura:if>     
+                                                                               <!--make offer functionality added by himanshu 2 august end -->
+                                                                                
+                                                                             <!--   <aura:if isTrue="{!or(v.caseObject.AGLL_Offer_Amount__c == '', v.caseObject.AGLL_Offer_Amount__c == NULL)}">
+                                                                                    
+                                                                                    <lightning:input variant="label-hidden" type="number" style="background-color: white;" aura:id="makeAnOfferId" placeholder="£" formatter="currency" step="0.01" value="{!v.caseObject.Claimed_by_Tenant__c}"/>
+                                                                                    <aura:set attribute="else">
+                                                                                        <lightning:input variant="label-hidden" type="number" style="background-color: white;" aura:id="makeAnOfferId" placeholder="£" formatter="currency" step="0.01" value="{!v.caseObject.AGLL_Offer_Amount__c}"/>
+                                                                                        
+                                                                                    </aura:set>
+                                                                                </aura:if>-->
+                                                                                
+                                                                            </div>
+                                                                            <div class="col-6 col-md-4">
+                                                                                <lightning:button type="button" aura:id="makeAnOfferIdB" class="accept_btn" label="Make offer" onclick="{!c.handleMakeAnOffer}"/>
+                                                                            </div>
+                                                                            <aura:if isTrue="{!v.exceedamount}">
+                                                                                <p class="error-msg text-right" style="margin-left: 50%;color: red;">
+                                                                                    You cannot give offer more then requested amount. 
+                                                                                </p>
+                                                                            </aura:if>
+                                                                             <aura:if isTrue="{!v.exceedamounttenant}">
+                                                                                <p class="error-msg text-right" style="margin-left: 50%;color: red;">
+                                                                                    You cannot give offer more then agent/landlord offer amount . 
+                                                                                </p>
+                                                                            </aura:if>
+                                                                            <aura:if isTrue="{!v.lessamounttenant}">
+                                                                                <p class="error-msg text-right" style="margin-left: 50%;color: red;">
+                                                                                    You cannot give offer less then initial agreed amount. 
+                                                                                </p>
+                                                                            </aura:if>
+                                                                             <aura:if isTrue="{!v.moreamountagllrequest}">
+                                                                                <p class="error-msg text-right" style="margin-left: 50%;color: red;">
+                                                                                    You cannot give offer more then agent/landlord requested amount. 
+                                                                                </p>
+                                                                            </aura:if>
+                                                                             <aura:if isTrue="{!v.undefinedamount}">
+                                                                                <p class="error-msg text-right" style="margin-left: 50%;color: red;">
+                                                                                    You cannot offer invalid amount. 
+                                                                                </p>
+                                                                            </aura:if>
+                                                                        
+                                                                        </div>
+                 
+                                                                        <div class="form-group row">
+                                                                            <div class="col-6 col-md-4">
+                                                                                <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                                    <label>This means you will receive</label>
+                                                                                </aura:if>
+                                                                                <aura:if isTrue="{!or(v.profileName == 'Landlord',v.profileName == 'Agent')}">
+                                                                                    <label>This means the tenant would receive</label>
+                                                                                </aura:if>
+                                                                            </div>
+                                                                            
+                                                                            <!--make offer functionality added by himanshu 2 august start -->
+                                                                              <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                              <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!(v.totalprotectedamount-v.offeramounttoagentlandlord)}"/>
+                                                                              <aura:set attribute="else">
+                                                                               <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!(v.totalprotectedamount-v.offeramounttotenant)}"/>
+                                                                              </aura:set>
+                                                                              </aura:if>
+                                                                            <!--make offer functionality added by himanshu 2 august end -->
+                                                                            
+                                                                           <!-- <div class="col-6 col-md-4">
+                                                                                <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!v.caseObject.sumOfDisputeLandlord}"/>
+                                                                            </div>-->
+                                                                            <div class="col-6 col-md-4">
+                                                                                <button type="button" class="accept_btn" onclick="{!c.handleDoNotWantToMakeAnOffer}">I do not want to make an offer</button>
+                                                                            </div>
+                                                                        </div>
+                                                                        <aura:set attribute="else">
+                                                                          <!--add by himanshu start NPP-38   30 july -->  
+                                                                            
+                                                                            <aura:if isTrue="{!v.isAgree}">
+                                                                            <aura:if isTrue="{!v.profileName == 'Tenant'}">    
+                                                                            <div class="form-group row">
+                                                                                <div class="col-6 col-md-6">
+                                                                                    <label>Amount to be paid to agent/landlord</label>
+                                                                                </div>
+                                                                                <div class="col-6 col-md-5">
+                                                                                  <!--  <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!v.caseObject.totalAgreebyTenant}"/>-->
+                                                                               <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!v.totalAGLLAmount}"/>
+                                                                                </div>
+                                                                            </div> 
+                                                                            <div class="form-group row">
+                                                                                <div class="col-6 col-md-6">
+                                                                                    <label>Amount to be paid to tenant(s)</label>
+                                                                                </div>
+                                                                                <div class="col-6 col-md-5">
+                                                                                    <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!(v.totalprotectedamount-v.totalAGLLAmount)}"/>
+                                                                                </div>
+                                                                            </div>
+                                                                            </aura:if>
+                                                                            <aura:if isTrue="{!v.profileName != 'Tenant'}">
+                                                                             <div class="form-group row">
+                                                                                <div class="col-6 col-md-6">
+                                                                                    <label>Amount to be paid to agent/landlord</label>
+                                                                                </div>
+                                                                                <div class="col-6 col-md-5">
+                                                                                    
+                                                                                  <!--  <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!v.caseObject.totalAgreebyTenant}"/>-->
+                                                                               <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!v.totalTenantAmount}"/>
+                                                                                </div>
+                                                                            </div> 
+                                                                            <div class="form-group row">
+                                                                                <div class="col-6 col-md-6">
+                                                                                    <label>Amount to be paid to tenant(s)</label>
+                                                                                </div>
+                                                                                <div class="col-6 col-md-5">
+                                                                                    <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!(v.totalprotectedamount-v.totalTenantAmount)}"/>
+                                                                                </div>
+                                                                            </div>
+                                                                            </aura:if>
+                                                                            
+                                                                            <!--added by himanshu end NPP-38 30 july    -->
+                                                                        
+                                                                            <aura:set attribute="else">
+                                                                            <div class="form-group row">
+                                                                                <div class="col-6 col-md-6">
+                                                                                    <label>Amount to be paid to agent/landlord</label>
+                                                                                </div>
+                                                                                <div class="col-6 col-md-5">
+                                                                                  <!--  <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!v.caseObject.totalAgreebyTenant}"/>-->
+                                                                               <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!v.totalAGLLAmount}"/>
+                                                                                </div>
+                                                                            </div> 
+                                                                            <div class="form-group row">
+                                                                                <div class="col-6 col-md-6">
+                                                                                    <label>Amount to be paid to tenant(s)</label>
+                                                                                </div>
+                                                                                <div class="col-6 col-md-5">
+                                                                                    <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!v.caseObject.sumOfDisputeLandlord}"/>
+                                                                                </div>
+                                                                            </div>
+                                                                            </aura:set>
+                                                                            </aura:if>
+                                                                        </aura:set>
+                                                                    </aura:if>
+                                                                    
+                                                                    <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                        <aura:if isTrue="{!v.makeAnOffer}">
+                                                                            <p>You can make an offer to the agent/landlord to try to reach a quick and easy settlement. If the agent/landlord accepts it, we will release the deposit as detailed above within 5 working days.</p>
+                                                                            <p>The offer is non-binding so if they reject it the unresolved amount will remain per the repayment summary above and you can continue to try to negotiate.</p>
+                                                                            <aura:set attribute="else">
+                                                                                <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                                    <p>Any adjustments to your repayment request above will be reflected here.
+                                                                                        If you make adjustments and select "Submit", the amount you agree to be repaid to the agent/landlord will update and we will invite the agent/landlord to agree to your updated request.</p>
+                                                                                    <p>The changes you make above are binding. Once you select "Submit", it will not be possible to revert to the amount you previously agreed to be paid to the agent/landlord, but you can continue to increase it.</p>
+                                                                                    <aura:set attribute="else">
+                                                                                        <p>Any adjustments to your repayment request above will be reflected here.
+                                                                                            If you make adjustments and select "Submit", the amount you agree to be repaid to the tenant will update and we will invite the tenant to agree to your updated request.</p>
+                                                                                        <p>The changes you make above are binding. Once you select "Submit", it will not be possible to revert to the amount you previously agreed to be paid to the tenant, but you can continue to increase it.</p>
+                                                                                    </aura:set>
+                                                                                </aura:if>
+                                                                            </aura:set>
+                                                                        </aura:if>
+                                                                    </aura:if>
+                                                                    <aura:if isTrue="{!or(v.profileName == 'Landlord',v.profileName == 'Agent')}">
+                                                                        <aura:if isTrue="{!v.makeAnOffer}">
+                                                                            <p>You can make an offer to the tenant to try to reach a quick and easy settlement. If the tenant accept it. we will release the deposit detailed above within 5 working days.</p>
+                                                                            <p>The offer is non-binding so if they reject it the unresolved amount will remain per the repayment above and you can continue to try to negotiate.</p>
+                                                                            <aura:set attribute="else">
+                                                                                <aura:if isTrue="{!v.adjustRePayment}">
+                                                                                    <p>Any adjustments to your repayment request above will be reflected here. If you make adjustments and select "Submit", the amount you are claiming will update and we will invite tenant agree to your updated request.</p>
+                                                                                    <p>The changes you make above are binding. Once you select "Submit", it will not be possible to revert to the amount you previously claimed, but you can continue to reduce the amount you are willing to accept.</p>
+                                                                                    <aura:set attribute="else">
+                                                                                        <p>By clicking ‘Submit’ you confirm that you agree to the Tenant's request. Payment will be made as above within 5 working days. This cannot be amended later.</p>
+                                                                                    </aura:set>
+                                                                                </aura:if>
+                                                                            </aura:set>
+                                                                        </aura:if>
+                                                                    </aura:if>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <aura:if isTrue="{!v.adjustRePayment}">
+                                                            <aura:if isTrue="{!!v.makeAnOffer}">
+                                                                <div class="row">
+                                                                    <div class="col-lg-11 col-md-12">
+                                                                        <div class="list_of_btns">
+                                                                            <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                                <button type="button" class="accept_btn" onclick="{!c.handleSettlementcomment}">It has not been able to reach an agreement</button>
+                                                                                <button type="button" class="accept_btn" onclick="{!c.handleWantToMakeAnOffer}">I want to make an offer</button>
+                                                                            </aura:if>
+                                                                            <aura:if isTrue="{!or(v.profileName == 'Landlord',v.profileName == 'Agent')}">
+                                                                                <button type="button" class="accept_btn" onclick="{!c.handleSettlementcomment}">It has not been able to reach an agreement</button>
+                                                                                <button type="button" class="accept_btn" onclick="{!c.handleWantToMakeAnOffer}">I want to make an offer</button>
+                                                                            </aura:if>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </aura:if>
+                                                        </aura:if>
+                                                        <aura:if isTrue="{!v.settlementComment}">
+                                                            <div class="row">
+                                                                <div class="col-lg-12 col-md-12">
+                                                                    <p>Please tell us what you have done to try to reach an agreement. If you have not taken any steps to resolve this, this may delay our handling of the case, We recommend that you speak to the tenant and then resolve this page.</p>
+                                                                    <div class="response-section" >
+                                                                        <div class="form-group">
+                                                                            <label class="col-form-label"></label>
+                                                                            <div class="slds-form-element " >
+                                                                                <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left" >
+                                                                                    <aura:if isTrue="{!or(v.caseObject.Not_reach_an_agreement_Reason_AG_LL__c,v.caseObject.Not_reach_an_agreement_Reason_Tenant__c)}">
+                                                                                        <lightning:icon class="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default" size="medium" iconName="utility:edit" />
+                                                                                    </aura:if>
+                                                                                    <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                                        <lightning:textarea variant="label-hidden" value="{!v.caseObject.Not_reach_an_agreement_Reason_AG_LL__c}"/>
+                                                                                        <aura:set attribute="else">
+                                                                                            <lightning:textarea variant="label-hidden" value="{!v.caseObject.Not_reach_an_agreement_Reason_Tenant__c}"/>
+                                                                                        </aura:set>
+                                                                                    </aura:if>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <!--<div class="form-group">
+                                                                        <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                                            <lightning:textarea minlength = "150" maxlength="500" variant="label-hidden" value="{!v.caseObject.Not_reach_an_agreement_Reason_AG_LL__c}"/>
+                                                                            <aura:set attribute="else">
+                                                                                <lightning:textarea minlength = "150" maxlength="500" variant="label-hidden" value="{!v.caseObject.Not_reach_an_agreement_Reason_Tenant__c}"/>
+                                                                            </aura:set>
+                                                                        </aura:if>
+                                                                    </div>-->
+                                                                </div>
+                                                            </div>
+                                                        </aura:if>   
+                                                    </aura:if>
+                                                    <div class="row">
+                                                        <div class="col-lg-11 col-md-12 text-right">
+                                                            <button type="button" style="{!v.btnBackgroundColor}" class="see-all mw-auto" disabled="{!or(v.madeAnOffer,v.submitBtn)}" onclick="{!c.handleSubmit}">Submit</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </section>
+                                        </div>
+                                        <div class="col-md-3 info-right-tab">
+                                            <aura:if isTrue="{!v.makeAnOffer}">
+                                                <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                    <p>Most disagreements about the amount claimed are resolved by the parties themselves, without the need for formal adjudication. This means faster and easier resolution as you do not need to view or submit evidence to support your position.</p>
+                                                    <p>You can adjust your claim in the following ways <b>(note that you cannot reduce the amount you have already agreed)</b>.</p>
+                                                    <p>.&nbsp;&nbsp;Select the pencil icon next to each claim and enter the amount you agree to pay to the agent/landlord.</p>
+                                                    <p>.&nbsp;&nbsp;Use the slider bar to easily offer to accept a percentage of the amount claimed.</p>
+                                                    <p>.&nbsp;&nbsp;Select the “I want to make an offer” option and enter an overall amount you are happy to pay to the agent/landlord to settle the claim.</p>
+                                                    <p>You can adjust your claim as many times as you like during the 10 working day period. We will inform the agent/landlord of your response and invite them to agree to your response or make an offer of their own.</p>
+                                                    <aura:set attribute="else">
+                                                        <p>Most disagreements about the amount claimed are resolved by the parties themselves, without the need for formal adjudication. This means faster and easier resolution as you do not need to view or submit evidence to support your position.</p>
+                                                        <p>You can adjust your claim in the following ways <b>(note that you cannot reduce the amount you have already agreed)</b>.</p>
+                                                        <p>.&nbsp;&nbsp;Select the pencil icon next to each claim and enter the amount you agree to accept from the tenant.</p>
+                                                        <p>.&nbsp;&nbsp;Use the slider bar to easily offer to accept a percentage of the amount claimed.</p>
+                                                        <p>.&nbsp;&nbsp;Select the “I want to make an offer” option and enter an overall amount you are happy to accept fromtenant to settle the claim.</p>
+                                                        <p>You can adjust your claim as many times as you like during the 10 working day period. We will inform the tenant of your response and invite them to agree to your response or make an offer of their own.</p>
+                                                    </aura:set>
+                                                </aura:if>
+                                                <aura:set attribute="else">
+                                                    <aura:if isTrue="{!v.profileName == 'Tenant'}">
+                                                        <aura:if isTrue="{!v.changeTextOnAdjust}">  
+                                                            <p>Most disagreements about the amount claimed are resolved by the parties themselves, without the need for formal adjudication. This means faster and easier resolution as you do not need to view or submit evidence to support your position.</p>
+                                                            <p>You can adjust your claim in the following ways (<b>note that you cannot reduce the amount you have already agreed</b>).</p>
+                                                            <p>· &nbsp; Select the pencil icon next to each claim and enter the amount you agree to accept from the agent/landloard</p>
+                                                            <p>· &nbsp; Use the slider bar to easily offer to accept a percentage of the amount claimed.</p>
+                                                            <p>· &nbsp;Select the “I want to make an offer” option and enter an overall amount you are happy to accept from the agent/landloard to settle the claim.</p>
+                                                            <p> You can adjust your claim as many times as you like during the 10 working day period. We will inform the agent/landloard of your response and invite them to agree to your response or make an offer of their own.</p>
+                                                            <aura:set attribute="else">
+                                                                <p>Our records show that you have not agreed to the agent/landlord's claim. This is an opportunity for both parties to reach and acceptable solution quickly. Over 50% of customers are able to reach an agreement through this process, which is initially open for 10 working days.</p>
+                                                                <p>If you cannot reach agreement, the case will be passed through for formal resolution by an adjudicator. This can take 8-12 weeks and will involve a third party imposing a binding decision based on the evidence we ask you to submit.</p>
+                                                                <p>you can adjust your response as many times as you like during the 10 working days period. We will inform the agent/landlord of your response and invite them to agree to your response or make an offer of their own.</p>
+                                                            </aura:set>
+                                                        </aura:if>
+                                                        <aura:set attribute="else">
+                                                            <aura:if isTrue="{!v.changeTextOnAdjust}">  
+                                                                <p>Most disagreements about the amount claimed are resolved by the parties themselves, without the need for formal adjudication. This means faster and easier resolution as you do not need to view or submit evidence to support your position.</p>
+                                                                <p>You can adjust your claim in the following ways (<b>note that you cannot reduce the amount you have already agreed</b>).</p>
+                                                                <p>· &nbsp; Select the pencil icon next to each claim and enter the amount you agree to accept from the tenant</p>
+                                                                <p>· &nbsp; Use the slider bar to easily offer to accept a percentage of the amount claimed.</p>
+                                                                <p>· &nbsp;Select the “I want to make an offer” option and enter an overall amount you are happy to accept from the tenant to settle the claim.</p>
+                                                                <p> You can adjust your claim as many times as you like during the 10 working day period. We will inform the tenant of your response and invite them to agree to your response or make an offer of their own</p>
+                                                                <aura:set attribute="else">
+                                                                    <p>Our records show that the tenant has not agreed to your claim. This is an opportunity for both parties to reach an acceptable solution quickly. Over 50% of customers are able to reach an agreement through this process, which is initially open for 10 working days.</p>
+                                                                    <p>If you cannot reach agreement, the case will be passed through for formal resolution by an adjudicator. This can take 8-12 weeks and will involve a third party imposing a binding decision based on the evidence we ask you to submit.</p>
+                                                                    <p>You can adjust your response as many times as you like during the 10 working day period. We will inform the tenant of your response and invite them to agree to your response or make an offer of their own.</p>
+                                                                </aura:set>
+                                                            </aura:if>
+                                                        </aura:set>
+                                                    </aura:if>
+                                                </aura:set>
+                                            </aura:if>
+                                            
+                                            <!--<p>The tenant has not yet agreed to the claim, so this step is an opportunity for both parties to come to an acceptable solution. Over 50% of customers reach an agreement at this stage.</p>
+                                            <p>Now you have seen the tenant's initial response, you can either accept the tenant's proposal. If you don’t accept their proposal you can amend, maintain, or cancel the claim.</p>
+                                            <p>If you cannot reach agreement, the case will be passed through for formal resolution by an adjudicator. This can take 8-12 weeks and will involve a third party imposing a binding decision based on the evidence that you and the tenant submit.</p>
+                                            <p>You have until [date] to come to an agreement with your tenant. During this period you can adjust your response and we will propose any amendments you make to your tenants. We will also inform you of any value that they accept.</p>-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </body>
+            </aura:if>
+        </aura:set>
+    </aura:if>
+    
+    
+    <aura:if isTrue="{!v.isModal}">
+        
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <lightning:buttonIcon iconName="utility:close"
+                                          onclick="{! c.closeModel }"
+                                          alternativeText="close"
+                                          variant="bare-inverse"
+                                          class="slds-modal__close"/>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <p><b>You will not be able to reduce these figures once you have pressed submit.
+                        </b>
+                    </p>
+                </div>
+                <footer class="slds-modal__footer"> 
+                    <button type="button" class="see-all mw-auto" onclick="{!c.handleMakeadjustment}">Submit</button>
+                    <button type="button" class="see-all mw-auto" onclick="{!c.closeModel}">Cancel</button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+        
+    </aura:if>
+</aura:component>

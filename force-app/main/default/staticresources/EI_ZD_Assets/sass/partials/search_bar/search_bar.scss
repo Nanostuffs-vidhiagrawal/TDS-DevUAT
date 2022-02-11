@@ -1,0 +1,123 @@
+.filter-search {
+    position: relative;
+    @include space(margin, top, $s50);
+    @include space(margin, bottom, $s35);
+
+    @include respond-below(sm) {
+        @include space(margin, top, $s25);
+        @include space(margin, bottom, $s15);
+    }
+
+    .form-control {
+        background: lighten(map-get($color, light_gray), 50%);
+        @include border(1px, solid, map-get($color, light_border));
+        height: 52px;
+        @include font_size($base);
+        @include space('padding', 'left', $s15);
+        @include space('padding', 'right', $s50);
+        @include border_radius($s25);
+
+        @include respond-below(sm) {
+            @include space(margin, top, $s15);
+        }
+    }
+    button {
+        appearance: none;
+        border: none;
+        width: 40px;
+        height: 40px;
+        background-image: url(../img/Search_Bg_icon.png);
+        background-color: transparent;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        position: absolute;
+        bottom: 5px;
+        right: 8px;
+        outline: 0;
+    }
+}
+
+.protect-search {
+    @include space(margin, top, $s05);
+
+    .row {
+        align-items: center;
+    }
+
+    .filter-search {
+        @include space(margin, top, $zero);
+        @include space(margin, bottom, $zero);
+    }
+}
+
+.web_search {
+    position: relative;
+    @include space(margin, top, $s50);
+    @include space(margin, bottom, $s35);
+
+    @include respond-below(sm) {
+        @include space(margin, top, $s25);
+        @include space(margin, bottom, $s15);
+    }
+
+    .form-control {
+        @include border(1px, solid, map-get($color, light_border));
+        height: 52px;
+        @include font_size($base);
+        @include space('padding', 'left', $s15);
+        @include space('padding', 'right', $s50);
+        color: map-get($color, light-black);
+        font-family: $Aller_Bold;
+
+        @include respond-below(sm) {
+            @include space(margin, top, $s15);
+        }
+    }
+    button {
+        appearance: none;
+        border: none;
+        width: 25px;
+        height: 25px;
+        background-image: url(../img/feather-search.png);
+        background-color: transparent;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        position: absolute;
+        bottom: 13px;
+        right: 13px;
+        outline: 0;
+    }
+}
+
+.search_result {
+    .search-result_box {
+        border-bottom: 1px solid map-get($color, light_border);
+        @include space(padding, bottom, $s25);
+        @include space(margin, bottom, $s35);
+
+        @include respond-below(sm) {
+            @include space(padding, bottom, $s15);
+            @include space(margin, bottom, $s25);
+        }
+
+        h6 {
+            color: map-get($color, light_blue);
+        }
+    }
+
+    .most_part {
+        h4 {
+            color: map-get($color, light-black);
+        }
+        ul {
+            @include space(margin, bottom, $s45);
+
+            li {
+                @include space(padding, bottom, $s25);
+                @include font_size($above_base);
+            }
+        }
+    }
+}

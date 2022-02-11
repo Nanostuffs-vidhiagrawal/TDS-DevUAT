@@ -1,0 +1,59 @@
+.THIS .dataTables_empty{
+    display:none!important;
+}
+
+.THIS .modal-backdrop {
+    z-index: 0!important;
+}
+
+.THIS .dynamic{
+    height: 4rem!important;
+}
+
+.THIS .see-all{
+   margin-left: 10%;
+}
+
+.THIS .textcss{
+    font-family: Aller_regular!important;
+    text-align: left!important;
+    color: #212529!important;
+    font-weight: 400!important;
+    line-height: 1.5!important;
+    font-size: 15px!important;
+    border-top: none;
+    border-bottom: none;
+    padding: 8px 18px;
+}
+
+.THIS .headingtext{
+    text-align:left;
+    padding: 16px 18px;
+    border-bottom: none!important;
+    font-weight: bold;
+    background-color: #F5F6FA;
+    font-size: 15px!important;
+    line-height: 1.5;
+    color:#212529;
+    border-top: none!important;
+    font-family: Aller_regular;
+}
+
+.THIS .textcss1{
+    font-family: Aller_regular!important;
+    text-align: left!important;
+    color: #212529!important;
+    font-weight: 400!important;
+    line-height: 1.5!important;
+    font-size: 15px!important;
+    border-top: none;
+    border-bottom: none;
+    padding: 2px 14px;
+}
+.THIS .slds-dueling-list__column_responsive {
+    flex: initial!important;
+    flex-wrap: wrap;
+    overflow: hidden;
+    min-width: initial!important;
+    width: 49%!important;
+}

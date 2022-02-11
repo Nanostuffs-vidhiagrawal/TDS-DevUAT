@@ -1,0 +1,12 @@
+<aura:component implements="force:lightningQuickActionWithoutHeader,force:hasRecordId" controller="EI_UnallocateIRController">
+    <aura:attribute name="report" type="Inbound_Report__c" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="selectDAN" type="boolean" default="false"/>
+    <aura:attribute name="numberDAN" type="String" default=""/>
+
+    <aura:if isTrue="{!v.selectDAN}">
+        <lightning:input label="Please enter DAN :" placeholder="type here..." value="{!v.numberDAN}"/>
+        <input style= "margin-top: 5px;" class="slds-button slds-button_brand" type = "button" disabled="{!v.disable}" value = "Allocate" onclick="{! c.allocate}"/>
+        <input style= "margin-top: 5px;" class="slds-button slds-button_destructive custom" type = "button" disabled="{!v.disable}" value = "Cancel" onclick="{! c.closeWindow}"/>
+    </aura:if>
+</aura:component>

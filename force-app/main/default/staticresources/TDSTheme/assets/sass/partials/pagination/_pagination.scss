@@ -1,0 +1,69 @@
+.pagination {
+	align-items: center;
+	justify-content: center;
+	@include space(margin, top, $s15);
+	@include space(margin, bottom, $s15);
+
+	li {
+		&.page-item {
+			@include space(margin, left, $zero);
+			a {
+				color: map-get($color, light_gray);
+				@include font_size($below_base);
+				border: none;
+				@include space(margin, left, $s05);
+				@include space(margin, right, $s05);
+				outline: $zero;
+				box-shadow: none;
+
+				&:hover {
+					background-color: transparent;
+				}
+			}
+
+			&:last-child, &:first-child {
+				a {
+					@include border(1px, solid, map-get($color, blue));
+					color: map-get($color, blue);
+					@include space(padding, left, $s25);
+					@include space(padding, right, $s25);
+					@include space(padding, top, $s10);
+					@include space(padding, bottom, $s10);
+					@include border_radius($s25);
+					background-repeat: no-repeat;
+					background-size: $s20;
+				}
+			}
+
+			&:last-child {
+				a {
+					@include space(padding, right, $s35);
+					background-image: url('../img/chevron-right.svg');
+					background-position: 60px center;	
+				}
+			}
+
+			&:first-child {
+				a {
+					@include space(padding, left, $s35);
+					background-image: url('../img/chevron-left.svg');
+					background-position: 10px center;
+				}
+			}
+
+			&.disabled {
+				a {
+					cursor: not-allowed;
+					color: map-get($color, light_gray);
+					opacity: 0.3;
+				}
+
+				&:last-child, &:first-child {
+					a {
+						@include border(1px, solid, map-get($color, light_gray));
+					}
+				}
+			}
+		}
+	}
+}

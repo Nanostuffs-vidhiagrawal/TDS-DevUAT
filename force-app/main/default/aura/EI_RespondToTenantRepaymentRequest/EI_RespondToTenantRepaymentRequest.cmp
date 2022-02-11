@@ -1,0 +1,1407 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes"
+   controller="EI_PendingRepaymentRequest">
+   <!-- Attributes -->
+   <aura:attribute name="currentUser" type="User" />
+   <force:recordData aura:id="recordLoader" recordId="{!$SObjectType.CurrentUser.Id}"  
+      fields="Name,ContactId,AccountId,User_Role__c,Profile.Name,Addition_Permission__c" targetFields="{!v.currentUser}"/>
+   <!-- <aura:attribute name="loggedInUserName" type="String" /> -->
+   <aura:attribute name="depositId" type="String" default='' />
+   <aura:attribute name="disableTrue" type="Boolean" default="true" />
+   <aura:attribute name="repaymentRec" type="Repayment_Request__c" 
+      default="{'sobjectType': 'Repayment_Request__c', 'AL_Rent_Arrears__c' : 0, 'Total_Amount_Requested_AL__c' : 0}" />
+   <aura:attribute name="repReqLines" type="Repayment_Request_Line__c[]" />
+   <!--<aura:attribute name="BankDetails" type="sobject" default="{'sobjectType': 'Bank_Account__c'}" />-->
+   <aura:attribute name="tenantrequestedAmount" type="Decimal" />
+   <aura:attribute name="BankDetailsFlag" type="boolean" default="false" />
+   <aura:attribute name="browserDate" type="date" />
+   <!-- New Attributes Start -->
+   <aura:attribute name="showInitialform" type="Boolean" default="true" />
+   <aura:attribute name="isUpperSection" type="Boolean" default="true" />
+   <aura:attribute name="isTenancyEnded" type="Boolean" default="false" />
+   <aura:attribute name="showConfirmDialog" type="Boolean" default="false" />
+   <aura:attribute name="isFutureDateError" type="Boolean" default="false" />
+   <aura:attribute name="isTenEndDateValid" type="Boolean" default="false" />
+   <aura:attribute name="isValidTenancyEndDate" type="Boolean" default="false" />
+   <aura:attribute name="noBankDetailsFoundError" type="Boolean" default="false" />
+   <aura:attribute name="isBankDetailsPresent" type="Boolean" default="false" />
+   <aura:attribute name="showEditBankDetailsSect" type="Boolean" default="false" />
+   <aura:attribute name="disagreeSection" type="Boolean" default="false" />
+   <aura:attribute name="isMoreThanDepAmtBttn" type="Boolean" default="false" />
+   <aura:attribute name="isLessThanDepAmtBttn" type="Boolean" default="false" />
+   <aura:attribute name="thankuSection" type="Boolean" default="false" />
+   <aura:attribute name="otherAmtValidationError" type="boolean" />
+   <aura:attribute name="tenancyEndDate" type="Date"/>
+   <aura:attribute name="buttonClicked" type="String" default="" />
+   <aura:attribute name="errorToBeDisplayed" type="String" default="" />
+   <!-- <aura:attribute name="totalDepositsHeld" type="Double" />
+      <aura:attribute name="totalRepayments" type="Double" /> -->
+   <aura:attribute name="totalRepaymentsToTenants" type="Decimal" />
+   <aura:attribute name="totalAmtToTent" type="Decimal" />
+   <aura:attribute name="sumOfTotalAmountToTenant" type="Decimal" default="0.0" />
+   <aura:attribute name="sumOfTenantRepaymentsToAGLL" type="Decimal" default="0.0" />
+   <aura:attribute name="remainderToAllocate" type="Decimal" />
+   <aura:attribute name="totalDepRepayment" type="Decimal" default="0.0" />
+   <!-- Bank Details Add or Edit Error messages -->
+   <aura:attribute name="bankSuccessMessage" type="boolean" default="false"/>
+   <aura:attribute name="bankErrorMessage" type="boolean" default="false"/>
+   <aura:attribute name="nameOnAccountBlankError" type="boolean" default="false"/>
+   <aura:attribute name="accountNumberBlankError" type="boolean" default="false"/>
+   <aura:attribute name="invalidAccountNumberError" type="boolean" default="false"/>
+   <aura:attribute name="sortCodeBlankError" type="boolean" default="false"/>
+   <aura:attribute name="invalidSortCodeError" type="boolean" default="false"/>
+   <aura:attribute name="intbankSuccessMessage" type="boolean" default="false"/>
+   <aura:attribute name="intbanknameerror" type="boolean" default="false"/>
+   <aura:attribute name="intbankaccounterror" type="boolean" default="false"/>
+   <aura:attribute name="intNameOnAccountSpecialCharError" type="Boolean" default="false" />
+   <aura:attribute name="nameOnAccountSpecialCharError" type="Boolean" default="false" />
+   <aura:attribute name="bankOfAmericaSortCode" type="Boolean" default="false" />
+   <aura:attribute name="saveBankForLater" type="Boolean" default="true" />
+   <!-- <aura:attribute name="bankDetails" type="Bank_Account__c[]"  /> -->
+   <aura:attribute name="bankDetails" type="Bank_Account__c" default="{'sobjectType': 'Bank_Account__c'}" />
+   <aura:attribute name="InterBankDetails" type="Bank_Account__c" default="{'sobjectType': 'Bank_Account__c'}" />
+   <!--International Bank Details Variables-->
+   <aura:attribute name="bankIntName" type="string"  />
+   <aura:attribute name="bankIntAddress" type="string"  />
+   <aura:attribute name="bankIdentificationCode" type="string"  />
+   <aura:attribute name="bankSwiftCode" type="string"  />
+   <aura:attribute name="IBAN" type="string"  />
+   <aura:attribute name="nameOnAccount" type="string"  />
+   <aura:attribute name="bankAccountName" type="string"  />
+   <aura:attribute name="accountNumber" type="string"  />
+   <aura:attribute name="sortCode" type="string"  />
+   <aura:attribute name="bankName" type="string"  />
+   <aura:attribute name="blankAllocationList" type="List" access="global"/>
+   <aura:attribute name="showAddressFlag" type="Boolean" default = "false"/>
+   <aura:handler name="cmpEvent" event="c:ceEvent" action="{!c.handleComponentEvent}"/>
+   <!-- New Attributes End -->
+   <!-- System Events -->
+   <aura:handler name='init' value='{!this}' action='{!c.doInit}' />
+   <!-- OverLay library -->
+   <lightning:overlayLibrary aura:id="overlayLib" />
+   <lightning:navigation aura:id="navService" />
+   <div class="tab-content custom-tab-content" id="sf-tabContent">
+      <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+         <div class="deposit-agent">
+            <div class="container">
+               <div class="row">
+                  <div class="col-md-12">
+                     <aura:if isTrue="{!!v.thankuSection}">
+                        <h2>Repayment request</h2>
+                     </aura:if>
+                     <a href="" class="go-back" onclick="{!c.backToDepositDetail}">
+                        <img src="{!$Resource.TDSTheme+'/assets/img/md-arrow-dropleft.png'}" />
+                        <!-- <img src="../assets/img/md-arrow-dropleft.png" alt="Back Icon" />-->
+                        Go back
+                     </a>
+                     <!-- Window 1 Aura if Start -->
+                     <aura:if isTrue="{!v.showInitialform}">
+                        <!-- Deposit Steps HTML Start -->
+                        <section class="deposit_steps tf-other-prop">
+                           <div class="deposit_steps_detail">
+                              <!-- 3 sections on top Start -->
+                              <div class="row">
+                                 <div class="col-xs-12 col-md-12">
+                                    <div class="deposit_box_container">
+                                       <div class="deposit_box ">
+                                          <div>
+                                             <h5 class="text-secondary">Repayment to tenant(s)</h5>
+                                             <h6>
+                                                <ui:outputCurrency value="{!v.totalRepaymentsToTenants}"/>
+                                             </h6>
+                                          </div>
+                                          <img src="{!$Resource.TDSTheme+'/assets/img/group_icon.png'}" />
+                                       </div>
+                                       <div class="deposit_box">
+                                          <div>
+                                             <h5 class="text-secondary">Repayment to {!v.currentUser.Name}</h5>
+                                             <h6>
+                                                <ui:outputCurrency value="{!v.repaymentRec.Total_Amount_By_Tenant__c}"/>
+                                             </h6>
+                                          </div>
+                                          <img src="{!$Resource.TDSTheme+'/assets/img/home_icon.png'}" />
+                                       </div>
+                                       <div class="deposit_box bg-blue-light">
+                                          <div>
+                                             <h5 class="text-secondary">Total deposit amount</h5>
+                                             <h6>
+                                                <ui:outputCurrency value="{!v.repaymentRec.Deposit__r.Protected_Amount__c}"/>
+                                             </h6>
+                                          </div>
+                                          <img src="{!$Resource.TDSTheme+'/assets/img/pound_icon.png'}" />
+                                       </div>
+                                    </div>
+                                 </div>
+                              </div>
+                              <!-- 3 sections on top End -->
+                              <form>
+                                 <!-- Upper Section of Body Start -->
+                                 <aura:if isTrue = "{! v.isUpperSection}" >
+                                    <!-- Summary section start -->
+                                    <aura:if isTrue="{!v.showAddressFlag}">
+                                       <c:EI_ForwardingAddress depositId = "{!v.depositId}" allocationList = "{!v.blankAllocationList}"/>
+                                    </aura:if>
+                                    <aura:if isTrue="{!!v.showAddressFlag}">
+                                       <div class="form-group row">
+                                          <div class="col-sm-12 col-md-6 col-lg-4">
+                                             <div class="request_table">
+                                                <label class="col-form-label">Repayments to tenant(s)</label>
+                                                <!-- <aura:iteration items="{!v.repaymentRec[0].Repayment_Request_Lines__r}" var="item">
+                                                   <div class="slds-p-top_small">
+                                                       <b>{!item.Account__r.Name}</b> : €{!item.AL_ReqAmt__c}
+                                                   </div>
+                                                   </aura:iteration> -->
+                                                <div class="request_table_box">
+                                                   <aura:iteration items="{!v.repReqLines}" var="item">
+                                                      <aura:if isTrue="{!item.Account__c!=v.currentUser.AccountId}" >
+                                                         <p class="request_table_text">
+                                                            <span>{!item.Account__r.Name}</span>
+                                                            <span>
+                                                               <ui:outputCurrency value="{!item.Tenant_ReqAmt__c}"/>
+                                                            </span>
+                                                         </p>
+                                                      </aura:if>
+                                                   </aura:iteration>
+                                                   <!-- <p class="request_table_text">
+                                                      <span>Stacie Kerrison</span>
+                                                      <span>&#163;1000.00</span>
+                                                      </p>
+                                                      <p class="request_table_text">
+                                                      <span>Robert McLean</span>
+                                                      <span>&#163;1000.00</span>
+                                                      </p> -->
+                                                </div>
+                                                <div class="request_table_total">
+                                                   <p class="request_table_text">
+                                                      <span>Total</span>
+                                                      <span>
+                                                         <ui:outputCurrency value="{!v.totalAmtToTent}"/>
+                                                      </span>
+                                                   </p>
+                                                </div>
+                                             </div>
+                                          </div>
+                                          <div class="col-sm-12 col-md-6 col-lg-4">
+                                             <div class="request_table">
+                                                <label class="col-form-label">Repayment to {!v.currentUser.Name}</label>
+                                                <div class="request_table_box">
+                                                   <aura:if isTrue="{!v.repaymentRec.Tenant_Cleaning__c > 0 }">
+                                                      <!-- <div class="slds-p-top_small">
+                                                         <b>Cleaning</b> : {!v.repaymentRec.Tenant_Cleaning__c}
+                                                         </div> -->
+                                                      <p class="request_table_text">
+                                                         <span>Cleaning</span>
+                                                         <span>
+                                                            <ui:outputCurrency value="{!v.repaymentRec.Tenant_Cleaning__c}"/>
+                                                         </span>
+                                                      </p>
+                                                   </aura:if>
+                                                   <aura:if isTrue="{!v.repaymentRec.Tenant_Dmg_to_Property__c > 0 }">
+                                                      <!-- <div class="slds-m-left_mediumslds-m-left_medium">
+                                                         <b>Damage</b> : {!v.repaymentRec.Tenant_Dmg_to_Property__c}
+                                                         </div> -->
+                                                      <p class="request_table_text">
+                                                         <span>Damage</span>
+                                                         <span>
+                                                            <ui:outputCurrency value="{!v.repaymentRec.Tenant_Dmg_to_Property__c}"/>
+                                                         </span>
+                                                      </p>
+                                                   </aura:if>
+                                                   <aura:if isTrue="{!v.repaymentRec.Tenant_Gardening__c > 0 }">
+                                                      <!-- <div class="slds-m-left_mediumslds-m-left_medium">
+                                                         <b>Gardening</b> : {!v.repaymentRec.Tenant_Gardening__c}
+                                                         </div> -->
+                                                      <p class="request_table_text">
+                                                         <span>Gardening</span>
+                                                         <span>
+                                                            <ui:outputCurrency value="{!v.repaymentRec.Tenant_Gardening__c}"/>
+                                                         </span>
+                                                      </p>
+                                                   </aura:if>
+                                                   <aura:if isTrue="{!v.repaymentRec.Tenant_Redecoration__c > 0 }">
+                                                      <!-- <div class="slds-m-left_medium">
+                                                         <b>Redecoration</b> : {!v.repaymentRec.Tenant_Redecoration__c}
+                                                         </div> -->
+                                                      <p class="request_table_text">
+                                                         <span>Redecoration</span>
+                                                         <span>
+                                                            <ui:outputCurrency value="{!v.repaymentRec.Tenant_Redecoration__c}"/>
+                                                         </span>
+                                                      </p>
+                                                   </aura:if>
+                                                   <aura:if isTrue="{!v.repaymentRec.Tenant_Rent_Arrears__c > 0 }">
+                                                      <!-- <div class="slds-m-left_medium">
+                                                         <b>Rent arrears</b> : {!v.repaymentRec.Tenant_Rent_Arrears__c}
+                                                         </div> -->
+                                                      <p class="request_table_text">
+                                                         <span>Rent arrears</span>
+                                                         <span>
+                                                            <ui:outputCurrency value="{!v.repaymentRec.Tenant_Rent_Arrears__c}"/>
+                                                         </span>
+                                                      </p>
+                                                   </aura:if>
+                                                   <aura:if isTrue="{!v.repaymentRec.Tenant_Other__c > 0 }">
+                                                      <!-- <div class="slds-m-left_medium">
+                                                         <b>Other</b> : {!v.repaymentRec.Tenant_Other__c}
+                                                         </div> -->
+                                                      <p class="request_table_text">
+                                                         <span>Other</span>
+                                                         <span>
+                                                            <ui:outputCurrency value="{!v.repaymentRec.Tenant_Other__c}"/>
+                                                         </span>
+                                                      </p>
+                                                   </aura:if>
+                                                </div>
+                                                <div class="request_table_total">
+                                                   <p class="request_table_text">
+                                                      <span>Total</span>
+                                                      <span>
+                                                         <ui:outputCurrency value="{!v.repaymentRec.Total_Amount_By_Tenant__c}"/>
+                                                      </span>
+                                                   </p>
+                                                </div>
+                                             </div>
+                                          </div>
+                                       </div>
+                                       <!-- Summary section end -->
+                                       <!-- Has the tenancy ended Start -->
+                                       <div class="form-group row">
+                                          <label class="col-sm-12 col-md-4 col-lg-3 col-form-label">Response to repayment request</label>
+                                          <div class="col-sm-12 col-md-8 col-lg-5">
+                                             <label class="col-form-label">Has the tenancy ended?</label>
+                                             <!-- <div class="agree-container">
+                                                <button type="button" class="agree-btn">I agree with the repayment request111</button> 
+                                                <lightning:button class="agree-btn"  aura:id="I agree with the repayment request" 
+                                                                  label="I agree with the repayment request" 
+                                                                  onclick="{! c.userTypeHandler }" />
+                                                </div> -->
+                                             <div class="agree-container">
+                                                <lightning:button class="learn-more" aura:id="firstyes" label="Yes" 
+                                                   title="Yes" onclick="{!c.tenancyHasEnded}"/>
+                                                <lightning:button class="learn-more" aura:id="firstno" label="No" 
+                                                   title="No" onclick="{!c.tenancyHasNotEnded}"/>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </aura:if>
+                                    <!-- Has the tenancy ended End -->
+                                    <aura:if isTrue="{!v.isTenancyEnded}">
+                                       <!-- Tenancy End date Start -->
+                                       <div class="form-group row">
+                                          <label class="col-sm-12 col-md-4 col-lg-3 col-form-label">Tenancy end date</label>
+                                          <div class="col-sm-12 col-md-8 col-lg-5">
+                                             <label>Please tell us the date the tenancy ended</label>
+                                             <!-- Tenancy end date -->
+                                             <div class="d-flex">
+                                                <div class="flex3">
+                                                   <select class="form-control" id="endDateId" name="day"  onchange="{!c.checkTenancyEndDate }">
+                                                      <option value="" disabled="true" selected="true">Select Day</option>
+                                                      <option id="drd01" value="01">1</option>
+                                                      <option id="drd02" value="02">2</option>
+                                                      <option id="drd03" value="03">3</option>
+                                                      <option id="drd04" value="04">4</option>
+                                                      <option id="drd05" value="05">5</option>
+                                                      <option id="drd06" value="06">6</option>
+                                                      <option id="drd07" value="07">7</option>
+                                                      <option id="drd08" value="08">8</option>
+                                                      <option id="drd09" value="09">9</option>
+                                                      <option id="drd10" value="10">10</option>
+                                                      <option id="drd11" value="11">11</option>
+                                                      <option id="drd12" value="12">12</option>
+                                                      <option id="drd13" value="13">13</option>
+                                                      <option id="drd14" value="14">14</option>
+                                                      <option id="drd15" value="15">15</option>
+                                                      <option id="drd16" value="16">16</option>
+                                                      <option id="drd17" value="17">17</option>
+                                                      <option id="drd18" value="18">18</option>
+                                                      <option id="drd19" value="19">19</option>
+                                                      <option id="drd20" value="20">20</option>
+                                                      <option id="drd21" value="21">21</option>
+                                                      <option id="drd22" value="22">22</option>
+                                                      <option id="drd23" value="23">23</option>
+                                                      <option id="drd24" value="24">24</option>
+                                                      <option id="drd25" value="25">25</option>
+                                                      <option id="drd26" value="26">26</option>
+                                                      <option id="drd27" value="27">27</option>
+                                                      <option id="drd28" value="28">28</option>
+                                                      <option id="drd29" value="29">29</option>
+                                                      <option id="drd30" value="30">30</option>
+                                                      <option id="drd31" value="31">31</option>
+                                                   </select>
+                                                </div>
+                                                <div class="flex3">
+                                                   <select class="form-control" id="endMonthId" name="month"  onchange="{!c.checkTenancyEndDate }">
+                                                      <option value="" disabled="true" selected="true">Select Month</option>
+                                                      <option id="drm01" value="01">January</option>
+                                                      <option id="drm02" value="02">February</option>
+                                                      <option id="drm03" value="03">March</option>
+                                                      <option id="drm04" value="04">April</option>
+                                                      <option id="drm05" value="05">May</option>
+                                                      <option id="drm06" value="06">June</option>
+                                                      <option id="drm07" value="07">July</option>
+                                                      <option id="drm08" value="08">August</option>
+                                                      <option id="drm09" value="09">September</option>
+                                                      <option id="drm10" value="10">October</option>
+                                                      <option id="drm11" value="11">November</option>
+                                                      <option id="drm12" value="12">December</option>
+                                                   </select>
+                                                </div>
+                                                <div class="flex3">
+                                                   <select class="form-control" id="endYearId" name="year" onchange="{!c.checkTenancyEndDate }">
+                                                      <option value="" disabled="true" selected="true">Select Year</option>
+                                                      <option id="dry2015" value="2015">2015</option>
+                                                      <option id="dry2016" value="2016">2016</option>
+                                                      <option id="dry2017" value="2017">2017</option>
+                                                      <option id="dry2018" value="2018">2018</option>
+                                                      <option id="dry2019" value="2019">2019</option>
+                                                      <option id="dry2020" value="2020">2020</option>
+                                                      <option id="dry2021" value="2021">2021</option>
+                                                      <option id="dry2022" value="2022">2022</option>
+                                                      <option id="dry2023" value="2023">2023</option>
+                                                      <option id="dry2024" value="2024">2024</option>
+                                                   </select>
+                                                </div>
+                                                <!--<div class="flex1">
+                                                   <div class="calander-icon">
+                                                       <input name="datepicker-ui" type="text"
+                                                              id="datepicker-ui" />
+                                                   </div>
+                                                   </div>-->
+                                             </div>
+                                             <!-- Tenancy end date -->
+                                             <aura:if isTrue="{!v.isFutureDateError}">
+                                                <p class="error-msg">You cannot provide a date in the future.
+                                                </p>
+                                             </aura:if>
+                                             <aura:if isTrue="{!v.isTenEndDateValid}">
+                                                <p class="error-msg">Invalid Tenancy End Date.
+                                                </p>
+                                             </aura:if>
+                                          </div>
+                                       </div>
+                                       <!-- Tenancy End date End -->
+                                       <aura:if isTrue="{!v.isValidTenancyEndDate}">
+                                          <!-- Agree or disagree Start -->
+                                          <div class="form-group row">
+                                             <label class="col-sm-12 col-md-4 col-lg-3 col-form-label"></label>
+                                             <div class="col-sm-12 col-md-8 col-lg-5">
+                                                <label class="col-form-label">Do you agree with what the tenant wants to happen to the deposit?</label>
+                                                <!-- <div class="agree-container">
+                                                   <button type="button" class="agree-btn">I agree with the repayment request111</button> 
+                                                   <lightning:button class="agree-btn"  aura:id="I agree with the repayment request" 
+                                                                     label="I agree with the repayment request" 
+                                                                     onclick="{! c.userTypeHandler }" />
+                                                   </div> -->
+                                                <div class="agree-container">
+                                                   <lightning:button aura:id="agreeRepayment" 
+                                                      label="I agree with the repayment request" 
+                                                      class="agree-btn" onclick="{!c.agreeingRepayment }" />
+                                                   <lightning:button aura:id="disagreeRepayment" 
+                                                      label="I do not agree with the repayment request" 
+                                                      class="agree-btn" onclick="{!c.disagreeingRepayment }" />
+                                                </div>
+                                                <br/>
+                                                <aura:if isTrue="{!v.buttonClicked=='agreeRepayment'}">
+                                                   <!-- Bank details section Start -->
+                                                   <aura:if isTrue="{!!v.isBankDetailsPresent}">
+                                                      <aura:if isTrue="{!v.noBankDetailsFoundError}">
+                                                         <a href="" class="see-all danger" onclick="{!c.bankDetailsEditSection}">
+                                                            <!-- <img src="../assets/img/add-circle.svg" alt="Add Icon" /> -->
+                                                            <img src="{!$Resource.TDSTheme+'/assets/img/add-circle.svg'}" />
+                                                            Add repayment details for {!v.currentUser.Name}
+                                                         </a>
+                                                         <p class="error-msg">
+                                                            You must provide your payment details before you can submit your response. SafeDeposits 
+                                                            Scotland will then make payment to you within 5 working days.
+                                                         </p>
+                                                         <aura:set attribute="else">
+                                                            <a href="" class="see-all" onclick="{!c.bankDetailsEditSection}">
+                                                               <img src="{!$Resource.TDSTheme+'/assets/img/add-circle.svg'}" />
+                                                               <!--<img src="../assets/img/add-circle.svg" alt="Add Icon" />--> 
+                                                               Add repayment details for {!v.currentUser.Name}
+                                                            </a>
+                                                            <br /><br />
+                                                         </aura:set>
+                                                      </aura:if>
+                                                      <aura:set attribute="else">
+                                                         <a href="" class="see-all" onclick="{!c.bankDetailsEditSection}">
+                                                            <img src="{!$Resource.TDSTheme+'/assets/img/edit-icon1.svg'}" />
+                                                            <!-- <img src="../assets/img/edit-icon1.svg" alt="Edit Icon" /> --> 
+                                                            Edit repayment details for {!v.currentUser.Name}
+                                                         </a>
+                                                         <br /><br />
+                                                      </aura:set>
+                                                   </aura:if>
+                                                   <!-- Bank details section End -->
+                                                   <!-- Add/Edit bank detail section START -->
+                                                   <aura:if isTrue="{!v.showEditBankDetailsSect}">
+                                                      <div class="organization-details" id="payment-details">
+                                                         <aura:if isTrue="{!!v.isBankDetailsPresent}" >
+                                                            <div class="form-group row">
+                                                               <input type="checkbox" id="checkboxstatus" checked="{!v.saveBankForLater}" 
+                                                                  onchange="{!c.saveDetailsForLater}" value="{!v.saveBankForLater}"  
+                                                                  class="col-sm-2 col-lg-1"/>
+                                                               <p>Save these details</p>
+                                                            </div>
+                                                         </aura:if>
+                                                         <h5>UK payment details</h5>
+                                                         <aura:if isTrue="{!v.bankSuccessMessage}">
+                                                            <div
+                                                               id="bankSuccessMessage"
+                                                               class="alert alert-success alert-dismissible fade show"
+                                                               >
+                                                               <!--  <strong>Success!</strong>--> Bank account updated successfully.
+                                                               <button
+                                                                  type="button"
+                                                                  class="close"
+                                                                  onclick="{!c.hideBootstrapErrors}"
+                                                                  name="bankSuccessMessage"
+                                                                  >&times;</button
+                                                                  >
+                                                            </div>
+                                                         </aura:if>
+                                                         <aura:if isTrue="{!v.bankErrorMessage}">
+                                                            <div
+                                                               id="bankErrorMessage"
+                                                               class="alert alert-danger alert-dismissible fade show"
+                                                               >
+                                                               <!-- <strong>Error!</strong>--> Bank account cannot be Updated.
+                                                               <button
+                                                                  type="button"
+                                                                  class="close"
+                                                                  onclick="{!c.hideBootstrapErrors}"
+                                                                  name="bankErrorMessage"
+                                                                  >&times;</button
+                                                                  >
+                                                            </div>
+                                                         </aura:if>
+                                                         <aura:if isTrue="{!v.nameOnAccountBlankError}">
+                                                            <div
+                                                               id="nameOnAccountBlankError"
+                                                               class="alert alert-danger alert-dismissible fade show"
+                                                               >
+                                                               <!--  <strong>Error!</strong>--> Name on account cannot be blank.
+                                                               <button
+                                                                  type="button"
+                                                                  class="close"
+                                                                  onclick="{!c.hideBootstrapErrors}"
+                                                                  name="nameOnAccountBlankError"
+                                                                  >&times;</button
+                                                                  >
+                                                            </div>
+                                                         </aura:if>
+                                                         <aura:if isTrue="{!v.accountNumberBlankError}">
+                                                            <div
+                                                               id="accountNumberBlankError"
+                                                               class="alert alert-danger alert-dismissible fade show"
+                                                               >
+                                                               <!-- <strong>Error!</strong>--> Account number cannot be blank.
+                                                               <button
+                                                                  type="button"
+                                                                  class="close"
+                                                                  onclick="{!c.hideBootstrapErrors}"
+                                                                  name="accountNumberBlankError"
+                                                                  >&times;</button
+                                                                  >
+                                                            </div>
+                                                         </aura:if>
+                                                         <aura:if isTrue="{!v.invalidAccountNumberError}">
+                                                            <div
+                                                               id="invalidAccountNumberError"
+                                                               class="alert alert-danger alert-dismissible fade show"
+                                                               >
+                                                               <!-- <strong>Error!</strong> -->This account number is invalid. Please enter valid account number.
+                                                               <button
+                                                                  type="button"
+                                                                  class="close"
+                                                                  onclick="{!c.hideBootstrapErrors}"
+                                                                  name="invalidAccountNumberError"
+                                                                  >&times;</button
+                                                                  >
+                                                            </div>
+                                                         </aura:if>
+                                                         <aura:if isTrue="{!v.sortCodeBlankError}">
+                                                            <div
+                                                               id="sortCodeBlankError"
+                                                               class="alert alert-danger alert-dismissible fade show"
+                                                               >
+                                                               <!-- <strong>Error!</strong>--> Sort code cannot be blank.
+                                                               <button
+                                                                  type="button"
+                                                                  class="close"
+                                                                  onclick="{!c.hideBootstrapErrors}"
+                                                                  name="sortCodeBlankError"
+                                                                  >&times;</button
+                                                                  >
+                                                            </div>
+                                                         </aura:if>
+                                                         <aura:if isTrue="{!v.invalidSortCodeError}">
+                                                            <div
+                                                               id="invalidSortCodeError"
+                                                               class="alert alert-danger alert-dismissible fade show"
+                                                               >
+                                                               <!--  <strong>Error!</strong>--> This sort code is invalid. Please enter valid sort code.
+                                                               <button
+                                                                  type="button"
+                                                                  class="close"
+                                                                  onclick="{!c.hideBootstrapErrors}"
+                                                                  name="invalidSortCodeError"
+                                                                  >&times;</button
+                                                                  >
+                                                            </div>
+                                                         </aura:if>
+                                                         <aura:if isTrue="{!v.nameOnAccountSpecialCharError}">
+                                                            <div
+                                                               id="nameOnAccountSpecialCharError"
+                                                               class="alert alert-danger alert-dismissible fade show"
+                                                               >
+                                                               <!--  <strong>Error!</strong>--> Name cannot contain special character.
+                                                               <button
+                                                                  type="button"
+                                                                  class="close"
+                                                                  onclick="{!c.hideBootstrapErrors}"
+                                                                  name="nameOnAccountSpecialCharError"
+                                                                  >&times;</button
+                                                                  >
+                                                            </div>
+                                                         </aura:if>
+                                                         <aura:if isTrue="{!v.bankOfAmericaSortCode}">
+                                                            <div
+                                                               id="bankOfAmericaSortCode"
+                                                               class="alert alert-danger alert-dismissible fade show"
+                                                               >
+                                                               <!-- <strong>Error!</strong>--> We do not support payments to Bank of America.
+                                                               <button
+                                                                  type="button"
+                                                                  class="close"
+                                                                  onclick="{!c.hideBootstrapErrors}"
+                                                                  name="bankOfAmericaSortCode"
+                                                                  >&times;</button
+                                                                  >
+                                                            </div>
+                                                         </aura:if>
+                              <form class="sf-custom-form">
+                              <div class="form-row">
+                              <div class="form-group col-md-6">
+                              <span onkeypress="{!c.NumSplCharsCheck}">
+                              <lightning:input aura:id="bankAccountName" class="lightInput"  label="Name on account" maxlength="64" 
+                                 title="Name must appear exactly as it does on bank account (e.g. Bob OBrien rather than Bob O’Brien)." 
+                                 placeholder="Enter account name" value="{!v.bankAccountName}"/> 
+                              </span>
+                              </div>
+                              <div class="form-group col-md-6">
+                              <lightning:input aura:id="accountNumber" class="lightInput" label="Account number" minlength="8" maxlength="8" 
+                                 messageWhenTooShort="You must provide eight numbers." placeholder="Enter account number"
+                                 pattern="[0-9]*" messageWhenPatternMismatch="You must provide a valid account number." 
+                                 value="{!v.accountNumber}"/>
+                              </div>
+                              </div>
+                              <div class="form-row">
+                              <div class="form-group col-md-6">
+                              <lightning:input aura:id="sortCode" class="lightInput"  label="Sort code" minlength="6" maxlength="6" 
+                                 messageWhenTooShort="You must provide six numbers." placeholder="Enter sort code" 
+                                 pattern="[0-9]*" messageWhenPatternMismatch="You must provide a valid sort code." 
+                                 value="{!v.sortCode}"/>
+                              </div>
+                              <div class="form-group col-md-6">
+                              <lightning:input aura:id="bankName" disabled="true" label="Bank name" placeholder="Enter bank name" 
+                                 value="{!v.bankName}"/>
+                              </div>
+                              </div>
+                              <div class="text-right">
+                              <!--<button class="see-all" onclick="{!c.updateBankDetails }">Save</button>-->
+                              <lightning:button class="see-all" variant="brand" label="Submit" title="Save"
+                                 onclick="{!c.updateBankDetails }" />
+                              <lightning:button class="see-all" variant="brand" label="Cancel" title="Cancel"
+                                 onclick="{!c.cancelBankDetails }" />
+                              </div>
+                              </form>
+                              </div>
+                              <div class="organization-details" id="internationalpayment-details">
+                              <h5>International payment details</h5><br/>
+                              <p>If you provide SafeDeposits Scotland with international payment details, we will assume that you would like any payments that need to be made to you to be made to this bank account. If you would like to be paid to your UK bank account, please remove any international payment details using the form provided.</p>
+                              <aura:if isTrue="{!v.intbankSuccessMessage}">
+                              <div
+                                 id="interbankSuccessMessage"
+                                 class="alert alert-success alert-dismissible fade show"
+                                 >
+                              <!--  <strong>Success!</strong>--> International bank account updated successfully.
+                              <button
+                                 type="button"
+                                 class="close"
+                                 onclick="{!c.hideBootstrapErrors}"
+                                 name="intbankSuccess"
+                                 >&times;</button
+                                 >
+                              </div>
+                              </aura:if>                                                    
+                              <aura:if isTrue="{!v.intbanknameerror}">
+                              <div
+                                 id="intbanknameerror"
+                                 class="alert alert-danger alert-dismissible fade show"
+                                 >
+                              <!-- <strong>Error!</strong>--> You must provide bank name.
+                              <button
+                                 type="button"
+                                 class="close"
+                                 onclick="{!c.hideBootstrapErrors}"
+                                 name="intbankname"
+                                 >&times;</button
+                                 >
+                              </div>
+                              </aura:if>
+                              <aura:if isTrue="{!v.intbankaccounterror}">
+                              <div
+                                 id="intbankaccounterror"
+                                 class="alert alert-danger alert-dismissible fade show"
+                                 >
+                              <!--  <strong>Error!</strong>--> You must provide account name.
+                              <button
+                                 type="button"
+                                 class="close"
+                                 onclick="{!c.hideBootstrapErrors}"
+                                 name="intbankaccount"
+                                 >&times;</button
+                                 >
+                              </div>
+                              </aura:if>
+                              <aura:if isTrue="{!v.intNameOnAccountSpecialCharError}">
+                              <div
+                                 id="intNameOnAccountSpecialCharError"
+                                 class="alert alert-danger alert-dismissible fade show"
+                                 >
+                              <!--  <strong>Error!</strong> -->Name cannot contain special character.
+                              <button
+                                 type="button"
+                                 class="close"
+                                 onclick="{!c.hideBootstrapErrors}"
+                                 name="intNameOnAccountSpecialCharError"
+                                 >&times;</button
+                                 >
+                              </div>
+                              </aura:if>
+                              <form class="sf-custom-form">
+                              <div class="form-row">
+                              <div class="form-group col-md-6">
+                              <lightning:input aura:id="bankIntName" class="lightInput" label="Bank name" maxlength="64" 
+                                 placeholder="Enter bank name" value="{!v.bankIntName}"/>
+                              </div>
+                              </div>
+                              <div class="form-row">
+                              <div class="form-group col-md-6">
+                              <lightning:input aura:id="bankIdentificationCode" class="lightInput" label="Bank identification code" 
+                                 placeholder="Enter bank identification code" value="{!v.bankIdentificationCode}"/>
+                              </div>
+                              <div class="form-group col-md-6">
+                              <lightning:input aura:id="bankSwiftCode" class="lightInput" label="Swift code" 
+                                 placeholder="Enter swift code"  value="{!v.bankSwiftCode}"/>
+                              </div>
+                              </div>
+                              <div class="form-row">
+                              <div class="form-group col-md-6">
+                              <lightning:input aura:id="IBAN" class="lightInput" label="IBAN" placeholder="Enter IBAN" 
+                                 value="{!v.IBAN}"/>
+                              </div>
+                              <div class="form-group col-md-6">
+                              <span onkeypress="{!c.NumSplCharsCheck}">
+                              <lightning:input aura:id="bankIntAccountName" class="lightInput" label="Name on account" 
+                                 title="Name must appear exactly as it does on bank account (e.g. Bob OBrien rather than Bob O’Brien)." 
+                                 placeholder="Enter account name" value="{!v.nameOnAccount}" maxlength="64"/>
+                              </span>
+                              </div>
+                              </div>
+                              <div class="text-right">
+                              <!--<button class="see-all" onclick="{!c.updateBankDetails }">Save</button>-->
+                              <lightning:button class="see-all" variant="brand" label="Submit"
+                                 onclick="{!c.updateInternationalBankDetails }" />
+                              <lightning:button class="see-all" variant="brand" label="Cancel" title="Cancel"
+                                 onclick="{!c.cancelBankDetails }" />
+                              </div>
+                              </form>
+                              </div>
+                              </aura:if>	
+                              <!-- Add/Edit bank detail section END -->
+                              </aura:if>
+                              </div>
+                              </div>
+                              <!-- Agree or disagree Start -->
+                              <aura:if isTrue="{!v.buttonClicked!=''}">
+                              <!-- Continue button Start -->
+                              <div class="form-group row">
+                              <div class="col-sm-12 col-md-10 col-lg-8 text-right">
+                              <lightning:button aura:id="goToDisagree" label="Continue" class="see-all" 
+                                 onclick="{! c.goToNextSection }" />
+                              </div>
+                              </div>
+                              <!-- Continue button End -->
+                              </aura:if>
+                              </aura:if>
+                              </aura:if>
+                              </aura:if>
+                              <!-- Upper Section of Body End -->
+                              <!-- Disagree Section Render Start -->
+                              <aura:if isTrue="{!v.disagreeSection}">
+                                 <div class="row">
+                                    <div class="col-sm-12 col-md-6 col-lg-5 offset-md-3">
+                                       <aura:if isTrue="{!v.isMoreThanDepAmtBttn || v.isLessThanDepAmtBttn || v.errorToBeDisplayed=='Errors'}">
+                                          <div class="deposit_box deposit_danger pt-3 pb-2">
+                                             <div class="row">
+                                                <div class="col-6 col-sm-8">
+                                                   <h5 class="text-secondary">Remainder to allocate
+                                                   </h5>
+                                                </div>
+                                                <div class="col-sm-4 col-6">
+                                                   <h6 class="mb-3">
+                                                      <lightning:formattedNumber value="{!v.remainderToAllocate}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/>
+                                                   </h6>
+                                                </div>
+                                             </div>
+                                             <div class="row">
+                                                <div class="col-6 col-sm-8">
+                                                   <h5 class="text-secondary">Total deposit allocated
+                                                   </h5>
+                                                </div>
+                                                <div class="col-sm-4 col-6">
+                                                   <h6 class="mb-3">
+                                                      <lightning:formattedNumber value="{!v.totalDepRepayment}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/>
+                                                   </h6>
+                                                </div>
+                                             </div>
+                                          </div>
+                                          <aura:if isTrue="{!v.errorToBeDisplayed == 'Errors'}">
+                                             <div class="col-sm-12">
+                                                <p class="error-msg">Please enter the valid values.</p>
+                                             </div>
+                                             <aura:set attribute = "else">
+                                                <aura:if isTrue="{!v.isMoreThanDepAmtBttn}">
+                                                   <div class="col-sm-12">
+                                                      <!--<p class="error-msg">You cannot request to repay more than the deposit total.</p>-->
+                                                      <p class="error-msg">
+                                                         <!-- You cannot ask for less to be paid to the agent/landlord than the amount of 
+                                                            &pound; {!v.repaymentRec.Total_Amount_By_Agent_Landlord__c} that was previously offered. -->
+                                                         You cannot allocate more than the total deposit amount.
+                                                      </p>
+                                                   </div>
+                                                </aura:if>
+                                                <aura:if isTrue="{!v.isLessThanDepAmtBttn}">
+                                                   <div class="col-sm-12">
+                                                      <p class="error-msg">
+                                                         There is still 
+                                                         <lightning:formattedNumber value="{!v.remainderToAllocate}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/>
+                                                         left to allocate.
+                                                      </p>
+                                                   </div>
+                                                </aura:if>
+                                             </aura:set>
+                                          </aura:if>
+                                          <aura:set attribute="else">
+                                             <div class="deposit_box pt-3 pb-2">
+                                                <div class="row">
+                                                   <div class="col-6 col-sm-8">
+                                                      <h5 class="text-secondary">Remainder to allocate
+                                                      </h5>
+                                                   </div>
+                                                   <div class="col-sm-4 col-6">
+                                                      <h6 class="mb-3">
+                                                         <lightning:formattedNumber value="{!v.remainderToAllocate}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/>
+                                                      </h6>
+                                                   </div>
+                                                </div>
+                                                <div class="row">
+                                                   <div class="col-6 col-sm-8">
+                                                      <h5 class="text-secondary">Total deposit allocated
+                                                      </h5>
+                                                   </div>
+                                                   <div class="col-sm-4 col-6">
+                                                      <h6 class="mb-3">
+                                                         <lightning:formattedNumber value="{!v.totalDepRepayment}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/>
+                                                      </h6>
+                                                   </div>
+                                                </div>
+                                             </div>
+                                          </aura:set>
+                                       </aura:if>
+                                    </div>
+                                 </div>
+                                 <div class="form-group row">
+                                    <label class="col-sm-12 col-md-4 col-lg-3 col-form-label">Repayments to tenants</label>
+                                    <div class="col-sm-12 col-md-8 col-lg-5">
+                                       <div class="agree-container">
+                                          <div class="agree-detail" style="display: block;">
+                                             <div class="form-group row">
+                                                <div class="col-sm-6">
+                                                   <div class="request-section">
+                                                      <label>Tenant request</label>
+                                                      <aura:iteration items="{!v.repaymentRec.Repayment_Request_Lines__r}" var="item">
+                                                         <aura:if isTrue="{!item.Account__c != item.Repayment_Request__r.Deposit__r.Customer__c}">
+                                                            <div class="form-group">
+                                                               <label class=" col-form-label">{!item.Account__r.Name}</label>
+                                                               <!-- <input type="number" disabled class="form-control" id="" placeholder="&#163;125.00" /> -->
+                                                               <lightning:input type="number" placeholder="£" formatter="currency" step="0.01" 
+                                                                  value="{!item.Tenant_ReqAmt__c}" disabled="true" />
+                                                            </div>
+                                                         </aura:if>
+                                                      </aura:iteration>
+                                                   </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                   <div class="response-section">
+                                                      <label>Your response1</label>
+                                                      <aura:iteration items="{!v.repaymentRec.Repayment_Request_Lines__r}" var="item">
+                                                         <aura:if isTrue="{!item.Account__c != item.Repayment_Request__r.Deposit__r.Customer__c}">
+                                                            <div class="form-group">
+                                                               <label class="col-form-label"><br/></label>
+                                                               <!-- <label class="col-form-label">Miss tenant name</label> 
+                                                                  <input type="number" class="form-control" placeholder="&#163;"> -->
+                                                               <lightning:input type="number" placeholder="£0" onchange="{!c.removeZero}" onfocus="{!c.removeZero}" formatter="currency" step="0.01" 
+                                                                  value="{!item.AL_ReqAmt__c}" oncommit="{!c.handleOnChange}" />
+                                                            </div>
+                                                         </aura:if>
+                                                      </aura:iteration>
+                                                   </div>
+                                                </div>
+                                                <br/>
+                                             </div>
+                                          </div>
+                                          <div class="agree-detail" style="display: block;">
+                                             <div class="form-group row">
+                                             </div>
+                                             <div class="form-group row">
+                                                <div class="col-sm-12">
+                                                   <div class="payment-estimate">
+                                                      <span>Payment to tenants</span>
+                                                      <span>
+                                                         <lightning:formattedNumber value="{!v.sumOfTotalAmountToTenant}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/>
+                                                      </span>
+                                                   </div>
+                                                </div>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div class="form-group row">
+                                    <label class="col-sm-12 col-md-4 col-lg-3 col-form-label">Repayment to agent/landlord</label>
+                                    <div class="col-sm-12 col-md-8 col-lg-5">
+                                       <div class="agree-container">
+                                          <div class="agree-detail" style="display: block;">
+                                             <div class="form-group row">
+                                                <div class="col-sm-6">
+                                                   <div class="request-section">
+                                                      <label>Tenant request</label>
+                                                      <div class="form-group">
+                                                         <label class="col-form-label" >Cleaning</label>
+                                                         <!-- <input type="number" disabled class="form-control" id="Cleaning" placeholder="&#163;125.00" /> -->
+                                                         <lightning:input type="number" placeholder="£0" formatter="currency" step="0.01" disabled="true" 
+                                                            value="{!v.repaymentRec.Tenant_Cleaning__c}" />
+                                                      </div>
+                                                   </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                   <div class="response-section">
+                                                      <label>Your response</label>
+                                                      <div class="form-group">
+                                                         <label class="col-form-label">Cleaning</label>
+                                                         <!-- <input type="number" class="form-control" placeholder="&#163;" /> -->
+                                                         <lightning:input type="number" onchange="{!c.removeZero}" onfocus="{!c.removeZero}" placeholder="£" formatter="currency" step="0.01" 
+                                                            value="{!v.repaymentRec.AL_CleaningAmt__c}" oncommit="{!c.handleOnChange}" />
+                                                      </div>
+                                                   </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                   <div class="request-section">
+                                                      <div class="form-group">
+                                                         <label class="col-form-label">Damage to property or contents</label>
+                                                         <!-- <input type="number" disabled class="form-control" id="Cleaning" placeholder="&#163;125.00" /> -->
+                                                         <lightning:input type="number"  placeholder="£" formatter="currency" step="0.01" disabled="true" 
+                                                            value="{!v.repaymentRec.Tenant_Dmg_to_Property__c}" />
+                                                      </div>
+                                                   </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                   <div class="response-section">
+                                                      <div class="form-group">
+                                                         <label class="col-form-label">Damage to property or contents</label>
+                                                         <!-- <input type="number" class="form-control" placeholder="&#163;" /> -->
+                                                         <lightning:input type="number" onchange="{!c.removeZero}" onfocus="{!c.removeZero}" placeholder="£" formatter="currency" step="0.01" 
+                                                            value="{!v.repaymentRec.AL_DmgPropAmt__c}" oncommit="{!c.handleOnChange}" />
+                                                      </div>
+                                                   </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                   <div class="request-section">
+                                                      <div class="form-group">
+                                                         <label class=" col-form-label">Gardening</label>
+                                                         <!--<input type="number" disabled class="form-control" id="Gardening" placeholder="&#163;260.00" /> -->
+                                                         <lightning:input type="number" placeholder="£" formatter="currency" step="0.01" disabled="true" 
+                                                            value="{!v.repaymentRec.Tenant_Gardening__c}" />
+                                                      </div>
+                                                   </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                   <div class="response-section">
+                                                      <div class="form-group">
+                                                         <label class="col-form-label">Gardening</label>
+                                                         <!-- <input type="number" class="form-control" placeholder="&#163;" /> -->
+                                                         <lightning:input type="number" onchange="{!c.removeZero}" onfocus="{!c.removeZero}" placeholder="£" formatter="currency" step="0.01" 
+                                                            value="{!v.repaymentRec.AL_GardeningAmt__c}" oncommit="{!c.handleOnChange}" />
+                                                      </div>
+                                                   </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                   <div class="request-section">
+                                                      <div class="form-group">
+                                                         <label class="col-form-label">Redecoration</label>
+                                                         <!-- <input type="number" class="form-control" placeholder="&#163;" /> -->
+                                                         <lightning:input type="number" placeholder="£" formatter="currency" step="0.01" disabled="true" 
+                                                            value="{!v.repaymentRec.Tenant_Redecoration__c}" />
+                                                      </div>
+                                                   </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                   <div class="response-section">
+                                                      <div class="form-group">
+                                                         <label class="col-form-label">Redecoration</label>
+                                                         <!-- <input type="number" class="form-control" placeholder="&#163;" /> -->
+                                                         <lightning:input type="number" onchange="{!c.removeZero}" onfocus="{!c.removeZero}" placeholder="£" formatter="currency" step="0.01" 
+                                                            value="{!v.repaymentRec.AL_RedecorationAmt__c}" oncommit="{!c.handleOnChange}" />
+                                                      </div>
+                                                   </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                   <div class="request-section">
+                                                      <div class="form-group">
+                                                         <label class="col-form-label">Rent arrears</label>
+                                                         <!-- <input type="number" class="form-control" placeholder="&#163;" /> -->
+                                                         <lightning:input type="number" placeholder="£" formatter="currency" step="0.01" disabled="true" 
+                                                            value="{!v.repaymentRec.Tenant_Rent_Arrears__c}" />
+                                                      </div>
+                                                   </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                   <div class="response-section">
+                                                      <div class="form-group">
+                                                         <label class="col-form-label">Rent arrears</label>
+                                                         <!-- <input type="number" class="form-control" placeholder="&#163;" /> -->
+                                                         <lightning:input type="number" onchange="{!c.removeZero}" onfocus="{!c.removeZero}" placeholder="£" formatter="currency" step="0.01" 
+                                                            value="{!v.repaymentRec.AL_Rent_Arrears__c}" oncommit="{!c.handleOnChange}" />
+                                                      </div>
+                                                   </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                   <div class="request-section">
+                                                      <div class="form-group">
+                                                         <label class="col-form-label">Other</label>
+                                                         <!-- <input type="number" class="form-control" placeholder="&#163;" /> -->
+                                                         <lightning:input type="number" placeholder="£" formatter="currency" step="0.01" disabled="true" 
+                                                            value="{!v.repaymentRec.Tenant_Other__c}" />
+                                                      </div>
+                                                   </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                   <div class="response-section">
+                                                      <div class="form-group">
+                                                         <label class="col-form-label">Other</label>
+                                                         <!-- <input type="number" class="form-control" placeholder="&#163;" /> -->
+                                                         <lightning:input type="number" onchange="{!c.removeZero}" onfocus="{!c.removeZero}" placeholder="£" formatter="currency" step="0.01" 
+                                                            value="{!v.repaymentRec.AL_OtherAmt__c}" oncommit="{!c.validateOtherAmt}" />
+                                                      </div>
+                                                   </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                   <div class="request-section">
+                                                      <div class="form-group">
+                                                         <label class="col-form-label">Other (Reason for claim)</label>
+                                                         <!-- <input type="number" class="form-control" placeholder="&#163;" /> -->
+                                                         <lightning:input disabled="true" type="text" 
+                                                            value="{!v.repaymentRec.Tenant_Other_Reason__c}" />
+                                                      </div>
+                                                   </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                   <div class="response-section">
+                                                      <div class="form-group">
+                                                         <label class="col-form-label">Other (Reason for claim)</label>
+                                                         <!-- <input type="number" class="form-control" placeholder="&#163;" /> -->
+                                                         <lightning:input type="text" value="{!v.repaymentRec.AL_Other_Reason__c}" 
+                                                            onchange="{!c.validateOtherAmt}"  />
+                                                      </div>
+                                                   </div>
+                                                   <!--<aura:if isTrue="{!v.repaymentRec.AL_OtherAmt__c > 0}">-->
+                                                   <aura:if isTrue="{!v.otherAmtValidationError}">
+                                                      <div class="error-msg">
+                                                         {!$Label.c.OtherPaymentReasonError}
+                                                      </div>
+                                                   </aura:if>
+                                                </div>
+                                             </div>
+                                             <div class="form-group row">
+                                                <div class="col-sm-12">
+                                                   <div class="payment-estimate payEstimate">
+                                                      <span>Payment to {!v.currentUser.Name}</span>
+                                                      <span>
+                                                         <lightning:formattedNumber value="{!v.sumOfTenantRepaymentsToAGLL}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/>
+                                                      </span>
+                                                   </div>
+                                                </div>
+                                             </div>
+                                          </div>
+                                          <!-- Bank details section Start -->
+                                          <aura:if isTrue="{!!v.isBankDetailsPresent}">
+                                             <aura:if isTrue="{!v.noBankDetailsFoundError}">
+                                                <a href="" class="see-all danger" onclick="{!c.bankDetailsEditSection}">
+                                                   <!-- <img src="../assets/img/add-circle.svg" alt="Add Icon" /> -->
+                                                   <img src="{!$Resource.TDSTheme+'/assets/img/add-circle.svg'}" />
+                                                   Add repayment details for {!v.currentUser.Name}
+                                                </a>
+                                                <p class="error-msg">
+                                                   You must provide your payment details before you can submit your response. SafeDeposits 
+                                                   Scotland will then make payment to you within 5 working days.
+                                                </p>
+                                                <aura:set attribute="else">
+                                                   <a href="" class="see-all" onclick="{!c.bankDetailsEditSection}">
+                                                      <img src="{!$Resource.TDSTheme+'/assets/img/add-circle.svg'}" />
+                                                      <!--<img src="../assets/img/add-circle.svg" alt="Add Icon" />--> 
+                                                      Add repayment details for {!v.currentUser.Name}
+                                                   </a>
+                                                   <br /><br />
+                                                </aura:set>
+                                             </aura:if>
+                                             <aura:set attribute="else">
+                                                <a href="" class="see-all" onclick="{!c.bankDetailsEditSection}">
+                                                   <img src="{!$Resource.TDSTheme+'/assets/img/edit-icon1.svg'}" />
+                                                   <!-- <img src="../assets/img/edit-icon1.svg" alt="Edit Icon" /> --> 
+                                                   Edit repayment details for {!v.currentUser.Name}
+                                                </a>
+                                                <br /><br />
+                                             </aura:set>
+                                          </aura:if>
+                                          <!-- Bank details section End -->
+                                          <!-- Add/Edit bank detail section START -->
+                                          <aura:if isTrue="{!v.showEditBankDetailsSect}">
+                                             <div class="organization-details" id="payment-details">
+                                                <h5>UK payment details</h5>
+                                                <aura:if isTrue="{!v.bankSuccessMessage}">
+                                                   <div
+                                                      id="bankSuccessMessage"
+                                                      class="alert alert-success alert-dismissible fade show"
+                                                      >
+                                                      <!--  <strong>Success!</strong>--> Bank account updated successfully.
+                                                      <button
+                                                         type="button"
+                                                         class="close"
+                                                         onclick="{!c.hideBootstrapErrors}"
+                                                         name="bankSuccessMessage"
+                                                         >&times;</button
+                                                         >
+                                                   </div>
+                                                </aura:if>
+                                                <aura:if isTrue="{!v.bankErrorMessage}">
+                                                   <div
+                                                      id="bankErrorMessage"
+                                                      class="alert alert-danger alert-dismissible fade show"
+                                                      >
+                                                      <!--  <strong>Error!</strong>--> Bank account cannot be Updated.
+                                                      <button
+                                                         type="button"
+                                                         class="close"
+                                                         onclick="{!c.hideBootstrapErrors}"
+                                                         name="bankErrorMessage"
+                                                         >&times;</button
+                                                         >
+                                                   </div>
+                                                </aura:if>
+                                                <aura:if isTrue="{!v.nameOnAccountBlankError}">
+                                                   <div
+                                                      id="nameOnAccountBlankError"
+                                                      class="alert alert-danger alert-dismissible fade show"
+                                                      >
+                                                      <!--  <strong>Error!</strong>--> Name on account cannot be blank.
+                                                      <button
+                                                         type="button"
+                                                         class="close"
+                                                         onclick="{!c.hideBootstrapErrors}"
+                                                         name="nameOnAccountBlankError"
+                                                         >&times;</button
+                                                         >
+                                                   </div>
+                                                </aura:if>
+                                                <aura:if isTrue="{!v.accountNumberBlankError}">
+                                                   <div
+                                                      id="accountNumberBlankError"
+                                                      class="alert alert-danger alert-dismissible fade show"
+                                                      >
+                                                      <!-- <strong>Error!</strong> -->Account number cannot be blank.
+                                                      <button
+                                                         type="button"
+                                                         class="close"
+                                                         onclick="{!c.hideBootstrapErrors}"
+                                                         name="accountNumberBlankError"
+                                                         >&times;</button
+                                                         >
+                                                   </div>
+                                                </aura:if>
+                                                <aura:if isTrue="{!v.invalidAccountNumberError}">
+                                                   <div
+                                                      id="invalidAccountNumberError"
+                                                      class="alert alert-danger alert-dismissible fade show"
+                                                      >
+                                                      <!--  <strong>Error!</strong>--> This account number is invalid. Please enter valid account number.
+                                                      <button
+                                                         type="button"
+                                                         class="close"
+                                                         onclick="{!c.hideBootstrapErrors}"
+                                                         name="invalidAccountNumberError"
+                                                         >&times;</button
+                                                         >
+                                                   </div>
+                                                </aura:if>
+                                                <aura:if isTrue="{!v.sortCodeBlankError}">
+                                                   <div
+                                                      id="sortCodeBlankError"
+                                                      class="alert alert-danger alert-dismissible fade show"
+                                                      >
+                                                      <!-- <strong>Error!</strong> -->Sort code cannot be blank.
+                                                      <button
+                                                         type="button"
+                                                         class="close"
+                                                         onclick="{!c.hideBootstrapErrors}"
+                                                         name="sortCodeBlankError"
+                                                         >&times;</button
+                                                         >
+                                                   </div>
+                                                </aura:if>
+                                                <aura:if isTrue="{!v.invalidSortCodeError}">
+                                                   <div
+                                                      id="invalidSortCodeError"
+                                                      class="alert alert-danger alert-dismissible fade show"
+                                                      >
+                                                      <!--   <strong>Error!</strong>--> This sort code is invalid. Please enter valid sort code.
+                                                      <button
+                                                         type="button"
+                                                         class="close"
+                                                         onclick="{!c.hideBootstrapErrors}"
+                                                         name="invalidSortCodeError"
+                                                         >&times;</button
+                                                         >
+                                                   </div>
+                                                </aura:if>
+                                                <form class="sf-custom-form">
+                                                   <div class="form-row">
+                                                      <div class="form-group col-md-6">
+                                                         <span onkeypress="{!c.NumSplCharsCheck}">
+                                                            <lightning:input aura:id="bankAccountName" class="lightInput"  label="Name on account" 
+                                                               title="Name must appear exactly as it does on bank account (e.g. Bob OBrien rather than Bob O’Brien)."  
+                                                               maxlength="64" placeholder="Enter account name" value="{!v.bankAccountName}"/>
+                                                         </span>
+                                                      </div>
+                                                      <div class="form-group col-md-6">
+                                                         <lightning:input aura:id="accountNumber" class="lightInput" label="Account number" minlength="8" maxlength="8" 
+                                                            messageWhenTooShort="You must provide eight numbers." placeholder="Enter account number"
+                                                            pattern="[0-9]*" messageWhenPatternMismatch="You must provide a valid account number." 
+                                                            value="{!v.accountNumber}"/>
+                                                      </div>
+                                                   </div>
+                                                   <div class="form-row">
+                                                      <div class="form-group col-md-6">
+                                                         <lightning:input aura:id="sortCode" class="lightInput"  label="Sort code" minlength="6" maxlength="6" 
+                                                            messageWhenTooShort="You must provide six numbers." placeholder="Enter sort code" 
+                                                            pattern="[0-9]*" messageWhenPatternMismatch="You must provide a valid sort code." 
+                                                            value="{!v.sortCode}"/>
+                                                      </div>
+                                                      <div class="form-group col-md-6">
+                                                         <lightning:input aura:id="bankName" disabled="true" label="Bank name" placeholder="Enter bank name" 
+                                                            value="{!v.bankName}"/>
+                                                      </div>
+                                                   </div>
+                                                   <div class="text-right">
+                                                      <!--<button class="see-all" onclick="{!c.updateBankDetails }">Save</button>-->
+                                                      <lightning:button class="see-all" variant="brand" label="Submit" title="Save"
+                                                         onclick="{!c.updateBankDetails }" />
+                                                      <lightning:button class="see-all" variant="brand" label="Cancel" title="Cancel"
+                                                         onclick="{!c.cancelBankDetails }" />
+                                                   </div>
+                                                </form>
+                                             </div>
+                                             <div class="organization-details" id="internationalpayment-details">
+                                                <h5>International payment details</h5>
+                                                <br/>
+                                                <p>If you provide SafeDeposits Scotland with international payment details, we will assume that you would like any payments that need to be made to you to be made to this bank account. If you would like to be paid to your UK bank account, please remove any international payment details using the form provided.</p>
+                                                <aura:if isTrue="{!v.intbankSuccessMessage}">
+                                                   <div
+                                                      id="interbankSuccessMessage"
+                                                      class="alert alert-success alert-dismissible fade show"
+                                                      >
+                                                      <!--    <strong>Success!</strong>--> International bank account updated successfully.
+                                                      <button
+                                                         type="button"
+                                                         class="close"
+                                                         onclick="{!c.hideBootstrapErrors}"
+                                                         name="intbankSuccess"
+                                                         >&times;</button
+                                                         >
+                                                   </div>
+                                                </aura:if>
+                                                <aura:if isTrue="{!v.intbanknameerror}">
+                                                   <div
+                                                      id="intbanknameerror"
+                                                      class="alert alert-danger alert-dismissible fade show"
+                                                      >
+                                                      <!-- <strong>Error!</strong>--> You must provide bank name.
+                                                      <button
+                                                         type="button"
+                                                         class="close"
+                                                         onclick="{!c.hideBootstrapErrors}"
+                                                         name="intbankname"
+                                                         >&times;</button
+                                                         >
+                                                   </div>
+                                                </aura:if>
+                                                <aura:if isTrue="{!v.intbankaccounterror}">
+                                                   <div
+                                                      id="intbankaccounterror"
+                                                      class="alert alert-danger alert-dismissible fade show"
+                                                      >
+                                                      <!-- <strong>Error!</strong> -->You must provide account name.
+                                                      <button
+                                                         type="button"
+                                                         class="close"
+                                                         onclick="{!c.hideBootstrapErrors}"
+                                                         name="intbankaccount"
+                                                         >&times;</button
+                                                         >
+                                                   </div>
+                                                </aura:if>
+                                                <form class="sf-custom-form">
+                                                   <div class="form-row">
+                                                      <div class="form-group col-md-6">
+                                                         <lightning:input aura:id="bankIntName" class="lightInput" label="Bank name" maxlength="64" 
+                                                            placeholder="Enter bank name" value="{!v.bankIntName}"/>
+                                                      </div>
+                                                   </div>
+                                                   <div class="form-row">
+                                                      <div class="form-group col-md-6">
+                                                         <lightning:input aura:id="bankIdentificationCode" class="lightInput" label="Bank identification code" 
+                                                            placeholder="Enter bank identification code" value="{!v.bankIdentificationCode}"/>
+                                                      </div>
+                                                      <div class="form-group col-md-6">
+                                                         <lightning:input aura:id="bankSwiftCode" class="lightInput" label="Swift code" 
+                                                            placeholder="Enter swift code"  value="{!v.bankSwiftCode}"/>
+                                                      </div>
+                                                   </div>
+                                                   <div class="form-row">
+                                                      <div class="form-group col-md-6">
+                                                         <lightning:input aura:id="IBAN" class="lightInput" label="IBAN" placeholder="Enter IBAN" 
+                                                            value="{!v.IBAN}"/>
+                                                      </div>
+                                                      <div class="form-group col-md-6">
+                                                         <span onkeypress="{!c.NumSplCharsCheck}">
+                                                            <lightning:input aura:id="bankIntAccountName" class="lightInput" label="Name on account" 
+                                                               title="Name must appear exactly as it does on bank account (e.g. Bob OBrien rather than Bob O’Brien)." 
+                                                               placeholder="Enter account name" value="{!v.nameOnAccount}" maxlength="64"/>
+                                                         </span>
+                                                      </div>
+                                                   </div>
+                                                   <div class="text-right">
+                                                      <!--<button class="see-all" onclick="{!c.updateBankDetails }">Save</button>-->
+                                                      <lightning:button class="see-all" variant="brand" label="Submit"
+                                                         onclick="{!c.updateInternationalBankDetails }" />
+                                                      <lightning:button class="see-all" variant="brand" label="Cancel" title="Cancel"
+                                                         onclick="{!c.cancelBankDetails }" />
+                                                   </div>
+                                                </form>
+                                             </div>
+                                          </aura:if>
+                                          <!-- Add/Edit bank detail section END -->
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div class="form-group row">
+                                    <div class="col-sm-12 col-md-10 col-lg-8 text-right">
+                                       <!-- <button type="submit" class="see-all" >Continue</button> -->
+                                       <lightning:button aura:id="checkValidityTenEndDate" label="Continue" class="see-all" 
+                                          onclick="{!c.goToThankuSection }" />
+                                    </div>
+                                 </div>
+                              </aura:if>
+                              <!-- Disagree New Section Render Start -->
+                              </form>
+                           </div>
+                        </section>
+                        <!-- Deposit Steps HTML End -->
+                     </aura:if>
+                     <!-- Window 1 Aura if End -->
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   <!-- Confirmation Popup for Tenancy has not ended -->
+   <aura:if isTrue="{!v.showConfirmDialog}">
+      <!--Modal Box Start-->
+      <div role="dialog" class="slds-modal slds-fade-in-open ">
+         <div class="slds-modal__container">
+            <!--Modal Box Header Start-->
+            <header class="slds-modal__header">
+               <h1 class="slds-text-heading--medium"></h1>
+            </header>
+            <!--Modal Box Header End-->
+            <!--Modal Box Content Start-->
+            <div class="slds-modal__content slds-p-around--large" style="font-size: 1.5rem!important;color: #32669E!important;">
+               <center> Are you sure your tenancy has not ended?</center>
+            </div>
+            <!--Modal Box Content End-->
+            <!--Modal Box Button Start-->
+            <footer class="slds-modal__footer">
+               <center>
+                  <lightning:button variant="brand" name='Yes' label='Yes' onclick='{!c.tenancyHasNotEndedYes}' class="see-all"/>
+                  <lightning:button name='No' label='No' onclick='{!c.tenancyHasNotEndedNo}' class="see-all"/>
+               </center>
+            </footer>
+            <!--Modal Box Button End-->
+         </div>
+      </div>
+      <div class="slds-backdrop slds-backdrop--open"></div>
+   </aura:if>
+   <!-- Confirmation Popup for Tenancy has not ended -->
+   <!-- Displaying Thank you messages Start -->
+   <aura:if isTrue="{!v.thankuSection}">
+      <div class="tab-content custom-tab-content" id="sf-tabContent">
+         <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+            <div class="thank_you">
+               <div class="container">
+                  <div class="row">
+                     <div class="col-md-12">
+                        <!-- <img src="../assets/img/thank-you.png" alt="thank you" /> -->
+                        <img src="{!$Resource.TDSTheme+'/assets/img/thank-you.png'}" />
+                        <h2>Thank You!</h2>
+                        <p>You have successfully responded to the repayment request.</p>
+                        <!-- <aura:if isTrue="{! v.buttonClicked == 'resolveWithoutTDS' }">
+                           <p>You have successfully responded to the repayment request.</p>
+                              <aura:set attribute="else">
+                                  <p>You have successfully completed your repayment request.</p>
+                              </aura:set>
+                           </aura:if> -->   
+                        <div class="happens_next_block">
+                           <h6>What happens next?</h6>
+                           <aura:if isTrue="{!v.buttonClicked == 'agreeRepayment' }">
+                              <p>Thank you for confirming your agreement. SafeDeposits Scotland will pay the deposit in accordance 
+                                 with your agreement within 5 working days.
+                              </p>
+                              <!--<p>Thank you for confirming your agreement. SafeDeposits Scotland will pay the deposit in
+                                 accordance with your agreement within 5 working days.</p>-->
+                           </aura:if>
+                           <aura:if isTrue="{!v.buttonClicked == 'disagreeRepayment' }">
+                              <p>We will ask the tenant to respond to your repayment request within 30 working days.</p>
+                           </aura:if>
+                        </div>
+                        <a href="" class="see-all" onclick="{!c.backToDepositDetail}">Go to deposit summary</a>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </aura:if>
+   <!-- Displaying Thank you messages Button 1 End -->
+</aura:component>

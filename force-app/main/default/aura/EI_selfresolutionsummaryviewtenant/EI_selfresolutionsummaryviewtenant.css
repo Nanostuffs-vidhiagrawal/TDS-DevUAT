@@ -1,0 +1,57 @@
+.THIS .clickButton{
+    background-color : #32669E;
+    color: white;
+}
+.THIS .input_range{
+    width: 92%!important;
+}
+.THIS .slds-slider-label__range{
+    display: none !important;
+}
+.THIS .rangeBar{
+	padding-left: 0!important;
+    padding-right: 0!important;
+    min-height: 44px!important;
+}
+
+.THIS .deposit_steps_detail .form-group textarea {
+    border-width: 1px;
+    border-style: solid;
+    border-color: #C7C7C7;
+    background-color: transparent;
+    font-size: 14px;
+    font-size: 1.4rem;
+    line-height: 22px;
+    line-height: 2.2rem;
+    opacity: 0.6;
+    height: auto;
+    padding-left: 3.2rem;
+    padding-right: 1.2rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.THIS .slds-has-error .slds-form-element__help{
+  font-size: small;
+}
+.THIS .badge2 {
+    
+    position: relative;
+    top: -20px;
+    left: 17px;
+    border: 1px solid white;
+    border-radius: 30%;
+    background-color:red;
+}
+.THIS .divShow{
+    display:block;
+}
+.THIS .divHide{
+    display:none;
+}
+.THIS .uiButton{
+    border-radius: 84px;
+    margin-left: 130px;
+    height: 31px;
+    width: 68px;
+}

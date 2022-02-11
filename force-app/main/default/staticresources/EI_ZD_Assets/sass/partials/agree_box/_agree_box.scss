@@ -1,0 +1,171 @@
+.agree-container {
+	.agree-detail {
+		display: none;
+
+		.form-group {
+			.col-sm-6 {
+				&:last-child, &:nth-last-child(2), &:nth-last-child(3) {
+					.form-group {
+						@include space(margin, bottom, $zero);
+					}
+				}
+			}
+		}
+
+		.error-msg {
+			margin-bottom: $zero !important;
+		}
+
+		input[type="range"] {
+			&:focus {
+				box-shadow: none;
+			}
+		}
+
+		.request-section {
+
+			& > label {
+				@include space(margin, bottom, $s25);
+				@include space(margin, top, $s15);
+				@include font_size($above_base);
+			}
+
+			.form-group {
+				label {
+					font-family: $AllerRegular;
+				}
+
+				input, textarea {
+					text-align: right;
+				}
+			}
+		}
+
+		.response-section {
+
+			& > label {
+				@include space(margin, bottom, $s25);
+				@include space(margin, top, $s15);
+				@include font_size($above_base);
+
+				@include respond-below(sm) {
+					@include space(margin, bottom, $zero);
+				}
+			}
+
+			.form-group {
+				label {
+					visibility: hidden;
+				}
+
+				input {
+					text-align: right;
+				}
+			}
+		}
+
+		.dispute-section {
+
+			& > label {
+				@include space(margin, bottom, $s25);
+				@include space(margin, top, $s15);
+				@include font_size($above_base);
+
+				@include respond-below(sm) {
+					@include space(margin, bottom, $zero);
+				}
+			}
+
+			.form-group {
+				label {
+					visibility: hidden;
+				}
+
+				input {
+					text-align: right;
+					background-color: map-get($color, blue);
+					color: map-get($color, white);
+					opacity: 0.8;
+				}
+			}
+		}
+
+		.range-section {
+
+			& > label {
+				@include space(margin, bottom, $s25);
+				@include space(margin, top, $s15);
+				visibility: hidden;
+			}
+
+			.form-group {
+				label {
+					visibility: hidden;
+				}
+
+				input, textarea {
+					text-align: right;
+				}
+			}
+		}
+
+		.form-control {
+			&:disabled, &[readonly] {
+			    background-color: #e9ecef;
+			}
+		} 
+
+		.payment-estimate {
+			border-bottom: 1px solid rgba(0,0,0,0.08);
+			border-top: 1px solid rgba(0,0,0,0.08);
+			background-color: rgba(0,0,0,0.07) !important;
+			@include space(padding, all, $s15);
+			display: flex;
+			justify-content: space-between;
+			@include font_size($below_base);
+			font-family: $Aller_Bold;
+		}
+	}
+}
+
+.input_bg {
+	background-image: url('../img/pencil-icon.png');
+	background-repeat: no-repeat;
+    background-position-y: 6px;
+    background-position-x: 4px;
+    background-size: 30px;
+}
+
+.text_bg {
+	padding-left: $s50 !important;
+	background-image: url('../img/pencil-icon.png');
+	background-repeat: no-repeat;
+    background-position-y: 6px;
+    background-position-x: 4px;
+    background-size: 30px;
+}
+
+.text_mt {
+	@include space(margin, top, $s15);
+}
+
+.custom-list {
+	@include space(margin, top, $s15);
+
+	li {
+		@include space(padding, left, $s30);
+		position: relative;
+		&::before {
+			content: "•"; 
+			color: map-get($color, blue);
+			@include font_size(35);
+			position: absolute;
+		    top: $zero;
+		    left: $zero;
+		}
+	}
+}
+
+input[type="checkbox"] ~ label {
+    margin-left: 1.5rem;
+}

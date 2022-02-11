@@ -1,0 +1,19 @@
+.THIS .addButton {
+    background-color:red;
+    border-color: red;
+}
+.THIS .slds-form-element__label.slds-no-flex{
+    font-size:1.3rem;
+}
+
+.THIS .slds-text-heading_small.slds-truncate{
+   font-size:1.5rem; 
+}
+.THIS .clickButton{
+    background-color : #32669E;
+    color: white;
+}
+.THIS .newclickButton{
+    background-color : #32669E;
+    color: white;
+}

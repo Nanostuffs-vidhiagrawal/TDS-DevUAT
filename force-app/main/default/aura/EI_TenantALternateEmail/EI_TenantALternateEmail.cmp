@@ -1,0 +1,13 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" 
+                access="global" controller="EI_DepositLookupapex" >
+     <aura:attribute name="altenateemail" type="string" />
+    <lightning:overlayLibrary aura:id="overlayLib"/>
+    <aura:attribute name="acc" type="Account" default="{'sObjectType':'Account'}" />
+   <div>
+       <lightning:input type="email" name="altenateemail" value="{!v.altenateemail}" label="Second Email Address " /><br/>
+        <div>
+            <lightning:button variant="brand" label="Submit" title="Submit"
+                            onclick="{!c.handleClick }" />
+            </div>
+    </div> 
+</aura:component>

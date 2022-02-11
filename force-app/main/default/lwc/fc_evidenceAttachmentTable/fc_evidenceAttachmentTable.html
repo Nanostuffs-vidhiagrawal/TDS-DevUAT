@@ -1,0 +1,25 @@
+<template>
+    <lightning-datatable
+            class="slds-m-around_small"
+            columns={columns}
+            key-field="id"
+            data={evidenceList}
+            onrowaction={handleRowAction}
+            hide-checkbox-column>
+    </lightning-datatable>
+
+    <div class="/*testing the modal over modal issue*/">
+        <c-fc_modal label={confirmDeleteLabel} header={confirmDeleteLabel} section-class="modal-full-width" backdrop-class="modal-full-width">
+            <div class="slds-p-around_medium">
+                <div class="slds-m-bottom_medium slds-theme_warning slds-notify slds-notify_alert">
+                    <div style="font-size: 0.8125rem;">
+                        <h2>{confirmDeleteTextLabel}</h2>
+                    </div>
+                </div>
+            </div>
+            <div slot="footer">
+                <lightning-button class="slds-theme_neutral" variant="brand" label={deleteLabel} onclick={handleDelete}></lightning-button>
+            </div>
+        </c-fc_modal>
+    </div>
+</template>

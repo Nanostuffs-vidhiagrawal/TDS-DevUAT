@@ -1,0 +1,123 @@
+.custom-nav {
+	max-width: $container_size;
+	margin: $zero auto;
+	@include space(padding, top, $s20);
+	@include space(padding, bottom, $s20);
+
+	.navbar-brand {
+		img {
+			width: $s140;
+		} 
+	}
+
+	.navbar-toggler {
+		@include border(1px, solid, map-get($color, blue));
+		outline: none;
+	}
+
+	.navbar-collapse {
+
+		.navbar-nav {
+			.nav-item {
+				.nav-link {
+					@include font_size($nav-font);
+					color: map-get($color, gray);
+					transition: 0.3s;
+					@include space(padding, left, $s25);
+					@include space(padding, right, $s25);
+
+					@include respond-below(lg) {
+						@include space(padding, left, $s10);
+						@include space(padding, right, $s10);
+					}
+
+					@include respond-below(md) {
+						@include space(padding, left, $s05);
+						@include space(padding, right, $s05);
+					}
+
+					&:hover {
+						color: map-get($color, blue);
+					}
+
+					img {
+						width: $s30;
+					}	
+				}
+
+				.dropdown-menu {
+					@include border(1px, solid, map-get($color, light_gray));
+					@include space(margin, top, $s05);
+					position: absolute;
+
+					.dropdown-item {
+						@include font_size($base);
+					}
+				}
+
+				&.dropdown {
+					@include border(1px, solid, map-get($color, light_gray));
+					@include border-radius($s35);
+					@include space(padding, bottom, $zero);
+
+					.nav-link {
+						@include space(padding, left, $s10);
+						@include space(padding, right, $s30);
+
+						&.dropdown-toggle {
+							background-image: url('../img/Icon-arrow-down.png');
+							background-position-x: 85%;
+							background-position-y: center;
+
+							@include respond-below(md) {
+								background-position-x: 98%;
+							}
+
+							@include respond-below(xs) {
+								background-position-x: 98%;
+							}
+
+							background-repeat: no-repeat;
+
+							&::after {
+								border: $zero;
+							}
+						}
+					}
+
+					&.show {
+						.nav-link {
+							&.dropdown-toggle {
+								background-image: url('../img/Icon-arrow-up.png');
+								background-position-x: 85%;
+								background-position-y: center;
+
+								@include respond-below(md) {
+									background-position-x: 98%;
+								}
+
+								@include respond-below(xs) {
+									background-position-x: 98%;
+								}
+
+								background-repeat: no-repeat;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		.form-inline {
+			z-index: 99;
+			.search-input {
+				width: $zero;
+			}
+		}
+		
+
+		@include respond-below(md) {
+			@include space(margin, top, $s15);
+		}
+	}	
+}

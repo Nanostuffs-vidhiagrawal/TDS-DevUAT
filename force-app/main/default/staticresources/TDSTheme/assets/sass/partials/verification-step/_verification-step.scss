@@ -1,0 +1,31 @@
+.verification_step {
+
+	.verification_step_shadow {
+		box-shadow: 0px 3px 2px #00000029;
+		height: 0.4rem;
+		@include space(margin, bottom, $s30);
+
+		@include respond-below(sm) {
+			@include space(margin, bottom, $s20);
+		}
+	}
+
+	h5 {
+		@include space(margin, top, $s30);
+		@include space(margin, bottom, $s15);
+
+		@include respond-below(sm) {
+			@include space(margin, top, $s20);
+		}
+	}
+
+	label {
+		@include space(margin, top, $s15);
+	}
+}
+
+.error-msg {
+	@include space(margin, top, $s15);
+	color: map-get($color, maroon);
+	@include font_size($base);
+}

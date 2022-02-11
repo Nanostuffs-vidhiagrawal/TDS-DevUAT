@@ -1,0 +1,9 @@
+<aura:event type="COMPONENT" description="Event template" >
+	<aura:attribute name="switchYes" type="Boolean" default="false" />
+	<aura:attribute name="depositCreated" type="Boolean" default="false" />
+    <aura:attribute
+    name="newSelectedProperty"
+    type="Property__c"
+    default="{'sobjectType': 'Property__c'}"
+  />
+</aura:event>

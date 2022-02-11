@@ -1,0 +1,7 @@
+.THIS .myCustomClass input { 
+    text-align: right !important;
+}
+.THIS .btnNormal { 
+background-color: transparent !important;
+    color: #F45372 !important;
+}

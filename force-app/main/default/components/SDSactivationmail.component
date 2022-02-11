@@ -1,0 +1,98 @@
+<apex:component access="global" >
+    
+    <apex:attribute type="String" name="recFName" description="test1"/>
+  <!--  assignto="{!recordId}"-->
+    <apex:attribute type="String" name="recId"  description="test1"/>
+    <apex:attribute type="String" name="recLName" description="test1"/>
+    <apex:attribute type="String" name="commURL" description="test2"/>
+    
+  <style>
+.linkunderline{
+    text-decoration: underline;
+    color: black;
+    font-family:Arial;
+        font-size: 15;
+}
+.GFG {
+            background-color: white;
+            border: 2px solid black;
+            color: green;
+            padding: 5px 10px;
+            text-align: center;
+            display: inline-block;
+            font-size: 20px;
+            margin: 10px 30px;
+            cursor: pointer;
+        }
+.body{
+ 
+    color: black;
+    font-family:Arial;
+    
+}
+</style>
+
+<html style="height:800px;">
+  
+<table  BORDER="0" CELLSPACING="0" style="width:640px;height:800px;">
+
+<table style="width:100%;">
+<tr><td>
+<apex:image url="{!$Label.SDSURLLOGO}" width="30%" height="30%"/>
+</td>
+<td style="float:right;">
+<!--<apex:image url="{!$Label.ZDActivationTemplateImageURL2}" />-->
+</td></tr>
+</table>
+
+
+
+<br></br><br></br>
+<div class="body">
+Hi {!recFName}, <br></br><br></br>
+We’ve received a claim from your agent/landlord in relation to your tenancy at . They have claimed <b></b>.  <br></br> <br></br>
+<b>It’s essential that you <a  href="{!commURL}">now log into your claim portal</a> and view your landlord’s claim</b>. Your response lets us make sure that you only need to pay what you should. <br></br> <br></br>
+The first step is for you to view the claim. You can then decide to agree or disagree with it. You need to do this by <b></b>. <br></br> <br></br>
+If you agree the full amount is due, then you will need to pay that amount. If you disagree, then you respond by putting in the values that you feel are correct. Please log in now: <br></br> <br></br>
+<a style="background-color: #457cbf;
+    color: #fff;
+    font-size: 1rem;
+    text-transform: initial;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    display: inline-block;
+    outline: 0!important;
+    text-decoration: none!important;
+    width: 150px;
+    text-align: center;
+    border-radius: 3rem;"  href="{!commURL}">Activation link</a>
+
+    
+<br></br> <br></br>
+we’ll ask your landlord for their evidence and won’t have heard your view. From our experience, the tenants who get involved with the process end up owing less than those who don’t. Please review the claim and let us know your view.. <br></br> <br></br>
+If we can help at all, then please get in touch, <br></br> <br></br>
+Yours sincerely, <br></br>
+Mike Smith<br/>
+Operations Manager <br/><br/>
+T: 03333 213136<br/>
+E: <a href="">info@safedepositsscotland.com</a><br/>
+W: <a href="">www.safedepositsscotland.com</a>
+
+</div>
+<br/>
+<table style="width:100%;">
+<tr><td style="text-align:center">
+<apex:image url="{!$Label.SDSFOOTER}" width="100%" height="70%"/>
+</td>
+<td style="float:right;">
+<!--<apex:image url="{!$Label.ZDActivationTemplateImageURL2}" />-->
+</td></tr>
+</table>
+
+</table>
+
+
+</html>    
+</apex:component>

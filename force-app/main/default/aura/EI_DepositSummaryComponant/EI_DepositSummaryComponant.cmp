@@ -1,0 +1,913 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+                access="global"
+                controller="EI_DepositSummaryApx" >
+    
+    <aura:attribute name="data" type="String" />
+    <aura:attribute name="currentUser" type="User" />
+    <aura:attribute name="PageSpinner" type="boolean" default="true"/>
+    <force:recordData
+                      aura:id="recordLoader"
+                      recordId="{!$SObjectType.CurrentUser.Id}"
+                      fields="Name,Profile.Name,Contact.Job_role__c,Contact.Additional_Permission__c"
+                      targetFields="{!v.currentUser}"
+                      />
+    
+    <!-- HideAction on the basis of roles and permissions -->
+    <aura:attribute name="editLandlord" type="Boolean" default="false" />
+    <aura:attribute name="editTenant" type="boolean" default="false"/>
+    <aura:attribute name="submitEvidence" type="boolean" default="false"/>
+    <aura:attribute name="downloadPI" type="boolean" default="false"/>
+    <aura:attribute name="resRepayment" type="boolean" default="false"/>
+    <aura:attribute name="reqRepayment" type="boolean" default="false"/>
+    <aura:attribute name="depositDecreased" type="boolean" default="false"/>
+    <aura:attribute name="showAmmendMsg" type="boolean" default="false"/>
+    
+    <aura:attribute name="IsDisabled" type="boolean" default="true" />
+    <aura:attribute name="isLeadTenant" type="boolean" default="false" />
+    <aura:attribute name="successDPC" type="boolean" default="false" />
+    <aura:attribute name="sendData" type="object" />
+    <aura:attribute name="hidebutton" type="boolean" />
+    <aura:attribute name="depsumlist" type="List" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="hideDiv" type="boolean" default="true" />
+    <aura:attribute name="showSavebtn" type="boolean" default="false" />
+    <aura:attribute name="newDepositAmount" type="Decimal" />
+    <aura:attribute name="disabledSaveBtn" type="boolean" default="true" />
+    <aura:attribute name="depositTransferred" type="boolean" default="false" />
+    <aura:attribute name="changeovercancelled" type="boolean" default="false" />
+    <aura:attribute name="ShowTenantRec" type="boolean" default="false" />
+    <aura:attribute name="Topupamount" type="Decimal" />
+    
+    
+    <aura:attribute
+                    name="repayRequestAgentLandlord"
+                    type="boolean"
+                    default="false"
+                    />
+    <aura:attribute name="repayRequestTenant" type="boolean" default="false" />
+    <aura:attribute name="tenantDetails" type="List" />
+    <aura:attribute name="selectedTenant" type="List" />
+    <aura:attribute name="repayIdAgentLandlord" type="String" />
+    <aura:attribute name="repayIdTenant" type="String" />
+    <aura:attribute name="showTenantRespondBtn" type="Boolean" default="false" />
+    
+    <aura:attribute name="notenanterror" type="Boolean" default="false" />
+    <aura:attribute name="noamounterror" type="Boolean" default="false" />
+    <aura:attribute name="unknownerror" type="Boolean" default="false" />
+    <aura:attribute name="before30dayserror" type="Boolean" default="false" />
+    <aura:attribute name="depositupdatedsuccessmsg" type="Boolean" default="false" />
+    <aura:attribute name="bankdetailssuccessmsg" type="Boolean" default="false" />
+    <aura:attribute name="adjudicatorreportlink" type="string" />
+    <aura:attribute name="showConfirmDialog" type="Boolean" default="false" />
+    
+    <aura:attribute
+                    name="showAddNewTenantButton"
+                    type="boolean"
+                    default="false"
+                    />
+    <lightning:navigation aura:id="navService" />
+    <lightning:overlayLibrary aura:id="overlayLib" />
+    <lightning:overlayLibrary aura:id="overlayLib1" />
+    <lightning:overlayLibrary aura:id="overlayLib2" />
+    <aura:handler event="force:refreshView" action="{!c.doInit}" />
+    <aura:handler event="aura:doneWaiting" action="{!c.doneWaiting}"></aura:handler>
+  	
+    <!--Popup form HTMl end-->
+    <aura:renderIf isTrue="{!v.PageSpinner}">
+        <div class="lds-dual-ring">
+        </div>
+        <aura:set attribute="else"> 
+            <!--    <div class="tab-content custom-tab-content" id="sf-tabContent">
+        
+        <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+     -->       
+            <aura:if isTrue="{!v.hideDiv}">
+                <aura:if isTrue="{!v.currentUser.Profile.Name !='Tenant'}">
+                    
+                    <div class="list-of-btns">
+                        <div class="container">
+                            <h2>Deposit summary</h2> 
+                            
+                            <!--  <a href="#" class="see-all">Repayment request</a>
+                        <a href="tenant-changeover.html" class="see-all">Tenant changeover</a>-->
+                            <aura:if isTrue="{!or(v.depsumlist[0].objdeposit.Status__c==$Label.c.Awaiting_receipt_of_deposit, v.depsumlist[0].objdeposit.Status__c==$Label.c.Registered_not_paid)}">
+                                <a href="" class="see-all" onclick="{!c.confirmdeletedeposit}">Delete deposit</a>
+                            </aura:if>
+                            <aura:if isTrue="{!v.depsumlist[0].objdeposit.Status__c==$Label.c.Registered_not_paid}">
+                                <a href="" class="see-all" id="{!v.depsumlist[0].objdeposit.Id}" onclick="{!c.transferToPay}">Pay deposit</a>
+                            </aura:if>
+                            <aura:if isTrue="{!v.depsumlist[0].objdeposit.Status__c==$Label.c.Awaiting_receipt_of_deposit}">
+                                <a href="" class="see-all" id="{!v.depsumlist[0].objdeposit.Id}" onclick="{!c.transferToChangePayment}">Change payment method</a>
+                            </aura:if>
+                            <aura:if isTrue="{!and(or(or(or(v.depsumlist[0].objdeposit.Case_Status__c ==$Label.c.Deposit_transfer_cancelled,v.depsumlist[0].objdeposit.Case_Status__c ==$Label.c.Tenant_changeover_cancelled),v.depsumlist[0].objdeposit.Case_Status__c ==$Label.c.Deposit_transfer_rejected),v.depsumlist[0].objdeposit.Case_Status__c ==$Label.c.Repayment_requested_cancelled),v.depsumlist[0].objdeposit.Status__c ==$Label.c.Deposits_held_by_SafeDeposits_Scotland)}">
+                                <a href="" class="see-all" id="{!v.depsumlist[0].objdeposit.Id}" onclick="{!c.transferToPayTop}"> Pay additional deposit</a>
+                            </aura:if>
+                            
+                            <aura:if isTrue="{!and(v.depsumlist[0].objdeposit.Status__c ==$Label.c.Deposits_held_by_SafeDeposits_Scotland,or(v.depsumlist[0].objdeposit.Case_Status__c ==null, v.depsumlist[0].objdeposit.Case_Status__c == $Label.c.Deposit_transfer_accepted))}">
+                                <a href="" class="see-all" id="{!v.depsumlist[0].objdeposit.Id}" onclick="{!c.transferToPayTop}"> Pay additional deposit</a>
+                            </aura:if>
+                            <aura:if isTrue="{!and(or(or(or(v.depsumlist[0].objdeposit.Case_Status__c ==$Label.c.Deposit_transfer_cancelled,v.depsumlist[0].objdeposit.Case_Status__c =='Tenant changeover cancelled'),v.depsumlist[0].objdeposit.Case_Status__c ==$Label.c.Deposit_transfer_rejected),v.depsumlist[0].objdeposit.Case_Status__c ==$Label.c.Repayment_requested_cancelled),v.depsumlist[0].objdeposit.Status__c ==$Label.c.Deposits_held_by_SafeDeposits_Scotland)}">
+                                <a href="" onclick="{!c.dochangeover}" class="see-all" > Tenant changeover</a>
+                            </aura:if>
+                            <!--  <aura:if isTrue="{!and(v.depsumlist[0].objdeposit.Case_Status__c =='Tenant Changeover Cancelled'	,v.depsumlist[0].objdeposit.Status__c ==$Label.c.Deposits_held_by_SafeDeposits_Scotland)}">
+                            <a href="" onclick="{!c.dochangeover}" class="see-all" > Tenant changeover</a>
+                        </aura:if>-->
+                            
+                            <!--<aura:if isTrue="{!and(v.depsumlist[0].objdeposit.Status__c ==$Label.c.Deposits_held_by_SafeDeposits_Scotland,v.depsumlist[0].objdeposit.Case_Status__c ==null, v.depsumlist[0].objdeposit.Case_Status__c == $Label.c.Deposit_transfer_accepted)}"> -->
+                            <aura:if isTrue="{!and(or(or(v.depsumlist[0].objdeposit.Case_Status__c ==null, v.depsumlist[0].objdeposit.Case_Status__c == $Label.c.Deposit_transfer_accepted), v.depsumlist[0].objdeposit.Case_Status__c =='Case closed - tenancy not ended'), v.depsumlist[0].objdeposit.Status__c ==$Label.c.Deposits_held_by_SafeDeposits_Scotland)}">  
+                                <a href="" onclick="{!c.dochangeover}" class="see-all" > Tenant changeover</a>
+                            </aura:if>
+                            
+                            <aura:if isTrue="{!v.currentUser.Profile.Name =='Agent'}">
+                                <!--<lightning:button label="Add landlord" class="see-all" onclick="{! c.addlandlord}"/>-->
+                                
+                                <c:EI_Replace_Primary_landlord depositId="{!v.depsumlist[0].objdeposit.Id}"  propertyRecId="{!v.depsumlist[0].objdeposit.Property__c}"/>
+                            </aura:if>
+                            
+                            <aura:if isTrue="{!and(and(v.depsumlist[0].objdeposit.Status__c ==$Label.c.Deposits_held_by_SafeDeposits_Scotland	, v.depsumlist[0].objdeposit.Case_Status__c ==$Label.c.Tenant_changeover_initiated_tenant),v.depsumlist[0].ChangeOver_CaseStatus__c=='Tenant Initiate')}">
+                                <a href="" onclick="{!c.reviewChangeOver}" class="see-all" >Accept tenant changeover</a>
+                            </aura:if>
+                            <aura:if isTrue="{!and(v.depsumlist[0].objdeposit.Status__c ==$Label.c.Deposits_held_by_SafeDeposits_Scotland	, v.depsumlist[0].objdeposit.Case_Status__c ==$Label.c.Tenant_changeover_initiated_agent_landlord)}">
+                                <a href="" onclick="{!c.CancelTenantChangeover}" class="see-all" >Cancel tenant changeover</a>
+                            </aura:if>
+                            
+                            <aura:if isTrue="{!and(or(or(v.depsumlist[0].objdeposit.Case_Status__c ==$Label.c.Deposit_transfer_cancelled,v.depsumlist[0].objdeposit.Case_Status__c ==$Label.c.Tenant_changeover_cancelled),v.depsumlist[0].objdeposit.Case_Status__c ==$Label.c.Deposit_transfer_rejected,v.depsumlist[0].objdeposit.Case_Status__c ==$Label.c.Repayment_requested_cancelled),v.depsumlist[0].objdeposit.Status__c ==$Label.c.Deposits_held_by_SafeDeposits_Scotland)}">
+                                <a href="" onclick="{!c.doTransferProperty}" class="see-all" > Transfer to another property</a>
+                            </aura:if>
+                            
+                            <!-- <aura:if isTrue="{!and(v.depsumlist[0].objdeposit.Status__c ==$Label.c.Deposits_held_by_SafeDeposits_Scotland,or(v.depsumlist[0].objdeposit.Case_Status__c ==null, v.depsumlist[0].objdeposit.Case_Status__c == $Label.c.Deposit_transfer_accepted))}"> -->
+                            <aura:if isTrue="{!and(or(or(v.depsumlist[0].objdeposit.Case_Status__c ==null, v.depsumlist[0].objdeposit.Case_Status__c == $Label.c.Deposit_transfer_accepted), v.depsumlist[0].objdeposit.Case_Status__c =='Case closed - tenancy not ended'), v.depsumlist[0].objdeposit.Status__c ==$Label.c.Deposits_held_by_SafeDeposits_Scotland)}">
+                                <a href="" onclick="{!c.doTransferProperty}" class="see-all" > Transfer to another property</a>
+                            </aura:if>
+                            
+                            <aura:if isTrue="{!v.reqRepayment}">
+                                <aura:if isTrue="{!and(or(or(v.depsumlist[0].objdeposit.Case_Status__c ==$Label.c.Deposit_transfer_cancelled,v.depsumlist[0].objdeposit.Case_Status__c ==$Label.c.Tenant_changeover_cancelled),v.depsumlist[0].objdeposit.Case_Status__c ==$Label.c.Deposit_transfer_rejected,v.depsumlist[0].objdeposit.Case_Status__c ==$Label.c.Repayment_requested_cancelled),v.depsumlist[0].objdeposit.Status__c ==$Label.c.Deposits_held_by_SafeDeposits_Scotland)}">
+                                    <a href="" onclick="{!c.doRepaymentRequestOfDeposit}" class="see-all" > Repayment request</a>
+                                </aura:if>
+                                
+                                <!--<aura:if isTrue="{!and(v.depsumlist[0].objdeposit.Status__c ==$Label.c.Deposits_held_by_SafeDeposits_Scotland,or(v.depsumlist[0].objdeposit.Case_Status__c ==null, v.depsumlist[0].objdeposit.Case_Status__c == $Label.c.Deposit_transfer_accepted))}"> -->
+                                <aura:if isTrue="{!and(or(or(v.depsumlist[0].objdeposit.Case_Status__c ==null, v.depsumlist[0].objdeposit.Case_Status__c == $Label.c.Deposit_transfer_accepted), v.depsumlist[0].objdeposit.Case_Status__c =='Case closed - tenancy not ended'), v.depsumlist[0].objdeposit.Status__c ==$Label.c.Deposits_held_by_SafeDeposits_Scotland)}">
+                                    <a href="" onclick="{!c.doRepaymentRequestOfDeposit}" class="see-all" > Repayment request</a>
+                                </aura:if>
+                            </aura:if>
+                            
+                            <!--  <aura:if isTrue="{!and(v.depsumlist[0].objdeposit.Status__c ==$Label.c.Deposits_held_by_SafeDeposits_Scotland,v.depsumlist[0].objdeposit.Case_Status__c ==null)}">-->
+                            <aura:if isTrue="{!and(v.depsumlist[0].objdeposit.Status__c ==$Label.c.Repayment_requested_by_agent_landlord , 
+                                             v.depsumlist[0].objdeposit.Case_Status__c ==$Label.c.Repayment_requested_agent_landlord)}"> 
+                                <a href="" onclick="{!c.viewrepaymentofagll}" class="see-all" > View repayment request </a>
+                            </aura:if>
+                            
+                            
+                            <aura:if isTrue="{!v.resRepayment}">
+                                <aura:if isTrue="{!and(or(v.depsumlist[0].objdeposit.Case_Status__c ==$Label.c.Repayment_Requested_Tenant ,
+                                                 v.depsumlist[0].objdeposit.Case_Status__c ==$Label.c.No_response_from_agent_landlord), 
+                                                 v.depsumlist[0].objdeposit.Status__c ==$Label.c.Repayment_requested_by_tenant	)}">
+                                    <a href="" onclick="{!c.RespondtoRequest}" class="see-all" > Respond to repayment request</a>
+                                </aura:if>
+                            </aura:if>
+                            <aura:if isTrue="{!and(v.depsumlist[0].objdeposit.Status__c ==$Label.c.Deposits_held_by_SafeDeposits_Scotland, v.depositTransferred==false)}">
+                                <a href="" class="see-all" onclick="{!c.doTransferDeposit}">Transfer to another landlord</a>
+                            </aura:if>	
+                            <aura:if isTrue="{!v.depositTransferred}">
+                                <a href="" class="see-all" onclick="{!c.cancelDeposit}">Cancel deposit transfer</a>
+                            </aura:if>
+                            
+                            <aura:if isTrue="{!and(v.depsumlist[0].objdeposit.Status__c =='Repayment not agreed - In dispute resolution', v.depsumlist[0].objdeposit.Case_Status__c =='Evidence gathering AA/LL')}">
+                                <aura:if isTrue="{!v.depsumlist[1].objcase.AGLL_Respond_Evidance_Gathering__c==false}">
+                                    <aura:if isTrue="{!v.submitEvidence}">
+                                        <a href="" class="see-all" onclick="{!c.submitevidence}">Submit evidence</a>
+                                    </aura:if>
+                                </aura:if>
+                                <aura:if isTrue="{!v.depsumlist[1].objcase.AGLL_Respond_Evidance_Gathering__c==true}">
+                                    <a href="" class="see-all" onclick="{!c.submitevidence}">Review/edit evidence</a>
+                                </aura:if>
+                                <a href="" class="see-all" onclick="{!c.cancelclaim}">Cancel dispute</a>
+                            </aura:if>
+                            
+                            <!-- Once the case has moved further from Evidence Gathering stages START -->
+                            <aura:if isTrue="{!and(v.depsumlist[0].objdeposit.Status__c =='Repayment not agreed - In dispute resolution')}">
+                                <aura:if isTrue="{!and(v.depsumlist[0].objdeposit.Case_Status__c!='Evidence gathering AA/LL', v.depsumlist[1].objcase.AGLL_Respond_Evidance_Gathering__c)}">
+                                    <a href="" class="see-all" onclick="{!c.viewEvidencesOnly}">Review evidence</a>
+                                </aura:if>
+                            </aura:if>
+                            <!-- Once the case has moved further from Evidence Gathering stages END -->
+                            
+                            
+                            
+                            <aura:if isTrue="{!and(and(v.depsumlist[0].objdeposit.Status__c =='Repayment not agreed - In dispute resolution', v.depsumlist[0].objdeposit.Case_Status__c =='On Hold'),v.depsumlist[1].objcase.PreviousStatus__c =='Evidence gathering AA/LL')}">
+                                
+                                <aura:if isTrue="{!v.depsumlist[1].objcase.AGLL_Respond_Evidance_Gathering__c==false}">
+                                    <aura:if isTrue="{!v.submitEvidence}">
+                                        <a href="" class="see-all" onclick="{!c.submitevidence}">Submit evidence</a>
+                                    </aura:if>
+                                </aura:if>
+                                <aura:if isTrue="{!v.depsumlist[1].objcase.AGLL_Respond_Evidance_Gathering__c==true}">
+                                    <a href="" class="see-all" onclick="{!c.submitevidence}">Review/edit evidence</a>
+                                </aura:if>
+                                <a href="" class="see-all" onclick="{!c.cancelclaim}">Cancel dispute</a>
+                            </aura:if>
+                            
+                            
+                            
+                            <aura:if isTrue="{!and(v.depsumlist[0].objdeposit.Status__c ==$Label.c.Self_resolution, v.depsumlist[0].objdeposit.Case_Status__c ==$Label.c.Repayment_disputed_self_resolution)}">
+                                <a href="" class="see-all" onclick="{!c.continuerepayment}">Continue repayment journey</a>
+                            </aura:if>    
+                            
+                            <aura:if isTrue="{!and(and(v.depsumlist[1].objcase.PreviousStatus__c ==$Label.c.Repayment_disputed_self_resolution, v.depsumlist[0].objdeposit.Case_Status__c =='On Hold'),v.depsumlist[0].objdeposit.Status__c ==$Label.c.Self_resolution)}">
+                                <a href="" class="see-all" onclick="{!c.continuerepayment}">Continue repayment journey</a>
+                            </aura:if>  
+                            
+                        </div>
+                    </div>
+                </aura:if>
+            </aura:if>
+            
+            <div class="tab-content custom-tab-content" id="sf-tabContent">
+                
+                <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+                    
+                    <aura:if isTrue="{!v.currentUser.Profile.Name =='Tenant'}">
+                        <div class="list-of-btns">
+                            <div class="container">
+                                <h2>Deposit summary</h2> 
+                                <aura:if isTrue="{!v.depsumlist[0].objdeposit.Status__c ==$Label.c.Deposits_held_by_SafeDeposits_Scotland}">
+                                    <a href="" onclick="{!c.doRepaymentRequestOfDepositTenant}" class="see-all" > Repayment request</a>
+                                </aura:if>
+                                <aura:if isTrue="{!and(v.depsumlist[0].objdeposit.Case_Status__c ==$Label.c.Repayment_Requested_Tenant ,                           
+                                                 v.depsumlist[0].objdeposit.Status__c ==$Label.c.Repayment_requested_by_tenant)}">
+                                    <a href="" class="see-all" onclick="{!c.viewRepReqForJointTenant}">View repayment request</a>
+                                </aura:if>
+                                
+                                <aura:if isTrue="{!and(v.depsumlist[0].objdeposit.Status__c ==$Label.c.Repayment_requested_by_agent_landlord , 
+                                                 v.depsumlist[0].objdeposit.Case_Status__c ==$Label.c.Repayment_requested_agent_landlord)}">
+                                    <aura:if isTrue ="{!v.isLeadTenant}">
+                                        <a href="" class="see-all"  onclick="{!c.moveToRepaymentPage }">Respond to repayment request</a>
+                                        <aura:set attribute="else">
+                                            <aura:if isTrue ="{!v.depsumlist[0].objdeposit.No_of_lead_tenants__c==0}">
+                                                <a href="" class="see-all"  onclick="{!c.moveToRepaymentPage }">Respond to repayment request</a>
+                                            </aura:if>
+                                            <!--    <aura:if isTrue ="{!v.depsumlist[0].objdeposit.No_of_lead_tenants__c!=0}">
+                                        <a href="" class="see-all" onclick="{!c.viewRepReqForJointTenant}">View repayment request</a>
+                                    </aura:if>-->
+                                        </aura:set>
+                                    </aura:if>
+                                    <a href="" class="see-all" onclick="{!c.viewRepReqForJointTenant}">View repayment request</a>
+                                </aura:if>
+                                
+                                <aura:if isTrue="{!and(v.depsumlist[0].objdeposit.Status__c ==$Label.c.Self_resolution, v.depsumlist[0].objdeposit.Case_Status__c ==$Label.c.Repayment_disputed_self_resolution)}">
+                                    <aura:if isTrue="{!v.isLeadTenant}">
+                                        <a href="" class="see-all" onclick="{!c.continuerepayment}">Continue repayment journey</a>
+                                        <aura:set attribute="else">
+                                            <a href="" class="see-all" onclick="{!c.continuerepayment}">View repayment process</a>
+                                        </aura:set>
+                                    </aura:if>
+                                </aura:if>
+                                
+                                <aura:if isTrue="{!and(and(v.depsumlist[1].objcase.PreviousStatus__c ==$Label.c.Repayment_disputed_self_resolution, v.depsumlist[0].objdeposit.Case_Status__c =='On Hold'),v.depsumlist[0].objdeposit.Status__c ==$Label.c.Self_resolution)}">
+                                    <aura:if isTrue="{!v.isLeadTenant}">
+                                        <a href="" class="see-all" onclick="{!c.continuerepayment}">Continue repayment journey</a>
+                                        <aura:set attribute="else">
+                                            <a href="" class="see-all" onclick="{!c.continuerepayment}">View repayment process</a>
+                                        </aura:set>
+                                    </aura:if>
+                                </aura:if>
+                                
+                                <aura:if isTrue="{!v.currentUser.Profile.Name =='Tenant'}">
+                                    
+                                    <aura:if isTrue="{!and(v.depsumlist[0].objdeposit.Status__c =='Repayment not agreed - In dispute resolution', v.depsumlist[0].objdeposit.Case_Status__c =='Evidence gathering TT')}">
+                                        <!-- <a href="" class="see-all" onclick="{!c.submitevidenceTenant}">Submit evidence</a>
+                            <a href="" class="see-all" onclick="{!c.cancelclaim}">Cancel dispute</a>-->
+                                        <div class = "slds-p-horizontal_x-small" style = "display : inline">
+                                            <aura:if isTrue="{!v.isLeadTenant}">
+                                                <aura:if isTrue="{!!v.depsumlist[1].objcase.TT_respond_evidence_gathering__c}">
+                                                    <a href="" class="see-all" onclick="{!c.submitevidenceTenant}">Submit evidence</a>
+                                                    <aura:set attribute="else"> 
+                                                        <a href="" class="see-all" onclick="{!c.submitevidenceTenant}">Review/edit evidence</a>
+                                                    </aura:set>
+                                                </aura:if>
+                                            </aura:if>
+                                            <aura:set attribute="else">
+                                                <aura:if isTrue="{!!v.depsumlist[1].objcase.TT_respond_evidence_gathering__c}">
+                                                    <a href="" class="see-all" onclick="{!c.viewEvidencesOnly}">Review evidence</a>
+                                                </aura:if>
+                                            </aura:set>
+                                        </div>
+                                        
+                                        <div class = "slds-p-horizontal_x-small" style="display : inline">
+                                            <aura:if isTrue="{!v.isLeadTenant}">
+                                                <a href="" class="see-all" onclick="{!c.cancelclaim}">Cancel dispute</a>
+                                            </aura:if>
+                                        </div>
+                                    </aura:if>
+                                    
+                                    <!-- Once the case has moved further from Evidence Gathering stages START -->
+                                    <aura:if isTrue="{!and(v.depsumlist[0].objdeposit.Status__c =='Repayment not agreed - In dispute resolution')}">
+                                        <div class = "slds-p-horizontal_x-small" style = "display : inline">
+                                            <aura:if isTrue="{!and(v.depsumlist[0].objdeposit.Case_Status__c!='Evidence gathering TT', v.depsumlist[0].objdeposit.Case_Status__c!='Evidence gathering AA/LL', v.depsumlist[1].objcase.TT_respond_evidence_gathering__c)}">
+                                                <a href="" class="see-all" onclick="{!c.viewEvidencesOnly}">Review evidence</a>
+                                            </aura:if>
+                                        </div>
+                                    </aura:if>
+                                    <!-- Once the case has moved further from Evidence Gathering stages END -->
+                                    
+                                    <aura:if isTrue="{!and(and(v.depsumlist[0].objdeposit.Status__c =='Repayment not agreed - In dispute resolution', v.depsumlist[0].objdeposit.Case_Status__c =='On Hold'),v.depsumlist[1].objcase.PreviousStatus__c =='Evidence gathering TT')}">
+                                        <!-- <a href="" class="see-all" onclick="{!c.submitevidenceTenant}">Submit evidence</a>
+                          <a href="" class="see-all" onclick="{!c.cancelclaim}">Cancel dispute</a>-->
+                                        <div class = "slds-p-horizontal_x-small" style = "display : inline">
+                                            <aura:if isTrue="{!v.isLeadTenant}">
+                                                <aura:if isTrue="{!!v.depsumlist[1].objcase.TT_respond_evidence_gathering__c}">
+                                                    <a href="" class="see-all" onclick="{!c.submitevidenceTenant}">Submit evidence</a>
+                                                    <aura:set attribute="else"> 
+                                                        <a href="" class="see-all" onclick="{!c.submitevidenceTenant}">Review/edit evidence</a>
+                                                    </aura:set>
+                                                </aura:if>
+                                                <aura:set attribute="else"> 
+                                                    <a href="" class="see-all" onclick="{!c.viewEvidencesOnly}">Review evidence</a>
+                                                </aura:set>   
+                                            </aura:if>
+                                        </div>
+                                        
+                                        <div class = "slds-p-horizontal_x-small" style="display : inline">
+                                            <aura:if isTrue="{!v.isLeadTenant}">
+                                                <a href="" class="see-all" onclick="{!c.cancelclaim}">Cancel dispute</a>
+                                            </aura:if>
+                                        </div>
+                                    </aura:if>
+                                </aura:if>        
+                                
+                                <!-- <aura:if isTrue="{!and(or(v.depsumlist[0].objdeposit.Case_Status__c ==null,v.depsumlist[0].objdeposit.Case_Status__c =='Deposit transfer accepted'), v.depsumlist[0].objdeposit.Status__c ==$Label.c.Deposits_held_by_SafeDeposits_Scotland)}"> -->
+                                
+                                <aura:if isTrue="{!and(or(or(or(or(or(v.depsumlist[0].objdeposit.Case_Status__c ==null,v.depsumlist[0].objdeposit.Case_Status__c =='Deposit transfer accepted'),v.depsumlist[0].objdeposit.Case_Status__c ==$Label.c.Deposit_transfer_cancelled),v.depsumlist[0].objdeposit.Case_Status__c ==$Label.c.Tenant_changeover_cancelled),v.depsumlist[0].objdeposit.Case_Status__c ==$Label.c.Deposit_transfer_rejected),v.depsumlist[0].objdeposit.Case_Status__c ==$Label.c.Repayment_requested_cancelled), v.depsumlist[0].objdeposit.Status__c ==$Label.c.Deposits_held_by_SafeDeposits_Scotland)}"> 
+                                    <aura:renderIf isTrue="{!v.depsumlist[0].objdeposit.Tenant_Changeover_Status__c != 'In Progress'}" >
+                                        <a href="" class="see-all" name="movedOut" onclick="{!c.dochangeover }">I have moved out</a>
+                                    </aura:renderIf>
+                                </aura:if>
+                                
+                            </div>
+                        </div>
+                    </aura:if>
+                    
+                    <aura:if isTrue="{!v.successDPC}">
+                        <div id="successAlert" class="alert alert-success alert-dismissible fade show" >
+                            Deposit protection certificate generated successfully. 
+                            &nbsp;<a href="" onclick="{!c.onDownload}">Click here  to download</a>
+                            <button 
+                                    type="button"
+                                    class="close"
+                                    onclick="{!c.hideBootstrapErrors}"
+                                    name="successmsg"
+                                    >&times;
+                            </button>
+                        </div>                 
+                    </aura:if> 
+                    
+                    <!-- Success Alert -->
+                    <aura:if isTrue="{!v.hideDiv}">
+                        <aura:if isTrue="{!v.depositTransferred}">
+                            <div class="col-lg-12 col-md-12 alert alert-success alert-dismissible fade show">
+                                <strong>Success!</strong> Request submitted - we have contacted the other party and invited them to accept the transfer. We will notify you when they accept the transfer, after which you will no longer have access to this deposit.
+                                <button onclick="{!c.hideBootstrapErrors}" type="button" class="close" data-dismiss="alert" name="depositTransfer">&times;</button>
+                            </div>
+                        </aura:if>
+                        <aura:if isTrue="{!v.changeovercancelled}">
+                            <div class="col-lg-12 col-md-12 alert alert-success alert-dismissible fade show">
+                                <strong>Success!</strong>Tenancy Changeover Request cancelled.
+                                <button onclick="{!c.hideBootstrapErrors}" type="button" class="close" data-dismiss="alert" name="changeovercancel">&times;</button>
+                            </div>
+                        </aura:if>
+                    </aura:if>
+                    
+                    <aura:if isTrue="{!v.hideDiv}">
+                        <div class="container">
+                            <p style="font-size:1.7rem;"><b> Tenants associated with this deposit</b></p>
+                            <aura:if isTrue="{!v.currentUser.Profile.Name =='Tenant'}">
+                                <p>One tenant must act as lead tenant during the repayment process and any subsequent negotiations or 
+                                    dispute. The lead tenant acts on behalf of the other named tenants, with their authority. 
+                                    <br/><br/>
+                                    Once a tenant has raised or responded to a repayment request, they are listed as the lead tenant on this 
+                                    page. We communicate with all tenants throughout the process, but only the lead tenant has options to give 
+                                    instructions on behalf of all tenants.
+                                </p>
+                            </aura:if>
+                            <aura:if isTrue="{!v.showAddNewTenantButton}">
+                                <aura:if isTrue="{!v.currentUser.Profile.Name !='Tenant'}">
+                                    <!--<lightning:button class="see-all" variant="brand" label="Add New Tenant" title="Brand action" 
+        onclick="{! c.handleAddMoreTenants }"
+        />-->
+                                    <aura:if isTrue="{!and(v.depsumlist[0].objdeposit.Status__c ==$Label.c.Deposits_held_by_SafeDeposits_Scotland,v.depsumlist[0].objdeposit.Case_Status__c ==null)}">
+                                        <c:EI_addMoreTenants depositId="{!v.depsumlist[0].objdeposit.Id}"/>
+                                    </aura:if>
+                                </aura:if>
+                            </aura:if>
+                            
+                            <c:EI_TenentDetails editTenant="{!v.editTenant}" depsumlist="{!v.depsumlist}" userprofilename="{!v.currentUser.Profile.Name}"/>	
+                            
+                            <p style="font-size:1.7rem;"><b>Landlord associated with this deposit</b></p>
+                            <aura:if isTrue="{!v.currentUser.Profile.Name !='Tenant'}">
+                                <!--<lightning:button label="Add landlord" class="see-all" onclick="{! c.addlandlord}"/>-->
+                                
+                                <c:EI_addLandlord depositId="{!v.depsumlist[0].objdeposit.Id}"  propertyRecId="{!v.depsumlist[0].objdeposit.Property__c}"/>
+                            </aura:if>
+                            
+                            <c:EI_LandlordDetails editLandlord="{!v.editLandlord}" depsumlist="{!v.depsumlist}" userprofilename="{!v.currentUser.Profile.Name}"/>
+                        </div>
+                    </aura:if>
+                    
+                    <div class="container">
+                        
+                        <aura:if isTrue="{!v.before30dayserror}">
+                            <div
+                                 id="titleErrorErrorAlert"
+                                 class="alert alert-danger alert-dismissible fade show"
+                                 >
+                                <strong>Error!</strong> Deposit has not been held for more than 30 days.
+                                <button
+                                        type="button"
+                                        class="close"
+                                        onclick="{!c.hideBootstrapErrors}"
+                                        name="before30days"
+                                        >&times;</button
+                                    >
+                            </div>                 
+                        </aura:if>
+                        <aura:if isTrue="{!v.depositDecreased}">
+                            <div
+                                 id="titleErrorErrorAlert"
+                                 class="alert alert-danger alert-dismissible fade show"
+                                 >
+                                <strong>Error!</strong> Deposit amount can not be decreased.
+                                <button
+                                        type="button"
+                                        class="close"
+                                        onclick="{!c.hideBootstrapErrors}"
+                                        name="decreaseAmt"
+                                        >&times;</button
+                                    >
+                            </div>                 
+                        </aura:if>
+                        
+                        <aura:if isTrue="{!v.noamounterror}">
+                            <div
+                                 id="titleErrorErrorAlert"
+                                 class="alert alert-danger alert-dismissible fade show"
+                                 >
+                                <strong>Error!</strong> Total deposit amount can not be null.
+                                <button
+                                        type="button"
+                                        class="close"
+                                        onclick="{!c.hideBootstrapErrors}"
+                                        name="noamount"
+                                        >&times;</button
+                                    >
+                            </div>                 
+                        </aura:if>
+                        
+                        <aura:if isTrue="{!v.unknownerror}">
+                            <div
+                                 id="titleErrorErrorAlert"
+                                 class="alert alert-danger alert-dismissible fade show"
+                                 >
+                                <strong>Error!</strong> There is an error Please contact Adminstrator.
+                                <button
+                                        type="button"
+                                        class="close"
+                                        onclick="{!c.hideBootstrapErrors}"
+                                        name="unknown"
+                                        >&times;</button
+                                    >
+                            </div>                 
+                        </aura:if>
+                        
+                        <aura:if isTrue="{!v.depositupdatedsuccessmsg}">
+                            <div
+                                 id="successAlert2"
+                                 class="alert alert-success alert-dismissible fade show"
+                                 >
+                                <strong>Success!</strong> Deposit Updated Successfully.
+                                <button
+                                        type="button"
+                                        class="close"
+                                        onclick="{!c.hideBootstrapErrors}"
+                                        name="depositupdated"
+                                        >&times;</button
+                                    >
+                            </div>                 
+                        </aura:if>
+                        
+                        <aura:if isTrue="{!v.bankdetailssuccessmsg}">
+                            <div
+                                 id="successAlert2"
+                                 class="alert alert-success alert-dismissible fade show"
+                                 >
+                                <strong>Success!</strong> Deposit Updated Successfully and send email to selected tenant to update Bank Details.
+                                <button
+                                        type="button"
+                                        class="close"
+                                        onclick="{!c.hideBootstrapErrors}"
+                                        name="bankdetailstenent"
+                                        >&times;</button
+                                    >
+                            </div>                 
+                        </aura:if>
+                        
+                        
+                        <div class="table-container no_navigation no_space">
+                            <table id="example-3" class="display scrollbar dataTable" style="width:100%">
+                                <tbody>
+                                    <aura:iteration items="{!v.depsumlist}" var="obj">
+                                        <aura:if isTrue="{!obj.objdeposit.Id !=null}">
+                                            <tr>
+                                                <td><aura:if isTrue="{!v.currentUser.Profile.Name =='Tenant'}">
+                                                    Tenancy Address
+                                                    <aura:set attribute="else"> Address </aura:set>
+                                                    </aura:if>
+                                                </td>
+                                                <td><aura:unescapedHtml value="{!obj.objdeposit.Property_Address_Without_Country__c}" /></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Tenancy start date</td>
+                                                <!-- {!obj.objdeposit.Start_Date__c}-->
+                                                <td> <ui:outputDate value="{!obj.objdeposit.Start_Date__c}"/></td>
+                                                <td></td>
+                                            </tr>
+                                            
+                                            <tr>
+                                                <td> <aura:if isTrue="{!v.currentUser.Profile.Name =='Tenant'}">
+                                                    Total deposit amount
+                                                    <aura:set attribute="else">
+                                                        Deposit amount stated in tenancy agreement
+                                                    </aura:set>
+                                                    </aura:if></td>
+                                                <!--	<td><lightning:formattedNumber value="{!obj.objdeposit.Deposit_Amount__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></td>-->
+                                                <aura:if isTrue="{!v.showSavebtn}">
+                                                    <!--  <p style="width: 50%; margin-top: -2%; padding-left:10" >-->
+                                                    <td>     <lightning:input
+                                                                              name="Deposit Amount"
+                                                                              value="{!v.newDepositAmount}"
+                                                                              onblur="{!c.handleNewAmount }"
+                                                                              style="width: 70%; margin-top:-23px"/>
+                                                    </td>
+                                                    
+                                                    <aura:set attribute="else">
+                                                        
+                                                        <!--  <td>{!obj.objdeposit.Deposit_Amount__c}</td>-->
+                                                        <td>
+                                                            <aura:if isTrue="{!v.showAmmendMsg}">
+                                                                <div style="color: orange; font-size:15px;">
+                                                                    <!--   Deposit amount £{!v.Topupamount} will update once funds are received and allocated.-->
+                                                                    Deposit amount will be updated once top up amount of £{!v.Topupamount} is received and allocated.
+                                                                </div><br></br>
+                                                            </aura:if>
+                                                            <lightning:formattedNumber value="{!obj.objdeposit.Deposit_Amount__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></td>
+                                                    </aura:set>
+                                                </aura:if>  
+                                                <aura:if
+                                                         isTrue="{!and(v.depsumlist[0].objdeposit.Status__c =='Deposits held by scheme',v.currentUser.Profile.Name !='Tenant')}"
+                                                         >
+                                                    <td>
+                                                        <lightning:button
+                                                                          label="Edit"
+                                                                          class="tbl-btn"
+                                                                          disabled="{!(v.showSavebtn)}"
+                                                                          name="Edit"
+                                                                          onclick="{! c.editDeposit }"/>
+                                                        
+                                                        
+                                                    </td>  
+                                                </aura:if>
+                                            </tr>
+                                            
+                                            <!---  <aura:if isTrue="{!v.showSavebtn}">
+                <p style="width: 50%; margin-top: -2%">
+                  <lightning:input
+                    name="Deposit Amount"
+                    value="{!v.newDepositAmount}"
+                    onblur="{!c.handleNewAmount }"
+                  />
+                </p>
+
+                <aura:set attribute="else">
+                  <td>{!obj.objdeposit.Deposit_Amount__c}</td>
+                </aura:set>
+              </aura:if>  -->
+                                            
+                                            <tr>
+                                                <td><aura:if isTrue="{!v.currentUser.Profile.Name =='Tenant'}">
+                                                    Amount protected with SafeDeposits Scotland
+                                                    <aura:set attribute="else">
+                                                        Amount protected by SafeDeposits Scotland
+                                                    </aura:set>
+                                                    </aura:if></td>
+                                                <!--  <td><lightning:formattedNumber value="{!obj.objdeposit.Amount_of_Deposit_Protected_by_TDS__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></td>-->
+                                                <aura:if isTrue="{!and(obj.objdeposit.Status__c != 'Registered (not paid)',obj.objdeposit.Status__c != 'Awaiting payment')}">
+                                                    <td><lightning:formattedNumber value="{!obj.objdeposit.Protected_Amount__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></td>    
+                                                    <aura:set attribute="else">
+                                                        <td><lightning:formattedNumber value="0" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></td>
+                                                    </aura:set>
+                                                </aura:if>
+                                                
+                                                
+                                                <!-- <aura:if
+                                                 isTrue="{!and(v.depsumlist[0].objdeposit.Status__c =='Deposits held by scheme',v.currentUser.Profile.Name !='Tenant')}"
+                                                 >
+                                            <td>
+                                                <lightning:button
+                                                                  label="Edit"
+                                                                  class="tbl-btn"
+                                                                  disabled="{!(v.showSavebtn)}"
+                                                                  name="Edit"
+                                                                  onclick="{! c.editDeposit }"/>
+                                                
+                                                
+                                            </td>  
+                                        </aura:if>-->
+                                                <!--<td class="text-right">
+            <a href="" data-toggle="modal" data-target="#EditDeposit" class="tbl-btn">
+             <img src="{!$Resource.TDSTheme + '/assets/img/feather-edit.svg'}" alt="View Icon"/>
+            Edit</a>
+           </td>-->
+                                                
+                                                <!-- <a href="" data-toggle="modal" data-target="#EditDeposit" class="tbl-btn">
+             <img src="{!$Resource.TDSTheme + '/assets/img/feather-edit.svg'}" alt="View Icon"/>
+            Edit</a>-->                       <!--   <aura:if
+                                                 isTrue="{!and(v.depsumlist[0].objdeposit.Status__c =='Deposits held by scheme',v.currentUser.Profile.Name !='Tenant')}"
+                                                 >
+                                            <td>
+                                                <lightning:button
+                                                                  label="Edit"
+                                                                  class="tbl-btn"
+                                                                  disabled="{!(v.showSavebtn)}"
+                                                                  name="Edit"
+                                                                  onclick="{! c.editDeposit }"/>
+                                                
+                                                
+                                            </td>  
+                                        </aura:if>-->
+                                            </tr>
+                                            <!-- commented by Vikas, suggested by Finance Team -->
+                                            <!--<tr>
+                                        <td>Rent amount (per calendar month)</td>
+                                        <td><lightning:formattedNumber value="{!obj.objdeposit.Rent_Amount__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></td>
+                                        <td></td>
+                                    </tr>-->
+                                            <tr>
+                                                <td>Deposit account number</td>
+                                                <td>{!obj.objdeposit.Name}</td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Deposit reference</td>
+                                                <aura:if isTrue="{!obj.objdeposit.User_reference_for_the_deposit__c !=null}">
+                                                    <td>{!obj.objdeposit.User_reference_for_the_deposit__c}</td>
+                                                    <aura:set attribute="else">
+                                                        <td>
+                                                            Not supplied
+                                                        </td>
+                                                    </aura:set>
+                                                </aura:if>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td><aura:if isTrue="{!v.currentUser.Profile.Name =='Tenant'}">
+                                                    Deposit Status
+                                                    <aura:set attribute="else">Deposit status</aura:set>
+                                                    </aura:if></td>
+                                                <td>{!obj.objdeposit.Status__c}</td>
+                                                <td></td>
+                                            </tr>
+                                            <aura:if isTrue="{!v.currentUser.Profile.Name =='Tenant'}">
+                                                <tr>
+                                                    <td>Agent</td>
+                                                    <td>{!obj.objdeposit.Customer_Name__c}</td>
+                                                    <td></td>
+                                                </tr>
+                                            </aura:if>
+                                        </aura:if>
+                                        <!--   <aura:if isTrue="{!obj.objdeposit.Case_Status__c !=null}">
+                                    <tr>
+                                        <td>Situation</td>
+                                        <td style="text-align:centre">
+            <aura:if isTrue="{!obj.objcase.Status =='Deposit transfer requested'}">
+             Transfer has been requested
+             <aura:set attribute="else">{!obj.objcase.Status}</aura:set>
+            </aura:if>
+           </td>
+                                        <td style="text-align:centre">
+                                            {!obj.objdeposit.Case_Status__c}  
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                </aura:if>-->
+                                    </aura:iteration>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <br /><br />
+                        <div>
+                            <aura:if isTrue="{!v.ShowTenantRec}">
+                                
+                                <div>
+                                    <aura:if isTrue="{!v.notenanterror}">
+                                        <div
+                                             id="titleErrorErrorAlert"
+                                             class="alert alert-danger alert-dismissible fade show"
+                                             >
+                                            <strong>Error!</strong> Please select Tenant.
+                                            <button
+                                                    type="button"
+                                                    class="close"
+                                                    onclick="{!c.hideBootstrapErrors}"
+                                                    name="notenant"
+                                                    >&times;</button
+                                                >
+                                        </div>                 
+                                    </aura:if>
+                                    <p style="font-size:1.7rem;"
+                                       ><b> Search tenant to whom you would like to pay the remaining amount</b>
+                                    </p>  
+                                    
+                                    <div class="slds-form-element" style="width:50%;height:35px;">
+                                        <div class="slds-form-element__control">
+                                            <div class="slds-combobox_container">
+                                                <div
+                                                     class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open"
+                                                     aria-expanded="true"
+                                                     aria-haspopup="listbox"
+                                                     role="combobox"
+                                                     >
+                                                    <div
+                                                         class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right"
+                                                         role="none" 
+                                                         >
+                                                        <lightning:input
+                                                                         type="text"
+                                                                         aura:id="searchField1"
+                                                                         onkeyup="{!c.searchKeyChange}"
+                                                                         placeholder="Please search tenant"
+                                                                         onclick="{!c.searchKeyChange}"
+                                                                         
+                                                                         />
+                                                        
+                                                        <span
+                                                              class=" slds-icon_container slds-icon-utility-search slds-input__icon
+                                                                     slds-input__icon_right"
+                                                              >
+                                                        </span>
+                                                    </div>
+                                                    <aura:if isTrue="{!v.tenantDetails[0].Id!=null}">
+                                                        <div
+                                                             id="listbox-id-2"
+                                                             class="slds-dropdown slds-dropdown_length-with-icon-7 slds-dropdown_fluid"
+                                                             role="listbox"
+                                                             >
+                                                            <ul
+                                                                class="slds-listbox slds-listbox_vertical"
+                                                                role="presentation"
+                                                                >
+                                                                <aura:iteration items="{!v.tenantDetails}" var="p">
+                                                                    <li role="presentation" class="slds-listbox__item">
+                                                                        <div
+                                                                             id="option1"
+                                                                             class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta"
+                                                                             role="option"
+                                                                             >
+                                                                            <span
+                                                                                  class="slds-media__figure slds-listbox__option-icon"
+                                                                                  >
+                                                                                <span
+                                                                                      class="slds-icon_container slds-icon-standard-account"
+                                                                                      >
+                                                                                </span>
+                                                                            </span>
+                                                                            <span class="slds-media__body">
+                                                                                <span
+                                                                                      onclick="{!c.SelectTenant}"
+                                                                                      id="{!p.Id}"
+                                                                                      class="slds-listbox__option-text slds-listbox__option-text_entity"
+                                                                                      >{!p.Contact__r.FirstName+'
+                                                                                    '+p.Contact__r.LastName}</span
+                                                                                    >
+                                                                            </span>
+                                                                        </div>
+                                                                    </li>
+                                                                </aura:iteration>
+                                                            </ul>
+                                                        </div>
+                                                    </aura:if>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <aura:iteration items="{!v.selectedTenant}" var="pl">
+                                    <div
+                                         class="slds-card slds-m-top_small"
+                                         style="border: 1px width:50% solid black; width: 50%;"
+                                         >
+                                        <lightning:card
+                                                        variant="Narrow"
+                                                        >
+                                            <p class="slds-p-horizontal_small">
+                                                <div class="slds-card__body">
+                                                    <p class="slds-truncate"
+                                                       >Tenent name : <ui:outputText value="{!pl.Contact__r.FirstName+' '+pl.Contact__r.LastName}" />
+                                                    </p>
+                                                    <p class="slds-truncate"
+                                                       >Email : <ui:outputText value="{!pl.Contact__r.Email}" />
+                                                    </p>
+                                                    <p class="slds-truncate"
+                                                       >Phone : <ui:outputText value="{!pl.Contact__r.Phone}" />
+                                                    </p>
+                                                </div>
+                                            </p>
+                                        </lightning:card>
+                                    </div>
+                                </aura:iteration>
+                            </aura:if>
+                        </div>
+                        <br /><br />
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <aura:if isTrue="{!v.showSavebtn}">
+                            <lightning:button
+                                              label="Save"
+                                              class="see-all"                 
+                                              variant="Brand"
+                                              name="Save"
+                                              onclick="{! c.saveDeposit}"
+                                              disabled="{!v.disabledSaveBtn}"
+                                              />
+                            <lightning:button
+                                              label="Cancel"
+                                              variant="Brand"
+                                              class="see-all"
+                                              name="Cancel"
+                                              onclick="{! c.CancelDeposit }"
+                                              />
+                        </aura:if>                        
+                        
+                        
+                        
+                        
+                        <aura:if isTrue="{!v.hideDiv}">
+                            <div class="text-right download-btns">
+                                
+                                <aura:if isTrue="{!and(v.depsumlist[0].objdeposit.Status__c != $Label.c.Awaiting_receipt_of_deposit,v.depsumlist[0].objdeposit.Status__c !=$Label.c.Registered_not_paid)}">
+                                    <a href="" class="go-back download" onclick="{!c.downloaDPCTemplate}"><img src="{!$Resource.TDSTheme + '/assets/img/feather-download.svg'}" alt="View Icon"/>Download deposit protection certificate</a>
+                                </aura:if>
+                                <aura:if isTrue="{!v.downloadPI}">
+                                    <!-- <a href=" " class="go-back download" onclick="{!c.downloadpitemplate}"><img src="{!$Resource.TDSTheme + '/assets/img/feather-download.svg'}" alt="View Icon"/>Download prescribed information</a>-->
+                                    <a href="" class="go-back download" onclick="{!c.downloadpitemplate}"><img src="{!$Resource.TDSTheme + '/assets/img/feather-download.svg'}" alt="View Icon"/>Download pre populated prescribed information form</a><!--Download prescribed information-->
+                                    <a href="" class="go-back download" onclick="{!c.downloadBlankPI}"><img src="{!$Resource.TDSTheme + '/assets/img/feather-download.svg'}" alt="View Icon"/>Download blank prescribed information template</a> <!--  onclick="{!c.downloadBlankPI}" -->   
+                                </aura:if>
+                                <aura:if isTrue="{!and(v.depsumlist[0].objdeposit.Status__c =='Repayment not agreed - In dispute resolution', v.depsumlist[0].objdeposit.Case_Status__c =='Decision issued - awaiting request for review')}">
+                                    <a href=" " class="go-back download" onclick="{!c.downloadAdjreport}"><img src="{!$Resource.TDSTheme + '/assets/img/feather-download.svg'}" alt="View Icon"/>View adjudication report</a>
+                                </aura:if>
+                            </div>
+                        </aura:if>
+                    </div>
+                    
+                </div>
+                
+            </div>
+            <!-- Tabs HTML End -->
+            
+            
+            <aura:if isTrue="{!v.showConfirmDialog}">
+                <!--Modal Box Start-->
+                <div role="dialog" class="slds-modal slds-fade-in-open ">
+                    <div class="slds-modal__container">
+                        <!--Modal Box Header Start-->
+                        <header class="slds-modal__header">
+                            <h1 class="slds-text-heading--medium"></h1>
+                        </header>
+                        <!--Modal Box Header End-->
+                        
+                        <!--Modal Box Content Start-->
+                        <div class="slds-modal__content slds-p-around--large" style="font-size: 1.5rem!important;color: #32669E!important;">
+                            <center> Are you sure you want to delete this deposit ?</center>
+                        </div>
+                        <!--Modal Box Content End-->
+                        
+                        <!--Modal Box Button Start-->
+                        <footer class="slds-modal__footer">                        
+                            <center> <lightning:button variant="brand" name='Yes' label='Yes' onclick='{!c.deletedeposit}' class="see-all"/>
+                                <lightning:button name='No' label='No' onclick='{!c.handleConfirmDialogNo}' class="see-all"/></center>
+                        </footer>
+                        <!--Modal Box Button End-->
+                    </div>
+                </div>
+                <div class="slds-backdrop slds-backdrop--open"></div>            
+            </aura:if>
+        </aura:set>
+    </aura:renderIf>
+    
+</aura:component>

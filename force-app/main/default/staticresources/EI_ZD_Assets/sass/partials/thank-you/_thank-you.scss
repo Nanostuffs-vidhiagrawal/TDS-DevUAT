@@ -1,0 +1,55 @@
+.thank_you {
+	text-align: center;
+	@include space(padding, top, $s50);
+	@include space(padding, bottom, $s50);
+
+	@include respond-below(sm) {
+		@include space(padding, top, $s30);
+		@include space(padding, bottom, $s30);
+	}
+
+	h2 {
+		color: map-get($color, dark_green);
+		@include space(padding, top, $s15);
+	}
+
+	h3, h4 {
+		max-width: 62rem;
+		margin: 0 auto;
+		text-transform: uppercase;
+		color: map-get($color, gray);
+	}
+
+	h3 {
+		@include font_size(38);
+		@include space(margin, top, $s20);
+	}
+
+	h4 {
+		@include font_size(26);
+		font-family: $AllerRegular;
+	}
+
+	p {
+		@include font_size($above_base);
+		@include space(margin, bottom, $zero);
+		max-width: 62rem;
+		margin: 0 auto;
+
+		span {
+			display: block;
+			color: map-get($color, gray);
+			@include font_size(110);
+			@include line_height(110);
+			font-family: $Aller_Bold;
+		}
+	}
+
+	.see-all {
+		@include space(margin, top, $s40);
+	}
+
+	@include respond-below(sm) {
+		@include space(margin, top, $s20);
+	}
+}

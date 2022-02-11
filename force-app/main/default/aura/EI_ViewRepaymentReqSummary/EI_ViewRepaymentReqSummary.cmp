@@ -1,0 +1,189 @@
+<aura:component implements="forceCommunity:themeLayout,forceCommunity:availableForAllPageTypes" access="global" 
+                controller="EI_ViewRepaymentReqSummaryController" >
+    
+	<!-- Attributes -->
+    <aura:attribute name="repaymentRec" type="List" />
+    <aura:attribute name="repReqLinesMap" type="Map" default="{ Id: '', tenantAmount: '' }" />
+    <aura:attribute name="currentUser" type="User" />
+    <force:recordData aura:id="recordLoader" recordId="{!$SObjectType.CurrentUser.Id}"  
+                      fields="Name,ContactId,AccountId,User_Role__c,Profile.Name,Addition_Permission__c" 
+                      targetFields="{!v.currentUser}"/>
+    
+    <!-- Amount attributes -->
+    <aura:attribute name="totalDepositsHeld" type="Double" />
+    <aura:attribute name="totalRepayments" type="Double" />
+    <aura:attribute name="sumOfTotalAmountToTenant" type="Double" />
+    <aura:attribute name="sumOfTenantRepaymentsToAGLL" type="Double" />
+    <aura:attribute name="totalAmtFromAgllToTenant" type="Double" />
+    <aura:attribute name="totalAmtFromTtToTenant" type="Double" />
+    
+    <!-- Handler -->
+    <aura:handler name='init' value='{!this}' action='{!c.doInit}' />
+    <aura:handler event="force:refreshView" action="{!c.goToNext}" />
+    
+    <!-- Navigation Service -->
+    <lightning:navigation aura:id="navService" />
+    
+    <ltng:require styles="{!$Resource.TDSTheme+'/assets/css/custom.css'}"
+                  scripts="{!join(',',
+                           $Resource.TDSTheme+'/assets/js/plugin.min.js',
+                           $Resource.TDSTheme+'/assets/js/custom.js')}"
+                  /> 
+    
+    <div class="tab-content custom-tab-content">
+        <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+            <div class="deposit-agent">
+                <div class="container">
+                    <div class="row" id="confSect">
+                        <div class="col-md-12">
+                            <!-- <a href="#" class="go-back edit"><img src="../assets/img/feather-edit_blue.png" alt="Back Icon" /> 
+        Edit </a> -->
+                            <a href="" class="go-back" onclick="{!c.backToDepositDetail}">
+                                <img src="{!$Resource.TDSTheme+'/assets/img/md-arrow-dropleft.png'}" />
+                                Go back
+                            </a>
+                            <section class="deposit_steps tf-other-prop">
+                                <div class="deposit_steps_detail">
+                                    <form>
+                                        <div class="form-group row">
+                                            <div class="col-sm-12 col-md-6 col-lg-4">
+                                                <div class="request_table">
+                                                    <label class="col-form-label">Repayments to tenant(s)</label>
+                                                    <div class="request_table_label">
+                                                        <label></label>
+                                                        <aura:if isTrue="{!v.repaymentRec[0].AL_Repay_Requested__c ==true}" >
+                                                        <label>Agent / landlord request</label>
+                                                        </aura:if>
+                                                        <label>Tenant(s) request</label>
+                                                    </div>
+                                                    <aura:iteration items="{!v.repaymentRec[0].Repayment_Request_Lines__r}" var="item">
+                                                        <aura:if isTrue="{!item.Account__c != item.Repayment_Request__r.Deposit__r.Customer__c}">
+                                                            <div class="request_table_box">
+                                                                <p class="request_table_text">
+                                                                    <span>{!item.Account__r.Name}</span>
+                                                                    <aura:if isTrue="{!v.repaymentRec[0].AL_Repay_Requested__c ==true}" >
+                                                                    <span><lightning:formattedNumber value="{!item.AL_ReqAmt__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></span>
+                                                                    </aura:if>
+                                                                    <span><lightning:formattedNumber value="{!item.Tenant_ReqAmt__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></span>
+                                                                </p>
+                                                            </div>
+                                                        </aura:if>
+                                                    </aura:iteration>
+                                                    
+                                                    <div class="request_table_total">
+                                                        <p class="request_table_text">
+                                                            <span>Total</span>
+                                                            <aura:if isTrue="{!v.repaymentRec[0].AL_Repay_Requested__c ==true}" >
+                                                            <span><lightning:formattedNumber value="{!v.totalAmtFromAgllToTenant}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></span>
+                                                            </aura:if>
+                                                            <span><lightning:formattedNumber value="{!v.totalAmtFromTtToTenant}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></span>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12 col-md-6 col-lg-4">
+                                                <div class="request_table">
+                                                    <label class="col-form-label">Repayment to {!v.repaymentRec[0].Deposit__r.Customer__r.Name}</label>
+                                                    <div class="request_table_label">
+                                                        <label></label>
+                                                        <aura:if isTrue="{!v.repaymentRec[0].AL_Repay_Requested__c ==true}" >
+                                                        <label>Agent / landlord request</label>
+                                                        </aura:if>
+                                                        <label>Tenant(s) request</label>
+                                                    </div>
+                                                    
+                                                    <div class="request_table_box">
+                                                        <p class="request_table_text">
+                                                            <span>Cleaning</span>
+                                                            <aura:if isTrue="{!v.repaymentRec[0].AL_Repay_Requested__c ==true}" >
+                                                            <span><lightning:formattedNumber value="{!v.repaymentRec[0].AL_CleaningAmt__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></span>
+                                                            </aura:if>
+                                                           <span><lightning:formattedNumber value="{!v.repaymentRec[0].Tenant_Cleaning__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></span>
+                                                        </p>
+                                                    </div>
+                                                    
+                                                    <div class="request_table_box">
+                                                        <p class="request_table_text">
+                                                            <span>Damage</span>
+                                                            <aura:if isTrue="{!v.repaymentRec[0].AL_Repay_Requested__c ==true}" >
+                                                               <span><lightning:formattedNumber value="{!v.repaymentRec[0].AL_DmgPropAmt__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></span>
+                                                            </aura:if>
+                                                              <span><lightning:formattedNumber value="{!v.repaymentRec[0].Tenant_Dmg_to_Property__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></span>
+                                                        </p>
+                                                    </div>
+                                                    
+                                                    <div class="request_table_box">
+                                                        <p class="request_table_text">
+                                                            <span>Gardening</span>
+                                                            <aura:if isTrue="{!v.repaymentRec[0].AL_Repay_Requested__c ==true}" >
+                                                            <span><lightning:formattedNumber value="{!v.repaymentRec[0].AL_GardeningAmt__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></span>
+                                                            </aura:if>
+                                                           <span><lightning:formattedNumber value="{!v.repaymentRec[0].Tenant_Gardening__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></span>
+                                                        </p>
+                                                    </div>
+                                                    
+                                                    <div class="request_table_box">
+                                                        <p class="request_table_text">
+                                                            <span>Redecoration</span>
+                                                            <aura:if isTrue="{!v.repaymentRec[0].AL_Repay_Requested__c ==true}" >
+                                                               <span><lightning:formattedNumber value="{!v.repaymentRec[0].AL_RedecorationAmt__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></span>
+                                                            </aura:if>
+                                                           <span><lightning:formattedNumber value="{!v.repaymentRec[0].Tenant_Redecoration__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></span>
+                                                        </p>
+                                                    </div>
+                                                    
+                                                    <div class="request_table_box">
+                                                        <p class="request_table_text">
+                                                            <span>Rent arrears</span>
+                                                            <aura:if isTrue="{!v.repaymentRec[0].AL_Repay_Requested__c ==true}" >
+                                                           <span><lightning:formattedNumber value="{!v.repaymentRec[0].AL_Rent_Arrears__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></span>
+                                                            </aura:if>
+                                                             <span><lightning:formattedNumber value="{!v.repaymentRec[0].Tenant_Rent_Arrears__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></span>
+                                                        </p>
+                                                    </div>
+                                                    
+                                                    <div class="request_table_box">
+                                                        <p class="request_table_text">
+                                                            <span>Other</span>
+                                                            <aura:if isTrue="{!v.repaymentRec[0].AL_Repay_Requested__c ==true}" >
+                                                           <span><lightning:formattedNumber value="{!v.repaymentRec[0].AL_OtherAmt__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></span>
+                                                            </aura:if>
+                                                           <span><lightning:formattedNumber value="{!v.repaymentRec[0].Tenant_Other__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></span>
+                                                        </p>
+                                                    </div>
+                                                    <div class="request_table_box">
+                                                        <p class="request_table_text">
+                                                            <span>Other reasons</span>
+                                                            <aura:if isTrue="{!v.repaymentRec[0].AL_Repay_Requested__c ==true}" >
+                                                            <span>{!v.repaymentRec[0].AL_Other_Reason__c}</span>
+                                                            </aura:if>
+                                                            <span>{!v.repaymentRec[0].Tenant_Other_Reason__c}</span>
+                                                        </p>
+                                                    </div>
+                                                    
+                                                    <div class="request_table_total">
+                                                        <p class="request_table_text">
+                                                            <span>Total</span>
+                                                            <aura:if isTrue="{!v.repaymentRec[0].AL_Repay_Requested__c ==true}" >
+                                                            <span><ui:outputCurrency value="{!v.repaymentRec[0].Total_Amount_By_Agent_Landlord__c}"/></span>
+                                                            </aura:if>
+                                                           <span><ui:outputCurrency value="{!v.repaymentRec[0].Total_Amount_By_Tenant__c}"/></span>
+                                                        </p>
+                                                    </div>
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </section>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+</aura:component>

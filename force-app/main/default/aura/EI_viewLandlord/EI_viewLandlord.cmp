@@ -1,0 +1,392 @@
+<aura:component
+                implements="force:appHostable,forceCommunity:themeLayout,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+                access="global"
+                controller="ManageProperties">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+       <aura:attribute name="PageSpinner" type="boolean" default="true"/>
+      <aura:handler event="aura:doneWaiting" action="{!c.doneWaiting}"></aura:handler>
+    <!-- Landlord pagination -->
+    <aura:attribute name="textareaval" type="string" />
+    <aura:attribute name="landlordStatus" type="string" />
+    <aura:attribute name="LandlordListView" type="List" />  
+    <aura:attribute name="startPageLandlord" type="Integer" />
+    <aura:attribute name="endPageLandlord" type="Integer" />  
+    <aura:attribute name="currentPageLandlord" type="integer" default="1" />
+    <aura:attribute name="pageSizeLandlord" type="Integer" default="4" description="number of records to be display on per page"/> 
+    <aura:attribute name="totalPagesCountLandlord" type="integer" default="1" />
+    <aura:attribute name="totalRecordsCountLandlord" type="Integer" /> 
+    <aura:attribute name="PaginationLandlordList" type="list" /> 
+    <aura:attribute name="editPage" type="boolean" default="false"/>    
+    <aura:attribute name="showViewPage" type="boolean" default="true"/>  
+    
+    <aura:attribute name="blankFields" type="Boolean" default="false" />
+    <aura:attribute name="phonelengthError" type="boolean" default="false"/>
+    <aura:attribute name="duplicateRecord" type="Contact"  />
+    <aura:attribute name="duplicateEmailError" type="boolean" default="false" />
+    <aura:attribute name="duplicateNameError" type="boolean" default="false" />
+    
+    <aura:attribute name="fromParentComp" type="boolean" default="false"/>  
+    <aura:attribute name="archivedLandlord" type="boolean" default="false"/>  
+    <aura:attribute name="landlord" type="Contact"/>
+    <aura:attribute name="phoneCodePicklist" type="String[]"/>
+    
+    <lightning:navigation aura:id="navServiceLandlord" />
+    
+          <aura:renderIf isTrue="{!v.PageSpinner}">
+      <div class="lds-dual-ring">
+      </div>
+      <aura:set attribute="else">  
+          
+    <div class="tab-content custom-tab-content" id="sf-tabContent">        
+        <div class="tab-pane fade show active" id="sf-Portfolio" role="tabpanel" aria-labelledby="sf-Portfolio-tab">
+            <!-- left Tabs HTML Start -->
+            <div class="secondary-tab-container">
+                <nav class="left-custom-tab">
+                    <div class="nav nav-tabs" id="left-nav-tab" role="tablist">
+                        <a onclick="{!c.navigateMyProp}" class="nav-link" id="left_nav-sf-presonal-tab"  href="" role="tab">
+                            <img class="initial-state" src="{!$Resource.TDSTheme + '/assets/img/newspaper_icon.svg'}" alt=""/>
+                            Manage my properties
+                        </a>
+                        <a onclick="{!c.navigateLandlord}" class="nav-link active" id="left_nav-sf-organisation-tab" data-toggle="tab" href="#left_nav-sf-organisation" role="tab" aria-controls="left_nav-sf-organisation" aria-selected="false">
+                            <img class="initial-state" src="{!$Resource.TDSTheme + '/assets/img/Organisation_icon.svg'}" alt=""/>
+                            Manage my landlords
+                        </a>
+                    </div>
+                </nav>
+                
+                <div class="tab-content custom-tab-content" id="sf-tabContent">
+                    
+                    
+                    
+                    <aura:if isTrue="{!v.showViewPage}">
+                        <c:EI_addNonMemberLandlord aura:id="landlordComp2" method="{!c.refreshLandlordList2}" fromViewLandlord="true" />
+                        
+                        
+                        <!-- Protect Search HTML Start -->
+                        <section class="protect-search">
+                            <div class="container">
+                                
+                                <div class="row">
+                                    
+                                    <div class="col-sm-6">
+                                        <div  class="signUp">
+                                            <div class="login-banner-form">                   
+                                                <div class="get_In_Touch_form">
+                                                    <div class="form-row">
+                                                        <label for="SelectTitle">Select term</label>
+                                                        <select id="SelectItemPick" class="form-control" value="{!v.term}" required="true"
+                                                                onchange="{!c.statusCheckPick}" >
+                                                            <option value="Active">Live</option>
+                                                            <option value="Inactive">Archived</option>
+                                                            
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="filter-search">
+                                            <input type="text" minlength="3" onkeypress="{!c.handleSearch}" id="searchValue" class="form-control" placeholder="Enter your search here...." value="{!v.searchText}"/>
+                                            <button type="button" onclick="{! c.handleClick }"></button>
+                                            <!--<ui:inputText value="{!v.searchText}" class="form-control" placeholder="Search" />
+          <lightning:buttonIcon iconName="utility:search" variant="bare" onclick="{! c.handleClick }" alternativeText="Enter your search here...." class="slds-input__icon" />-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                        <!-- Protect Search HTML End -->
+                        
+                        <div class="table-container">
+                            <table class="slds-table slds-table--striped" 
+                                   style="width:100%;table-layout: fixed;">
+                                <thead>
+                                    <tr>
+                                        <th class="headingtext">Name</th>
+                                        <th class="headingtext">Number of properties</th>
+                                        <th class="headingtext">Number of deposits</th>
+                                        <!--    <th class="headingtext">Landlord <br></br>Registeration Number</th>
+                          <th class="headingtext">Landlord <br></br>Registeration Status</th>
+                          <th class="headingtext">Address</th>
+                          <th class="headingtext">Email</th>
+                          <th class="headingtext">Phone</th>-->
+                                        <th class="headingtext"></th>
+                                    </tr>
+                                </thead>
+                                <tbody  style="font-size:1.5rem;">
+                                    
+                                    <aura:iteration items="{!v.PaginationLandlordList}" var="cnt">
+                                        <tr>
+                                            <td  class="slds-cell-wrap slds-text-align_left textcss">{!cnt.FirstName+' '+cnt.LastName}</td>
+                                            <td  class="slds-cell-wrap slds-text-align_left textcss"><div style="margin-left:10px;">
+                                          
+                                                <aura:if isTrue="{!cnt.Number_of_properties__c == '0'}">
+                                                    {!cnt.Account.Number_of_Properties__c}
+                                                    <aura:set attribute="else">
+                                                         {!cnt.Number_of_properties__c}
+                                                    </aura:set>
+                                                </aura:if>
+                                                </div></td>
+                                            <td class="slds-cell-wrap slds-text-align_left textcss"><div style="margin-left:10px;">
+                                                <aura:if isTrue="{!cnt.Number_of_Deposits__c == '0'}">
+                                                    {!cnt.Account.Deposit_Protections__c}
+                                                    <aura:set attribute="else">
+                                                        {!cnt.Number_of_Deposits__c}
+                                                    </aura:set>
+                                                </aura:if>
+                                                </div></td>
+                                            <!--  <td class="slds-cell-wrap slds-text-align_left textcss">{!cnt.LandLord_Registration_Number__c}</td>
+                              <td class="slds-cell-wrap slds-text-align_left textcss">{!cnt.LandLord_Registration_Status__c}</td>
+                              <td class="slds-cell-wrap slds-text-align_left textcss">{!cnt.AddressFormula__c}</td>
+                              <td class="slds-cell-wrap slds-text-align_left textcss">{!cnt.Email}</td>
+                              <td class="slds-cell-wrap slds-text-align_left textcss">{!cnt.Phone}</td>-->
+                                            <td class="slds-text-align_left textcss"><a href="" class="tbl-btn" id="{!cnt.Id}" onclick="{!c.ViewLandlord}" ><img
+                                                                                                                                                                 src="{!$Resource.TDSTheme + '/assets/img/View_icon.svg'}"
+                                                                                                                                                                 alt="View Icon" /> View / Edit</a ></td>
+                                        </tr>
+                                    </aura:iteration>
+                                </tbody>
+                                <div style="margin-left:420px!important;">
+                                    <nav aria-label="Page navigation">
+                                        <ul class="pagination">
+                                            <aura:if isTrue="{!or(v.startPageLandlord == 0,v.PaginationLandlordList.length==0)}">
+                                                <li class="page-item disabled"><a class="page-link" href="" >Previous</a></li>
+                                                <aura:set attribute="else">
+                                                    <li class="page-item"><a class="page-link" id="previousId" style="width :120px" href="" onclick="{!c.navLandlordPage}">Previous</a></li>
+                                                </aura:set>
+                                            </aura:if>
+                                            <li class="page-item"><a class="page-link" href="" style="width :120px">Page {!v.currentPageLandlord} out of {!v.totalPagesCountLandlord}</a></li>
+                                            <aura:if isTrue="{!or((v.endPageLandlord + 1) >= v.totalRecordsCountLandlord,v.PaginationLandlordList.length==0 )}">
+                                                <li class="page-item disabled"><a class="page-link" href="" >Next</a></li>							
+                                                <aura:set attribute="else">
+                                                    <li class="page-item"><a class="page-link" id="nextId" href="" onclick="{!c.navLandlordPage}">Next</a></li>
+                                                </aura:set>
+                                            </aura:if>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </table>
+                        </div>
+                        <aura:set attribute="else">
+                            <!--Popup form HTMl start-->
+                            <div id="myModal2" class="custom-model modal fade" data-backdrop="static" data-keyboard="false" 
+                                 tabindex="-1" role="dialog" aria-hidden="true">
+                                <div style="margin-top: 200px;" class="modal-dialog modal-lg">
+                                    
+                                    <!-- Modal content-->
+                                    <div style="width:500px;
+                                                border-color: #457cbf;" class="modal-content">
+                                        <div class="modal-body">
+                                            <p> By clicking ‘Confirm’, you understand that your landlord will <br></br> be archived and will not be available to add to a property<br></br> when registering a deposit.</p>
+                                            <br></br> <div style="text-align:center;"> <a href="" id="{!v.landlordStatus}" class="see-all" onclick="{!c.handleArch}"> <img src="{!$Resource.TDSTheme + '/assets/img/delete_icon.svg'}" alt="Delete Icon"/>Confirm</a>
+                                            &nbsp; <a href="" class="see-all" data-dismiss="modal"> <img src="{!$Resource.TDSTheme + '/assets/img/edit-icon1.svg'}" alt="Edit Icon"/>Go back</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-content custom-tab-content" id="sf-tabContent">
+                                <div class="tab-pane fade show active" id="nav-sf-presonal" role="tabpanel" >
+                                    <div class="organization-details property-details">
+                                        
+                                        <aura:if isTrue="{!v.duplicateNameError}">
+                                            <div class="form-group row">
+                                                <div class="col-sm-8 col-lg-7 offset-sm-4">
+                                                    <div class="alert alert-warning alert-dismissible fade show" >
+                                                        <img
+                                                             src="{!$Resource.TDSTheme + '/assets/img/warning-icon.png'}"
+                                                             alt="warning Icon"
+                                                             />
+                                                        <div>
+                                                            <strong>Warning!</strong> A Non Member Landlord is already registered for this customer
+                                                            <a href="" id="{!v.duplicateRecord.Id}" class="tbl-btn" onclick="{!c.handleLinkToViewLandlord}">
+                                                                <img id="{!v.duplicateRecord.Id}" src="{!$Resource.TDSTheme + '/assets/img/View_icon.svg'}" 
+                                                                     alt="View Icon"/> {!v.duplicateRecord.Name}
+                                                            </a> 
+                                                        </div>
+                                                        <button
+                                                                type="button"
+                                                                class="close"
+                                                                data-dismiss="alert"
+                                                                >×</button
+                                                            >
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </aura:if>
+                                        
+                                        <aura:if isTrue="{!v.blankFields}">
+                                            <div id="blankFieldsdiv" class="alert alert-danger alert-dismissible fade show">
+                                                <strong>Error!</strong>You can not leave blank fields.
+                                                <button
+                                                        type="button"
+                                                        class="close"
+                                                        onclick="{!c.hideBootstrapErrors}"
+                                                        name="blankFieldsBtn"
+                                                        >&times;</button
+                                                    >
+                                            </div>
+                                        </aura:if>  
+                                        
+                                        <aura:if isTrue="{!v.phonelengthError}">
+                                            <div 
+                                                 id="phonelengthErrorAlert" 
+                                                 class="alert alert-danger alert-dismissible fade show"
+                                                 >
+                                                <strong>Error!</strong> Enter a valid phone number that starts with '07' and it also must be of 11 digits.
+                                                <button type="button" class="close" 
+                                                        onclick="{!c.hideBootstrapErrors}" 
+                                                        name="phonelength" 
+                                                        >&times;</button >
+                                            </div> 
+                                        </aura:if>
+                                        
+                                        <aura:if isTrue="{!v.duplicateEmailError}">  
+                                            <div id="duplicateEmailAlert" class="alert alert-danger alert-dismissible fade show" >
+                                                <strong>Error!</strong> Email is already in use.
+                                                <button type="button" class="close"
+                                                        onclick="{!c.hideBootstrapErrors}"
+                                                        name="duplicateEmail"
+                                                        >&times;
+                                                </button>
+                                            </div>
+                                        </aura:if>
+                                        
+                                        <div class="row">
+                                            <div class="col-sm-3">
+                                                <h5>Landlord details</h5>
+                                            </div>
+                                            <div class="col-sm-9 text-right">
+                                                <aura:if isTrue="{!!v.editPage}">	
+                                                    
+                                                    <aura:if isTrue="{!v.landlord.Number_of_Deposits__c == '0'}">
+                                                        <aura:if isTrue="{!v.landlord.Account_Status__c == 'Active' }">	
+                                                            <a href="#" onclick="{!c.archiveStatus}" id="Inactive" data-toggle="modal" data-target="#myModal2" class="see-all">  <img src="{!$Resource.TDSTheme + '/assets/img/delete_icon.svg'}" alt="Delete Icon"/>Archive landlord</a>
+                                                            <aura:set attribute="else">
+                                                                <a href="" onclick="{!c.handleArch}" id="Active" class="see-all">  <img src="{!$Resource.TDSTheme + '/assets/img/delete_icon.svg'}" alt="Delete Icon"/>Reactivate landlord</a>
+                                                            </aura:set>
+                                                        </aura:if>
+                                                    </aura:if>
+                                                    <a href="" class="see-all" onclick="{!c.handleEditLandlord }"> <img src="{!$Resource.TDSTheme + '/assets/img/edit-icon1.svg'}" alt="Edit Icon"/>Edit landlord</a>
+                                                    
+                                                    <aura:set attribute="else">
+                                                        <a href="" class="see-all" onclick="{!c.handleSave }">Save</a>
+                                                        <a href="" class="see-all" onclick="{!c.handleCancle }">Cancel</a>
+                                                        
+                                                    </aura:set>
+                                                </aura:if>
+                                            </div>
+                                        </div>
+                                        <div class="property-detail-table">
+                                            <!--<div class="property-detail-row">
+                                    <div class="row">
+                                        <div class="col-sm-4">House number/name</div>
+                                        <div class="col-sm-8">6667-22</div>
+                                    </div>
+                                </div>-->
+                                            <div class="property-detail-row">
+                                                <div class="row">
+                                                    <div class="col-sm-4">Name</div>
+                                                    <div class="col-sm-8">{!v.landlord.Salutation} &nbsp;{!v.landlord.Name}</div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="property-detail-row">
+                                                <div class="row">
+                                                    
+                                                    <div class="col-sm-4">Landlord registration number</div>
+                                                    <div  class="col-sm-8">
+                                                        <aura:if isTrue="{!v.editPage}">
+                                                            <!--     <lightning:textarea escape="false" aura:id="address" label="" value="{!v.textareaval}"/>-->
+                                                            <lightning:input required="true" aura:id="field1input" variant = "label-hidden"  class="landRegNo" label="" maxlength="100" value="{!v.landlord.LandLord_Registration_Number__c}"/>
+                                                            <aura:set attribute="else">
+                                                                {!v.landlord.LandLord_Registration_Number__c}
+                                                            </aura:set>
+                                                        </aura:if>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="property-detail-row">
+                                                <div class="row">
+                                                    <div class="col-sm-4">Address</div>
+                                                    <div  class="col-sm-8">
+                                                        <aura:if isTrue="{!v.editPage}">
+                                                            
+                                                            <lightning:input required="true" aura:id="field1input" variant = "label-hidden"  class="landRegNo" label="" maxlength="100" value="{!v.landlord.MailingStreet}"/>
+                                                            <lightning:input required="true" aura:id="field1input" variant = "label-hidden"  class="landRegNo" label="" maxlength="100" value="{!v.landlord.MailingCity}"/>
+                                                            <lightning:input required="true" aura:id="field1input" variant = "label-hidden"  class="landRegNo" label="" maxlength="100" value="{!v.landlord.MailingPostalCode}"/>
+                                                            
+                                                            <!--       <lightning:textarea escape="false" variant = "label-hidden" aura:id="address" label="" value="{!v.textareaval}"/>-->
+                                                            <aura:set attribute="else">
+                                                                {!v.landlord.MailingStreet},<br></br>
+                                                                {!v.landlord.MailingCity},<br></br>
+                                                                {!v.landlord.MailingPostalCode}
+                                                            </aura:set>
+                                                        </aura:if>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="property-detail-row">
+                                                <div class="row">
+                                                    <div class="col-sm-4">Country</div>
+                                                    <div class="col-sm-8">
+                                                        <aura:if isTrue="{!v.editPage}">
+                                                            
+                                                            <lightning:input required="true" aura:id="field1input" variant = "label-hidden"  class="landRegNo" label="" value="{!v.landlord.MailingCountry}"/>
+                                                            
+                                                            <aura:set attribute="else">
+                                                                {!v.landlord.MailingCountry}
+                                                            </aura:set>
+                                                        </aura:if>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="property-detail-row">
+                                                <div class="row">
+                                                    <div class="col-sm-4">Email address</div>
+                                                    <div class="col-sm-8">
+                                                        <aura:if isTrue="{!v.editPage}">
+                                                            <lightning:input required="true" aura:id="field1input" class="landRegNo" variant = "label-hidden" label="" value="{!v.landlord.Email}"/>
+                                                            <aura:set attribute="else">
+                                                                {!v.landlord.Email}
+                                                            </aura:set>
+                                                        </aura:if>   
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="property-detail-row">
+                                                <div class="row">
+                                                    <div class="col-sm-4">Telephone</div>
+                                                    <div class="col-sm-8">
+                                                        <aura:if isTrue="{!v.editPage}">
+                                                            <select id="phoneCodeId" required="true" aura:id="field1input" class="landRegNo" >
+                                                                <aura:iteration items="{!v.phoneCodePicklist}" var="itemVar">
+                                                                    <option text="{!itemVar}" value="{!itemVar}" selected="{!itemVar==v.landlord.Phone_Code__c}"/>
+                                                                </aura:iteration>
+                                                            </select>
+                                                            <lightning:input required="true" aura:id="field1input" variant = "label-hidden"  class="landRegNo" label="" value="{!v.landlord.Phone}"/>
+                                                            <aura:set attribute="else">
+                                                                {!v.landlord.Phone_Code__c} <br />
+                                                                {!v.landlord.Phone}
+                                                            </aura:set>
+                                                        </aura:if>  
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </aura:set>
+                    </aura:if>    
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+              </aura:set>
+    </aura:renderIf>
+</aura:component>

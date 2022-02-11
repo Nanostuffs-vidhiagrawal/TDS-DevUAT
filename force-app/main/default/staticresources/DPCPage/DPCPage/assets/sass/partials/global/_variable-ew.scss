@@ -1,0 +1,105 @@
+// Fonts Variables
+$AllerRegular: Aller_regular;
+$AllerDisplayRegular: Aller_display_regular;
+$Aller_Bold: Aller_bold;
+$AllerBoldItalic: Aller_bold_italic;
+$AllerLight: Aller_light;
+$AllerLightItalic: Aller_light_italic;
+$AllerItalic: Aller_italic;
+
+
+// Font Size Variables
+$xxx_lg: 30;
+$xx_lg: 24;
+$x_lg: 22;
+$lg: 20;
+$above_base: 18;
+$base: 16;
+$below_base: 14;
+$sm: 12;
+$x_sm: 10;
+$xx_sm: 8;
+$nav-font: 17;
+$step-font: 26;
+
+
+// Default Size Variables;
+$full: 100%;
+$half: 50%;
+$quarter: 25%;
+$zero: 0;
+$container_size: 120rem;
+
+
+// Color Variables
+$color: (
+	white: #fff,
+	black: #000,
+	light-black: #2E2E2E,
+	gray-black: #201F1F,
+	gray: #4D4C4C,
+	light_gray: #787878,
+	blue: #1DAE83,
+	light_blue: #1DAE83,
+	light_border: #dbdbda,
+	red: #F30F0F,
+	maroon: #BF0D0D,
+	green: #4BCA81,
+	dark_green: #52B04D,
+	orange: #FF8D1A,
+	light_orange: #D87512,
+	ZD_red: #F45372,
+);
+
+$banner-form-color: (
+	sky-blue: #00A6D3,
+	light-sky-blue: #8FDCFF,
+	dark-gray: #071929,
+	gray: #4D4D4D,
+	light-gray: #929292,
+);
+
+$gray_shade: (
+	gray01: #9F9F9F,
+	gray02: #EFEFEF,
+	gray03: #C7C7C7,
+	gray04: #D5D5D5,
+	gray05: #F5F6FA,
+	gray06: #F9F9F9
+);
+
+$accordion-color: (
+	accordion_body: #eef7fe, 
+	accordion_title: #EEEEEE
+);
+
+$font-weights: (
+	light:$AllerLight, 
+	regular:$AllerRegular, 
+	normal:$AllerDisplayRegular, 
+	bold:$Aller_Bold
+);
+
+// Space Size Variables
+$s05: 0.5rem;
+$s10: 1.0rem;
+$s15: 1.5rem;
+$s20: 2.0rem;
+$s25: 2.5rem;
+$s30: 3.0rem;
+$s35: 3.5rem;
+$s40: 4.0rem;
+$s45: 4.5rem;
+$s50: 5.0rem;
+$s55: 5.5rem;
+$s60: 6.0rem;
+$s65: 6.5rem;
+$s70: 7.0rem;
+$s75: 7.5rem;
+$s80: 8.0rem;
+$s85: 8.5rem;
+$s90: 9.0rem;
+$s95: 9.5rem;
+$s100: 10.0rem;
+$s110: 11.0rem;
+$s140: 14.0rem;

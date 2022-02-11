@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="21.775" height="22.696" viewBox="0 0 21.775 22.696">
+  <g id="Group_11626" data-name="Group 11626" transform="translate(-299.5 0.5)">
+    <path id="Icon_material-event-note" data-name="Icon material-event-note" d="M19.687,11.263H8.839v2.17H19.687Zm2.17-7.594H20.772V1.5H18.6V3.67H9.924V1.5H7.754V3.67H6.67a2.16,2.16,0,0,0-2.159,2.17L4.5,21.027A2.169,2.169,0,0,0,6.67,23.2H21.857a2.176,2.176,0,0,0,2.17-2.17V5.839A2.176,2.176,0,0,0,21.857,3.67Zm0,17.357H6.67V9.094H21.857ZM16.433,15.6H8.839v2.17h7.594Z" transform="translate(295.5 -1.5)" fill="none" stroke="#5b5b5b" stroke-width="1"/>
+    <path id="Icon_ionic-ios-close-circle" data-name="Icon ionic-ios-close-circle" d="M7.51,3.375A4.135,4.135,0,1,0,11.646,7.51,4.135,4.135,0,0,0,7.51,3.375ZM8.558,9.007,7.51,7.96,6.463,9.007a.318.318,0,1,1-.449-.449L7.061,7.51,6.013,6.463a.318.318,0,0,1,.449-.449L7.51,7.061,8.558,6.013a.318.318,0,0,1,.449.449L7.96,7.51,9.007,8.558a.319.319,0,0,1,0,.449A.316.316,0,0,1,8.558,9.007Z" transform="translate(309.629 -3.375)" fill="#4d4c4c"/>
+  </g>
+</svg>

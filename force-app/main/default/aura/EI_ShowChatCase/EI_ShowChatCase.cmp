@@ -1,0 +1,100 @@
+<aura:component controller="EI_ShowChatCaseController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+   <aura:attribute name="chatList" type="List"/>
+   <aura:attribute name="spinner" type="boolean" default="false"/>
+   <aura:attribute name="showChats" type="boolean" default="true"/>
+   <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+   <!-- Chatter Box HTML Start -->
+   <aura:if isTrue="{!v.spinner}">
+      <div class="exampleHolder">
+         <lightning:spinner alternativeText="Loading" size="large" />
+      </div>
+   </aura:if>
+   <!--<aura:if isTrue="{!v.showChats}">
+      <div class="chatter_box">
+         <div class="chatter_header">
+            <div class="user_detail">
+               <img src="{!$Resource.SFChatter  + '/assets/img/profile-img.png'}" alt="Profile Image"></img>
+               <p>Chat History</p>
+            </div>
+            <div class="close_detail">
+      
+      <span class="minimize_btn"><img src="{!$Resource.SFChatter  + '/assets/img/minimize-icon.png'}" alt="Minimize Icon" onclick = "{!c.closeChatBox}"></img></span>
+               <span class="close_btn"><img src="{!$Resource.SFChatter  + '/assets/img/close-icon.png'}" alt="Close Icon" onclick = "{!c.closeChatBox}"> </img></span>
+            </div>
+         </div>
+         <div class="chatter_body">
+            <aura:iteration items="{!v.chatList}" var="obj" indexVar="rowIndex">
+               <div class="{!obj.From_User_Type__c != 'Tenant' ? 'chat_info ind' : 'chat_info'}">
+                  
+                  <aura:if isTrue="{!equals(obj.File_Type__c,undefined) }">
+                  	
+                      <p>{!obj.Message__c}</p>
+                      <aura:set attribute = "else">
+                      	<p><a href="{!obj.File_Location__c}" target="_blank">{!obj.File_Name__c}</a></p>
+                      </aura:set>
+                  </aura:if>
+                   
+               </div>
+               
+            </aura:iteration>
+            
+         </div>
+       </div>
+      </aura:if>-->
+   <aura:if isTrue="{!v.showChats}">
+      <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+         <div class="slds-modal__container">
+            <!-- Modal/Popup Box Header Starts here-->
+            <header class="slds-modal__header">
+               <lightning:buttonIcon iconName="utility:close"
+                  onclick="{! c.closeChatBox }"
+                  alternativeText="close"
+                  variant="bare-inverse"
+                  class="slds-modal__close icn"/>
+               <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Chat History</h2>
+            </header>
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+               <aura:iteration items="{!v.chatList}" var="obj" indexVar="rowIndex">
+                  <div>
+                     <table>
+                        <tr>
+                           <td>
+                              <aura:if isTrue="{!obj.From_User_Type__c != 'Tenant' }">
+                                 <aura:if isTrue="{!equals(obj.File_Type__c,undefined) }">
+                                    <div class = "container">
+                                       <p >{!obj.Message__c}</p>
+                                    </div>
+                                 </aura:if>
+                                 <aura:if isTrue="{!!equals(obj.File_Type__c,undefined) }">
+                                    <div class = "container">
+                                       <p><a href="{!obj.File_Location__c}" target="_blank">{!obj.File_Name__c}</a></p>
+                                    </div>
+                                 </aura:if>
+                              </aura:if>
+                           </td>
+                           <td>
+                              <aura:if isTrue="{!obj.From_User_Type__c == 'Tenant' }">
+                                 <aura:if isTrue="{!equals(obj.File_Type__c,undefined) }">
+                                    <div class = "container darker">
+                                       <p >{!obj.Message__c}</p>
+                                       <!--<aura:set attribute = "else">
+                                          <p><a href="{!obj.File_Location__c}" target="_blank">{!obj.File_Name__c}</a></p>
+                                       </aura:set>-->
+                                    </div>
+                                 </aura:if>
+                                 <aura:if isTrue="{!!equals(obj.File_Type__c,undefined) }">
+                                    <div class = "container darker">
+                                       <p><a href="{!obj.File_Location__c}" target="_blank">{!obj.File_Name__c}</a></p>
+                                    </div>
+                                 </aura:if>
+                              </aura:if>
+                           </td>
+                        </tr>
+                     </table>
+                  </div>
+               </aura:iteration>
+            </div>
+         </div>
+      </section>
+   </aura:if>
+</aura:component>

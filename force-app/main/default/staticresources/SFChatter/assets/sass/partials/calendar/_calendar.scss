@@ -1,0 +1,132 @@
+.calender_section {
+	background-color: rgb(247,250,255);
+	@include space(padding, top, $s40);
+	@include space(padding, bottom, $s50);
+
+	@include respond-below(sm) {
+		@include space(padding, top, $s25);
+		@include space(padding, bottom, $s25);
+	}
+
+	.calender_month {
+		text-align: center;
+		@include font_size(26);
+		font-family: $Aller_Bold;
+		@include space(padding, bottom, $s35);
+
+		@include respond-below(sm) {
+			@include space(padding, bottom, $s15);
+		}
+
+		span {
+			@include space(padding, left, $s25);
+			@include space(padding, right, $s25);
+
+			@include respond-below(sm) {
+				@include space(padding, left, $s15);
+				@include space(padding, right, $s15);
+			}
+		}
+
+		.arrow {
+			border: solid black;
+			border-width: 0 2px 2px 0;
+			display: inline-block;
+			padding: 4px;
+			cursor: pointer;
+		}
+
+		.right {
+			transform: rotate(-45deg);
+			-webkit-transform: rotate(-45deg);
+		}
+
+		.left {
+			transform: rotate(135deg);
+			-webkit-transform: rotate(135deg);
+		}
+	}
+
+	.calender_header {
+		display: flex;
+
+		div {
+			width: 14.29%;
+			text-align: center;
+			color: map-get($color, white);
+			background-color: #27ca9b;
+			@include space(padding, top, $s10);
+			@include space(padding, bottom, $s10);
+			@include font_size($below_base);
+
+			&:nth-child(odd) {
+				background-color: #1eb187;
+			}
+		}
+	}
+
+	.calender_body {
+
+		.calender_row {
+			border: 1px solid map-get($gray_shade, gray04);
+			border-right: none;
+			border-top: none;
+			display: flex;
+
+			.disabled {
+				opacity: 0.5;
+			}
+
+			& > div {
+				width: 14.29%;
+				min-height: $s100;
+				background-color: map-get($color, white);
+				@include space(padding, top, $s15);
+				@include space(padding, bottom, $s15);
+				@include space(padding, right, 1.2rem);
+				@include space(padding, left, 1.2rem);
+				@include font_size($below_base);
+				border-right: 1px solid map-get($gray_shade, gray04);
+
+				@include respond-below(sm) {
+					@include space(padding, top, 0.7rem);
+					@include space(padding, bottom, 0.7rem);
+					@include space(padding, left, 0.4rem);
+					@include space(padding, right, 0.4rem);
+				}
+
+				span {
+					&.active {
+						color: map-get($color, white);
+						background-color: #21af85;
+						border-radius: 50%;
+						@include space(padding, all, $s05);
+					}
+				}
+
+				.calender_item {
+					border-left: 4px solid #7e80bc;
+					background-color: #dbdcee;
+					@include font_size($sm);
+					@include space(padding, top, 0.2rem);
+					@include space(padding, bottom, 0.2rem);
+					@include space(padding, left, 0.7rem);
+					@include space(padding, right, 0.7rem);
+					@include space(margin, top, $s10);
+
+					&.success {
+						border-color: #21af85;
+						background-color: #c2ede3;
+					}
+
+					@include respond-below(sm) {
+						border-left: $zero;
+						border-top: 4px solid #7e80bc;
+						@include space(padding, left, 0.2rem);
+						@include space(padding, right, 0.2rem);
+					}
+				}
+			}
+		}
+	}
+}

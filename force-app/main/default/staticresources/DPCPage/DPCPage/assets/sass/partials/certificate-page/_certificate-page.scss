@@ -1,0 +1,136 @@
+.certificate-detail {
+	font-family: arial;
+	background-color: map-get($gray_shade, gray03);
+
+	.container {
+		max-width: 99rem !important;
+		background-color: map-get($color, white);
+
+		@include respond-above(md) {
+			@include space(padding, left, $s45);
+			@include space(padding, right, $s45);
+		}
+	}
+
+	.certificate_left-part {
+
+		.logo_box {
+			@include space(padding, top, $s40);
+			@include space(padding, bottom, $s10);
+			@include space(margin, bottom, $s20);
+			border-bottom: 1px dashed #3A7BBF;
+
+			@include respond-below(md) {
+				@include space(padding, top, $s20);
+			}
+
+			img {
+				width: 350px;
+			}
+		}
+
+		.rectangle_box {
+			font-weight: bold;
+			color: map-get($color, black);
+			border-radius: 12px;
+			@include font_size($base);
+			border: 2px solid #3A7BBF;
+			@include space(margin, bottom, $s15);
+
+			.row {
+				@include space(margin, all, $zero);
+			}
+
+			.colored {
+				background-color: #3A7BBF;
+				color: map-get($color, white);
+				border-radius: 9px;
+			}
+
+			[class^="col-"] {
+				@include space(padding, all, $s10);
+			}
+
+			p {
+				@include space(margin, bottom, $zero);
+			}
+		}
+	}
+
+	.certificate_right-part {
+
+		@include space(margin, top, $s40);
+		@include respond-below(md) {
+			@include space(margin, top, $s20);
+		}
+
+		h4 {
+			font-family: arial;
+			font-weight: bold;
+			color: #3A7BBF;
+			@include font_size($base);
+			@include line_height($xx_lg);
+			@include space(margin, bottom, $s15);
+		}
+
+		p {
+			@include font_size(13);
+			@include line_height($lg);
+			color: map-get($color, black);
+		}
+
+		img {
+			display: block;
+			margin: 0 auto;
+			@include space(margin, bottom, $s20);
+
+			@include respond-above(md) {
+				width: 100%;
+			}
+		}
+	}
+}
+
+
+.certificate-detail-footer {
+	background-color: map-get($gray_shade, gray03);
+	@include space(padding, top, $zero);
+
+	.container {
+		font-family: arial;
+		max-width: 99rem !important;
+		@include space(padding, top, $s10);
+		@include space(padding, bottom, $s40);
+		background-color: map-get($color, white);
+
+		@include respond-above(md) {
+			@include space(padding, left, $s45);
+			@include space(padding, right, $s45);
+		}
+
+		p {
+			@include font_size($sm);
+			@include line_height($lg);
+			@include space(margin, bottom, $zero);
+			font-weight: bold;
+			color: map-get($color, black);
+
+			&.colored {
+				color: #3A7BBF;
+			}
+
+			span {
+				&.colored {
+					color: #3A7BBF;
+				}
+			}
+
+			a {
+				color: map-get($color, black);
+				&.colored {
+					color: #3A7BBF;
+				}
+			}
+		}
+	}
+}

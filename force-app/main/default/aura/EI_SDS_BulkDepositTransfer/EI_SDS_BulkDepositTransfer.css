@@ -1,0 +1,11 @@
+.THIS h1 {
+  color: #000000;     
+}
+
+.THIS .openSubTab{
+    display:block!important;
+}
+
+.THIS .closeSubTab{
+    display:none!important;
+}

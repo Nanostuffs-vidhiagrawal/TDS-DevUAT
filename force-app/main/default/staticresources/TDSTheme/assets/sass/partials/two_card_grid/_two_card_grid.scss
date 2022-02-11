@@ -1,0 +1,32 @@
+.two_card_grid {
+	.card_grid {
+		float: left;
+		img {
+			width: $full;
+			@include space(margin, bottom, $s40);
+
+			@include respond-below(sm) {
+				@include space(margin, bottom, $s20);
+			}
+		}
+
+		.learn-more, .learn-less {
+			cursor: pointer;
+			float: right;
+			@include space(margin, top, $s25);
+			@include respond-below(sm) {
+				@include space(margin, top, $s10);
+			}
+		}
+
+		.learn-less {
+			display: none;
+		}
+	}
+
+	div {
+		[class^="col-sm-"] {
+			transition: ease 0.3s;
+		}
+	}
+}

@@ -1,0 +1,70 @@
+<apex:page controller="EI_DownloadPostController" renderAs="pdf" cache="true" action="{!updateIsPrinted}">
+   <head>
+      <!-- Required meta tags -->
+      <meta charset="utf-8"/>
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+      <title>TDS</title>
+      <style>
+         body {
+         margin: 0;
+         }
+         .container {
+         max-width: 630px;
+         width: 100%;
+         margin: 0 auto;
+         padding: 0 15px;
+         box-sizing: border-box;
+         }
+      </style>
+   </head>
+   <apex:outputPanel rendered="{!Source == 'SDS Custodial'}">
+      <table width="100%" cellspacing="0" cellpadding="0" style="max-width: 680px; padding: 0 15px; margin: 0 auto; font-family: arial; font-size: 16px; color: #4D4C4C; line-height: 20px;">
+         <tr>
+            <td style="padding: 20px 15px 0 10px; border-left: 15px solid #3379c1; ">
+               <img src="/resource/SDSLogo"/>
+            </td>
+         </tr>
+         <tr>
+            <td style="padding: 20px 15px 0 20px; border-left: 15px solid #3379c1; ">
+               SafeDeposits Scotland, Lower Ground, 250 West George Street, Glasgow, G2 4QY               
+            </td>
+         </tr>
+         <tr>
+            <td style="">
+               <br/>
+               <strong>{!msg.Contact__r.MailingStreet}
+               <br/>{!msg.Contact__r.MailingCity}
+               <br/>{!msg.Contact__r.MailingPostalCode} {!msg.Contact__r.MailingCountry}</strong>              
+            </td>
+         </tr>
+         <tr>
+            <td>
+               <apex:outputText value="{!msg.Sent_Message__c}"  escape="false"/>
+            </td>
+         </tr>
+         <tr>
+            <td style="padding: 25px 20px 0 15px; border-right: 15px solid #3379c1; text-align: right;">
+               <a style="color: #3379c1; text-decoration: none; font-size: 24px; line-height: 32px" href="safedepositsscotland.com" title="safedepositsscotland.com">safedepositsscotland.com</a>
+            </td>
+         </tr>
+         <tr>
+            <td style="padding: 5px 20px 20px 15px; border-right: 15px solid #3379c1; text-align: right;">
+               Company number: 405020               
+            </td>
+         </tr>
+      </table>
+   </apex:outputPanel>
+   <apex:outputPanel rendered="{!Source == 'NHOS'}">
+      <apex:image url="{!$Resource.SDSLogo}" width="200" height="100"/>
+      <p>
+         <apex:outputText value="NHOS Office address"/>
+      </p>
+      <b>
+         <p>{!msg.Contact__r.MailingStreet}<br/>
+            {!msg.Contact__r.MailingCity}<br/>
+            {!msg.Contact__r.MailingPostalCode} {!msg.Contact__r.MailingCountry}
+         </p>
+      </b>
+      <apex:outputText value="{!msg.Sent_Message__c}"  escape="false"/>
+   </apex:outputPanel>
+</apex:page>

@@ -1,0 +1,39 @@
+<apex:page showHeader="false" sidebar="false" controller="EI_SDS_EvidenceUploadToAzure" action="{!fetchAzureLink}">  
+    <html>
+        <head>
+            <script>
+            function toDataURL(url, callback) {
+                var xhr = new XMLHttpRequest();
+                xhr.onload = function() {
+                    var reader = new FileReader();
+                    reader.onloadend = function() {
+                        callback(reader.result);
+                    }
+                    reader.readAsDataURL(xhr.response);
+                };
+                xhr.open('GET', url); 
+                xhr.responseType = 'blob';
+                xhr.send();
+            }
+            
+            var azureLink = '{!AzureUrl[0].Location__c}';
+            //console.log('ff '+azureLink);
+            toDataURL(azureLink, function(dataUrl) {
+                download(dataUrl);
+                setTimeout(function(){
+                    window.top.close()
+                }, 3000);                
+            })
+            
+            function download(ImageBase64) {                
+                var a = document.createElement("a"); //Create <a>
+                a.href = ImageBase64; //Image Base64 Goes here
+                a.download = "{!AzureUrl[0].Filename__c}"; //File name Here
+                a.click(); 
+            }
+            </script> 
+        </head>
+        
+        File downloading.........
+    </html>    
+</apex:page>

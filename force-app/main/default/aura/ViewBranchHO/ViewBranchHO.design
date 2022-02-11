@@ -1,0 +1,12 @@
+<design:component>
+    <design:attribute name="branchTitle" label="Title for Branch Card"
+        description="Specify the card title for Branch Card" />
+    <design:attribute name="manageUsers" label="Title for Manage Users Card"
+        description="Specify the card title for Manage Users Card" />
+    <design:attribute name="clientAccountReport" label="Title for Client Account Report"
+        description="Specify the card title for Client Account Report Card" />
+    <design:attribute name="logout" label="Title for Logout Card"
+        description="Specify the card title for Logout Card" />
+    <design:attribute name="changeMyDetails" label="Title for Change My Details"
+        description="Specify the card title for Change My Details" />
+</design:component>

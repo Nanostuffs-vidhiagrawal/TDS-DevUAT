@@ -1,0 +1,45 @@
+/*.THIS .slds-form-element__label{
+    font-size:1.3rem!important;    
+}
+
+.THIS .slds-required{
+	text-decoration: none!important;
+}
+.THIS .slds-has-error .slds-input{
+    border-color:none;
+    box-shadow:none;
+}
+.THIS h3 
+{
+    float:left;
+}
+.THIS h5
+{
+	float:left;
+}*/
+.THIS .button
+{
+	float:left;
+    padding: 5px;
+    margin: 5px;
+}
+.THIS .landlord-login {
+    max-height: none;
+}
+
+@media (min-width: 768px) {
+.THIS .landlord-login {
+max-height: none !important;
+}
+}
+
+.THIS .slds-button_neutral {
+    vertical-align: unset;
+    margin-left : 2% !important;
+}
+.THIS .cRegister .content {
+    width: 450px;
+    margin-left: -15px;
+    background-color: white;
+    padding: 15px;
+}

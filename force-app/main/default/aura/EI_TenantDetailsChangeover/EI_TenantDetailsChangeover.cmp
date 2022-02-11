@@ -1,0 +1,422 @@
+<aura:component
+                implements="lightning:isUrlAddressable,forceCommunity:themeLayout,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+                access="global" controller="EI_TenentChangeoverApx">
+    
+    <aura:attribute name="phoneCodePicklist" type="String[]"/>
+    <aura:attribute name="arrObj" type="object[]" />
+    <aura:attribute name="leadTenantObj" type="object" />
+    
+    <aura:attribute name="newdepositstartdate" type="date" />
+    <aura:attribute name="newdepositamount" type="integer" />
+    <aura:attribute name="newtenantnumber" type="integer" />
+        <aura:attribute name="yesNoError" type="boolean" default="false" /> 
+    <aura:attribute name="olddepositid" type="string" />
+    <aura:attribute name="disablefields" type="boolean" default="false"/>
+    
+    <aura:attribute name="default" type="Boolean" default="true" />
+    <aura:attribute name="registerTenant" type="Boolean" default="true" />
+    
+    <aura:attribute name="LeadSummary" type="Boolean" default="false"/>
+    <aura:attribute name="emailList" type="List" />
+    <aura:attribute name="cardTitle" type="String" default="Lead Tenant details" />
+    <aura:attribute name="noOfTenants" type="Integer" />
+    <aura:attribute name="item" type="integer" />
+    
+    <aura:attribute name="IsOrg" type="Boolean" />
+    <aura:attribute name="title" type="string" default="Mrs" />
+    <aura:attribute name="companyName" type="string" />
+    <aura:attribute name="FirstName" type="string" />
+    <aura:attribute name="SurName" type="string" />
+    <aura:attribute name="email" type="string" />
+    <aura:attribute name="phoneCode" type="string" default="+44" />
+    <aura:attribute name="phone" type="string" />
+    <aura:attribute name="titles" type="List" default="[
+                                                       {'label': 'Mrs', 'value': 'Mrs'},
+                                                       {'label': 'Ms', 'value': 'Ms'},
+                                                       {'label': 'Mr', 'value': 'Mr'},
+                                                       {'label': 'Miss', 'value': 'Miss'},
+                                                       {'label': 'Dame', 'value': 'Dame'},
+                                                       {'label': 'Doctor', 'value': 'Doctor'},
+                                                       {'label': 'Lady', 'value': 'Lady'},
+                                                       {'label': 'Lord', 'value': 'Lord'},
+                                                       {'label': 'Professor', 'value': 'Professor'},
+                                                       {'label': 'The Rt Hon', 'value': 'The Rt Hon'},
+                                                       {'label': 'Sir', 'value': 'Sir'},
+                                                       {'label': 'Other', 'value': 'Other'},
+                                                       {'label': 'Reverend', 'value': 'Reverend'},
+                                                       {'label': 'The Hon', 'value': 'The Hon'},
+                                                       ]" />
+    
+    <!-- BootStrap Errors using Aura:if Start -->
+    <aura:attribute name="succeessmessage" type="boolean" default="false" />
+    <aura:attribute name="companyNameError" type="boolean" default="false" />
+    <aura:attribute name="titleError" type="boolean" default="false" />
+    <aura:attribute name="firstNameError" type="boolean" default="false" />
+    <aura:attribute name="surNameError" type="boolean" default="false" />
+    <aura:attribute name="emailMobileError" type="boolean" default="false" />
+    <aura:attribute name="invalidEmailFormatError" type="boolean" default="false" />
+    <aura:attribute name="invalidPhoneFormatError" type="boolean" default="false" />
+    <aura:attribute name="IsDuplicateEmail" type="boolean" default="false" />
+    <aura:attribute name="duplicateEmailError" type="boolean" default="false" />
+    <aura:attribute name="duplicateEmailInDepositError" type="boolean" default="false" />
+    <aura:attribute name="PhonelengthError" type="boolean" default="false" />
+    <aura:attribute name="duplicatePhoneInDepositError" type="boolean" default="false" />
+	<!-- BootStrap Errors using Aura:if End -->
+    
+    <aura:handler name='init' value='{!this}' action='{!c.doInit}' />
+    
+    <aura:registerEvent name="EI_Tenantchangeoverdetails" type="c:EI_Tenantchangeoverdetails" />
+    
+    <div class="tab-content custom-tab-content" aura:id="changeIt" id="sf-tabContent">
+        <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+            <div class="deposit-agent">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <!-- Deposit Steps HTML Start --> 
+                            <section class="deposit_steps">
+                                <div class="deposit_steps_detail">
+                                    <form>
+                                                             <aura:if isTrue="{!v.yesNoError}">
+                                            <div id="yesNoMsg"
+                                                 class="alert alert-danger alert-dismissible fade show"
+                                                 >
+                                                <strong>Error!</strong>Please select Yes or No option.
+                                               	
+                                                <button
+                                                        type="button"
+                                                        class="close"
+                                                        onclick="{!c.hideBootstrapErrors}"
+                                                        name="yesNoMsg"
+                                                        >&times;</button
+                                                    >
+                                            </div>                 
+                                        </aura:if>
+                                    
+                                        
+                                        <!-- Bootstrap Error messages Start -->
+                                        
+                                        <aura:if isTrue="{!v.succeessmessage}">
+                                            <div id="successAlert" class="alert alert-success alert-dismissible fade show" >
+                                                <strong>Success!</strong> Tenant has been created Successfully.
+                                                <button
+                                                        type="button"
+                                                        class="close"
+                                                        onclick="{!c.hideBootstrapErrors}"
+                                                        name="successmsg"
+                                                        >&times;
+                                                </button>
+                                            </div>                 
+                                        </aura:if>
+                                        
+                                        <aura:if isTrue="{!v.companyNameError}">
+                                            <div id="companyNameErrorAlert" class="alert alert-danger alert-dismissible fade show" >
+                                                <strong>Error!</strong> Company name is mandatory.
+                                                <button type="button"
+                                                        class="close"
+                                                        onclick="{!c.hideBootstrapErrors}"
+                                                        name="companyName"
+                                                        >&times;
+                                                </button>
+                                            </div>                 
+                                        </aura:if>
+                                        
+                                        <aura:if isTrue="{!v.titleError}">
+                                            <div id="titleErrorErrorAlert" class="alert alert-danger alert-dismissible fade show" >
+                                                <strong>Error!</strong> Please select the valid title.
+                                                <button type="button"
+                                                        class="close"
+                                                        onclick="{!c.hideBootstrapErrors}"
+                                                        name="title"
+                                                        >&times;
+                                                </button>
+                                            </div>                 
+                                        </aura:if>
+                                        
+                                        <aura:if isTrue="{!v.firstNameError}">
+                                            <div id="firstNameErrorAlert" class="alert alert-danger alert-dismissible fade show" >
+                                                <strong>Error!</strong> First Name is mandatory.
+                                                <button type="button"
+                                                        class="close"
+                                                        onclick="{!c.hideBootstrapErrors}"
+                                                        name="firstName"
+                                                        >&times;
+                                                </button>
+                                            </div>                 
+                                        </aura:if>                
+                                        
+                                        <aura:if isTrue="{!v.surNameError}">  
+                                            <div id="SurNameErrorAlert" class="alert alert-danger alert-dismissible fade show" >
+                                                <strong>Error!</strong> Surname is mandatory.
+                                                <button type="button"
+                                                        class="close"
+                                                        onclick="{!c.hideBootstrapErrors}"
+                                                        name="surName"
+                                                        >&times;
+                                                </button>
+                                            </div>
+                                        </aura:if> 
+                                        
+                                        <aura:if isTrue="{!v.emailMobileError}">  
+                                            <div id="EmailMobileErrorAlert" class="alert alert-danger alert-dismissible fade show" >
+                                                <strong>Error!</strong> Please provide either Mobile number or Email address
+                                                <button type="button" class="close"
+                                                        onclick="{!c.hideBootstrapErrors}"
+                                                        name="emailMobile"
+                                                        >&times;
+                                                </button>
+                                            </div>
+                                        </aura:if>
+                                        
+                                        <aura:if isTrue="{!v.invalidEmailFormatError}">
+                                            <div id="invalidEmailFormatErrorAlert" class="alert alert-danger alert-dismissible fade show" >
+                                                <strong>Error!</strong> Invalid email format.
+                                                <button type="button"
+                                                        class="close"
+                                                        onclick="{!c.hideBootstrapErrors}"
+                                                        name="invalidEmailFormat"
+                                                        >&times;
+                                                </button>
+                                            </div>                 
+                                        </aura:if>
+                                        
+                                        <aura:if isTrue="{!v.PhonelengthError}">
+                                             <div 
+                                                  id="PhonelengthErrorAlert"
+                                                  class="alert alert-danger alert-dismissible fade show"
+                                                  >
+                                                 <strong>Error!</strong> Enter a valid phone number that starts with '07' and it also must be of 11 digits.
+                                                 <button type="button" class="close" 
+                                                         onclick="{!c.hideBootstrapErrors}" 
+                                                         name="phonelength" 
+                                                         >&times;</button >
+                                             </div> 
+                                        </aura:if>
+                                        
+                                        <aura:if isTrue="{!v.invalidPhoneFormatError}">
+                                            <div id="invalidPhoneFormatErrorAlert" class="alert alert-danger alert-dismissible fade show" >
+                                                <strong>Error!</strong> Invalid phone format.
+                                                <button type="button"
+                                                        class="close"
+                                                        onclick="{!c.hideBootstrapErrors}"
+                                                        name="invalidPhoneFormat"
+                                                        >&times;
+                                                </button>
+                                            </div>                 
+                                        </aura:if>
+                                        
+                                        <aura:if isTrue="{!v.duplicateEmailError}">  
+                                            <div id="duplicateEmailError" class="alert alert-danger alert-dismissible fade show" >
+                                                <strong>Error!</strong> Email address already in use.
+                                                <button type="button" class="close"
+                                                        onclick="{!c.hideBootstrapErrors}"
+                                                        name="duplicateEmailError"
+                                                        >&times;
+                                                </button>
+                                            </div>
+                                        </aura:if>
+                                        
+                                        <aura:if isTrue="{!v.duplicateEmailInDepositError}">  
+                                            <div id="duplicateEmailInDepositError" class="alert alert-danger alert-dismissible fade show" >
+                                                <strong>Error!</strong> This email has been already used for other tenant in this deposit.
+                                                <button type="button" class="close"
+                                                        onclick="{!c.hideBootstrapErrors}"
+                                                        name="duplicateEmailInDepositError"
+                                                        >&times;
+                                                </button>
+                                            </div>
+                                        </aura:if>
+                                        
+                                        <aura:if isTrue="{!v.duplicatePhoneInDepositError}">  
+                                            <div id="duplicatePhoneInDepositError" class="alert alert-danger alert-dismissible fade show" >
+                                                <strong>Error!</strong> This Phone has been already used for other tenant in this deposit.
+                                                <button type="button" class="close"
+                                                        onclick="{!c.hideBootstrapErrors}"
+                                                        name="duplicatePhoneInDepositError"
+                                                        >&times;
+                                                </button>
+                                            </div>
+                                        </aura:if>
+                                        
+                                        <!-- Bootstrap Error messages End -->
+                                            <div class="form-group row">
+                   
+                                            <label class="col-sm-4 col-form-label">
+                                                Is the tenant associated with this deposit a company?
+                                            </label>
+                                            <div class="col-sm-8">
+                                                <lightning:button aura:id="orgBtn" variant="brand-outline" label="Yes"
+                                                                  onclick="{! c.doEnableOrg }" class="learn-more" />
+                                                <lightning:button aura:id="personBtn" variant="brand" label="No"
+                                                                  onclick="{! c.doPerson }" class="learn-more" />
+                                                <!-- <a class="learn-more">Yes</a>
+                                                <a class="learn-more">No</a> -->
+                                            </div>
+                                        </div>
+                                        <aura:if isTrue="{!v.IsOrg}">
+                                            
+                                            <div class="form-group row">
+                                                <label for="tenant_first_Name" class="col-sm-4 offset-sm-4 col-form-label">Company name</label>
+                                                <div class="col-sm-8 col-lg-7 offset-sm-4">
+                                                    <lightning:input aura:id="compNameId" type="text" value="{!v.companyName}" 
+                                                                     placeholder="Enter company name" />
+                                                </div>
+                                            </div>
+                                            
+                                            <aura:set attribute="else">
+                                                <div class="form-group row">
+                                                    <label for="Title" class="col-sm-4 offset-sm-4 col-form-label">Title</label>
+                                                    <div class="col-sm-4 col-lg-3 offset-sm-4">
+                                                        <!-- <select class="form-control" id="Title">
+                                                            <option value="">Select Option</option>
+                                                            <option>01</option> <option>02</option>
+                                                            <option>03</option> <option>04</option>
+                                                        </select> -->
+                                                        <select class="form-control"
+                                                                id="titleId"
+                                                                name="userTitle" 
+                                                                label="Title" 
+                                                                value="{!v.title}" 
+                                                                onchange="{! c.onChangeTitle}"
+                                                                >
+                                                            <option value="">-- Please Select --</option>
+                                                            <option value="Mrs.">Mrs.</option>
+                                                            <option value="Mr.">Mr.</option>
+                                                            <option value="Ms.">Ms.</option>
+                                                            <option value="Miss">Miss</option>
+                                                            <option value="Dr.">Dr.</option>
+                                                            <option value="Prof.">Prof.</option>
+                                                            <option value="Lady">Lady</option>
+                                                            <option value="Lord">Lord</option>
+                                                            <option value="The Rt Hon">The Rt Hon</option>
+                                                            <option value="Sir">Sir</option>
+                                                            <option value="Other">Other</option>
+                                                            <option value="Reverend">Reverend</option>
+                                                            <option value="The Hon">The Hon</option>
+                                                        </select>
+                                                        <!-- <lightning:combobox aura:id="titleId" value="{!v.title}" name="title" 
+                                                                            options="{! v.titles }" 
+                                                                            onchange="{! c.handleChange }" /> -->
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label for="tenant_first_Name" class="col-sm-4 offset-sm-4 col-form-label">First name</label>
+                                                    <div class="col-sm-8 col-lg-7 offset-sm-4">
+                                                        <!--    <input type="text" name="" class="form-control" id="tenant_first_Name" 
+                                                               placeholder="John, Jon" /> -->
+                                                        <lightning:input aura:id="firstNameId" value="{!v.FirstName}" maxlength="40" 
+                                                                         messageWhenTooLong="Title cannot exceed 40 characters" 
+                                                                         minlength="1" messageWhenTooShort="Title should have atleast 1 character" 
+                                                                         placeholder="Enter first name" />
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label for="tenant_surname" class="col-sm-4 offset-sm-4 col-form-label">Surname</label>
+                                                    <div class="col-sm-8 col-lg-7 offset-sm-4">
+                                                        <!--    <input type="text" name="" class="form-control" id="tenant_surname" 
+                                                               placeholder="Smith, Jon" /> -->
+                                                        <lightning:input aura:id="surNameId" value="{!v.SurName}" maxlength="40" 
+                                                                         messageWhenTooLong="Title cannot exceed 40 characters" 
+                                                                         minlength="1" messageWhenTooShort="Title should have atleast 1 character" 
+                                                                         placeholder="Enter surname" />
+                                                    </div>
+                                                </div>
+                                            </aura:set>
+                                            
+                                        </aura:if>
+                                        
+                                        <div class="form-group row">
+                                            <label class="col-xs-12 col-sm-4 col-form-label">Contact information 
+                                                <!--     <a href="#" class="questionsmark"> 
+                                                    <img src="{!$Resource.TDSTheme + '/assets/img/question-circle.png'}" 
+                                                         alt="Question Mark" /> Question?
+                                                </a> -->
+                                            </label> 
+                                            <label for="tenant_Email" class="col-sm-4 col-form-label">Email</label>
+                                            <div class="col-sm-8 col-lg-7 offset-sm-4">
+                                                <!--    <input type="email" class="form-control" id="tenant_Email"
+                                                               placeholder="tenant@email.com" /> -->
+                                                <lightning:input aura:id="emailID" value="{!v.email}" 
+                                                                 type="email" pattern="^((([a-z]|\d|[!#\$%'&amp;''\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&amp;'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))$"
+                                                                 placeholder="Enter email" onblur="{! c.handleEmailBlur}" />
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-group row">
+                                            <label for="Phone" class="col-sm-4 offset-sm-4 col-form-label">Mobile</label>
+                                            <div class="col-sm-2 offset-sm-4 slds-p-top_xx-large">
+                                                <select id="selectPhoneCode" class="form-control" value="{!v.phoneCode}"
+                                                onchange="{!c.handlePhoneCode}" >
+                                                    <aura:iteration items="{!v.phoneCodePicklist}" var="itemVar">
+                                                        <option text="{!itemVar}" value="{!itemVar}" selected="{!itemVar==v.phoneCode}"/>
+                                                    </aura:iteration>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-5 slds-p-top_small">
+                                                <lightning:input aura:id="mobileId" type="tel" name="Phone"
+                                                                 placeholder="Enter mobile number" value="{!v.phone}" /> 
+                                            </div>
+                                            <!--<div class="col-sm-2 col-lg-2 offset-sm-4">
+                                                         <select class="form-control" id="Mobile">
+                                                            <option value="">+44</option>
+                                                            <option>+91</option>
+                                                            <option>+44</option>
+                                                            <option>+44</option>
+                                                            <option>+44</option>
+                                                        </select>
+                                                 </div>-->
+                                        </div>
+                                        
+                                        <div class="form-group row">
+                                            <div class="col-sm-12 col-lg-11 text-right">
+                                                <!-- <button type="submit" class="see-all">Continue</button> -->
+                                                <lightning:button aura:id="doSubmit" variant="brand" label="Save"
+                                                                  onclick="{! c.doSubmit }" disabled="false" class="see-all" />
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </section>
+                            <!-- Deposit Steps HTML End -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- <lightning:card >
+                <div aura:id="changeIt">
+                  
+                    <lightning:card title="{!v.cardTitle}">
+                      
+                        <p class="slds-p-around_small">
+                            <lightning:combobox aura:id="field" value="{!v.title}" disabled="{!v.disablefields==true}" name="title" label="Title"
+                                                placeholder="Select Title" options="{! v.titles }" onchange="{! c.handleChange }"
+                                                required="true" />
+                            
+                            <lightning:input aura:id="field" label="First Name" disabled="{!v.disablefields==true}" value="{!v.FirstName}" required="true"
+                                             maxlength="40" messageWhenTooLong="Title cannot exceed 40 characters" minlength="1"
+                                             messageWhenTooShort="Title should have atleast 1 character" />
+                            <lightning:input aura:id="field" label="Sur Name" disabled="{!v.disablefields==true}" value="{!v.SurName}" required="true"
+                                             maxlength="40" messageWhenTooLong="Title cannot exceed 40 characters" minlength="1"
+                                             messageWhenTooShort="Title should have atleast 1 character" />
+                            
+                            <lightning:input aura:id="emailfield" label="Email" disabled="{!v.disablefields==true}" value="{!v.email}" required="true"
+                                             type="email"
+                                              
+                                             onblur="{! c.handleEmailBlur}" />
+                            
+                            <lightning:input aura:id="phonefield" type="tel" disabled="{!v.disablefields==true}" name="Phone" label="Phone" value="{!v.phone}"
+                                             required="true" onblur="{! c.handlePhoneBlur }" />
+                        </p>
+                        <p class="slds-p-top_small">
+                            <lightning:button aura:id="doSubmit" variant="brand" label="Save" onclick="{! c.doSubmit }"
+                                              disabled="false" />
+                        </p>
+                    </lightning:card>
+                </div>
+    </lightning:card> --> 
+    
+    
+</aura:component>

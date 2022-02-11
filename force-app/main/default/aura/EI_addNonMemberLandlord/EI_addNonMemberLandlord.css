@@ -1,0 +1,89 @@
+/*.THIS .slds-form-element__label{
+    font-size:1.3rem!important;    
+}
+
+.THIS .slds-required{
+	text-decoration: none!important;
+}
+.THIS .slds-has-error .slds-input{
+    border-color:none;
+    box-shadow:none;
+}
+.THIS h3 
+{
+    float:left;
+}
+.THIS h5
+{
+	float:left;
+}*/
+.THIS .clickButton{
+    background-color : #32669E;
+    color: white;
+}
+.THIS .notclickButton{
+    background-color : white;
+    color: #32669E;
+}
+.THIS .button
+{
+	float:left;
+    padding: 5px;
+    margin: 5px;
+}
+.THIS .landlord-login {
+    max-height: none;
+}
+
+@media (min-width: 768px) {
+.THIS .landlord-login {
+max-height: none !important;
+}
+}
+
+.THIS .slds-button_neutral {
+    vertical-align: unset;
+    margin-left : 2% !important;
+}
+.THIS .cRegister .content {
+    width: 450px;
+    margin-left: -15px;
+    background-color: white;
+    padding: 15px;
+}
+
+/*
+.THIS .text-right {
+    text-align: left !important;
+}*/
+
+.THIS .deposit_steps .deposit_steps_detail .form-group {
+    margin-bottom: 3rem;
+}
+
+.THIS .learn-more {
+ min-width: 0% !important;   
+    
+}
+
+
+
+/*
+.THIS .cEI_addNonMemberLandlord .text-right {
+    text-align: right !important;
+}*/
+
+.THIS .yesnobtn {
+    text-align: left !important;
+    
+}
+.THIS .learn-more{
+    text-transform: unset;
+}
+.THIS .saveCancelbtn {
+   text-align: right; 
+}
+
+.THIS .learn-more:first-child{
+    margin-right: 0rem !important;
+}

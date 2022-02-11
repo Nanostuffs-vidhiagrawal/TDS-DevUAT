@@ -1,0 +1,130 @@
+$h1-font: 50;
+$h1-line-height: 60;
+$h1-m-line-height: 32;
+
+h1 {
+	@include font_size($h1-font);
+	@include line_height($h1-line-height);
+	font-family: $Aller_Bold;
+	color: map-get($color, blue);
+	@include space(margin, bottom, $s25);
+
+	@include respond-below(sm) {
+		@include font_size($xxx_lg);
+		@include line_height($h1-m-line-height);
+		@include space(margin, bottom, $s15);
+	}
+}
+
+
+$h2-font: 34;
+$h2-line-height: 44;
+$h2-m-line-height: 34;
+
+h2 {
+	@include font_size($h2-font);
+	@include line_height($h2-line-height);
+	font-family: $Aller_Bold;
+	color: map-get($color, light-black);
+	@include space(margin, bottom, $s25);
+
+	@include respond-below(sm) {
+		@include font_size($xx_lg);
+		@include line_height($h2-m-line-height);
+		@include space(margin, bottom, $s15);
+	}
+}
+
+
+$h3-font: 30;
+$h3-line-height: 40;
+
+h3 {
+	@include font_size($h3-font);
+	@include line_height($h3-line-height);
+	font-family: $Aller_Bold;
+	color: map-get($color, gray);
+	@include space(margin, bottom, $s40);
+
+	@include respond-below(sm) {
+		@include font_size($x_lg);
+		@include line_height($xxx_lg);
+		@include space(margin, bottom, $s15);
+	}
+}
+
+$h4-line-height: 40;
+
+h4 {
+	@include font_size($xxx_lg);
+	@include line_height($h4-line-height);
+	font-family: $Aller_Bold;
+	color: map-get($color, light_gray);
+	@include space(margin, bottom, $s25);
+
+	@include respond-below(sm) {
+		@include font_size($lg);
+		@include line_height($xx_lg);
+		@include space(margin, bottom, $s15);
+	}
+}
+
+h5 {
+	@include font_size($x_lg);
+	@include line_height($xxx_lg);
+	font-family: $Aller_Bold;
+	color: map-get($color, light_gray);
+	@include space(margin, bottom, $s15);
+
+	@include respond-below(sm) {
+		@include font_size($above_base);
+		@include line_height($x_lg);
+		@include space(margin, bottom, $s10);
+	}
+}
+
+
+h6 {
+	@include font_size($above_base);
+	@include line_height($x_lg);
+	font-family: $Aller_Bold;
+	color: map-get($color, light-black);
+	@include space(margin, bottom, $s15);
+
+	@include respond-below(sm) {
+		@include font_size($base);
+		@include line_height($lg);
+	}
+}
+
+
+p {
+	@include font_size($base);
+	@include line_height($xx_lg);
+	color: map-get($color, gray);
+	@include space(margin, bottom, $s10);
+}
+
+ul {
+	@include space(padding, all, $zero); 
+	list-style: none;
+
+	li {
+		@include font_size($base);
+		@include line_height($lg);
+		@include space(padding, bottom, $s10);
+
+		a {
+			text-decoration: none !important;
+			color: map-get($color, gray);
+
+			&:hover {
+				color: map-get($color, blue);
+			}
+		}
+	}
+}
+
+img {
+	max-width: $full;
+}

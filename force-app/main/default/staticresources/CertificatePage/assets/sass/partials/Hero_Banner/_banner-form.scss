@@ -1,0 +1,103 @@
+.banner_form {
+
+	@include flexbox;
+	
+	.banner_form-detail {
+		text-align: left;
+
+		&__heading {
+			@include font_size($base);
+			text-transform: uppercase;
+			@include space(padding, top, $s20);
+			@include space(padding, bottom, $s20);
+			@include space(padding, left, $s25);
+			@include space(padding, right, $s25);
+
+			@include respond-below(sm) {
+				@include space(padding, left, $s10);
+				@include space(padding, right, $s10);
+				@include space(padding, top, $s10);
+				@include space(padding, bottom, $s10);
+				@include font_size(15);
+				@include flexbox();
+				@include flex_properties(left, center, wrap);
+			    min-height: 5.6rem;
+			    @include line-height($above_base);
+			}
+
+			@include respond-below(xs) {
+				@include font_size($below_base);
+			}
+		}
+
+		&__tab {
+			
+			@include font_size($below_base);
+			@include space(padding, all, $s25);
+			@include space(padding, right, $s60);
+			border-bottom: 1px solid map-get($banner-form-color, sky-blue);
+			cursor: pointer;
+			@include position_relative();
+
+			@include respond-below(md) {
+				@include space(padding, all, $s20);
+				@include space(padding, right, $s60);
+			}
+
+			@include respond-below(sm) {
+				@include space(padding, all, $s10);
+				@include space(padding, right, 3.2rem);
+				@include flex_properties(left, center, wrap);
+			    min-height: 5.7rem;
+			    @include line-height($above_base);
+			    @include flexbox();
+				@include flex_properties(left, center, wrap);
+			}
+
+			@include respond-below(xs) {
+				@include font_size($sm);
+			}
+
+			img {
+				width: $s20;
+				height: $s20;
+				@include position_absolute($s25, $s25, auto, auto);
+
+				@include respond-below(sm) {
+					@include position_absolute($s20, .7rem, auto, auto);
+				}
+			}
+
+			a {
+				text-decoration: none;
+				color: map-get($color, white);
+			}
+
+		}
+
+		&.tanent {
+			.banner_form-detail__heading {
+				background-color: map-get($color, blue);
+				@include Single_side_Border_radius(0, 2rem, 0, 0);
+			}
+
+			.banner_form-detail__tab {
+				background-color: map-get($banner-form-color, dark-gray);
+			}
+		}
+
+		&.agent {
+			.banner_form-detail__heading {
+				background-color: map-get($color, light_blue);
+				@include Single_side_Border_radius(2rem, 0, 0, 0);
+				border-left: 1px solid transparent;
+			}
+
+			.banner_form-detail__tab {
+				background-color: map-get($banner-form-color, gray);
+				border-left: 1px solid map-get($banner-form-color, sky-blue);
+			}
+		}
+	}
+	
+}

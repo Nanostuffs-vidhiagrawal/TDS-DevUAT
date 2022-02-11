@@ -1,0 +1,342 @@
+<aura:component
+    implements="lightning:isUrlAddressable,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes"
+    access="global" controller="EI_getBranch">
+
+    <aura:attribute name="branch" type="Branch__c" default="{'sObjectType':'branch__c'}" />
+    <aura:attribute name="selectedVal" type="String" />
+    <aura:attribute name="countryMap" type="Map" />
+    <aura:attribute name="phoneCodePicklist" type="String[]"/>
+
+    <!-- Address Finder Attributes -->
+    <aura:attribute access="public" name="Address" type="String" />
+    <aura:attribute access="public" name="Street" type="String" />
+    <aura:attribute access="public" name="Town" type="String" />
+    <aura:attribute access="public" name="County" type="String" />
+    <aura:attribute access="public" name="PostCode" type="String" />
+    <aura:attribute access="public" name="Country" type="String" />
+    
+    <aura:attribute access="public" name="showform" type="boolean" default="true" />
+    
+    
+    <!-- BootStrap Errors using Aura:if-->
+      <aura:attribute name="branchNameError" type="boolean" default="false" />
+      <aura:attribute name="PhonelengthError" type="Boolean" default="false" />
+      <aura:attribute name="altPhonelengthError" type="Boolean" default="false" />
+      <aura:attribute name="telephoneNumError" type="boolean" default="false" />
+      <aura:attribute name="isAddressValidError" type="boolean" default="false" />
+          <aura:attribute name="succeessmessage" type="boolean" default="false" />
+      <aura:attribute name="generalEmailError" type="boolean" default="false" />
+    
+    
+    
+    
+    <lightning:navigation aura:id="navService" />
+ <div class="tab-content custom-tab-content" id="sf-tabContent">
+            
+            <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-9">
+                            <a id="maincon" href="" class="go-back" onclick="{! c.backtobranches }"><img src="{!$Resource.TDSTheme + '/assets/img/md-arrow-dropleft.png'}" alt="Back Icon"/> Go back</a>
+                           
+                            <aura:if isTrue="{!v.succeessmessage}">
+						<div id="successAlert"
+							 class="alert alert-success alert-dismissible fade show"
+							 >
+							  <strong>Success!</strong> Branch created successfully.
+							  <button
+									  type="button"
+									  class="close"
+									  onclick="{!c.hideBootstrapErrors}"
+									  name="successmsg"
+									  >&times;</button
+								  >
+						</div>                 
+                            </aura:if>
+                            
+                             <aura:if isTrue="{!v.generalEmailError}">
+                                <div
+                                     id="generalEmailErrorAlert"
+                                     class="alert alert-danger alert-dismissible fade show"
+                                     >
+                                    <strong>Error!</strong> Please enter general correspondence email.
+                                    <button
+                                            type="button"
+                                            class="close"
+                                            onclick="{!c.hideBootstrapErrors}"
+                                            name="generalEmail"
+                                            >&times;</button
+                                        >
+                                </div>                 
+                            </aura:if>
+                          
+                            <aura:if isTrue="{!v.branchNameError}">
+                                <div
+                                     id="titleErrorErrorAlert"
+                                     class="alert alert-danger alert-dismissible fade show"
+                                     >
+                                    <strong>Error!</strong> Please enter branch name.
+                                    <button
+                                            type="button"
+                                            class="close"
+                                            onclick="{!c.hideBootstrapErrors}"
+                                            name="branchname"
+                                            >&times;</button
+                                        >
+                                </div>                 
+                            </aura:if>
+                            
+                             <aura:if isTrue="{!v.PhonelengthError}">
+                                 <div
+                                      id="PhonelengthError"
+                                      class="alert alert-danger alert-dismissible fade show"
+                                      >
+                                     <strong>Error!</strong> Enter a valid phone number that starts with '07' and it also must be of 11 digits.
+                                     <button
+                                             type="button"
+                                             class="close"
+                                             onclick="{!c.hideBootstrapErrors}"
+                                             name="Phonelength"
+                                             >&times;</button
+                                         >
+                                 </div>
+                            </aura:if>
+                            
+                             <aura:if isTrue="{!v.altPhonelengthError}">
+                                 <div
+                                      id="altPhonelengthError"
+                                      class="alert alert-danger alert-dismissible fade show"
+                                      >
+                                     <strong>Error!</strong> Enter a valid phone number that starts with '07' and it also must be of 11 digits.
+                                     <button
+                                             type="button"
+                                             class="close"
+                                             onclick="{!c.hideBootstrapErrors}"
+                                             name="altPhonelength"
+                                             >&times;</button
+                                         >
+                                 </div>
+                            </aura:if>
+                            
+                             <aura:if isTrue="{!v.telephoneNumError}">
+                                 <div
+                                      id="titleErrorErrorAlert"
+                                      class="alert alert-danger alert-dismissible fade show"
+                                      >
+                                     <strong>Error!</strong> Please enter telephone number.
+                                     <button
+                                             type="button"
+                                             class="close"
+                                             onclick="{!c.hideBootstrapErrors}"
+                                             name="telephonenumber"
+                                             >&times;</button
+                                         >
+                                 </div>                 
+                            </aura:if>
+                            
+                            <aura:if isTrue="{!v.isAddressValidError}">
+						  <div
+							   id="titleErrorErrorAlert"
+							   class="alert alert-danger alert-dismissible fade show"
+							   >
+							  <strong>Error!</strong> Please enter complete address.
+							  <button
+									  type="button"
+									  class="close"
+									  onclick="{!c.hideBootstrapErrors}"
+									  name="validAddress"
+									  >&times;</button
+								  >
+						  </div>                 
+					  </aura:if>
+                            
+                            <br/> <br/> <br/>
+                            <aura:if isTrue="{!v.showform}">
+                            <section class="deposit_steps space-top">
+                                <div class="deposit_steps_detail">
+                                    <form>
+                                        <div class="form-group row">
+                                            <div class="col-md-6">
+                                                <label for="Branch_name" class="col-form-label">Branch name</label>
+                                                <!--<input type="text" class="form-control" id="Branch_name"/>-->
+                                                <lightning:input aura:id="branch" placeholder="Enter branch name"   value="{!v.branch.Branch_Name__c}" />
+                                            </div>
+                                           <!-- <div class="col-md-6">
+                                                <label for="Branch_ID" class="col-form-label">Branch id <span class="optional">(Optional)</span></label>
+                                                 <lightning:input disabled="true" placeholder="" value="{!v.branch.Branch_ID__c}" />
+                                            </div>-->
+                                        </div>
+                                        <div class="form-group row">
+                                            <!-- <div class="col-md-6">
+                                                <label for="Telephone" class="col-form-label">Telephone number</label>
+                                                <lightning:input placeholder="Enter telephone number" aura:id="telephone"  
+                                                                 value="{!v.branch.Telephone_no__c}" />
+                                            </div>
+                                        --> 
+                                            <div class="col-md-4">
+                                               <label for="Telephone" class="col-form-label">Telephone number</label>
+                                                <select id="selectPhoneCode" class="form-control" value="{!v.branch.Phone_Code__c}">
+                                                    <aura:iteration items="{!v.phoneCodePicklist}" var="itemVar">
+                                                        <option text="{!itemVar}" value="{!itemVar}" selected="{!itemVar==v.branch.Phone_Code__c}"/>
+                                                    </aura:iteration>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4 slds-p-top_x-small">
+                                                <label for="Telephone" class="col-form-label"></label>
+                                                <lightning:input placeholder="Enter telephone number" aura:id="telephone"  
+                                                                 value="{!v.branch.Telephone_no__c}" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-4">
+                                                <label for="Alt_Telephone" class="col-form-label">Alt telephone number&nbsp; <span class="optional">(Optional)</span></label>
+                                                <select id="selectAltPhoneCode" class="form-control" value="{!v.branch.Alt_Phone_Code__c}">
+                                                    <aura:iteration items="{!v.phoneCodePicklist}" var="itemVar">
+                                                        <option text="{!itemVar}" value="{!itemVar}" selected="{!itemVar==v.branch.Alt_Phone_Code__c}"/>
+                                                    </aura:iteration>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4 slds-p-top_x-small">
+                                                <label for="Alt_Telephone" class="col-form-label"></label>
+                                                <!-- <input type="number" class="form-control" id="Alt_Telephone"/>-->
+                                                <lightning:input placeholder="Enter alternate telephone number"  aura:id="alttelephone"  
+                                                                 value="{!v.branch.Alt_telephone_no__c}" />
+                                            </div>
+                                        </div>
+                                        <!--
+                                        <div class="form-group row">
+                                            <div class="col-md-4">
+                                                <label for="Fax" class="col-form-label">Fax &nbsp;<span class="optional">(Optional)</span></label>
+                                               	<input type="text" class="form-control" id="Fax"/>
+                                                <lightning:input placeholder="Enter fax"  value="{!v.branch.Fax__c}" />
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label for="Website" class="col-form-label">Website &nbsp;<span class="optional">(Optional)</span></label>
+                                                <input type="text" class="form-control" id="Website"/>
+                                                 <lightning:input type="text" placeholder="Enter website" value="{!v.branch.Website__c}" />
+                                            </div>
+                                        </div>
+										-->
+                                        <div style="margin-right: -80px!important;" class="form-group row">
+                                            <div class="col-md-6">
+                                                  <c:Register aura:id="compB" method="{!c.parentPress}" />
+                                                
+                                            </div>
+                                        </div>
+                 
+                                    <!--    <div class="form-group row">
+                                            <div class="col-md-6">
+                                                <label for="Address" class="col-form-label">Address</label>
+                                                <lightning:input aura:id="street"   value="{!v.branch.Address__c}" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-6">
+                                                <label for="Postcode" class="col-form-label">Postcode</label>
+                                                <lightning:input aura:id="postcode"    value="{!v.branch.Postcode__c}" />
+                                            </div>
+                                        </div>
+                                       
+                                        <div class="form-group row">
+                                            <div class="col-md-6">
+                                                <label for="Town" class="col-form-label">Town/City</label>
+                                                <lightning:input aura:id="town"   value="{!v.branch.Town_City__c}" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-6">
+                                                <label for="County" class="col-form-label">County</label>
+                                                <lightning:input aura:id="county"  value="{!v.branch.County__c}" />
+                                            </div>
+                                            <div class="col-md-6">
+                                              <label for="Country" class="col-form-label">Country</label>
+                                                 <lightning:input aura:id="country"   value="{!v.branch.Country__c}" />
+                                            </div>
+                                        </div>-->
+                                        <div class="form-group row">
+                                            <div class="col-md-6">
+                                                <label for="correspondence" class="col-form-label">General correspondence email </label>
+                                              <!--  <input type="email" class="form-control" id="correspondence"/>-->
+                                                <lightning:input aura:id="gnrlemail" type="email" placeholder="Enter general correspondence email" 
+                                                                 value="{!v.branch.General_correspondence_e_mail__c}" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-6">
+                                                <label for="resolution" class="col-form-label">Dispute resolution email <span class="optional">(Optional)</span></label>
+                                               <!-- <input type="email" class="form-control" id="resolution"/>-->
+                                                <lightning:input aura:id="dispemail"  placeholder="Enter dispute resolution email"
+                                                                 value="{!v.branch.Dispute_resolution_e_mail__c}" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-6">
+                                                <label for="Finance" class="col-form-label">Finance email <span class="optional">(Optional)</span></label>
+                                                <!--<input type="email" class="form-control" id="Town"/>-->
+                                                <lightning:input aura:id="finemail" placeholder="Enter finance email" 
+                                                                 value="{!v.branch.Finance_e_mail__c}" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-12 text-right">
+                                             <!--   <button type="submit" class="see-all" onclick="{!c.addBranch }">Add</button>-->
+                                                <lightning:button variant="brand" class="see-all" label="Add" title="Brand action" onclick="{! c.addBranch }" />
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </section>
+                            </aura:if>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <aura:handler name='init' value='{!this}' action='{!c.doInit}' />
+
+    <aura:registerEvent name="EI_branchDatatableRefresh" type="c:EI_branchDatatableRefresh" />
+    
+           
+
+
+    <!--<lightning:overlayLibrary aura:id="overlayLib" />
+    <div>
+        <lightning:input aura:id="mandate" label="Branch Name" required="true" value="{!v.branch.Branch_Name__c}" />
+        <lightning:input label="Branch Id" value="{!v.branch.Branch_ID__c}" />
+        <lightning:input type="tel" aura:id="mandate" label="Telephone no." required="true"
+            value="{!v.branch.Telephone_no__c}" />
+        <lightning:input type="tel" label="Alt Telephone no." value="{!v.branch.Alt_telephone_no__c}" />
+        <lightning:input label="Fax" value="{!v.branch.Fax__c}" />
+        <lightning:input type="text" label="Website" value="{!v.branch.Website__c}" />
+
+        <c:addressFinder aura:id="compB" IsEditMode="true" method="{!c.parentPress}" />
+
+
+        <lightning:input aura:id="mandate" label="Postcode" required="true" value="{!v.branch.Postcode__c	}" />
+        <lightning:textarea aura:id="mandate" label="Address" required="true" value="{!v.branch.Address__c}" />
+        <lightning:input aura:id="mandate" label="Town/City" required="true" value="{!v.branch.Town_City__c}" />
+        <lightning:input aura:id="mandate" label="County" value="{!v.branch.County__c}" required="true" />
+
+        <lightning:select aura:id="mandate" value="{!v.branch.Country__c}" name="countryPicklist" label="Country"
+            required="true">
+            <option value="">-None-</option>
+            <aura:iteration items="{!v.countryMap}" var="cnt" indexVar="key">
+                <option text="{!cnt.value}" value="{!cnt.key}" />
+            </aura:iteration>
+        </lightning:select>
+
+        <lightning:input aura:id="gnrlemail" type="email" label="General correspondence e-mail optional"
+            value="{!v.branch.General_correspondence_e_mail__c}" />
+        <lightning:input aura:id="dispemail" type="email" label="Dispute resolution e-mail optional"
+            value="{!v.branch.Dispute_resolution_e_mail__c}" />
+        <lightning:input aura:id="finemail" type="email" label="Finance e-mail optional"
+            value="{!v.branch.Finance_e_mail__c}" />
+
+    </div>
+    <br />
+    <div>
+        <lightning:button variant="brand" label="Add Now" title="Brand action" onclick="{! c.addBranch }" />
+    </div>-->
+
+</aura:component>

@@ -1,0 +1,27 @@
+$copy_right_font: 13;
+
+.copyright_part {
+	border-top: 1px solid map-get($color, light_border);
+	@include flexbox;
+	@include flex_properties(space-between, flex-start, wrap);
+	@include space(padding, top, $s25);
+	@include space(padding, bottom, $s25);
+
+	@include respond-below(sm) {
+		@include space(padding, top, $s15);
+		@include space(padding, bottom, $s15);
+		@include flex_properties(center, flex-start, wrap);
+	}
+
+	p {
+		color: map-get($color, light_blue);
+		@include font_size($copy_right_font);
+		@include space(margin, bottom, $zero);
+
+		&:first-child {
+			@include respond-above(sm) {
+				@include space(padding, right, $s15);
+			}
+		}
+	}
+}

@@ -1,0 +1,50 @@
+.apply-job {
+	
+	.apply-job-wrapper {
+		background-color: map-get($gray_shade, gray06);
+		@include border(1px, solid, map-get($gray_shade, gray03));
+
+		.apply-job-title {
+			@include flexbox();
+			@include flex_properties(space-between, center, wrap);
+			@include space(padding, all, $s25);
+			border-bottom: 1px solid map-get($gray_shade, gray02);
+
+			@include respond-below(sm) {
+				@include space(padding, all, $s15);
+			}
+
+			@media (max-width: 645px) {
+				.learn-more {
+					@include space(margin, top, $s15);
+				}
+			}
+
+			h3 {
+				@include space(margin, bottom, $zero);
+			}
+		}
+
+		.sf-custom-form {
+			max-width: 63rem;
+			margin: 0 auto;
+			@include space(padding, left, $s15);
+			@include space(padding, right, $s15);
+
+			input, textarea, select {
+				background: transparent;
+			}
+
+			input[type="file"] {
+				display: inline-block;
+				width: auto;
+				@include border_radius($s25);
+				@include space(padding, left, $s15);
+			}
+
+			.text-right {
+				@include space(margin, top, $zero);
+			}
+		}
+	}
+}

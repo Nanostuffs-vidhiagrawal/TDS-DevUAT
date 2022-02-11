@@ -1,0 +1,116 @@
+.deposit_calc-section {
+	
+	@include position_fixed(auto, auto, $zero, $zero);
+
+	.calculator-btn {
+		@extend %custom-btn;
+		color: map-get($color, white);
+		text-transform: uppercase;
+		@include border_radius($s15);
+		border-bottom-left-radius: 0;
+		border-bottom-right-radius: 0;
+		@include font_size($above_base);
+		z-index: 99;
+		background-color: map-get($color, ew_blue);
+		@include space(margin, left, $s05);
+
+		&:hover {
+			color: map-get($color, white);
+		}
+	}
+		
+	.Calculator_detail {
+		background-color: map-get($color, ew_blue);
+		max-width: 285px;
+
+		.deposit_info, .deposit_find-more, .calc {
+			@include space(padding, all, $s15);
+		}
+		.deposit_info, .deposit_find-more {
+
+			p {
+				color: map-get($color, white);
+				@include font_size($sm);
+				@include line_height($lg);
+				@include space(padding, top, $zero);
+
+				&:last-child {
+					@include space(margin, bottom, $zero);
+				}
+			}
+
+			a {
+				@include font_size($sm);
+				@include line_height($lg);
+				color: map-get($color, white);
+				text-decoration: underline;
+			}
+		}
+
+		.calc {
+			background-color: map-get($color, blue);
+
+			.form-group {
+				@include space(margin, bottom, $s15);
+
+				&:last-child {
+					@include space(margin, bottom, $zero);
+				}
+			}
+
+			label {
+				color: map-get($color, white);
+				@include font_size($sm);
+				@include line_height($above_base);
+				@include space(margin, bottom, $zero);
+			}
+
+			input {
+				@include font_size($sm);
+				@include line_height($lg);
+				@include space(padding, top, $s15);
+				@include space(padding, bottom, $s15);
+				@include space(padding, left, $s10);
+				@include space(padding, right, $s10);
+				max-width: 125px;
+    			border-radius: 5px;
+    			display: inline-block;
+			}
+
+			.dollar-sign {
+				color: map-get($color, white);
+				@include font_size($xx_lg);
+				@include line_height($lg);
+				@include space(margin, right, 0.2rem);
+				position: relative;
+    			top: 5px;
+    			display: inline;
+
+    			.max_value {
+				    overflow: hidden;
+				    display: inline-block;
+				    position: relative;
+				    top: 2px;
+    			}
+			}
+		}
+
+		.deposit_find-more {
+			text-align: center;
+		}
+	}
+}
+
+.info-right-tab {
+	
+	.deposit_calc-section {
+		position: relative;
+		@include space(margin, top, $s35);
+
+		@include respond-below(sm) {
+			@include space(margin, top, $s15);
+		}
+	}
+	
+}
+

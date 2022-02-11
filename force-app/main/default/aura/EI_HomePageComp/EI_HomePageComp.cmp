@@ -1,0 +1,17 @@
+<aura:component implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" access="global">
+    <lightning:navigation aura:id="navService" />
+
+
+    <!-- Add Deposit -->
+
+    <div class="slds-col slds-size_1-of-4">
+        <lightning:card iconName="utilty:moneybag">
+            <p class="slds-p-horizontal_small">
+                <lightning:button variant="success" label="Add Deposit" title="Add Deposit"
+                    onclick="{! c.AddDeposit }" />
+            </p>
+        </lightning:card>
+    </div>
+
+
+</aura:component>

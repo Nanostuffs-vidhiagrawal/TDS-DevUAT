@@ -1,0 +1,24 @@
+.THIS .wid{
+    max-width: 145px;
+}
+.THIS .opened{
+    background-color: #3B7A57; 
+}
+.THIS .sent{
+    background-color: #8DB600; 
+}
+.THIS .blocked{
+    background-color: #ff0000; 
+}
+.THIS .clicked{
+    background-color: #3B7A57; 
+}
+.THIS .softbounced{
+    background-color: #ff0000; 
+}
+.THIS .unsub{
+    background-color: #FFBF00; 
+}
+.THIS .spam{
+    background-color: #FFBF00; 
+}

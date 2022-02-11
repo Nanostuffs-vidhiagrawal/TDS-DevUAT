@@ -1,0 +1,1108 @@
+<aura:component access="global" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes"
+                    controller="TenantAvailableDeposit">
+        
+        <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+        <aura:attribute name="activeDeposits" type="Boolean" default="false"/>
+        <aura:attribute name="closeAccountPopUp" type="Boolean" default="false"/>
+        <aura:attribute name="tenant" type="Contact" default="{'sObjectType':'Contact'}" />
+        <aura:attribute name="fieldnotEdit" type="Boolean" default="true" />
+        <aura:attribute name="toggle" type="Boolean" default="true" />
+        <aura:attribute name="fieldBankDetailsEdit" type="Boolean" default="true" />
+        <aura:attribute name="toggleBankDetails" type="Boolean" default="true" />
+        <aura:attribute name="fieldInternationalBankDetailsEdit" type="Boolean" default="true" />
+        <aura:attribute name="toggleInternationalBankDetails" type="Boolean" default="true" />
+        <aura:attribute name="marketFieldNotEdit" type="Boolean" default="true" />
+        <aura:attribute name="toggleMarketDetails" type="Boolean" default="true" />
+        <aura:attribute name="authorizedPersonEdit" type="Boolean" default="true" />
+        <aura:attribute name="toggleAuthorizedPersonEdit" type="Boolean" default="true" />
+        <aura:attribute name="passwordChangePopUp" type="Boolean" default="false" />
+        <aura:attribute name="passwordCancelPopUp" type="Boolean" default="false" />
+        <aura:attribute name="MarketingMaterialsOptions" type="Boolean" default="false" />
+        <aura:attribute name="authorizedPerson" type="string"/> 
+        <aura:attribute name="tenantFirstName" type="string"/>
+        <aura:attribute name="tenantLastName" type="string"/>
+        <aura:attribute name="salutationMap" type="Map" />
+   <aura:attribute name="editAddress" type="boolean" default="false" />
+    <aura:attribute name="datesharingtenent" type="string" default=""/>
+    <aura:attribute name="shownomessage" type="Boolean" default="false" />
+
+    <aura:attribute
+    name="orgAdd"
+    type="Map"
+    default="{Country__c:null,Postcode__c:null,Town_City__c:null,County__c:null,Address__c:null}"
+  /> 
+    <aura:attribute name="textareaval" type="string" />
+        <!--Bank Details Variables-->
+        <aura:attribute name="bankName" type="string"  /> 
+        <aura:attribute name="bankAccountName" type="string"  /> 
+        <aura:attribute name="sortCode" type="string"  /> 
+        <aura:attribute name="accountNumber" type="string"  />
+        
+         <!--International Bank Details Variables-->
+        <aura:attribute name="bankIntName" type="string"  /> 
+        <aura:attribute name="bankIntAddress" type="string"  /> 
+        <aura:attribute name="bankIdentificationCode" type="string"  /> 
+        <aura:attribute name="bankSwiftCode" type="string"  />
+        <aura:attribute name="IBAN" type="string"  /> 
+        <aura:attribute name="nameOnAccount" type="string"  />
+    
+     <!-- Address Finder Attributes -->
+    <aura:attribute access="public" name="Address" type="String" />
+    <aura:attribute access="public" name="Street" type="String" />
+    <aura:attribute access="public" name="Town" type="String" />
+    <aura:attribute access="public" name="County" type="String" />
+    <aura:attribute access="public" name="PostCode" type="String" />
+    <aura:attribute access="public" name="Country" type="String" />
+    
+    <!-- BootStrap Errors using Aura:if-->
+    <aura:attribute name="titleError" type="boolean" default="false" />
+    <aura:attribute name="firstNameError" type="boolean" default="false" />
+    <aura:attribute name="SurNameError" type="boolean" default="false" />
+    <aura:attribute name="firstnamechangeerror" type="boolean" default="false" />
+    <aura:attribute name="lastnamechangeerror" type="boolean" default="false" />
+    <aura:attribute name="firstnamemorechangeerror" type="boolean" default="false" />
+    <aura:attribute name="lastnamemorechangeerror" type="boolean" default="false" />
+    <aura:attribute name="mobileError" type="boolean" default="false" />
+    <aura:attribute name="phoneformaterror" type="boolean" default="false" />
+   <aura:attribute name="datasharesuccess" type="boolean" default="false" />
+    <aura:attribute name="marketingprefsuccess" type="boolean" default="false" />
+         <aura:attribute name="authorisedPerson" type="boolean" default="false" />                 
+    
+    <aura:attribute name="addressError" type="Boolean" default="false" />
+    <aura:attribute name="successMsg" type="Boolean" default="false" />
+    
+    <aura:attribute name="sortCodeBlankError" type="Boolean" default="false" />
+    <aura:attribute name="invalidSortCodeError" type="Boolean" default="false" />
+    <aura:attribute name="invalidAccountNumberError" type="Boolean" default="false" />
+    <aura:attribute name="bankSuccessMessage" type="Boolean" default="false" />
+    <aura:attribute name="bankErrorMessage" type="Boolean" default="false" />
+    <aura:attribute name="usernameErrorMessage" type="Boolean" default="false" />
+    
+    <aura:attribute name="intbanknameerror" type="Boolean" default="false" />
+    <aura:attribute name="intbankaccounterror" type="Boolean" default="false" />
+     <aura:attribute name="intbankSuccessMessage" type="Boolean" default="false" />
+    
+    
+     <!-- Bank Detail Errors -->
+  <aura:attribute
+    name="nameOnAccountBlankError"
+    type="Boolean"
+    default="false"
+  />
+  <aura:attribute
+    name="accountNumberBlankError"
+    type="Boolean"
+    default="false"
+  />
+	
+    <aura:attribute name="bankOfAmericaSortCode" type="Boolean" default="false"/>
+    <aura:attribute name="nameOnAccountSpecialCharError" type="Boolean" default="false"/>
+    <aura:attribute name="nameOnIntAccountSpecialCharError" type="Boolean" default="false"/>
+    
+    <aura:attribute name="passwordSuccessMsg" type="Boolean" default="false" />
+    <aura:attribute name="passwordErrorMsg" type="Boolean" default="false" />
+    
+      <!-- Percentage completion HTML End -->
+    <div class="tab-content custom-tab-content" id="sf-tabContent">
+      <div
+        class="tab-pane fade show active"
+        id="sf-setting"
+        role="tabpanel"
+        aria-labelledby="sf-setting-tab"
+      >
+    
+    
+     <div class="secondary-tab-container">
+         
+         
+         <nav class="left-custom-tab">
+             <div class="nav nav-tabs" id="left-nav-tab" role="tablist">
+                 <!--  <a
+                class="nav-link active"
+                id="left_nav-sf-presonal-tab"
+                data-toggle="tab"
+                href="#left_nav-sf-presonal"
+                role="tab"
+                aria-controls="left_nav-sf-presonal"
+                aria-selected="true"
+              >
+                <img
+                  class="initial-state"
+                  src="{!$Resource.TDSTheme + '/assets/img/newspaper_icon.svg'}"
+                  alt=""
+                />
+                Personal Details
+              </a>-->
+                 <a
+                    class="nav-link active"
+                    id="left_nav-sf-organisation-tab"
+                    data-toggle="tab"
+                    href="#left_nav-sf-organisation"
+                    role="tab"
+                    aria-controls="left_nav-sf-organisation"
+                    aria-selected="true"
+                    >
+                     <img
+                          class="initial-state"
+                          src="{!$Resource.TDSTheme + '/assets/img/newspaper_icon.svg'}"
+                          alt=""/>
+                     Personal details
+                 </a>
+                 <ul class="org-detail-list" style="display: block;">
+                     <li class="account-detail"
+                         ><a><span class="arrow-left"></span> Contact details</a></li>
+                     <!--<li class="Correspondence-email"><a><span class="arrow-left"></span> Payment details</a></li>-->
+                     
+                     <li class="payment-details"
+                         ><a onclick="{!c.paymentClick}"><span class="arrow-left" onclick="{!c.paymentClick}"></span> Payment details</a></li
+                         >
+                     <li class="Correspondence-email"
+                         ><a onclick="{!c.corresPondenceClick}"><span class="arrow-left"  onclick="{!c.corresPondenceClick}"></span> Password</a></li
+                         >
+                     <li class="prescribed-info"
+                         ><a onclick="{!c.autorizedpersonclick}"><span class="arrow-left" onclick="{!c.autorizedpersonclick}"></span> Authorised person
+                         </a
+                         ></li
+                         >
+                     <li class="additional-user"><a onclick="{!c.marketingclick}"><span class="arrow-left" onclick="{!c.marketingclick}"></span> Marketing preferences</a></li
+                         >
+                     <li class="account-type"
+                         ><a onclick="{!c.datashareclick}"><span class="arrow-left" onclick="{!c.datashareclick}" ></span> Data sharing</a></li
+                         >
+                    <!-- <aura:if isTrue="{!!v.activeDeposits}">-->
+                         <li class="close-account"
+                             ><a onclick="{!c.closeaccoutclick}"><span class="arrow-left" onclick="{!c.closeaccoutclick}"></span> Close account</a></li
+                             >
+                 <!--    </aura:if>-->
+                 </ul>
+             </div>
+         </nav>
+         
+         
+         <div class="tab-content custom-tab-content" id="sf-tabContent">
+             
+             <!---contact details section start-->
+             <div class="tab-pane fade show active" id="left_nav-sf-presonal" role="tabpanel" aria-labelledby="left_nav-sf-presonal-tab">
+			<aura:if isTrue="{!v.errorMsg}">
+            <div id="personalErrorAlert" class="alert alert-danger alert-dismissible fade show">
+             <!-- <strong>Error!</strong>--> A problem has been occurred while submitting your data.
+              <button type="button" class="close"  onclick="{!c.hideBootstrapErrors}" name="ErrorMessage">&times;</button>
+            </div>
+              </aura:if>
+                <aura:if isTrue="{!v.successMsg}">
+            <div id="personalAlert" class="alert alert-success alert-dismissible fade show">
+             <!-- <strong>Success!</strong>--> Your personal details updated successfully.
+              <button type="button" class="close"  onclick="{!c.hideBootstrapErrors}" name="SuccessMessage">&times;</button>
+            </div>
+              </aura:if> 
+            <aura:if isTrue="{!v.titleError}">
+              <div
+                id="titleErrorErrorAlert"
+                class="alert alert-danger alert-dismissible fade show"
+              >
+               <!-- <strong>Error!</strong>--> Please select the valid title.
+                <button
+                  type="button"
+                  class="close"
+                  onclick="{!c.hideBootstrapErrors}"
+                  name="title"
+                  >&times;</button
+                >
+              </div>
+            </aura:if>
+
+            <aura:if isTrue="{!v.firstNameError}">
+              <div
+                id="firstNameErrorAlert"
+                class="alert alert-danger alert-dismissible fade show"
+              >
+               <!-- <strong>Error!</strong>--> First name is mandatory.
+                <button
+                  type="button"
+                  class="close"
+                  onclick="{!c.hideBootstrapErrors}"
+                  name="firstName"
+                  >&times;</button
+                >
+              </div>
+            </aura:if>
+
+            <aura:if isTrue="{!v.SurNameError}">
+              <div
+                id="SurNameErrorAlert"
+                class="alert alert-danger alert-dismissible fade show"
+              >
+               <!-- <strong>Error!</strong>--> Surname is mandatory.
+                <button
+                  type="button"
+                  class="close"
+                  onclick="{!c.hideBootstrapErrors}"
+                  name="surName"
+                  >&times;</button
+                >
+              </div>
+            </aura:if>
+                
+
+            <aura:if isTrue="{!v.mobileError}">
+              <div
+                id="MobileNumberErrorAlert"
+                class="alert alert-danger alert-dismissible fade show"
+              >
+               <!-- <strong>Error!</strong>--> Telephone number is mandatory.
+                <button
+                  type="button"
+                  class="close"
+                  onclick="{!c.hideBootstrapErrors}"
+                  name="mobileNumber"
+                  >&times;</button
+                >
+              </div>
+            </aura:if>
+               
+                 <aura:if isTrue="{!v.phoneformaterror}">
+              <div
+                id="MobileNumberErrorAlert"
+                class="alert alert-danger alert-dismissible fade show"
+              >
+               <!-- <strong>Error!</strong>-->Enter valid phone number starts with '07' and it must be of 11 digits.
+                <button
+                  type="button"
+                  class="close"
+                  onclick="{!c.hideBootstrapErrors}"
+                  name="phoneformat"
+                  >&times;</button
+                >
+              </div>
+            </aura:if>
+                 <aura:if isTrue="{!v.firstnamechangeerror}">
+              <div
+                id="MobileNumberErrorAlert"
+                class="alert alert-danger alert-dismissible fade show"
+              >
+              <!--  <strong>Error!</strong>-->If you need to change more than 2 characters of your First name, you need to contact the scheme.
+                <button
+                  type="button"
+                  class="close"
+                  onclick="{!c.hideBootstrapErrors}"
+                  name="firstnamechange"
+                  >&times;</button
+                >
+              </div>
+            </aura:if>
+               <aura:if isTrue="{!v.lastnamechangeerror}">
+              <div
+                id="MobileNumberErrorAlert"
+                class="alert alert-danger alert-dismissible fade show"
+              >
+               <!-- <strong>Error!</strong>-->If you need to change more than 2 characters of your surname, you need to contact the scheme.
+                <button
+                  type="button"
+                  class="close"
+                  onclick="{!c.hideBootstrapErrors}"
+                  name="lastnamechange"
+                  >&times;</button
+                >
+              </div>
+            </aura:if>
+              <aura:if isTrue="{!v.firstnamemorechangeerror}">
+              <div
+                id="MobileNumberErrorAlert"
+                class="alert alert-danger alert-dismissible fade show"
+              >
+               <!-- <strong>Error!</strong>-->If you need to change any more of your first name, you need to contact the scheme.
+                <button
+                  type="button"
+                  class="close"
+                  onclick="{!c.hideBootstrapErrors}"
+                  name="firstnamemorechange"
+                  >&times;</button
+                >
+              </div>
+            </aura:if>
+               <aura:if isTrue="{!v.lastnamemorechangeerror}">
+              <div
+                id="MobileNumberErrorAlert"
+                class="alert alert-danger alert-dismissible fade show"
+              >
+              <!--  <strong>Error!</strong>-->If you need to change any more of your last name, you need to contact the scheme.
+                <button
+                  type="button"
+                  class="close"
+                  onclick="{!c.hideBootstrapErrors}"
+                  name="lastnamemorechange"
+                  >&times;</button
+                >
+              </div>
+            </aura:if>
+                  
+               <aura:if isTrue="{!v.addressError}">
+                  <div
+                    id="addressError"
+                    class="alert alert-danger alert-dismissible fade show"
+                  >
+                  <!--  <strong>Error!</strong>--> You must enter address.
+                    <button
+                      type="button"
+                      class="close"
+                      onclick="{!c.hideBootstrapErrors}"
+                      name="addressError"
+                      >&times;</button
+                    >
+                  </div>
+                </aura:if> 
+
+           
+              <h5>Contact details</h5>
+              <form class="sf-custom-form">
+                <div class="form-row">
+                  <div class="form-group col-md-3">
+                    <label for="sf-Title">Title</label>
+                    <select class="form-control" id="tenantTitle">
+                      <option>-- Select Title --</option>
+                      <aura:iteration
+                        items="{!v.salutationMap}"
+                        var="ind"
+                        indexVar="key"
+                      >
+                          
+                        <option
+                          text="{!ind.value}"
+                          value="{!ind.key}"
+                          selected="{!ind.key==v.tenant.Salutation}"
+                        />
+                      </aura:iteration>
+                    </select>
+                  </div>
+                  
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <!--<label for="sf-First">First Name</label>
+                                        <input type="text" class="form-control" id="sf-First" placeholder="Enter First Name"/>-->
+                    <lightning:input
+                      aura:id="tenantFirstName"
+                      label="First name"
+                      value="{!v.tenant.FirstName}"
+                      placeholder="Enter first name"
+                      class="textcolor"
+                    />
+                  </div>
+                  <div class="form-group col-md-6">
+                    <!--<label for="sf-Surname">Surname (Optional)</label>
+                                        <input type="text" class="form-control" id="sf-Surname" placeholder="Enter Surname"/>-->
+                    <lightning:input
+                      aura:id="tenantLastName"
+                      label="Surname"
+                      value="{!v.tenant.LastName}"
+                      placeholder="Enter surname"
+                      class="textcolor"
+                    />
+                  </div>
+                </div>
+               
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <!--<label for="sf-Mobile">Mobile Number</label>
+                                        <input type="number" class="form-control" id="sf-Mobile" placeholder="564656456"/>-->
+                    <lightning:input
+                      aura:id="tenantphone"
+                      label="Telephone number"
+                      value="{!v.tenant.Phone}"
+                      placeholder="Enter telephone number"
+                      class="textcolor"
+                    />
+                  </div>
+                  <div class="form-group col-md-6">
+                     
+                          <aura:if isTrue="{!v.editAddress}">  
+                        <div style="margin-left:12px;margin-top:-10px;">
+                   <c:Register aura:id="compB" method="{!c.parentPress}" />
+                               <lightning:button
+                      class="see-all"
+                      label="Cancel"
+                      title="Cancel"
+                      onclick="{!c.closeEditAdd }"
+                    />
+                            </div>
+                        <aura:set attribute="else">       
+                              
+                           <lightning:textarea disabled="true"
+                            
+                            escape="false"
+                            aura:id="address"
+                            label="Address"
+                            value="{!v.textareaval}"
+                          /> 
+                           <a
+                            href=""
+                            style="font-size: 1.3rem;"
+                            class=""
+                              onclick="{!c.editAdd}"
+                            >Edit address</a> 
+                              </aura:set>
+                        </aura:if>
+                      <!-- <textarea class="form-control" id="sf-Address" value="{!v.orgAcc.add}"></textarea> -->
+                    </div>
+                </div>
+                <!--   <div class="form-row">
+                  <div class="form-group col-md-6">
+                      <lightning:input
+                      aura:id="txtEmail"
+                      type="email"
+                      label="Username"
+                      value="{!v.tenant.Email}"
+                      placeholder="Enter email "
+                      class="textcolor"
+                    />
+                  </div>
+                  </div> -->
+                 
+               
+                <div class="text-right">
+                  <!--<button class="see-all">Save</button>-->
+                  <lightning:button
+                    class="see-all"
+                    label="Save"
+                    title="Save"
+                    onclick="{!c.submitDetails2 }"
+                  />
+                </div>
+              </form>
+            </div>
+              <!---contact details section end-->
+             
+             <!-- Uk payment details section start -->
+             <div class="organization-details" id="payment-details">
+                <h5>UK payment details</h5>
+                  
+                  <aura:if isTrue="{!v.bankSuccessMessage}">
+                    <div
+                      id="bankSuccessMessage"
+                      class="alert alert-success alert-dismissible fade show"
+                    >
+                     <!-- <strong>SUCCESS!</strong>--> Bank account updated successfully.
+                      <button
+                        type="button"
+                        class="close"
+                        onclick="{!c.hideBootstrapErrors}"
+                        name="bankSuccessMessage"
+                        >&times;</button
+                      >
+                    </div>
+                  </aura:if>
+
+                  <aura:if isTrue="{!v.bankErrorMessage}">
+                    <div
+                      id="bankErrorMessage"
+                      class="alert alert-danger alert-dismissible fade show"
+                    >
+                     <!-- <strong>Error!</strong>--> Bank account cannot be updated.
+                      <button
+                        type="button"
+                        class="close"
+                        onclick="{!c.hideBootstrapErrors}"
+                        name="bankErrorMessage"
+                        >&times;</button
+                      >
+                    </div>
+                  </aura:if>
+
+                  
+                   <aura:if isTrue="{!v.nameOnAccountBlankError}">
+                    <div
+                      id="nameOnAccountBlankError"
+                      class="alert alert-danger alert-dismissible fade show"
+                    >
+                    <!--  <strong>Error!</strong>--> Name on account cannot be blank.
+                      <button
+                        type="button"
+                        class="close"
+                        onclick="{!c.hideBootstrapErrors}"
+                        name="nameOnAccountBlankError"
+                        >&times;</button
+                      >
+                    </div>
+                  </aura:if>
+                  <aura:if isTrue="{!v.nameOnAccountSpecialCharError}">
+                    <div
+                      id="nameOnAccountSpecialCharError"
+                      class="alert alert-danger alert-dismissible fade show"
+                    >
+                    <!--  <strong>Error!</strong>--> Name cannot contain special character.
+                      <button
+                        type="button"
+                        class="close"
+                        onclick="{!c.hideBootstrapErrors}"
+                        name="nameOnAccountSpecialCharError"
+                        >&times;</button
+                      >
+                    </div>
+                  </aura:if>
+                  <aura:if isTrue="{!v.accountNumberBlankError}">
+                    <div
+                      id="accountNumberBlankError"
+                      class="alert alert-danger alert-dismissible fade show"
+                    >
+                     <!-- <strong>Error!</strong>--> Account number cannot be blank.
+                      <button
+                        type="button"
+                        class="close"
+                        onclick="{!c.hideBootstrapErrors}"
+                        name="accountNumberBlankError"
+                        >&times;</button
+                      >
+                    </div>
+                  </aura:if>
+                  
+                  <aura:if isTrue="{!v.invalidAccountNumberError}">
+                    <div
+                      id="invalidAccountNumberError"
+                      class="alert alert-danger alert-dismissible fade show"
+                    >
+                    <!--  <strong>Error!</strong>--> This account number is invalid. Please enter valid account number.
+                      <button
+                        type="button"
+                        class="close"
+                        onclick="{!c.hideBootstrapErrors}"
+                        name="invalidAccountNumberError"
+                        >&times;</button
+                      >
+                    </div>
+                  </aura:if>
+                  
+                  <aura:if isTrue="{!v.sortCodeBlankError}">
+                    <div
+                      id="sortCodeBlankError"
+                      class="alert alert-danger alert-dismissible fade show"
+                    >
+                    <!--  <strong>Error!</strong> -->Sort code cannot be blank.
+                      <button
+                        type="button"
+                        class="close"
+                        onclick="{!c.hideBootstrapErrors}"
+                        name="sortCodeBlankError"
+                        >&times;</button
+                      >
+                    </div>
+                  </aura:if>
+                 <aura:if isTrue="{!v.bankOfAmericaSortCode}">
+                    <div
+                      id="bankOfAmericaSortCode"
+                      class="alert alert-danger alert-dismissible fade show"
+                    >
+                     <!-- <strong>Error!</strong>--> We do not support payments to Bank of America.
+                      <button
+                        type="button"
+                        class="close"
+                        onclick="{!c.hideBootstrapErrors}"
+                        name="sortCodeBlankError"
+                        >&times;</button
+                      >
+                    </div>
+                  </aura:if>
+                  
+                  <aura:if isTrue="{!v.invalidSortCodeError}">
+                    <div
+                      id="invalidSortCodeError"
+                      class="alert alert-danger alert-dismissible fade show"
+                    >
+                    <!--  <strong>Error!</strong>--> This sort code is invalid. Please enter valid sort code.
+                      <button
+                        type="button"
+                        class="close"
+                        onclick="{!c.hideBootstrapErrors}"
+                        name="invalidSortCodeError"
+                        >&times;</button
+                      >
+                    </div>
+                  </aura:if>
+                  
+                <form class="sf-custom-form">
+                  <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <span onkeypress="{!c.NumSplCharsCheck}">
+                     <lightning:input aura:id="bankAccountName" class="textcolor" placeholder="Enter account name"  maxlength="64"  label="Name on account" value="{!v.bankAccountName}" title="Name must appear exactly as it does on bank account (e.g. Bob OBrien rather than Bob O’Brien)."/> 
+                        </span>
+                    </div>
+                    <div class="form-group col-md-6">
+                      <lightning:input aura:id="accountNumber" class="textcolor"  minlength="8"  placeholder="Enter account number"   maxlength="8" messageWhenTooShort="You must provide eight numbers."  label="Account number" pattern="[0-9]*"   messageWhenPatternMismatch="You must provide a valid account number."     value="{!v.accountNumber}"/>   
+                      
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group col-md-6">
+                      <lightning:input aura:id="sortCode" class="textcolor"  minlength="6"     maxlength="6" messageWhenTooShort="You must provide six numbers." placeholder="Enter sort code"	     label="Sort code"     pattern="[0-9]*"   messageWhenPatternMismatch="You must provide a valid sort code."     value="{!v.sortCode}"/>   
+                      
+                    </div>
+                    <div class="form-group col-md-6">
+                     <lightning:input aura:id="bankName" disabled="true" label="Bank name" value="{!v.bankName}"/>
+                      
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <!--<button class="see-all" onclick="{!c.updateBankDetails }">Save</button>-->
+                    <lightning:button class="see-all" variant="brand" label="Submit" title="Save"
+                                                              onclick="{!c.updateBankDetails }" />
+                  </div>
+                </form>
+              </div>
+             <!-- Uk payment details section end  -->
+             
+             <!-- international payment details section start  -->
+             <div class="organization-details" id="internationalpayment-details">
+                 <h5>International payment details</h5><br/>
+              <!--   <p>If you provide SafeDeposits Scotland with international payment details, we will assume that you would like any payments that need to be made to you to be made to this bank account. If you would like to be paid to your UK bank account, please remove any international payment details using the form provided.</p> -->
+   <p>Where we have been provided with both UK and International bank account details we will always make payment to the UK account.</p>               
+                  <aura:if isTrue="{!v.intbankSuccessMessage}">
+                    <div
+                      id="interbankSuccessMessage"
+                      class="alert alert-success alert-dismissible fade show"
+                    >
+                    <!--  <strong>SUCCESS!</strong>--> International bank account updated successfully.
+                      <button
+                        type="button"
+                        class="close"
+                        onclick="{!c.hideBootstrapErrors}"
+                        name="intbankSuccess"
+                        >&times;</button
+                      >
+                    </div>
+                  </aura:if>
+
+                  
+
+                  
+                   <aura:if isTrue="{!v.intbanknameerror}">
+                    <div
+                      id="intbanknameerror"
+                      class="alert alert-danger alert-dismissible fade show"
+                    >
+                     <!-- <strong>Error!</strong>--> You must provide bank name.
+                      <button
+                        type="button"
+                        class="close"
+                        onclick="{!c.hideBootstrapErrors}"
+                        name="intbankname"
+                        >&times;</button
+                      >
+                    </div>
+                  </aura:if>
+				  
+                 <aura:if isTrue="{!v.nameOnIntAccountSpecialCharError}">
+                    <div
+                      id="nameOnIntAccountSpecialCharError"
+                      class="alert alert-danger alert-dismissible fade show"
+                    >
+                    <!--  <strong>Error!</strong>--> Name cannot contain special character.
+                      <button
+                        type="button"
+                        class="close"
+                        onclick="{!c.hideBootstrapErrors}"
+                        name="intbankname"
+                        >&times;</button
+                      >
+                    </div>
+                  </aura:if>
+                  <aura:if isTrue="{!v.intbankaccounterror}">
+                    <div
+                      id="intbankaccounterror"
+                      class="alert alert-danger alert-dismissible fade show"
+                    >
+                      <!--<strong>Error!</strong>--> You must provide account name.
+                      <button
+                        type="button"
+                        class="close"
+                        onclick="{!c.hideBootstrapErrors}"
+                        name="intbankaccount"
+                        >&times;</button
+                      >
+                    </div>
+                  </aura:if>
+                  
+                <form class="sf-custom-form">
+                  <div class="form-row">
+                    <div class="form-group col-md-6">
+                         <lightning:input aura:id="bankIntName" class="textcolor" placeholder="Enter bank name" maxlength="64"  label="Bank name"   value="{!v.bankIntName}"/>
+                      
+                    </div>
+                   <!-- <div class="form-group col-md-6">
+                        <lightning:textarea aura:id="bankIntaddress" class="textcolor"   disabled="{!v.fieldInternationalBankDetailsEdit}"  label="Bank address" value="{!v.bankIntAddress}"/> 
+                     
+                    </div>-->
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <lightning:input aura:id="bankIdentificationCode" class="textcolor" placeholder="Enter bank identification code"   label="Bank identification code" value="{!v.bankIdentificationCode}"/>
+                     
+                    </div>
+                    <div class="form-group col-md-6">
+                      <lightning:input aura:id="bankSwiftCode" class="textcolor" placeholder="Enter swift code" label="Swift code"   value="{!v.bankSwiftCode}"/>
+                    </div>
+                  </div>
+                     <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <lightning:input aura:id="IBAN" class="textcolor" placeholder="Enter IBAN"  label="IBAN" value="{!v.IBAN}"/>
+                     
+                    </div>
+                    <div class="form-group col-md-6">
+                      <span onkeypress="{!c.NumSplCharsCheck}">  
+                      <lightning:input aura:id="bankIntAccountName" class="textcolor"  placeholder="Enter account name" label="Name on account"   value="{!v.nameOnAccount}" maxlength="64" title="Name must appear exactly as it does on bank account (e.g. Bob OBrien rather than Bob O’Brien)."/>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <!--<button class="see-all" onclick="{!c.updateBankDetails }">Save</button>-->
+                    <lightning:button class="see-all" variant="brand" label="Submit" title="Save"
+                                                              onclick="{!c.updateInternationalBankDetails }" />
+                  </div>
+                </form>
+              </div>
+              <!-- international payment details section end  -->
+            <!-- <div class="tab-pane fade show active" id="left_nav-sf-presonal" role="tabpanel" aria-labelledby="left_nav-sf-presonal-tab">-->
+               <div class="organization-details" id="Correspondence-email">
+                 <h5>Password</h5><br/>
+                 <aura:if isTrue="{!!v.shownomessage}">
+                 <p>Would you like to change your password?</p>
+                 </aura:if> 
+                  <aura:if isTrue="{!v.shownomessage}">
+                             <p>Thank you.</p>
+                        </aura:if>
+                 <div class="form-group col-md-6">
+                    <!--   <label for="sf-Password" style="margin-bottom:34px"></label> 
+                                        <a style="font-size: 1.3rem;" href="" class="card-title">
+                                      Change Password </a>-->
+
+                    <div class="col-sm-6">
+                      <label
+                        for="sf-Password"
+                        style="margin-bottom:34px"
+                      ></label>
+                        
+                          <aura:if isTrue="{!!v.shownomessage}">
+                        <div class="text-right" style="width: max-content;">
+                      <a
+                        href="#"
+                        data-toggle="modal"
+                        data-target="#newpassword"
+                        class="see-all"
+                        >Yes</a
+                      >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        
+                      <lightning:button
+                    class="see-all"
+                    label="No"
+                    title="No"
+                    onclick="{!c.shownomessage }"
+                  />
+                        </div>
+                        </aura:if>
+                         
+                            
+                      <!--Popup form HTMl start-->
+                      <div
+                        class="custom-model modal fade"
+                        id="newpassword"
+                        data-backdrop="static"
+                        data-keyboard="false"
+                        tabindex="-1"
+                        aria-labelledby="createUser"
+                        aria-hidden="true"
+                      >
+                        <div class="modal-dialog modal-lg">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h3 class="modal-title">Change password</h3>
+                              <button
+                                type="button"
+                                class="close"
+                                data-dismiss="modal"
+                                aria-label="Close"
+                              >
+                                <span  aria-hidden="true">
+                                  <img onclick="{!c.closePopup}"
+                                    src="{!$Resource.TDSTheme + '/assets/img/Cancel-icon.png'}"
+                                    alt=""
+                                  />
+                                </span>
+                              </button>
+                            </div>
+                            <div id="modalwindow" class="modal-body">
+          <aura:if isTrue="{!v.passwordErrorMsg}">
+            <div id="passwordErrorAlert"
+              class="alert alert-danger alert-dismissible fade show">
+              <!-- <strong>Error!</strong>--> {!v.ErrorMessage}
+             
+              <button type="button" class="close"  onclick="{!c.hideBootstrapErrors}"
+                  name="passErrorMessage"
+                >&times;</button
+              >
+            </div>
+              </aura:if>
+            	  <aura:if isTrue="{!v.passwordSuccessMsg}">
+                            <div id="passwordAlert"
+                              class="alert alert-success alert-dismissible fade show">
+                              <!-- <strong>Success!</strong>--> Your password updated
+                                successfully.
+                          
+                              <button type="button" class="close"  onclick="{!c.hideBootstrapErrors}"
+                                  name="passSuccessMessage"
+                                >&times;</button
+                              >
+                            </div>
+                </aura:if>
+
+                              <div class="sf-custom-form">
+                                <p
+                                  >You must adhere to the following password
+                                  rules:</p
+                                >
+                                <h6
+                                  >* Your password must be atleast 8 character
+                                  long.</h6
+                                >
+                                <h6
+                                  >* Your password must include letters and
+                                  number.</h6
+                                ><br></br>
+                                <form>
+                                  <div class="form-row">
+                                    <div class="form-group col-md-4">
+                                      <label for="popup-Address"
+                                        >Current password<span
+                                          class="mandatory-field"
+                                          >*</span
+                                        ></label
+                                      >
+
+                                      <input
+                                        type="password"
+                                        class="form-control"
+                                        id="sf-currentPassword"
+                                        placeholder="********"
+                                      />
+                                    </div>
+
+                                    <div class="form-group col-md-4">
+                                      <label for="popup-landlord"
+                                        >New password</label
+                                      >
+                                      <input
+                                        type="password"
+                                        class="form-control"
+                                        id="sf-NewPassword"
+                                        placeholder="********"
+                                      />
+                                    </div>
+                                    <div class="form-group col-md-4">
+                                      <label for="popup-landlord"
+                                        >Verify new password</label
+                                      >
+                                      <input
+                                        type="password"
+                                        class="form-control"
+                                        id="sf-VerifyPassword"
+                                        placeholder="********"
+                                      />
+                                    </div>
+                                  </div>
+                                  <div class="form-row">
+                                    <div
+                                      class="form-group col-md-12 text-right"
+                                    >
+                                      <a
+                                        data-dismiss="modal"
+                                        aria-label="Close"
+                                        href=""
+                                        class=" close learn-more"
+                                         onclick="{!c.closePopup}"
+                                        >cancel</a>
+                                      <lightning:button
+                                        class="see-all"
+                                        label="Save"
+                                        title="Save"
+                                        onclick="{!c.updatePassword }"
+                                      />
+                                    </div>
+                                  </div>
+                                </form>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!--Popup form HTMl end-->
+                    </div>
+                  </div>
+                  
+              </div> 
+             
+             
+             
+             <div class="organization-details" id="prescribed-info">
+                              <aura:if isTrue="{!v.authorisedPerson}">
+                                            <div id="authorisedPerson" class="alert alert-success alert-dismissible fade show">
+                                              <!--  <strong>Success!</strong>--> Authorised person updated successfully.
+                                                <button type="button" class="close"  onclick="{!c.hideBootstrapErrors}" name="authorisedPerson">&times;</button>
+                                            </div>
+                                        </aura:if>
+                            <h5>Authorised person</h5>
+                            <form class="sf-custom-form">                                
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <p>You may select an individual to discuss any deposit details with SafeDeposits Scotland on your behalf. Enter their name below to confirm this individual's name. SafeDeposits Scotland will not contact them.</p>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                         <lightning:input aura:id="authorizedPerson" label="Name" 
+                                                 disabled="{!v.authorizedPersonEdit}"  value="{!v.tenant.Authorized_Person__c}"/>
+                                    </div>
+                                  <div class="form-group col-md-6 text-right">
+                                    <aura:if isTrue="{!v.toggleAuthorizedPersonEdit}">
+                                        
+                                        <a href="" class="tbl-btn" onclick="{!c.enableAuthorizedPersonEdit }"><img src="{!$Resource.TDSTheme+'/assets/img/feather-edit.svg'}" alt="View Icon"/>Edit</a>
+                                       <!-- <lightning:button variant="brand" class="see-all" label="Edit" title="Edit" onclick="{!c.enableAuthorizedPersonEdit }" />-->
+                                        <aura:set attribute="else">
+                                            <lightning:button class="see-all" variant="brand" label="Submit" title="Save"
+                                                              onclick="{!c.updateAuthorizedPerson }" />
+                                            <lightning:button variant="brand" class="see-all" label="Cancel" title="Cancel" onclick="{!c.cancelAuthorizedPersonEdit }" />
+                                        </aura:set>
+                                        
+                                    </aura:if>
+                                        </div>
+                                </div>
+                            </form>
+                        </div>
+             <!--  <div class="tab-pane fade show active" id="left_nav-sf-presonal" role="tabpanel" aria-labelledby="left_nav-sf-presonal-tab">-->
+                   <div class="organization-details" id="additional-user">
+                            <h5>Marketing preferences</h5>
+                            <form class="sf-custom-form">                                
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <h6>Marketing preferences</h6>
+                                        <aura:if isTrue="{!v.marketingprefsuccess}">
+                                            <div id="personalAlert" class="alert alert-success alert-dismissible fade show">
+                                              <!--  <strong>Success!</strong>--> Marketing Preferences updated successfully.
+                                                <button type="button" class="close"  onclick="{!c.hideBootstrapErrors}" name="successmarketingpref">&times;</button>
+                                            </div>
+                                        </aura:if> 
+                                        <div class="form-check">
+                                          <!--  <input type="checkbox" class="form-check-input" id="exampleCheck2"/>-->
+                                             <input aura:id="market"  checked="{!v.tenant.Marketing_Agreement__c}"  class="form-check-input" type="checkbox" id="gridAgreement" onclick="{!c.MarketingMaterialsFunc }"/>
+                                            <label class="form-check-label" for="exampleCheck2">From time to time, we would like to send you information about offers or initiatives from selected third parties. Note that information will come from us - we will never share your details with them directly. Please let us know here if you would like to receive this.</label>
+                                        </div>
+                                        <aura:if isTrue="{!v.tenant.Marketing_Agreement__c}">
+                                        <div>
+                                       <div class="form-check">
+                                          <!--  <input type="checkbox" class="form-check-input" id="exampleCheck2"/>-->
+                                             <input class="form-check-input" type="checkbox" style="opacity: 0;"/>
+                                             <label class="form-check-label">How can we send you marketing materials?</label>
+                                        </div>    
+                                        <div class="form-check">
+                                           <!-- <input type="checkbox" class="form-check-input" id="exampleCheck1"/>-->
+                                            <input aura:id="checkboxEmail"  checked="{!v.tenant.Email_Opt_in__c}" class="form-check-input" type="checkbox" id="marketingemail" />
+                                          <!--  <ui:inputCheckbox aura:id="checkboxEmail" class="form-check-input" label="Email" value="{!v.tenant.Email_Opt_in__c}"/>-->
+                                            <label class="form-check-label" for="exampleCheck1">Email</label>
+                                        </div>
+                                        <div class="form-check">
+                                           <!-- <input type="checkbox" class="form-check-input" id="exampleCheck2"/>-->
+                                            <input aura:id="checkboxSMS"  checked="{!v.tenant.SMS_opt_in__c}" class="form-check-input" type="checkbox" id="marketingsms" />
+                                          <!--  <ui:inputCheckbox aura:id="checkboxSMS" label="SMS" value="{!v.tenant.SMS_opt_in__c}"/>-->
+                                            <label class="form-check-label" for="exampleCheck2">SMS</label>
+                                        </div>
+                                        <div class="form-check">
+                                         <!--   <input type="checkbox" class="form-check-input" id="exampleCheck3"/>-->
+                                            <input aura:id="checkboxPost"  checked="{!v.tenant.Post_opt_in__c}" class="form-check-input" type="checkbox" id="marketingpost" />
+                                           <!-- <ui:inputCheckbox aura:id="checkboxPost" label="Post" value="{!v.tenant.Post_opt_in__c}"/>-->
+                                            <label class="form-check-label" for="exampleCheck3">Post</label>
+                                        </div>
+                                        </div>
+                                        </aura:if>
+                                    </div>
+                                        
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <h6>Newsletter</h6>
+                                        <div class="form-check">
+                                           <!-- <input type="checkbox" class="form-check-input" id="exampleCheck2"/>-->
+                                            <input aura:id="news" required="true"  checked="{!v.tenant.Newsletter_Subscription__c}"  class="form-check-input" type="checkbox" id="gridSubscription"/>
+                                            <label class="form-check-label" for="exampleCheck2">We would like to send you helpful tips and guides about deposit protection - please subscribe here. You can unsubscribe at any time.</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <!--<button class="see-all">Save</button>-->
+                                    <lightning:button class="see-all" variant="brand" label="Save" title="Save"
+                                                      onclick="{!c.updateMarketDetails }" />
+                                </div>
+                            </form>
+                        </div>
+           <!--  <div class="tab-pane fade show active" id="left_nav-sf-presonal" role="tabpanel" aria-labelledby="left_nav-sf-presonal-tab">-->
+                  <div class="organization-details" id="account-type">
+                      <h5>Data sharing</h5>
+                      <aura:if isTrue="{!v.datasharesuccess}">
+                          <div id="personalAlert" class="alert alert-success alert-dismissible fade show">
+                             <!-- <strong>Success!</strong>--> Data sharing settings updated successfully.
+                              <button type="button" class="close"  onclick="{!c.hideBootstrapErrors}" name="successMessagedatasharing">&times;</button>
+                          </div>
+                      </aura:if> 
+                            <form class="sf-custom-form">                                
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        <p>By default, SafeDeposits Scotland does not share any updated contact details with landlords, letting agents, or joint tenants associated with the deposits listed under your account.</p>
+
+                                        <p>You can change this setting below.</p>
+
+                                        <p>If you choose to share your updated contact details, the landlord or letting agent associated with your deposit will be able to see the contact details that you have provided. They will not be able to edit your contact details. Note that this does not extend to payment details which will only be viewable by you and the SafeDeposits Scotland Finance department when making payment.</p>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                     <aura:if isTrue="{!v.datesharingtenent=='tenantDetailsViewable'}">
+                                        <button type="button" onclick="{!c.updateViewableDetails }" class="agree_btn active">I agree to my contact details being shared with all landlords, letting agents and joint tenants associated with the deposits listed in my account.</button>
+                                         <aura:set attribute="else">
+                                           <button type="button" onclick="{!c.updateViewableDetails }" class="agree_btn">I agree to my contact details being shared with all landlords, letting agents and joint tenants associated with the deposits listed in my account.</button>
+                                         </aura:set>
+                                        </aura:if>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <aura:if isTrue="{!v.datesharingtenent=='tenantDetailsNotViewable'}">
+                                        <button type="button" onclick="{!c.updateNotViewableDetails }" class="agree_btn active">I <strong>do not</strong> agree to my contact details being shared with all landlords, letting agents and joint tenants associated with the deposits listed in my account.</button>
+                                     <aura:set attribute="else">
+                                     <button type="button" onclick="{!c.updateNotViewableDetails }" class="agree_btn ">I <strong>do not</strong> agree to my contact details being shared with all landlords, letting agents and joint tenants associated with the deposits listed in my account.</button>
+                                       </aura:set>
+                                        </aura:if>   
+                                        </div>
+                                </div>
+
+                                <div class="text-right">
+                                      <lightning:button variant="brand" class="see-all" label="Save" onclick="{!c.updateTenantViewableDetails}"/>
+                                </div>
+                            </form>
+                        </div>
+             
+         <!--    <aura:if isTrue="{!!v.activeDeposits}"> -->
+             <!-- <div class="tab-pane fade show active" id="left_nav-sf-presonal" role="tabpanel" aria-labelledby="left_nav-sf-presonal-tab">-->
+                   <div class="organization-details" id="close-account">
+                  <h5>Close account</h5><br/>
+                  <p>Are you sure you want to close your SafeDeposits Scotland account? Doing so will prevent you from accessing information about your deposits.</p>
+                 <div>
+                  <lightning:button variant="brand" class="see-all" label="Close account" onclick="{!c.closeTenantAccount}"/>
+                     </div>
+                        </div>
+         <!--    </aura:if>-->
+         </div>
+          </div>
+        </div>
+    </div>
+    
+    
+    
+    
+   
+        
+    </aura:component>

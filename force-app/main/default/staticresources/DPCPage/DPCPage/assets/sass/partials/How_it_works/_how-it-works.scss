@@ -1,0 +1,186 @@
+.how_it_works {
+    @include space(padding, top, $s75);
+    @include space(padding, bottom, $s75);
+
+    @include respond-below(sm) {
+        @include space(padding, top, $s25);
+        @include space(padding, bottom, $s25);
+    }
+
+    h1 {
+        @include respond-below(sm) {
+            @include font_size($xx_lg);
+            @include line_height($value: 28);
+            @include space(margin, bottom, $s05);
+            @include space(margin, top, $s10);
+        }
+    }
+
+    .col-6 {
+        @include respond-below(xs) {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+    }
+
+    h3, p{
+        text-align: center;
+    }
+
+    .slider-nav {
+        max-width: 92rem;
+        @include space(margin, bottom, $s30);
+        @include space(margin, top, $s40);
+        @include space(margin, right, auto);
+        @include space(margin, left, auto);
+        
+        .slick-slide {
+            @include flexbox();
+            @include flex_properties(center, center);
+            @include position_relative;
+            &::after{
+                width: calc(50% - 5rem);
+                border: 1px dashed map-get($color, light_gray);
+                @include position_absolute(4.6rem, 0, auto, auto);
+                display: block;
+                content: '';
+
+                @include respond-below(sm) {
+                    width: calc(50% - 3.5rem);
+                    @include position_absolute(3rem, 0, auto, auto);
+                }
+            }
+
+            &::before{
+                width: calc(50% - 4.7rem);
+                border: 1px dashed map-get($color, light_gray);
+                @include position_absolute(4.6rem, auto, auto, 1px);
+                display: block;
+                content: '';
+
+                @include respond-below(sm) {
+                    width: calc(50% - 3.5rem);
+                    @include position_absolute(3rem, auto, auto, 1px);
+                }
+            }
+
+            &:nth-of-type(1) {
+                &::before {
+                    display: none;
+                }
+            }
+            
+            &:last-child {
+                &::after {
+                    display: none;
+                }
+            }
+
+            p {
+                width: $full;
+                text-transform: uppercase;
+                font-family: $Aller_Bold;
+            } 
+        }
+
+        .slick-current {
+            p {
+                color: map-get($color, light_blue);
+            }
+        }
+
+        .slick-track {
+            @include respond-above(sm) {
+                transform: translate3d(0px, 0px, 0px) !important;
+            }
+        }
+    }
+
+    .row {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        margin-right: -1.5rem !important;
+        margin-left: -1.5rem !important;
+        @include flex_properties(left, center, wrap);
+
+        .col-6 {
+            &:last-child {
+                @include respond-below(sm) {
+                    //@include space(padding, left, $zero);
+                }
+            }
+        } 
+    }
+
+    .slider-for {
+        h2 {
+            color: map-get($color, light_blue);
+        }
+        p {
+            text-align: left;
+            @include space(margin, bottom, $zero);
+        }
+
+        .row {
+            .col-6:first-of-type{
+                //max-height: 300px;
+                position: relative;
+            }
+        }
+
+        .layout_image {
+            position: relative;
+            .static-frame {
+                height: $full;
+                width: $full;
+                @include position_absolute(0, auto, auto, auto);
+                background-image: url('../img/new_Frame_blue_small.png');
+                background-repeat: no-repeat;
+                background-size: contain;
+            }
+        }
+
+        .circle {
+            @include respond-below(sm) {
+                display: none;
+            }
+        }
+
+    }
+
+    .circle{
+        width: $s90;
+        height: $s90;
+        @include border(1px, dashed, map-get($color, light_gray));
+        @include border_radius($half);
+        @include flexbox();
+        @include flex_properties(center, center);
+        @include font_size($value: 26);
+        color: map-get($color, light_gray);
+        @include space(margin, bottom, $s30);
+
+        @include respond-below(sm) {
+            width: $s60;
+            height: $s60;
+            @include space(margin, bottom, $s15);
+            @include font_size($value: 20);
+        }
+    }
+
+    .slick-current{
+        .circle {
+            background-color: map-get($color, light_blue);
+            color: map-get($color, white);
+            @include border(1px, solid, map-get($color, light_blue));
+        }
+    }
+
+    .slick-slide {
+        outline: 0;
+        img {
+            max-width: $full;
+            width: $full;
+        }
+    }
+}
+

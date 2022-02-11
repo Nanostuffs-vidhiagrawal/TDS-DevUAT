@@ -1,0 +1,94 @@
+<apex:component controller="activationEmail" access="global">
+<apex:attribute type="String" name="recFName" description="test1"/>
+<apex:attribute type="String" name="recId" assignto="{!recordId}" description="test1"/>
+<apex:attribute type="String" name="recLName" description="test1"/>
+<apex:attribute type="String" name="commURL" description="test2"/>
+
+    
+ <style>
+.linkunderline{
+    text-decoration: underline;
+    color: black;
+    font-family:Arial;
+        font-size: 15;
+}
+.GFG {
+            background-color: white;
+            border: 2px solid black;
+            color: green;
+            padding: 5px 10px;
+            text-align: center;
+            display: inline-block;
+            font-size: 20px;
+            margin: 10px 30px;
+            cursor: pointer;
+        }
+.body{
+ 
+    color: black;
+    font-family:Arial;
+    
+}
+</style>
+<html>
+  
+<table  BORDER="0" CELLSPACING="0" style="width:640px;height:800px;">
+
+<table style="width:100%;">
+<tr><td>
+<apex:image url="{!$Label.ZDActivationTemplateImageURL}" />
+</td>
+<td style="float:right;">
+<apex:image url="{!$Label.ZDActivationTemplateImageURL2}" />
+</td></tr>
+</table>
+
+
+
+<br></br><br></br>
+<div class="body">
+Hi {!recFName}, <br></br><br></br>
+We’ve received a claim from your agent/landlord in relation to your tenancy at {!add}. They have claimed <b>£{!totalClaim}</b>.  <br></br> <br></br>
+<b>It’s essential that you <a  href="{!commURL}">now log into your claim portal</a> and view your landlord’s claim</b>. Your response lets us make sure that you only need to pay what you should. <br></br> <br></br>
+The first step is for you to view the claim. You can then decide to agree or disagree with it. You need to do this by <b>{!respondDate}</b>. <br></br> <br></br>
+If you agree the full amount is due, then you will need to pay that amount. If you disagree, then you respond by putting in the values that you feel are correct. Please log in now: <br></br> <br></br>
+<a style="background-color: #f45372;
+    color: #fff;
+    font-size: 1rem;
+    text-transform: initial;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    display: inline-block;
+    outline: 0!important;
+    text-decoration: none!important;
+    text-align: center;
+    width: 220px;
+    border-radius: 3rem;"  href="{!commURL}">Access Your Claim Portal</a>
+
+    
+<br></br> <br></br>
+We are not able to consider a counter claim, because the guarantee only covers your liability. This means if you think that the landlord broke the tenancy agreement you’ll need to take this matter up with them directly. Where you wish to raise a counter claim we will continue with the claim that has been raised against you. <br></br> <br></br>
+The Claims Support Team is here to help you in responding to the claim. We’ll call in the next couple of days to introduce your claim support adviser, explain the process, and ask if we can help. If you want to get in touch or miss our call, then please call on 0333 200 2542, Monday to Friday 09:00-17:30 and Saturday 09:00-14:00. You can view the claim process <a href="app.zerodeposit.com/claim-overview">here</a> and see our <a href="https://app.zerodeposit.com/claim-faq">FAQs</a> and webchat with us <a href="app.zerodeposit.com/contact">here</a>. <br></br> <br></br>
+If we don’t hear from you by <b>{!respondDate}</b>, we’ll ask your landlord for their evidence and won’t have heard your view. From our experience, the tenants who get involved with the process end up owing less than those who don’t. Please review the claim and let us know your view.. <br></br> <br></br>
+If we can help at all, then please get in touch, <br></br> <br></br>
+Best Regards, <br></br>
+Zero Deposit Claims Team
+</div>
+
+</table>
+ <div style="width:640px;color:black;margin-top:10px;background-color: rgb(244, 244, 244);">
+<a class="linkunderline" style="color: black;" href="https://app.zerodeposit.com/claim-help"><b>Need more help?</b></a>
+<br></br><br></br>
+<a class="linkunderline" style="color: black;" href="https://app.zerodeposit.com/claim-faq"><b>FAQs</b></a>
+<br></br><br></br>
+<a class="linkunderline" style="color: black;" href="https://www.zerodeposit.com/privacy"><b>Privacy Policy</b></a>
+
+
+</div> 
+</html>
+
+
+
+</apex:component>

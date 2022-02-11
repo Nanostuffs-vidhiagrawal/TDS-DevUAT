@@ -1,0 +1,26 @@
+$two_card_grid-bg: #F7FBFF;
+
+.about-us {
+	.two_column_layout {
+		&.left_image {
+			@include space(padding, top, $s75);
+			@include space(padding, bottom, $s75);
+
+			@include respond-below(sm) {
+				@include space(padding, top, $s25);
+				@include space(padding, bottom, $s25);
+			}
+		}
+	}
+
+	.two_card_grid {
+		background-color: $two_card_grid-bg;
+		@include space(padding, top, $s75);
+		@include space(padding, bottom, $s75);
+
+		@include respond-below(sm) {
+			@include space(padding, top, $s25);
+			@include space(padding, bottom, $s25);
+		}
+	}
+}

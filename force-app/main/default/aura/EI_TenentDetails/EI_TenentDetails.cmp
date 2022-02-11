@@ -1,0 +1,484 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" 
+                access="global" controller="EI_DepositSummaryApx" >
+     <aura:attribute name="editTenant" type="Boolean" default="true" />
+        <aura:attribute name="fieldnotEdit" type="Boolean" default="true" />
+        <aura:attribute name="toggle" type="Boolean" default="true" />
+        <aura:attribute name="strRecordId" type="String" />
+        <lightning:overlayLibrary aura:id="overlayLib" />
+    
+    	<!--<aura:handler name="init" value="{!this}" action="{!c.doInit}" />-->
+    <aura:attribute name="phoneCodePicklist" type="String[]" />
+	    <aura:attribute name="tenentdetails" type="Account" default="{'sObjectType':'Account'}" />
+     <aura:attribute name="depsumlist" type="List" />
+    
+    <aura:attribute name="salutation" type="String" />
+    <aura:attribute name="salutationMap" type="Map" />
+    <aura:attribute name="userprofilename" type="String" />
+    
+    
+        <!-- BootStrap Errors using Aura:if-->
+      <aura:attribute name="titleError" type="boolean" default="false" />
+      <aura:attribute name="firstNameError" type="boolean" default="false" />
+      <aura:attribute name="surNameError" type="boolean" default="false" />
+      <aura:attribute name="emailError" type="boolean" default="false" />
+      <aura:attribute name="duplicateEmailError" type="boolean" default="false" />
+      <aura:attribute name="personPhonelengthError" type="boolean" default="false" />
+      <aura:attribute name="telephoneNumError" type="boolean" default="false" />
+      <aura:attribute name="personOtherPhonelengthError" type="boolean" default="false" />
+      <aura:attribute name="altertelephoneNumError" type="boolean" default="false" />
+      <aura:attribute name="alteremailError" type="boolean" default="false" />
+      <aura:attribute name="isAddressValidError" type="boolean" default="false" />
+      <aura:attribute name="succeessmessage" type="boolean" default="false" />
+      <aura:attribute name="updatesucceessmessage" type="boolean" default="false" />
+    
+    <div class="table-container">
+							<table class="slds-table slds-table--striped" style="width:100%">
+								<thead>
+									<tr>
+										<th class="headingtext">Name</th>
+										<th class="headingtext">Type</th>
+										<th class="headingtext">Email</th>
+										<th class="headingtext">Contact number</th>
+										<th class="headingtext"></th>
+									</tr>
+								</thead>
+								<tbody style="font-size:1.5rem;">
+								<aura:iteration items="{!v.depsumlist}" var="obj">
+									<aura:if isTrue="{!obj.objDA.Role__c =='Tenant'}">
+                                        <tr>
+                                            <td class="slds-cell-wrap slds-text-align_left textcss">{!obj.objDA.Deposit_Holder__r.Salutation}&nbsp;{!obj.objDA.Deposit_Holder__r.Name}</td>
+                                            <aura:if isTrue="{!!obj.objDA.Is_Lead__c}">
+                                                <td class="slds-cell-wrap slds-text-align_left textcss">Joint Tenant</td>
+                                                <aura:set attribute="else">
+                                                    <td class="slds-cell-wrap slds-text-align_left textcss">Lead Tenant</td>
+                                                </aura:set>
+                                            </aura:if>
+											<td class="slds-cell-wrap slds-text-align_left textcss"> <aura:if isTrue="{!!obj.objDA.Deposit_Holder__r.Tenant_Details_Not_Viewable__pc}">
+												  {!obj.objDA.Deposit_Holder__r.PersonEmail}
+												  <aura:set attribute="else">
+													  This tenant does not consent to sharing their contact details.
+												  </aura:set>
+												</aura:if>
+											</td>
+											<td class="slds-cell-wrap slds-text-align_left textcss"><aura:if isTrue="{!!obj.objDA.Deposit_Holder__r.Tenant_Details_Not_Viewable__pc}">
+												  {!obj.objDA.Deposit_Holder__r.Phone}
+												  <aura:set attribute="else">
+													  This tenant does not consent to sharing their contact details.
+												  </aura:set>
+											  </aura:if>
+											</td>
+                                            
+											<td class="slds-cell-wrap slds-text-align_left textcss">
+													<!--<lightning:button
+													  class="see-all"
+													  label="View/Edit"
+													  value="{!obj.objDA.Deposit_Holder__c}"
+													  onclick="{!c.viewedittenant}"
+													/>-->
+                                                    
+                                                <aura:if isTrue ="{!v.userprofilename !='Tenant'}">
+                                                    <aura:if isTrue="{!obj.objDA.Deposit_Holder__r.Tenant_Details_Not_Viewable__pc!=true}">
+                                                        <aura:if isTrue="{!v.editTenant}">
+                                                            <a href="#" data-toggle="modal" data-target="#createUser18" class="see-all" id="{!obj.objDA.Deposit_Holder__c}" onclick="{!c.getdata}" >View/Edit</a>
+                                                        </aura:if>
+                                                    </aura:if>
+                                                </aura:if> 
+
+                                                </td>
+										</tr>
+									</aura:if>
+								  </aura:iteration>
+								</tbody>
+							</table>
+						</div>
+    
+
+      <!--Popup form HTMl start-->
+                                <div class="custom-model modal fade" id="createUser18" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="createUser18" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h3 class="modal-title">Edit tenant details</h3>
+                                                <button type="button" class="close" data-dismiss="modal" onclick="{!c.cancelRefresh}" aria-label="Close">
+                                                    <span aria-hidden="true"> 
+                                                        <img src="{!$Resource.TDSTheme + '/assets/img/Cancel-icon.png'}" alt=""/>
+                                                    </span>
+                                                </button>
+                                            </div>
+                                            
+                                 <!-- Bootstrap Error messages Start -->
+            
+					<aura:if isTrue="{!v.succeessmessage}">
+						<div id="successAlert"
+							 class="alert alert-success alert-dismissible fade show"
+							 >
+							  <strong>Success!</strong> Tenent details updated successfully.
+							  <button
+									  type="button"
+									  class="close"
+									  onclick="{!c.hideBootstrapErrors}"
+									  name="successmsg"
+									  >&times;</button
+								  >
+						</div>                 
+					</aura:if>
+					
+					<aura:if isTrue="{!v.titleError}">
+						  <div
+							   id="titleErrorErrorAlert"
+							   class="alert alert-danger alert-dismissible fade show"
+							   >
+							  <strong>Error!</strong> Please select the valid title.
+							  <button
+									  type="button"
+									  class="close"
+									  onclick="{!c.hideBootstrapErrors}"
+									  name="title"
+									  >&times;</button
+								  >
+						  </div>                 
+					  </aura:if>
+					  
+					<aura:if isTrue="{!v.firstNameError}">
+							  <div
+								   id="firstNameErrorAlert"
+								   class="alert alert-danger alert-dismissible fade show"
+								   >
+								  <strong>Error!</strong> First name is mandatory.
+								  <button
+										  type="button"
+										  class="close"
+										  onclick="{!c.hideBootstrapErrors}"
+										  name="firstName"
+										  >&times;</button
+									  >
+							  </div>                 
+						  </aura:if>                
+					
+					<aura:if isTrue="{!v.surNameError}">  
+							<div
+							  id="SurNameErrorAlert"
+							  class="alert alert-danger alert-dismissible fade show"
+							>
+							  <strong>Error!</strong> Surname is mandatory.
+							  <button
+								type="button"
+								class="close"
+								onclick="{!c.hideBootstrapErrors}"
+								name="surName"
+								>&times;</button
+							  >
+						</div>
+						</aura:if> 
+					  
+					<aura:if isTrue="{!v.emailError}">  
+						  <div
+							   id="EmailErrorAlert"
+							   class="alert alert-danger alert-dismissible fade show"
+							   >
+							  <strong>Error!</strong> Email is mandatory.
+							  <button type="button" class="close"
+									  onclick="{!c.hideBootstrapErrors}"
+									  name="emailOfUser"
+									  >&times;</button
+								  >
+						  </div>
+					  </aura:if> 	
+                                            
+					<aura:if isTrue="{!v.duplicateEmailError}">  
+                            <div id="duplicateEmailError" class="alert alert-danger alert-dismissible fade show" >
+                                <strong>Error!</strong> Email Address is already in use.
+                                <button type="button" class="close"
+                                        onclick="{!c.hideBootstrapErrors}"
+                                        name="duplicateEmailError"
+                                        >&times;
+                                </button>
+                            </div>
+                    </aura:if>
+                    
+                    <aura:if isTrue="{!v.personPhonelengthError}">
+                          <div 
+                               id="personPhonelengthErrorAlert" 
+                               class="alert alert-danger alert-dismissible fade show"
+                               >
+                             <!-- <strong>Error!</strong> Enter a valid phone number that starts with '07' and it also must be of 11 digits.-->
+                              Enter a valid phone number that starts with '07' and it also must be of 11 digits.
+                              <button type="button" class="close" 
+                                      onclick="{!c.hideBootstrapErrors}" 
+                                      name="phonelength" 
+                                      >&times;</button >
+                          </div> 
+					</aura:if>
+					  
+					<aura:if isTrue="{!v.telephoneNumError}">        
+							<div
+							  id="MobileNumberErrorAlert"
+							  class="alert alert-danger alert-dismissible fade show"
+							>
+							  <strong>Error!</strong> Mobile number is mandatory.
+							  <button type="button" class="close"
+									  onclick="{!c.hideBootstrapErrors}"
+										  name="telephoneNumber"
+								>&times;</button
+							  >
+							</div>
+					  </aura:if>    
+                                            
+						<aura:if isTrue="{!v.personOtherPhonelengthError}">
+                          <div 
+                              id="personOtherPhonelengthErrorAlert" 
+                              class="alert alert-danger alert-dismissible fade show"
+                          >
+                             <!-- <strong>Error!</strong> Please enter atleast 11 digit other phone number or Your entry does not match the allowed pattern.-->
+                              Enter a valid phone number that starts with '07' and it also must be of 11 digits.
+                              <button type="button" class="close" 
+                                  onclick="{!c.hideBootstrapErrors}" 
+                                  name="otherPhonelength" 
+                              >&times;</button >
+                          </div> 
+                    </aura:if>    
+                                            
+					<aura:if isTrue="{!v.altertelephoneNumError}">        
+							<div
+							  id="alterMobileNumberErrorAlert"
+							  class="alert alert-danger alert-dismissible fade show"
+							>
+							  <strong>Error!</strong> Alternate mobile number is mandatory.
+							  <button type="button" class="close"
+									  onclick="{!c.hideBootstrapErrors}"
+										  name="altermobilenumber"
+								>&times;</button
+							  >
+							</div>
+					  </aura:if> 
+                     
+                    <aura:if isTrue="{!v.alteremailError}">  
+						  <div
+							   id="alterEmailErrorAlert"
+							   class="alert alert-danger alert-dismissible fade show"
+							   >
+							  <strong>Error!</strong> Alternate email is mandatory.
+							  <button type="button" class="close"
+									  onclick="{!c.hideBootstrapErrors}"
+									  name="alternateemail"
+									  >&times;</button
+								  >
+						  </div>
+					  </aura:if>                         
+                                            
+					
+					<aura:if isTrue="{!v.isAddressValidError}">  
+						  <div
+							   id="LandlineNumberErrorAlert"
+							   class="alert alert-danger alert-dismissible fade show"
+							   >
+							  <strong>Error!</strong> Please enter complete address.
+							  <button type="button" class="close"
+									  onclick="{!c.hideBootstrapErrors}"
+									  name="validAddress"
+									  >&times;</button
+								  >
+						  </div>
+					  </aura:if>
+					  
+					
+				<!-- Bootstrap Error messages End -->                           
+                                            
+                                            
+                                            
+                                            
+                    
+           <div class="modal-body">
+              <form class="sf-custom-form">
+                <div class="form-row">
+                  <div class="form-group col-md-4">
+                    <label for="sf-popup-Title">Title</label>
+                   <select class="form-control" id="selectedtitle" disabled="{!v.tenentdetails.IsCustomerPortal ==true}">
+                      
+                      <option>-- Select Title --</option>
+                      <aura:iteration
+                        items="{!v.salutationMap}"
+                        var="ind"
+                        indexVar="key"
+                      >
+                        <option
+                          text="{!ind.value}"
+                          value="{!ind.key}"
+                          selected="{!ind.key==v.tenentdetails.Salutation}"
+                        />
+                      </aura:iteration>
+                    </select>   
+                      
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <!--<label for="sf-popup-First">First Name</label>
+										<input type="text" class="form-control" id="sf-popup-First" value="{!v.tenentdetails.FirstName}" placeholder="Enter First Name"/>-->
+                   <lightning:input
+                      aura:id="firstname"
+                      label="First name"
+                      placeholder="Enter first name "
+                      value="{!v.tenentdetails.FirstName}"
+                      maxlength="40"
+                      messageWhenTooLong="Title cannot exceed 40 characters"
+                      minlength="1"
+                      disabled="{!v.tenentdetails.IsCustomerPortal ==true}"              
+                      messageWhenTooShort="Title should have atleast 1 character"
+                    />
+                  </div>
+                  <div class="form-group col-md-6">
+                    <!--<label for="sf-popup-Surname">Surname (Optional)</label>
+										<input type="text" class="form-control" value="{!v.act.LastName}" id="sf-popup-Surname" placeholder="Enter Surname"/>-->
+                    <lightning:input
+                      aura:id="surname"
+                      label="Surname "
+                      placeholder="Enter surname"
+                      value="{!v.tenentdetails.LastName}"
+                      maxlength="80"
+                      messageWhenTooLong="Title cannot exceed 80 characters"
+                      minlength="1"
+                      disabled="{!v.tenentdetails.IsCustomerPortal ==true}"               
+                      messageWhenTooShort="Title should have atleast 1 character"
+                    />
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-12">
+                    <!--<label for="sf-popup-UserName">Email</label>
+										<input type="email" class="form-control" value="{!v.act.PersonEmail}"  id="sf-popup-UserName" placeholder="test.co@gmail.com"/>-->
+                    <lightning:input
+                      aura:id="personemail"
+                      label="Email"
+                      value="{!v.tenentdetails.PersonEmail}"
+                      placeholder="Enter email "
+                      type="email"
+                      disabled="{!v.tenentdetails.IsCustomerPortal ==true}"               
+                      onblur="{!c.handleEmailBlur}"
+                    />
+                  </div>
+                </div>
+                <div class="form-row">
+                  <label class="slds-p-top_small"><b>Mobile number</b></label>
+                    <div class="form-group col-md-4  slds-p-top_large">
+                        <select id="selectPersonPhoneCode" class="form-control" disabled="{!v.tenentdetails.IsCustomerPortal ==true}" >
+                            <aura:iteration items="{!v.phoneCodePicklist}" var="itemVar" >
+                                <option text="{!itemVar}" value="{!itemVar}" selected="{!itemVar==v.tenentdetails.Phone_Code__pc}"/>
+                            </aura:iteration>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-8">
+                      <lightning:input
+                        aura:id="telephone"
+                        type="tel"
+                        placeholder="Enter mobile number"
+                        name="mobile"
+                        label=""
+                        disabled="{!v.tenentdetails.IsCustomerPortal ==true}"                
+                        value="{!v.tenentdetails.Phone}"
+                      />
+                    </div>
+                </div>
+                  
+                <div class="form-row">
+                  <label class="slds-p-top_small"><b>Alternative telephone number</b></label>
+                    <div class="form-group col-md-4  slds-p-top_large">
+                        <select id="selectPersonOtherPhoneCode" class="form-control" disabled="{!v.tenentdetails.IsCustomerPortal ==true}" >
+                            <aura:iteration items="{!v.phoneCodePicklist}" var="itemVar" >
+                                <option text="{!itemVar}" value="{!itemVar}" selected="{!itemVar==v.tenentdetails.Other_Phone_Code__pc}"/>
+                            </aura:iteration>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-8" >
+                      <lightning:input 
+                        aura:id="altertelephone"   
+                        label=""
+                        disabled="{!v.tenentdetails.IsCustomerPortal ==true}"               
+                        placeholder="Enter telephone number"
+                        value="{!v.tenentdetails.PersonOtherPhone}" 
+                      />
+                    </div>
+                  </div>
+                  
+                   <div class="form-row">
+                  <div class="form-group col-md-12">
+                   <lightning:input disabled="{!v.tenentdetails.IsCustomerPortal ==true}" label="Alternative email address" placeholder="Enter email address" type="email"  value="{!v.tenentdetails.Alternative_Email__pc}" aura:id="alteremail"   />
+                  </div>
+                   </div>
+                  <aura:if isTrue="{!v.tenentdetails.IsCustomerPortal ==false}"> 
+                  <div>
+                    <c:addressFinder aura:id="compB" method="{!c.parentPress}" />
+                    <!-- <c:Register1 aura:id="compA" method="{!c.parentPress}" />-->
+                  </div>
+                  </aura:if>    
+                 <div> 
+              <lightning:input disabled="{!v.tenentdetails.IsCustomerPortal ==true}" label="Street address" placeholder="Enter address" value="{!v.tenentdetails.PersonMailingStreet}" aura:id="street"   />
+             <lightning:input disabled="{!v.tenentdetails.IsCustomerPortal ==true}" label="Town" placeholder="Enter town" value="{!v.tenentdetails.PersonMailingCity}" aura:id="town"   />
+             <lightning:input disabled="{!v.tenentdetails.IsCustomerPortal ==true}" label="County" placeholder="Enter county"  value="{!v.tenentdetails.PersonMailingState}" aura:id="county"  />
+             <lightning:input disabled="{!v.tenentdetails.IsCustomerPortal ==true}" label="Country" placeholder="Enter country"  value="{!v.tenentdetails.PersonMailingCountry}" aura:id="country"  />
+             <lightning:input disabled="{!v.tenentdetails.IsCustomerPortal ==true}" label="Postcode" placeholder="Enter postcode" value="{!v.tenentdetails.PersonMailingPostalCode}" aura:id="postcode"   />
+                     </div>
+                  <br/>
+              
+                  <aura:if isTrue="{!v.tenentdetails.IsCustomerPortal ==false}">
+                <div class="text-right">                   
+
+                     <lightning:button class="see-all"  label="Update" title="Update"
+                            onclick="{!c.updatetenantdetails }" /> &nbsp;&nbsp;
+					  <button type="button" class="learn-more" style="text-transform: none;" data-dismiss="modal" onclick="{!c.cancelRefresh}">Cancel</button>
+                </div>
+                </aura:if>
+			
+    
+
+              </form>
+            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Popup form HTMl end    
+        
+       <div class="myCard"  >
+           <lightning:card  >
+             <lightning:select  value="{!v.tenentdetails.Salutation}" name="Salutation" label="Title"
+                           disabled="{!v.fieldnotEdit}">
+            <aura:iteration items="{!v.salutationMap}" var="sm" indexVar="key">
+                <option text="{!sm.value}" value="{!sm.key}" />
+            </aura:iteration>
+        </lightning:select>  
+             <lightning:input label="Firstname" required="true" value="{!v.tenentdetails.FirstName}" aura:id="mandate" disabled="{!v.fieldnotEdit}"  />
+             <lightning:input label="Surname" required="true" value="{!v.tenentdetails.LastName}" aura:id="mandate" disabled="{!v.fieldnotEdit}"  />  
+             <lightning:input label="Mobile Number" required="true" value="{!v.tenentdetails.Phone}" aura:id="mandate" disabled="{!v.fieldnotEdit}" 
+                               minlength="11" maxlength="11" messageWhenTooShort="You must provide 11 numbers."
+                              pattern="[0-9]*" messageWhenPatternMismatch="You must provide a valid mobile number."/> 
+             <lightning:input label="Email address" type="email" required="true" value="{!v.tenentdetails.PersonEmail}" aura:id="mandate" disabled="{!v.fieldnotEdit}"  />   
+             <lightning:input label="Alternative telephone number" required="true" value="{!v.tenentdetails.PersonOtherPhone}" aura:id="mandate" disabled="{!v.fieldnotEdit}"  />
+             <lightning:input label="Alternative email address" type="email" required="true" value="{!v.tenentdetails.Alternative_Email__pc}" aura:id="mandate" disabled="{!v.fieldnotEdit}"  />
+            <aura:if isTrue="{!v.toggle}">
+                <aura:set attribute="else">
+                    <c:addressFinder aura:id="compB" method="{!c.parentPress}" />
+                </aura:set>
+            </aura:if>
+             <lightning:input label="Street Address" required="true" value="{!v.tenentdetails.PersonMailingStreet}" aura:id="mandate" disabled="{!v.fieldnotEdit}"  />
+             <lightning:input label="Town" required="true" value="{!v.tenentdetails.PersonMailingCity}" aura:id="mandate" disabled="{!v.fieldnotEdit}"  />
+             <lightning:input label="County" required="true" value="{!v.tenentdetails.PersonMailingState}" aura:id="mandate" disabled="{!v.fieldnotEdit}"  />
+             <lightning:input label="Country" required="true" value="{!v.tenentdetails.PersonMailingCountry}" aura:id="mandate" disabled="{!v.fieldnotEdit}"  />
+             <lightning:input label="Postcode" required="true" value="{!v.tenentdetails.PersonMailingPostalCode}" aura:id="mandate" disabled="{!v.fieldnotEdit}"  />
+                    <br />
+            <div>
+                <aura:if isTrue="{!v.toggle}">
+                    <lightning:button variant="brand" label="Edit" title="Edit" onclick="{!c.enableEdit }" />
+                    <aura:set attribute="else">
+                        <lightning:button variant="brand" label="Update" title="Save"
+                            onclick="{!c.updatetenantdetails }" />
+                        <lightning:button variant="brand" label="Cancel" title="Cancel" onclick="{!c.cancelEdit }" />
+                    </aura:set>
+                </aura:if>
+            </div>  
+               <br/>
+               <br/>
+           </lightning:card>
+       </div>-->
+
+    
+</aura:component>

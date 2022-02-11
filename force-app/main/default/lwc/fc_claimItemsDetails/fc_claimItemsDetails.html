@@ -1,0 +1,15 @@
+<!-- Fc Claim Items Details -->
+<template>
+        <div class="slds-m-top_large slds-p-around_medium slds-text-heading_medium" style="color: #12185B;">
+            Details of Claim
+        </div>
+        <div class="slds-m-bottom_medium">
+            <lightning-tabset variant={getTabsetVariant}>
+                <template for:each={claimRecord.claimItems} for:item="claimItem">
+                    <lightning-tab label={claimItem.disputeItemType} key={claimItem.id}>
+                        <c-fc_claim-item claim-item={claimItem} allow-edit={allowEdit} ontenant_response_modified={tenantResponseModified} onevidence_attachment_deleted={handleEvidenceAttachmentDeleted}></c-fc_claim-item>
+                    </lightning-tab>
+                </template>
+            </lightning-tabset>
+        </div>
+</template>

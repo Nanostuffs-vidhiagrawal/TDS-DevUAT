@@ -1,0 +1,93 @@
+.support-block {
+    @include border(1px, solid, map-get($gray_shade, gray02));
+    @include space(margin, top, $s40);
+    @include respond-below(sm) {
+        @include space(margin, top, $s20);
+    }
+    &__heading {
+        background-repeat: no-repeat;
+        background-position: top;
+        background-size: cover;
+        &--text {
+            background-color: rgba(69, 124, 191, 0.8);
+            @include space(padding, all, $s30);
+            @include respond-below(sm) {
+                @include space(padding, all, $s15);
+            }
+            h5,
+            p {
+                color: map-get($color, white);
+            }
+            p {
+                @include space(margin, bottom, $zero);
+            }
+        }
+    }
+    &__text {
+        text-align: center;
+        @include space(padding, all, $s30);
+        @include space(padding, left, $s40);
+        @include respond-below(sm) {
+            @include space(padding, all, $s15);
+            @include space(padding, left, $s30);
+        }
+        ul {
+            list-style-image: url('../img/dropright.png');
+            text-align: left;
+            min-height: 12rem;
+        }
+    }
+}
+
+.help_support-section {
+    position: relative;
+    &.enable-absolute {
+        .enable_section_layer {
+            position: absolute;
+        }
+    }
+    .enable_section_layer {
+        width: 100%;
+        height: 100%;
+        left: 0;
+        z-index: 97;
+        top: 0;
+        position: static;
+    }
+    .container {
+        h3,
+        &>p {
+            text-align: center;
+        }
+        .col-md-6 {
+            .disable-section {
+                display: none;
+            }
+        }
+        .enable-row {
+            img {
+                &.disable-section {
+                    cursor: pointer;
+                    @include position_absolute($s45,
+                    $s20);
+                }
+            }
+            .col-md-6 {
+                display: none;
+            }
+        }
+        .col-md-12 {
+            z-index: 98;
+            position: relative;
+            .enable-section {
+                display: none;
+            }
+            .disable-section {
+                display: inline-block;
+            }
+        }
+        div[class^="col-md"] {
+            transition: ease 0.3s;
+        }
+    }
+}

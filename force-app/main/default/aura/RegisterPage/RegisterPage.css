@@ -1,0 +1,129 @@
+.THIS .content{
+      width: 440px;
+      margin-left: -40px;
+    	background-color: white;
+    	padding: 15px;
+    
+    }
+
+    .THIS .fieldWrap{
+    	width: 100%;
+    	clear: both;
+    }
+
+    .THIS .label{
+    	width: 15%;
+    	display: inline-block;
+    }
+
+    .THIS .seperator{
+    	margin-bottom: 15px;
+    	display: none;
+    }
+.THIS .ManualAddress{
+    display: none;
+}
+.THIS .EnterLink{
+  
+    font-family: monospace;
+    float:right;
+    font-size: large;
+}
+    .THIS .outputArea{
+    	display: none;
+    	padding-left: 5px;
+     	font-size: 16px;
+    	font-family: monospace;
+    	color: #1f2d3d;
+    }
+
+    .THIS .searchInput{
+    	width: 70%;
+    	height: 37px;
+    	padding: 5px;
+    	font-size: 18px;
+    	border: 1px solid transparent;
+    	border-bottom: 1px solid #D9D8D7;
+    	background: white;
+    	font-family: monospace;
+    }
+
+    .THIS .searchInput::placeholder{
+    	font-size: 18px;
+    }
+
+    .THIS .searchInput:focus {
+    	border-bottom: 1px solid #12ada6;
+    	outline: 0;
+    }
+
+    .THIS .selectin{
+    	width: 100%;
+      margin-top: 15px;
+    	height: 35px;
+    	padding-left: 5px;
+    	font-size: 18px;
+    	font-family: monospace;
+    	border: 1px solid #D9D8D7;
+    	color: #1f2d3d;
+    }
+
+    .THIS .selectin:focus{
+    	outline: 0;
+    	border: 1px solid #12ada6;
+    }
+    /*
+    select > option:selected {
+    	cursor: pointer;
+    	background: #14C5BD;
+    }
+    */
+
+    .THIS .selectin > option:focus{
+    	background:#14C5BD ;
+    	outline: none;
+    }
+
+    .THIS .btn {
+    	background-color: #14C5BD;
+    	color: white;
+    	width: 100px;
+    	height: 37px;
+    	border: none;
+    	cursor: pointer;
+    	float: right;
+    	font-size: 16px;
+    }
+
+    .THIS .btn:hover{
+    background: #7BDEDA;
+    }
+
+    .THIS .clear{
+    	display: none;
+    	position: relative;
+    	background: #bbb8b8;
+    	width: 20px;
+    	
+    	text-align: center;
+    	border-radius: 20px;
+    	float: right;
+    	padding: 2px;
+    	color: white;
+    	font-size: 14px;
+    	right: 30px;
+    	top: 8px;
+    	line-height: 18px;
+    }
+
+.THIS .clear:hover{
+    	background: #969696;
+    	cursor: pointer;
+    }
+
+.THIS .error{
+	background: #f5b355; 
+	padding: 10px;
+	margin-top: 15px;
+	display: none; 
+}

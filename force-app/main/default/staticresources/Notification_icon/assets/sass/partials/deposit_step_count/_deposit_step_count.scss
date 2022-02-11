@@ -1,0 +1,360 @@
+.deposit_steps {
+
+    h3, p{
+        text-align: center;
+    }
+
+    .deposit_steps_count {
+        max-width: 83rem;
+        @include space(margin, bottom, $s40);
+        @include space(margin, top, $s40);
+        @include space(margin, right, auto);
+        @include space(margin, left, auto);
+        display: flex;
+        justify-content: space-between;
+
+        .state-indicator {
+
+            position: relative;
+            width: 25%;
+
+            .circle{
+                width: $s70;
+                height: $s70;
+                @include border(1px, dashed, map-get($color, light_gray));
+                @include border_radius($half);
+                @include flexbox();
+                @include flex_properties(center, center);
+                @include font_size($value: 22);
+                color: map-get($color, light_gray);
+                margin: 0 auto;
+                @include space(margin, bottom, $s15);
+
+                @include respond-below(sm) {
+                    width: $s60;
+                    height: $s60;
+                    @include font_size($value: 18);
+                }
+            }
+
+            &.active {
+                .circle {
+                    background-color: map-get($color, light_blue);
+                    color: map-get($color, white);
+                    @include border(1px, solid, map-get($color, light_blue));
+                }
+
+                p {
+                    color: map-get($color, light_blue);
+                }
+            }
+
+            &::after{
+                width: calc(50% - 3.5rem);
+                border: 1px dashed map-get($color, light_gray);
+                @include position_absolute(3.5rem, 0, auto, auto);
+                display: block;
+                content: '';
+
+                @include respond-below(sm) {
+                    width: calc(50% - 3.5rem);
+                    @include position_absolute(3rem, 0, auto, auto);
+                }
+            }
+
+            &::before{
+                width: calc(50% - 3.5rem);
+                border: 1px dashed map-get($color, light_gray);
+                @include position_absolute(3.5rem, auto, auto, 1px);
+                display: block;
+                content: '';
+
+                @include respond-below(sm) {
+                    width: calc(50% - 3.5rem);
+                    @include position_absolute(3rem, auto, auto, 1px);
+                }
+            }
+
+            &:nth-of-type(1) {
+                &::before {
+                    display: none;
+                }
+            }
+
+            &:last-child {
+                &::after {
+                    display: none;
+                }
+            }
+
+        }
+
+        .slick-list {
+            padding: 0 !important;
+
+            @include respond-above(sm) {
+                .slick-track {
+                    width: 100% !important;
+                }
+            }
+        }
+        
+        .slick-slide {
+            @include flexbox();
+            @include flex_properties(center, center);
+            @include position_relative;
+
+            @include respond-above(sm) {
+                width: 24% !important;
+            }
+            
+            &::after{
+                width: calc(50% - 3.5rem);
+                border: 1px dashed map-get($color, light_gray);
+                @include position_absolute(3.5rem, 0, auto, auto);
+                display: block;
+                content: '';
+
+                @include respond-below(sm) {
+                    width: calc(50% - 3.5rem);
+                    @include position_absolute(3rem, 0, auto, auto);
+                }
+            }
+
+            &::before{
+                width: calc(50% - 3.5rem);
+                border: 1px dashed map-get($color, light_gray);
+                @include position_absolute(3.5rem, auto, auto, 1px);
+                display: block;
+                content: '';
+
+                @include respond-below(sm) {
+                    width: calc(50% - 3.5rem);
+                    @include position_absolute(3rem, auto, auto, 1px);
+                }
+            }
+
+            &:nth-of-type(1) {
+                &::before {
+                    display: none;
+                }
+            }
+            
+            &:last-child {
+                &::after {
+                    display: none;
+                }
+            }
+
+            p {
+                width: $full;
+                font-family: $Aller_Bold;
+            } 
+        }
+
+        .slick-current {
+            p {
+                color: map-get($color, light_blue);
+            }
+        }
+
+        .slick-track {
+            @include respond-above(sm) {
+                transform: translate3d(0px, 0px, 0px) !important;
+            }
+        }
+    }
+
+    &.tenant_cover_step {
+        .deposit_steps_count {
+            .state-indicator {
+                width: 33.3%;
+            }
+        }
+    }
+    
+
+    .deposit_steps_detail {
+        h2 {
+            color: map-get($color, light_blue);
+        }
+        p {
+            text-align: left;
+            @include space(margin, bottom, $zero);
+        }
+
+        .property_yes, .property_no {
+            display: none;
+        }
+
+        .form-group {
+
+            @include space(margin, bottom, $s30);
+
+            @include respond-below(sm) {
+                @include space(margin, bottom, $s15);
+            }
+
+            label {
+                font-family: $Aller_Bold;
+                @include font_size($base);
+            }
+
+            input, select {
+                @include border(1px, solid, map-get($gray_shade, gray03));
+                background-color: transparent;
+                @include font_size($below_base);
+                opacity: 0.6;
+                height: auto;
+                @include space(padding, left, 1.2rem);
+                @include space(padding, right, 1.2rem);
+                @include space(padding, top, $s10);
+                @include space(padding, bottom, $s10);
+
+                &:focus {
+                    opacity: 1;
+                }
+
+                & ~ .learn-more {
+                    @include space(margin, top, $s25);
+                }
+            }
+
+            p {
+                @include space(margin, bottom, $s10);
+            }
+
+            select {
+                @include space(padding, left, 0.7rem);
+            }
+
+            .alert-warning {
+                background-color: rgba(216, 117, 18, 0.17);
+                color: map-get($color, light-black);
+                border-left: 5px solid map-get($color, light_orange);
+                @include space(padding, all, $s15);
+                @include space(padding, left, $s10);
+                @include flexbox();
+                align-items: baseline;
+
+                img {
+                    @include space(margin, right, $s05);
+                }
+
+                strong {
+                    color: map-get($color, orange);
+                    @include font_size($above_base);
+                    display: block;
+                }
+            }
+        }
+
+        .learn-more {
+            min-width: 35%;
+            text-transform: initial;
+            cursor: pointer;
+            @include border(1px, solid, map-get($gray_shade, gray03));
+
+            &:first-child {
+                @include space(margin, right, $s20);
+            }
+
+            &:hover {
+                @include border(1px, solid, map-get($color, blue));
+            }
+
+            &.active {
+                @include border(1px, solid, map-get($color, blue));
+            }
+
+            img {
+                display: inline-block;
+            }
+        }
+
+        .row {
+            .col-6:first-of-type{
+                //max-height: 300px;
+                position: relative;
+            }
+        }
+
+        .layout_image {
+            position: relative;
+            .static-frame {
+                height: $full;
+                width: $full;
+                @include position_absolute(0, auto, auto, auto);
+                background-image: url('../img/new_Frame_blue_small.png');
+                background-repeat: no-repeat;
+                background-size: contain;
+            }
+        }
+
+        .circle {
+            @include respond-below(sm) {
+                display: none;
+            }
+        }
+
+    }
+
+
+
+    .slick-current{
+        .circle {
+            background-color: map-get($color, light_blue);
+            color: map-get($color, white);
+            @include border(1px, solid, map-get($color, light_blue));
+        }
+    }
+
+    .slick-slide {
+        outline: 0;
+        img {
+            max-width: $full;
+        }
+    }
+} 
+
+.deposit-agent {
+
+    @include space(padding, top, $s25);
+
+    @include respond-below(sm) {
+        @include space(padding, top, $s15);
+    }
+
+    .info-right-tab {
+        background-color: map-get($gray_shade, gray06);
+        border-top: 4px solid map-get($color, blue);
+        @include space(margin, top, $s25);
+
+        p {
+            @include font_size($below_base);
+            @include space(padding, top, $s25);
+
+            @include respond-below(sm) {
+                @include space(padding, top, $s15);
+            }
+        }
+    }
+}
+
+.manual_entery {
+    color: map-get($color, blue);
+    @include font_size($below_base);
+    text-decoration: underline;
+    display: block;
+    text-align: right;
+    @include space(margin, top, $s05);
+    cursor: pointer;
+}
+
+.optional {
+    color: map-get($gray_shade, gray01);
+    @include font_size($x_sm);
+    position: relative;
+    top: -0.4rem;
+}
+

@@ -1,0 +1,8 @@
+.slds-notify.slds-notify_alert{
+    background-color: #FCEBF1;
+    margin-bottom: 0.5rem;
+}
+
+.slds-notify.slds-notify_alert div p{
+    color: rgb(43, 40, 38); font-size: 0.8125rem;
+}

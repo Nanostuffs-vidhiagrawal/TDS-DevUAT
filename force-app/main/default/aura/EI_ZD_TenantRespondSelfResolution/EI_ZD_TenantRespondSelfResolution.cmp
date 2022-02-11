@@ -1,0 +1,865 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global"
+                controller="EI_ZD_TenantRespondToClaim">
+    <aura:attribute name="ClaimsDetails" type="list" />
+    <aura:attribute name="ClaimsDetailsOldValues" type="list" />
+    <aura:attribute name="adjustToClaim" type="Boolean" default="false" />
+    <aura:attribute name="viewClaim" type="Boolean" default="true" />
+    <aura:attribute name="tenantSelectOption" type="string" default=""/>
+    <aura:attribute name="totalTenantAmount" type="decimal" default="0"/>
+    <aura:attribute name="totalAGLLAmount" type="decimal" default="0"/>
+    <aura:attribute name="DisputeItems" type="list" />
+    <aura:attribute name="leadTenantName" type="string" default="Lead"/>
+    <aura:attribute name="madeOffer" type="Boolean" default="false" />
+    <aura:attribute name="counterOffer" type="Boolean" default="false" />
+    <aura:attribute name="madeNewOffer" type="Boolean" default="false" />
+    <aura:attribute name="newOfferValue" type="decimal" default="0"/>
+    <aura:attribute name="sliderValue" default="0" type="Integer"/>
+    <aura:attribute name="isLead" type="boolean" default="false"/>
+    <aura:attribute name="ViewContinue" type="Boolean" default="false" />
+    <aura:attribute name="showConfirmMessage" type="Boolean" default="false" />
+    <aura:attribute name="SelectedOption" type="string" default="-- Please select --"/>
+    <aura:attribute name="showConfirmDiv" type="Boolean" default="false" />
+    <aura:attribute name="enableSubmitAdjustmentBtn" type="boolean"  default="false"/>
+    <aura:attribute name="showError" type="string" default=""/>
+    <aura:attribute name="errorMessage" type="string" default=""/>
+    <aura:attribute name="isNotAgreedBtnClicked" type="boolean"  default="false"/>
+    <aura:attribute name="disputOldRecMap" type="map" default="" />
+    <aura:attribute name="notReachAgreementThanks" type="Boolean" default="false" />
+    <aura:attribute name="SubmitThanks" type="boolean"  default="false"/>
+    <aura:attribute name="LeadTenantUrl" type="string"  default=""/>
+    
+     <aura:attribute name="disabled" type="boolean"  default=""/>
+    <!-- ZP-21 -->
+        <aura:attribute name="isNotJT" type="Boolean" default="true"/>
+	<div id="scrollView"/>
+    <aura:if isTrue="{!v.viewClaim}">
+        <div class="tab-content custom-tab-content" id="sf-tabContent">
+                <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+                    <!-- Resolution Section HTML Start -->
+                    <section class="resolution_section">
+                        <div class="container">
+                            <div>
+                                <aura:if isTrue="{!v.isLead}">
+                                    <lightning:button variant="brand" label="Continue claim journey" title="Continue claim journey"
+                                                      onclick="{!c.showContinue }" class="see-all"/>
+                                    <aura:set attribute="else">
+                                        <lightning:button variant="brand" label="View claim" title="View claim"
+                                                          onclick="{!c.viewClaim }" disabled="{!v.isLead}" class="see-all"/>
+                                    </aura:set>
+                                </aura:if>
+                            </div>
+                            <img src="{!$Resource.EI_ZD_Assets  + '/img/resolution.png'}" alt="Resolution" />
+                        </div>
+                    </section>
+                    <!-- Resolution Section HTML End -->
+                    <div class="deposit-agent">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-9">
+                                    <!-- Table HTML Start -->
+                                    <div class="table-container no_navigation ZD_custom_table">
+                                        <table class="display scrollbar" style="width:100%">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Address</td>
+                                                    <td>{!v.ClaimsDetails[0].Deposit_Account_Number__r.Property_Address__c}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Claim status</td>
+                                                    <td>{!v.ClaimsDetails[0].Status}</td>
+                                                </tr>
+                                                
+                                                <tr>
+                                                    <td>Tenancy start date</td>
+                                                    <td> <ui:outputDate value="{!v.ClaimsDetails[0].Deposit_Account_Number__r.Start_Date__c}" format="dd/MM/yyyy"></ui:outputDate></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Claim number</td>
+                                                    <td>{!v.ClaimsDetails[0].External_ID__c}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- Table HTML End -->
+                                    
+                                    <!-- Table HTML Start -->
+                                    <div class="table-container no_navigation no_space">
+                                        <table id="example-2" class="display scrollbar dataTable no-footer" style="width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Type</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <aura:iteration var="caseParticpnt" items="{!v.ClaimsDetails[0].Case_Participants__r}" indexVar="i">
+                                                    <aura:if isTrue="{!caseParticpnt.Type__c =='Tenant'}">
+                                                        
+                                                        <aura:if isTrue="{!(i+1)%2 == 0}">
+                                                            <tr class="even">
+                                                                <td> {!caseParticpnt.Contact__r.Name} </td>
+                                                                <aura:if isTrue="{!caseParticpnt.Is_Lead__c}">
+                                                                    <td> Lead tenant </td>
+                                                                    <aura:set attribute="else">
+                                                                        <td> Joint tenant </td>
+                                                                    </aura:set>
+                                                                </aura:if>
+                                                                
+                                                                <!-- <td> {!caseParticpnt.Type__c}  </td> -->
+                                                            </tr>
+                                                        </aura:if>
+                                                        <aura:if isTrue="{!(i+1)%2 != 0}">
+                                                            <tr class="odd">
+                                                                <td> {!caseParticpnt.Contact__r.Name} </td>
+                                                                <aura:if isTrue="{!caseParticpnt.Is_Lead__c}">
+                                                                    <td> Lead tenant </td>
+                                                                    <aura:set attribute="else">
+                                                                        <td> Joint tenant </td>
+                                                                    </aura:set>
+                                                                </aura:if>
+                                                                <!-- <td> {!caseParticpnt.Type__c}  </td> -->
+                                                            </tr>
+                                                        </aura:if>
+                                                    </aura:if>
+                                                </aura:iteration>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- Table HTML End -->
+                                </div>
+                                <aura:if isTrue="{!v.isLead}">
+                                    <div class="col-md-3 info-right-tab">
+                                        <p>This page provides a summary of the claim, including where the claim is in the process.</p>
+                                        
+                                        <p>Select "Continue claim journey" to take the next step in determining the claim outcome.</p>
+                                        
+                                        <p>For your information, we have listed the lead tenant. While communications go to all tenants, the lead tenant makes decisions on behalf of all tenants on how to proceed.</p>
+                                    </div>
+                                    <aura:set attribute="else">
+                                        <div class="col-md-3 info-right-tab">
+                                            <p>This is the information provided by the agent or landlord about their claim.  As a joint tenant, you are able to view this information but you cannot make a submission.  It is the responsibility of the lead tenant to provide a response on behalf of all tenants by <ui:outputDate value="{!v.ClaimsDetails[0].Respond_Date__c}" format="dd/MM/yyyy"></ui:outputDate>. The lead tenant is {!v.leadTenantName}.</p>
+                                        </div>
+                                    </aura:set>
+                                    
+                                </aura:if>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        
+        
+        
+        
+        
+        
+        
+        
+       <!-- <div>Agent/landlord's claim</div><br/>
+        <div>Total level of cover</div>
+        <div>{!v.ClaimsDetails[0].Total_Deposit__c	}</div><br/>
+        <div>You have until {!v.ClaimsDetails[0].Respond_Date__c}  to respond to the agent/landlord's claim</div><br/>
+        
+        <div style="width:100%;float:left;">
+            <div style="width:30%;float:left;font-weight: bold;">Type</div>
+            <div style="width:30%;float:left;font-weight: bold;">Agent/Landlord Request</div>
+            <div style="width:30%;float:left;font-weight: bold;">Tenant(s) Response</div>
+        </div> 
+        <aura:iteration var="desptItems" items="{!v.ClaimsDetails[0].Dispute_Items__r}">
+            <div style="width:100%;float:left;">
+                <div style="width:30%;float:left;">{!desptItems.Type__c}</div>
+                <div style="width:30%;float:left;">{!desptItems.Claimed_by_Landlord__c}</div>
+                <div style="width:30%;float:left;">{!desptItems.Agreed_by_Tenant__c}</div>
+            </div> 
+        </aura:iteration>
+        
+        <br/><br/>
+        <div>Please select one of the following options</div><br/>
+        <select  id="selectIam" class="form-control" name="TenantOptions"
+                required="true"  onchange="{!c.handleSelectedvalue}">
+            <option >I agree with the agent/landlord's claim</option>
+            <option >I disagree to some/all of the agent/landlord's claim</option>
+            <aura:if isTrue="{!v.ClaimsDetails[0].AGLL_made_Offer__c}">
+                <option >View and respond to offer</option>
+            </aura:if>
+        </select>
+        <div></div><br/>
+        <lightning:button  variant="brand" label="Submit" onclick="{!c.doSubmit}" /> <br/> -->
+    </aura:if>
+    
+    <aura:if isTrue="{!v.ViewContinue}">
+            <div class="tab-content custom-tab-content" id="sf-tabContent">
+                
+                <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+                    <section class="resolution_section">
+                        <div class="container">
+                            <div>
+                                <!-- <a href="" class="go-back" onclick="{!c.goToCliamSummary}"><img  src="{!$Resource.EI_ZD_Assets  + '/img/zd-arrow-dropleft.png'}" alt="Back Icon"/> Go Back</a> -->
+                                <lightning:button onclick="{!c.goToCliamSummary}" aura:id="div0" class="go-back"><img  src="{!$Resource.EI_ZD_Assets  + '/img/zd-arrow-dropleft.png'}" alt="Back Icon"/> Go back</lightning:button>
+                            </div>
+                            <img src="{!$Resource.EI_ZD_Assets  + '/img/resolution.png'}" alt="Resolution" />
+                        </div>
+                    </section>
+                    
+                    <div class="deposit-agent">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-9">
+                                    <section class="deposit_steps">
+                                        <div class="deposit_steps_detail">
+                                            <div class="claim-summary_gray-panel">
+                                                <h5>Claim summary</h5>
+                                                <div class="row">
+                                                    <div class="col-lg-6 col-sm-9">
+                                                        <p>Amount requested by landlord</p>
+                                                    </div>
+                                                    <div class="col-lg-6 col-sm-3">
+                                                        <p><lightning:formattedNumber value="{!v.ClaimsDetails[0].Total_Agreed_by_AG_LL__c}" style="currency"  minimumFractionDigits="2" maximumFractionDigits="2"/></p>
+                                                    </div>
+                                                </div>
+                                                <div class="row my-4">
+                                                    <div class="col-lg-6 col-sm-9">
+                                                        <p class="text-right">- of which is agreed by you</p>
+                                                    </div>
+                                                    <div class="col-lg-6 col-sm-3">
+                                                        <p>(<lightning:formattedNumber value="{!v.ClaimsDetails[0].Total_Agreed_by_Tenant__c}" style="currency"  minimumFractionDigits="2" maximumFractionDigits="2"/>)</p>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-6 col-sm-9">
+                                                        <p><b>Unresolved amount</b></p>
+                                                    </div>
+                                                    <div class="col-lg-6 col-sm-3">
+                                                        <p><b><lightning:formattedNumber value="{!v.ClaimsDetails[0].Total_Agreed_by_AG_LL__c - v.ClaimsDetails[0].Total_Agreed_by_Tenant__c}" style="currency"  minimumFractionDigits="2" maximumFractionDigits="2"/></b></p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <aura:if isTrue="{!v.isLead}">
+                                                <h6>You have until <ui:outputDate value="{!v.ClaimsDetails[0].Respond_Date__c}" format="dd/MM/yyyy"></ui:outputDate> to try to reach a resolution. Please indicate how you wish to proceed below.</h6>
+                                                <aura:set attribute="else">
+                                                    <h6>You have until <ui:outputDate value="{!v.ClaimsDetails[0].Respond_Date__c}" format="dd/MM/yyyy"></ui:outputDate> to try to reach a resolution. If you are the lead tenant please indicate how you wish to proceed below, otherwise please contact Zero Deposit on 0333 200 2542 or claims@zerodeposit.com</h6>
+                                                </aura:set>
+                                            </aura:if>
+                                            <div class="row">
+                                                <div class="col-lg-8 col-md-12">
+                                                    <div class="agree-container">
+                                                        <div class="agree-detail" style="display: block;">
+                                                            <div class="form-group row">
+                                                                <div class="col-sm-6">
+                                                                    <div class="request-section">
+                                                                        <label>Requested by landlord</label>
+                                                                        <aura:iteration var="desptItems" items="{!v.ClaimsDetails[0].Dispute_Items__r}">
+                                                                            
+                                                                            <aura:if isTrue="{!desptItems.Type__c=='Other'}">
+                                                                                
+                                                                                <div class="form-group">
+                                                                                    <label for="Others" class=" col-form-label">{!desptItems.Type__c}</label>
+                                                                                    <textarea rows="3" class="form-control" style="overflow: hidden;" disabled="true" id="Others">{!'£'+desptItems.Agreed_by_AGLL__c}&nbsp;
+                                                                                        {!desptItems.Other_Reason__c}</textarea>
+                                                                                </div>
+                                                                                
+                                                                                <aura:set attribute="else">
+                                                                                    
+                                                                                    <div class="form-group">
+                                                                                        <label for="Cleaning" class=" col-form-label">{!desptItems.Type__c}</label>
+                                                                                        <input type="number" class="form-control" disabled="true" id="Cleaning" placeholder="{!'£'+desptItems.Agreed_by_AGLL__c}"/>
+                                                                                    </div>
+                                                                                </aura:set>
+                                                                            </aura:if>
+                                                                        </aura:iteration>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-6">
+                                                                    <div class="response-section">
+                                                                        <label>Previously agreed by you</label>
+                                                                        <aura:iteration var="desptItems" items="{!v.ClaimsDetails[0].Dispute_Items__r}">
+                                                                            <div class="form-group">
+                                                                                <label class="col-form-label">{!desptItems.Type__c}</label>
+                                                                                <input type="number" disabled="true" class="form-control" placeholder="{!'£'+desptItems.Agreed_by_Tenant__c}"/>
+                                                                            </div>
+                                                                        </aura:iteration>
+                                                                    </div>
+                                                                </div>
+                                                                
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!--     will update in Zp21-->
+                                           
+                                            <aura:if isTrue="{!v.isNotJT}">
+                                                <div class="row">
+                                                    <div class="col-lg-11 col-md-12">
+                                                        <div class="list_of_btns">
+                                                            
+                                                            <button type="button" id="agreed" onclick="{!c.handleSelectedvalue}" data-myid="I agree with the agent/landlord's claim"  class="accept_btn">Accept claim</button>
+                                                            <button type="button"  id="adjust" onclick="{!c.handleSelectedvalue}" data-myid="I want to adjust my claim" class="accept_btn">Don't accept claim</button>
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div id="scrolltoBtn"></div>
+                                                <div>&nbsp;</div>
+                                                <aura:if isTrue="{!v.showConfirmMessage}">
+                                                    <div class="row">
+                                                        <div class="col-lg-11 col-md-12">
+                                                            <div class="claim-summary_gray-panel border">
+                                                                <h6>You will need to pay the following </h6>
+                                                                
+                                                                <div class="form-group row">
+                                                                    <div class="col-6 col-md-3">
+                                                                        <label>Amount to be paid</label>
+                                                                    </div>
+                                                                    <div class="col-6 col-md-5" style="margin-top: -2%">
+                                                                        <lightning:input type="number" class="myCustomClass"  disabled="true" value="{!v.ClaimsDetails[0].Total_Agreed_by_AG_LL__c}" name="currencyVal" formatter="currency" step="0.01" />
+                                                                        <!-- <input class="form-control" disabled="true" placeholder="{!'£'+v.ClaimsDetails[0].Total_Agreed_by_AG_LL__c}"/> -->
+                                                                    </div>
+                                                                </div>
+                                                                <p>By clicking ‘Submit’, you confirm that you agree to the landlord’s claim. This cannot be amended later.</p>
+                                                                <p>If you are unable to pay in full now, then we will work with you to create a payment plan tailored to your specific circumstances.</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </aura:if>
+                                                <div class="row">
+                                                    <div class="col-lg-11 col-md-12 text-right">
+                                                        <lightning:button class="see-all mw-auto" onclick="{!c.doSubmit}" > Submit </lightning:button>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </aura:if>
+                                        </div>
+                                    </section>
+                                </div>
+                                <aura:if isTrue="{!v.isLead}">
+                                <div class="col-md-3 info-right-tab">
+                                    <p>You and the landlord have not yet reached an agreement. This stage is an opportunity for you to come to a solution that is acceptable to both you and the landlord. Over 50% of customers reach an agreement at this stage.</p>
+                                    <p>You can accept or disagree with the current claim. If you disagree with the claim, you will have the opportunity to put forward the value that you would be content to pay.</p>
+                                    <p>If you cannot reach agreement, the case will passed through for formal resolution by an adjudicator. This can be a lengthy process, will require you to present all your evidence to support your position, and involves a third party imposing a final value that you will then have to pay.</p>
+                                    <p>You have until <ui:outputDate value="{!v.ClaimsDetails[0].Respond_Date__c}" format="dd/MM/yyyy"></ui:outputDate>. If this is not possible within this time, the claim will proceed to evidence gathering.</p>
+                                </div>
+                                <aura:set attribute="else">
+                                        <div class="col-md-3 info-right-tab">
+                                            <p>This is the information provided by the agent or landlord about their claim.  As a joint tenant, you are able to view this information but you cannot make a submission.  It is the responsibility of the lead tenant to provide a response on behalf of all tenants by <ui:outputDate value="{!v.ClaimsDetails[0].Respond_Date__c}" format="dd/MM/yyyy"></ui:outputDate>. The lead tenant is {!v.leadTenantName}.</p>
+                                        </div>
+                                    </aura:set>
+                                </aura:if>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aura:if>
+    <aura:if isTrue="{!v.showConfirmDiv}">
+            <div class="tab-content custom-tab-content" id="sf-tabContent">
+                <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+                    <div class="deposit-agent">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-9">
+                                    <section class="deposit_steps">
+                                        <div class="deposit_steps_detail">
+                                            <div class="claim-summary_gray-panel border">
+                                                <h6>You will need to pay the following</h6>
+                                                <div class="form-group row">
+                                                    <div class="col-6 col-md-3">
+                                                        <label>Amount to be paid</label>
+                                                    </div>
+                                                    <div class="col-6 col-md-5" style="margin-top: -2%">
+                                                        <lightning:input type="number" class="myCustomClass"  disabled="true" value="{!v.ClaimsDetails[0].Total_Agreed_by_AG_LL__c}" name="currencyVal" formatter="currency" step="0.01" />
+                                                       <!-- <input class="form-control" disabled="true" placeholder="{!'£'+v.ClaimsDetails[0].Total_Agreed_by_AG_LL__c}"/> -->
+                                                    </div>
+                                                </div>
+                                                <p>Thank you for agreeing to the landlord's claim. Please use the link below to arrange repayment.  </p>
+                                            </div>
+                                            <div class="text-right">
+                                                <lightning:button class="see-all mw-auto" onclick="{!c.makePayment}" >Make Payment </lightning:button> 
+                                            </div>
+                                        </div>
+                                    </section>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aura:if> 
+    
+    <aura:if isTrue="{!v.adjustToClaim}">
+        
+        <div class="tab-content custom-tab-content" id="sf-tabContent">
+                
+                <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+                    <!-- Resolution Section HTML Start -->
+                    <section class="resolution_section">
+                        <div class="container">
+                            <div>
+                               <lightning:button onclick="{!c.goToCliamSummary}" aura:id="div1" class="go-back"><img  src="{!$Resource.EI_ZD_Assets  + '/img/zd-arrow-dropleft.png'}" alt="Back Icon"/> Go back</lightning:button>
+                            </div>
+                            <img src="{!$Resource.EI_ZD_Assets  + '/img/resolution.png'}" alt="Resolution" />
+                            
+                        </div>
+                    </section>
+                    <!-- Resolution Section HTML End -->
+                    <div class="deposit-agent">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-9">
+                                    <section class="deposit_steps">
+                                        <div class="deposit_steps_detail">
+                                            <div class="claim-summary_gray-panel">
+                                                <h5>Claim summary</h5>
+                                                <div class="row">
+                                                    <div class="col-lg-6 col-sm-9">
+                                                        <p>Amount requested by landlord</p>
+                                                    </div>
+                                                    <div class="col-lg-6 col-sm-3">
+                                                        <p><lightning:formattedNumber value="{!v.ClaimsDetails[0].Total_Agreed_by_AG_LL__c}" style="currency"  minimumFractionDigits="2" maximumFractionDigits="2"/></p>
+                                                    </div>
+                                                </div>
+                                                <div class="row my-4">
+                                                    <div class="col-lg-6 col-sm-9">
+                                                        <p class="text-right">- of which is agreed by you</p>
+                                                    </div>
+                                                    <div class="col-lg-6 col-sm-3">
+                                                        <p>(<lightning:formattedNumber value="{!v.ClaimsDetails[0].Total_Agreed_by_Tenant__c}" style="currency"  minimumFractionDigits="2" maximumFractionDigits="2"/>)</p>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-lg-6 col-sm-9">
+                                                        <p><b>Unresolved amount</b></p>
+                                                    </div>
+                                                    <div class="col-lg-6 col-sm-3">
+                                                        <p><b><lightning:formattedNumber value="{!v.ClaimsDetails[0].Total_Agreed_by_AG_LL__c - v.ClaimsDetails[0].Total_Agreed_by_Tenant__c}" style="currency"  minimumFractionDigits="2" maximumFractionDigits="2"/></b></p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <h6>You have until <ui:outputDate value="{!v.ClaimsDetails[0].Respond_Date__c}" format="dd/MM/yyyy"></ui:outputDate>  to try to reach a resolution. Please indicate how you wish to proceed below.</h6>
+                                            <br/>
+                                            <div class="row">
+                                                <div class="col-lg-12 col-md-12">
+                                                    <div class="agree-container">
+                                                        <div class="agree-detail" style="display: block;">
+                                                            <div class="form-group row">
+                                                                <div class="col-sm-4">
+                                                                    <div class="request-section">
+                                                                        <label>Requested by landlord</label>
+                                                                        <aura:iteration var="desptItems" items="{!v.ClaimsDetails[0].Dispute_Items__r}">
+                                                                            <aura:if isTrue="{!desptItems.Type__c=='Other'}">
+                                                                                <div class="request-section">
+                                                                                    <div class="form-group">
+                                                                                        <label for="Others" class=" col-form-label">{!desptItems.Type__c}</label>
+                                                                                        <textarea rows="3" class="form-control" style="overflow: hidden;" disabled="true" id="Others">{!'£'+desptItems.Agreed_by_AGLL__c}&nbsp;
+                                                                                            {!desptItems.Other_Reason__c}</textarea>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <aura:if isTrue="{!desptItems.Id == v.showError}">
+                                                                                                <p class="error-msg" >
+                                                                                                </p>
+                                                                                            </aura:if>
+                                                                                <aura:set attribute="else">
+                                                                                    <div class="request-section">
+                                                                                        <div class="form-group">
+                                                                                            
+                                                                                            <label for="Cleaning" class=" col-form-label">{!desptItems.Type__c}</label>
+                                                                                            <input type="number"  class="form-control" disabled="true" id="Cleaning" placeholder="{!'£'+desptItems.Agreed_by_AGLL__c}"/>
+                                                                                            
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <aura:if isTrue="{!desptItems.Id == v.showError}">
+                                                                                        <p class="error-msg" >
+                                                                                        </p>
+                                                                                    </aura:if>
+                                                                                </aura:set>
+                                                                            </aura:if>
+                                                                        </aura:iteration>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-4">
+                                                                    <div class="response-section">
+                                                                        <label>Previously agreed by you</label>
+                                                                        <aura:iteration var="desptItems" items="{!v.ClaimsDetails[0].Dispute_Items__r}">
+                                                                            
+                                                                                <div class="form-group">
+                                                                                    <div class="slds-form-element">
+                                                                                            <label for="Cleaning" class="col-form-label">{!desptItems.Type__c}</label>
+                                                                                            <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
+                                                                                                <lightning:icon class="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default" iconName="utility:edit" size="medium" />
+                                                                                                <input id="{!desptItems.Id}" class="slds-input" type="number" placeholder="£" formatter="currency" data-type="currency" value="{!desptItems.Agreed_by_Tenant__c}"  onchange="{!c.handleInput}" />
+                                                                                            </div>
+                                                                                            <aura:if isTrue="{!desptItems.Id == v.showError}">
+                                                                                                <p class="error-msg" >
+                                                                                                   {!v.errorMessage}
+                                                                                                </p>
+                                                                                            </aura:if>
+                                                                                        </div>
+                                                                                </div>
+                                                                        </aura:iteration>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-4">
+                                                                    
+                                                                    <div class="range-section">
+                                                                        <label>&nbsp;</label>
+                                                                        <aura:iteration var="desptItems" items="{!v.ClaimsDetails[0].Dispute_Items__r}">
+                                                                            <div class="range-section">
+                                                                                    <div class="form-group range_form_group">
+                                                                                        <label class="col-form-label">{!desptItems.Type__c}</label>
+                                                                                        <input type="range" id="{!desptItems.Id}" disabled="{!v.disabled}" class="form-control input_range" onchange="{!c.sliderMethod}" value="{!desptItems.Adjustment_Percentage_by_TT__c}"/>
+                                                                                        <span class="slds-slider__value" aria-hidden="true"><lightning:formattedNumber value="{!desptItems.Adjustment_Percentage_by_TT__c}" maximumFractionDigits="2"/>% </span> 
+                                                                                    </div>
+                                                                                </div>
+                                                                            <aura:if isTrue="{!desptItems.Id == v.showError}">
+                                                                                <p class="error-msg" >
+                                                                                   
+                                                                                </p>
+                                                                            </aura:if>
+                                                                        </aura:iteration>
+                                                                    </div>
+                                                                </div>
+                                                                <br></br>
+                                                               
+                                                              <!--  <aura:iteration var="desptItems" items="{!v.ClaimsDetails[0].Dispute_Items__r}">
+                                                                    
+                                                                    <aura:if isTrue="{!desptItems.Type__c=='Other'}">
+                                                                        <div class="col-sm-4">
+                                                                            <div class="request-section">
+                                                                                <div class="form-group">
+                                                                                    <label for="Others" class=" col-form-label">{!desptItems.Type__c}</label>
+                                                                                    <textarea rows="3" class="form-control" style="overflow: hidden;" disabled="true" id="Others">{!'£'+desptItems.Agreed_by_AGLL__c}&nbsp;
+                                                                                        {!desptItems.Other_Reason__c}</textarea>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-sm-4">
+                                                                            <div class="response-section">
+                                                                                <div class="form-group">
+                                                                                    <div class="slds-form-element">
+                                                                                            <label for="Cleaning" class="col-form-label">{!desptItems.Type__c}</label>
+                                                                                            <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
+                                                                                                <lightning:icon class="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default" iconName="utility:edit" size="medium" />
+                                                                                                <input id="{!desptItems.Id}" class="slds-input" type="number" placeholder="£" formatter="currency" data-type="currency" value="{!desptItems.Agreed_by_Tenant__c}"  onchange="{!c.handleInput}" />
+                                                                                            </div>
+                                                                                            <aura:if isTrue="{!desptItems.Id == v.showError}">
+                                                                                                <p class="error-msg" >
+                                                                                                   {!v.errorMessage}
+                                                                                                </p>
+                                                                                            </aura:if>
+                                                                                        </div>
+                                                                                    
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-sm-4">
+                                                                            <div class="range-section">
+                                                                                <div class="form-group range_form_group ">
+                                                                                    <label class="col-form-label">{!desptItems.Type__c}</label>
+                                                                                    <input type="range" id="{!desptItems.Id}"  class="form-control input_range" onchange="{!c.sliderMethod}" value="{!desptItems.Adjustment_Percentage_by_TT__c}"/>
+                                                                                    <span class="slds-slider__value" aria-hidden="true"><lightning:formattedNumber value="{!desptItems.Adjustment_Percentage_by_TT__c}" maximumFractionDigits="2"/>%</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <aura:set attribute="else">
+                                                                            <div class="col-sm-4">
+                                                                                <div class="request-section">
+                                                                                    <div class="form-group">
+                                                                                        
+                                                                                        <label for="Cleaning" class=" col-form-label">{!desptItems.Type__c}</label>
+                                                                                        <input type="number"  class="form-control" disabled="true" id="Cleaning" placeholder="{!'£'+desptItems.Agreed_by_AGLL__c}"/>
+                                                                                        
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-sm-4">
+                                                                                <div class="response-section">
+                                                                                    <div class="form-group">
+                                                                                        
+                                                                                        <div class="slds-form-element">
+                                                                                            <label for="Cleaning" class="col-form-label">{!desptItems.Type__c}</label>
+                                                                                            <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
+                                                                                                <lightning:icon class="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default" iconName="utility:edit" size="medium" />
+                                                                                                <input id="{!desptItems.Id}" disabled="{!v.disabled}" class="slds-input" type="number" placeholder="£" formatter="currency" data-type="currency" value="{!desptItems.Agreed_by_Tenant__c}" onchange="{!c.handleInput}" />
+                                                                                            </div>
+                                                                                            <aura:if isTrue="{!desptItems.Id == v.showError}">
+                                                                                                <p class="error-msg" >
+                                                                                                   {!v.errorMessage}
+                                                                                                </p>
+                                                                                            </aura:if>
+                                                                                        </div>
+                                                                                        
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-sm-4">
+                                                                                <div class="range-section">
+                                                                                    <div class="form-group range_form_group">
+                                                                                        <label class="col-form-label">{!desptItems.Type__c}</label>
+                                                                                        <input type="range" id="{!desptItems.Id}" disabled="{!v.disabled}" class="form-control input_range" onchange="{!c.sliderMethod}" value="{!desptItems.Adjustment_Percentage_by_TT__c}"/>
+                                                                                        <span class="slds-slider__value" aria-hidden="true"><lightning:formattedNumber value="{!desptItems.Adjustment_Percentage_by_TT__c}" maximumFractionDigits="2"/>% </span> 
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </aura:set>
+                                                                    </aura:if>
+                                                                </aura:iteration>
+                                                            -->
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="row">
+                                                <div class="col-lg-12 col-md-12">
+                                                    <div class="claim-summary_gray-panel border">
+                                                        <h6>If your landlord agrees, you will need to pay the following:  </h6>
+                                                        
+                                                        <div class="form-group row">
+                                                            <div class="col-6 col-md-3">
+                                                                <label>Amount to be paid</label>
+                                                            </div>
+                                                            <div class="col-6 col-md-5" style="margin-top: -2%">
+                                                                <lightning:input type="number" class="myCustomClass"  disabled="true" value="{!v.totalTenantAmount}" name="currencyVal" formatter="currency" step="0.01" />
+                                                               <!-- <input class="form-control" disabled="true" placeholder="{!'£'+v.totalTenantAmount}"/> -->
+                                                            </div>
+                                                        </div>
+                                                        <p>Adjusting your response to each item above will update the total amount claimed. Clicking 'Submit' is irreversible. You cannot reduce what you agree to pay at a later stage.</p>
+                                                        
+                                                        <p>Once you have submitted, we will notify the landlord of your response and invite them to agree or to amend the claim. </p>
+                                                    </div>
+                                                </div> 
+                                            </div>
+                                            <aura:if isTrue="{!v.isNotAgreedBtnClicked ==false}">
+                                                <aura:if isTrue="{!v.enableSubmitAdjustmentBtn}">
+                                                    <div class="row">
+                                                        <div class="col-lg-12 col-md-12 text-right" >
+                                                            <button class="see-all mw-auto" id="doSubmitAdjustmentBtn" onclick="{!c.doSubmitDisagree}" > Submit </button>
+                                                        </div>
+                                                    </div>
+                                                    <aura:set attribute="else">
+                                                        <div class="row">
+                                                            <div class="col-lg-12 col-md-12 text-right" >
+                                                                <button class="see-all mw-auto" disabled="{!v.enableSubmitAdjustmentBtn}" style="background-color:#6c757d" id="doSubmitAdjustmentBtn" > Submit </button>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                    </aura:set>
+                                                </aura:if>
+                                                
+                                            </aura:if>
+                                            <div id="scrollToNotPossible"></div>
+                                            <div class="row">
+                                                <div class="col-lg-12 col-md-12">
+                                                    <div class="list_of_btns">
+                                                        <button type="button" id="agreementBtn" aura:id="btnhandle" onclick="{!c.handleAgreementBtn}" data-myid="It has not been able to reach an agreement"  class="accept_btn">It has not been possible to reach an agreement</button>
+                                                        <!-- <button type="button" class="accept_btn">It has not been able to reach an agreement</button> -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <aura:if isTrue="{!v.isNotAgreedBtnClicked}">
+                                                <div class="row">
+                                                    <div class="col-lg-12 col-md-12">
+                                                        <p>Please tell us what you have done to try to reach an agreement. If you have not taken any steps to resolve this, this may delay our handling of the case. We recommend that you speak to the landlord and then revisit this page.</p>
+                                                        <div class="form-group">
+                                                            <textarea rows="4" id="notAgreementReasonId" class="form-control text_mt text_bg" onfocus="{!c.textAreaFun}">{!v.ClaimsDetails[0].Not_reach_an_agreement_Reason_Tenant__c}</textarea> 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row">
+                                                    <div class="col-lg-12 col-md-12 text-right">
+                                                        <button class="see-all mw-auto" onclick="{!c.doSubmitDisagree}" disabled="true" style="background-color:#6c757d" id="doSubmittBtn" > Submit </button>
+                                                    </div>
+                                                </div>
+                                                
+                                            </aura:if>
+                                            <div id='scrollView'/>
+                                            
+                                            
+                                        </div>
+                                    </section>
+                                </div>
+                                <aura:if isTrue="{!v.isLead}">
+                                <div class="col-md-3 info-right-tab">
+                                    <p>Most disagreements about the amount claimed are resolved by the parties themselves, withthout the need for formal adjudication. This means faster and easier resolution, with no need for a lengthy adjudication process and full evidence gathering from both parties.</p>
+                                    <p>You can now respond to the claim, by putting forward the amounts that you would be content to agree to. This can be done by: </p>
+                                    <p>• selecting the pencil icon next to each claim and entering the amount you agree to accept from the tenant(s); or</p>
+                                    <p>• using the slider bars to determine the amounts you agree to accept from the tenant</p>
+                                    <p>You have until <ui:outputDate value="{!v.ClaimsDetails[0].Respond_Date__c}" format="dd/MM/yyyy"></ui:outputDate>. If this is not possible within this time, the claim will proceed to evidence gathering. </p>
+                                </div>
+                                <aura:set attribute="else">
+                                        <div class="col-md-3 info-right-tab">
+                                            <p>This is the information provided by the agent or landlord about their claim.  As a joint tenant, you are able to view this information but you cannot make a submission.  It is the responsibility of the lead tenant to provide a response on behalf of all tenants by <ui:outputDate value="{!v.ClaimsDetails[0].Respond_Date__c}" format="dd/MM/yyyy"></ui:outputDate>. The lead tenant is {!v.leadTenantName}.</p>
+                                        </div>
+                                    </aura:set>
+                                </aura:if>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+        
+        
+        <!--
+        <lightning:card title="">
+            <div>Total level of cover</div>
+            <div>{!v.ClaimsDetails[0].Total_Claim_Amount__c}</div><br/>
+            <div>Adjust your claim</div><br/>
+            <div style="width:100%;float:left;">
+                <div style="width:25%;float:left;font-weight: bold;">Agent/Landlord Request</div>
+                <div style="width:25%;float:left;font-weight: bold;">Agent/Landlord Response</div>
+                <div style="width:25%;float:left;font-weight: bold;">Tenant(s) Response </div>
+                <div style="width:20%;float:left;font-weight: bold;">Percentage Slider </div>
+            </div>
+            <br/>
+            <aura:iteration var="desptItems" items="{!v.ClaimsDetails[0].Dispute_Items__r}">
+                <div style="width:100%;float:left;">
+                    <div style="width:20%;float:left;">{!desptItems.Type__c}</div><br/>
+                    <div style="width:20%;float:left;"><lightning:input name="input1" value="{!desptItems.Claimed_by_Landlord__c}" disabled="true"/></div> &nbsp;&nbsp;
+                    <div style="width:20%;float:left;"><lightning:input name="input1" value="{!desptItems.Agreed_by_AGLL__c}" disabled="true"/></div> &nbsp;&nbsp;
+                    
+                    
+                    <aura:if isTrue="{!desptItems.Agreed_by_Tenant__c > 0}">
+                        <div style="display:none;" class="recordDetails" id="{!'recDetails' + desptItems.Id}">{!desptItems.Id +'-'+ desptItems.Agreed_by_Tenant__c +'-'+ desptItems.Adjustment_Percentage_by_TT__c}</div>
+                        <aura:set attribute="else">
+                            <div style="display:none;" class="recordDetails" id="{!'recDetails' + desptItems.Id}"></div>
+                        </aura:set>
+                    </aura:if> 
+                    
+                    <div style="width:20%;float:left;"><div data-id="{!desptItems.Id}" style="padding: 2.2%;border: 1px solid #ccc;width: 100%;margin-top: 9%;border-radius: 4px;" id="{!'dis' + desptItems.Id}" onblur="{!c.manuallyEnterAGLLRes}">{!desptItems.Agreed_by_Tenant__c}</div></div>&nbsp;&nbsp;
+                    <div style="width:20%;float:left;"><lightning:input class="PercentageByAGLL" value="{!desptItems.Adjustment_Percentage_by_TT__c}" placeholder="%" id="{!desptItems.Id}" onblur="{!c.calculateAmountByPercentage}"/></div>
+                    <div style="float:left;cursor:default;margin-right: 5px;margin-top: 18px;margin-left: 5px;" data-id="{!desptItems.Id}" onclick="{!c.editBtn}"><lightning:button  variant="brand" label="Edit" /></div>  &nbsp;
+                    <div style="float:left;cursor:default;margin-right: 5px;margin-top: 18px;margin-left: 5px;" data-id="{!desptItems.Id}" onclick="{!c.cancelBtn}"><lightning:button  variant="brand" label="Cancel" /></div>
+                </div> 
+            </aura:iteration>
+            <div style="width:100%;float:left; margin-bottom:2%;">    
+                <div style="width:30%;float:left;">Total</div>
+                <div style="width:30%;float:left;"></div>
+                <div style="width:30%;float:left;">{!v.totalTenantAmount}</div>
+            </div>
+            <br/><br/>
+            
+           <div style="width:30%;float:left;font-weight: bold;"><lightning:input type="checkbox" aura:id="checkboxAuraId" label="I want to make an offer"/>  </div>
+            <lightning:button label="Submit" variant="brand" onclick="{!c.doSubmitDisagree}" /> <br/>
+        </lightning:card> -->
+
+    </aura:if>
+    <aura:if isTrue="{!v.notReachAgreementThanks}">
+            <div class="tab-content custom-tab-content" id="sf-tabContent">
+                <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+                    
+                    <div class="deposit-agent">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-9">
+                                    <section class="deposit_steps">
+                                        <div class="deposit_steps_detail">
+                                            <div class="claim-summary_gray-panel no-bg">
+                                                <p>Thank you for telling us that it has not been possible to reach an agreement.</p> 
+                                                <p>Did you know that most unresolved amounts are agreed by the landlord and tenant(s) directly, without the need for formal adjudication?</p> 
+                                                <p>We encourage you to continue to attempt to resolve the dispute directly with the other party by <ui:outputDate value="{!v.ClaimsDetails[0].Respond_Date__c}" format="dd/MM/yyyy"></ui:outputDate>. You can return here at any time to try to resolve the disagreement.</p>
+                                                <p> This window to reach an agreement will remain open till <ui:outputDate value="{!v.ClaimsDetails[0].Respond_Date__c}" format="dd/MM/yyyy"></ui:outputDate> and it is not possible to move your case on before that time. After the end of <ui:outputDate value="{!v.ClaimsDetails[0].Respond_Date__c}" format="dd/MM/yyyy"></ui:outputDate>, we will review what you and the landlord have done to try to reach an agreement. If we are satisfied that attempts have been made, we will move forward to formal adjudication and invite the landlord, in the first instance, to submit evidence to support their claim.</p>
+                                            </div>
+                                            <div class="text-right">
+                                                <lightning:button class="see-all mw-auto" onclick="{!c.goToHome}" > Go to claim summary </lightning:button> 
+                                            </div>
+                                        </div>
+                                    </section>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aura:if>
+    
+    <aura:if isTrue="{!v.SubmitThanks}">
+            <div class="tab-content custom-tab-content" id="sf-tabContent">
+                
+                <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+                    
+                    <div class="deposit-agent">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-9">
+                                    <section class="deposit_steps">
+                                        <div class="deposit_steps_detail">
+                                            
+                                            <div class="claim-summary_gray-panel border">
+                                                <h6>If your landlord agrees, you will need to pay the following</h6>
+                                                
+                                                <div class="form-group row">
+                                                    <div class="col-6 col-md-3">
+                                                        <label>Amount to be paid</label>
+                                                    </div>
+                                                    <div class="col-6 col-md-5" style="margin-top: -2%">
+                                                        <lightning:input type="number" class="myCustomClass" disabled="true" value="{!v.totalTenantAmount}" name="currencyVal" formatter="currency" step="0.01" />
+                                                       <!-- <input class="form-control" disabled="true" placeholder="{!'£'+v.totalTenantAmount}"/> -->
+                                                    </div>
+                                                </div>
+                                                <p>Thank you for responding to the claim. We will invite the landlord to agree to your response or suggest a new claim value. We will let you know how they respond.</p>
+                                                <p>You can return here at any point to make further adjustments to your claim, until <ui:outputDate value="{!v.ClaimsDetails[0].Respond_Date__c}" format="dd/MM/yyyy"></ui:outputDate>.</p>
+                                            </div>
+                                            <div class="text-right">
+                                                <lightning:button class="see-all mw-auto" onclick="{!c.goToHome}" > Go to claim summary </lightning:button>
+                                            </div>
+                                        </div>
+                                    </section>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </aura:if>
+    
+    <aura:if isTrue="{!v.madeOffer}">
+        <lightning:card title="">
+            <p>The tenant has made an offer to settle the claim. The offer is:</p><br/>
+            <p>Amount to be paid to the landlord:  {!v.ClaimsDetails[0].AGLL_Offer_Amount__c}</p><br/>
+            
+            <aura:if isTrue="{!v.counterOffer}">
+                <p>
+                    <input type="number" value="" placeholder="£" formatter="currency" id="counterOffer" />           
+                </p>
+                
+            </aura:if>
+            
+            <select id="madeOffer" class="form-control" name="TenantOptions"
+                    required="true" onchange="{!c.madeOfferSelect}">
+                <option >Accept Offer</option>
+                <option >Decline Offer</option>
+                <option >Make Counter Offer</option>
+            </select><br/><br/>
+            
+            <lightning:button  variant="brand" label="Submit" onclick="{!c.madeOffer}" /> <br/>
+        </lightning:card>
+    </aura:if>
+    
+    
+    <aura:if isTrue="{!v.madeNewOffer}">
+        
+        
+        <lightning:card title="">
+            <p>Total Level of Cover:  {!v.ClaimsDetails[0].Total_Deposit__c}</p><br/>
+            <p style="width:15%;">
+                <div>Total Claim Amount</div>
+                <lightning:input name="input" value="{!v.ClaimsDetails[0].Total_Claim_Amount__c}" disabled="true"/><br/>           
+            </p>
+            <p>
+                <input type="number" value="{!v.newOfferValue}" placeholder="£" formatter="currency" id="counterNewOffer" /> 
+                <!--   =============slider ====  -->
+                <lightning:slider step=".1" value="{!v.sliderValue}" onchange="{!c.handleChangeSlider }" size="x-small"/>
+            </p>
+            <lightning:button  variant="brand" label="Submit" onclick="{!c.madeNewOfferBtn}" /> <br/>
+        </lightning:card> 
+    </aura:if>
+    
+</aura:component>

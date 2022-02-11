@@ -1,0 +1,13 @@
+.modal-hidden {
+    display: none;
+}
+
+.slds-modal__content{
+    overflow: auto;
+    max-height: 93%;
+}
+
+.modal-full-width{
+    width: 200%;
+    left: -50%;    
+}

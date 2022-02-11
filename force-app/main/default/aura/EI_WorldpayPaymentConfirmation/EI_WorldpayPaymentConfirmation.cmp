@@ -1,0 +1,92 @@
+<aura:component access="global" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes"
+   controller="EI_PayDepositController">
+   <aura:attribute name="PageSpinner" type="boolean" default="true"/>
+   <aura:attribute name="wrapInstance" type="EI_PayDepositController.PaymentConfirmationWrapper" />
+   <aura:attribute name="PaymentReferenceNumber" type="String" />
+   <aura:attribute name="AmountToBePaid" type="Decimal" default="0.00"/>
+   <aura:attribute name="TotalDeposits" type="Decimal" default="0.00"/>
+   <lightning:navigation aura:id="navService" />
+   <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+   <aura:handler event="aura:doneWaiting" action="{!c.doneWaiting}"></aura:handler>
+   <div class="list-of-btns">
+      <div class="container">
+         <a href="/" class="go-back"> <img src="{!$Resource.TDSTheme + '/assets/img/md-arrow-dropleft.png'}" alt="Back Icon"/>Go back</a>
+         <!--<p style= "font-size:30px">Transaction Details</p>-->
+      </div>
+   </div>
+   <div>
+      <p><strong>Transaction details</strong></p>
+      <!--<p>Please pay the amount stated below into the following bank account. Please copy the bank details exactly as they are shown or your payment may be rejected.</p>-->
+      <div class="table-container no_navigation no_space leftover_table">
+         <table class="display scrollbar" style="width:100%">
+            <tr>
+               <td>Payment reference number</td>
+               <td>{!v.wrapInstance.PaymentReferenceNumber}</td>
+            </tr>
+            <tr>
+               <td>Total deposits</td>
+               <td>{!v.wrapInstance.TotalDeposits}</td>
+            </tr>
+            <tr>
+               <td>
+                  <div class="slds-truncate" title="pay">Payment made by card</div>
+               </td>
+               <td>
+                  <lightning:formattedNumber value="{!v.wrapInstance.AmountToBePaid}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/>
+               </td>
+            </tr>
+         </table>
+      </div>
+      <br/>
+      <!--<div class="col-md-12 alert alert-danger leftover_imp">
+         <strong>
+            <p>  Important: The deposit is NOT protected until SafeDeposit Scotland custodial has received payment in cleared funds. This may take upto 10 working days and until then the deposit status on your deposits management screen will show as awaiting payment.</p>
+         </strong>
+         </div>
+         <aura:if isTrue="{!v.isChequeConfirmed}" >
+         <div class="col-md-12 alert alert-danger leftover_imp">
+            <strong>
+               <p>Failure to quote the correct reference will delay protection of your deposit(s)</p>
+            </strong>
+         </div>
+         </aura:if>-->
+   </div>
+   <h5>Your deposit</h5>
+   <div class="table-container no_navigation no_space space-top leftover_address slds-table--striped">
+      <table id="example-2" class="display scrollbar dataTable" style="width:100%">
+         <thead>
+            <tr>
+               <th>Address</th>
+               <th>Deposit account number</th>
+               <th>Amount to be protected</th>
+               <th></th>
+            </tr>
+         </thead>
+         <tbody>
+            <aura:iteration items="{!v.wrapInstance.installmentList}" var="dep">
+               <tr class="">
+                  <td>{!dep.Deposit__r.Property_Address__c}</td>
+                  <td>{!dep.Deposit__r.Deposit_Account_Number__c}</td>
+                  <td>
+                     <lightning:formattedNumber value="{!dep.Amount__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/>
+                  </td>
+                  <td>
+                     <a href="" class="go-back download" onclick="{!c.downloadpitemplate}" id = "{!dep.Deposit__c}">   <img src="{!$Resource.TDSTheme + '/assets/img/feather-download.svg'}" alt="Back Icon" />   Download prescribed information</a>
+                     <a href="" class="go-back download">  <img src="{!$Resource.TDSTheme + '/assets/img/feather-download.svg'}" alt="Back Icon" />Customise prescribed information</a>
+                  </td>
+               </tr>
+            </aura:iteration>
+            <tr class="payment_total-row">
+               <td></td>
+               <td class="text-right"><strong>Total</strong></td>
+               <td>
+                  <strong>
+                     <lightning:formattedNumber value="{!v.wrapInstance.AmountToBePaid}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/>
+                  </strong>
+               </td>
+               <td></td>
+            </tr>
+         </tbody>
+      </table>
+   </div>
+</aura:component>

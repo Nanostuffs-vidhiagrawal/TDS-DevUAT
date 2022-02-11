@@ -1,0 +1,220 @@
+<aura:component implements="force:appHostable,forceCommunity:themeLayout,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+                access="global"
+                controller="ManageProperties">
+	
+    <!-- call doInit method on component load -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <!-- aura attributes to store data/values -->
+    <aura:attribute name="listOfAllAccounts" type="list"/>
+    <aura:attribute name="PaginationList" type="list"/>
+    <aura:attribute name="selectedCount" type="integer" default="0" description="selected Records Count"/>
+    <aura:attribute name="startPage" type="Integer" />
+    <aura:attribute name="endPage" type="Integer"/>
+    <aura:attribute name="totalRecordsCount" type="Integer"/>
+    <aura:attribute name="pageSize" type="Integer" default="4" description="number of records to be display on per page"/>
+    <aura:attribute name="currentPage" type="integer" default="1"/>
+    <aura:attribute name="totalPagesCount" type="integer" default="1"/>
+    <aura:attribute name="bNoRecordsFound" type="boolean"/>
+    <aura:attribute name="showdiv" type="boolean" default="false"/>
+    <aura:attribute name="Recid" type="string"/>
+    <aura:attribute name="searchText" type="string"/>
+    <aura:attribute name="openmodel" type="boolean" default="false"/>
+    
+    <!-- Address Fields-->
+    <aura:attribute access="public"  name="Street" type="String"  />
+    <aura:attribute access="public"  name="Town" type="String"  />
+    <aura:attribute access="public"  name="PostCode" type="String"  />
+    <aura:attribute access="public"  name="Country" type="String"  />
+    <aura:attribute access="public"  name="County" type="String"  />    
+    <aura:attribute name="Propobj" type="Property__c" default="{ 'sobjectType': 'Property__c'}"/>
+    
+    
+    <lightning:overlayLibrary aura:id="overlayLib"/>
+    <lightning:overlayLibrary aura:id="overlayLibDemo"/>
+    <!-- aura attributes End to store data/values -->
+    <p class="slds-m-around_small">
+        <span class="slds-badge slds-badge_lightest" style="display:inline-block">
+            Total Records : {!v.selectedCount > 0 ? v.selectedCount + '/' : ''} {!v.totalRecordsCount} 
+        </span>
+    </p>
+  <body>  
+    <!-- Manage Addresses HTMl Start -->
+    <section class="manage-address">
+        <div class="container">
+            <h2>Manage Addresses</h2>
+        </div>
+        
+        <!-- Search HTML Start -->
+        <div class="container">
+            <div class="filter-search">
+                <p>Search Addresses</p>
+                <input type="text" id="searchtext" onchange="{!c.handleClick}"  class="form-control" placeholder="Enter your search here...."/>
+                <button type="button"></button>
+            </div>
+        </div>
+        <!-- Search HTML End -->
+        
+        <section>
+            <div class="container">
+                <div class="table-container scrollbar">
+                    <table id="table-checkbox" class="display scrollbar w-100">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Country</th>
+                                <th>City</th>
+                                <th>Street</th>
+                                <th>Postal Code</th>
+                                <th>Property No.</th>
+                                <th>County</th>
+                                <th>Bedrooms</th>
+                                <th>Living Rooms</th>
+                                <th>Furnished</th>
+								<th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <aura:iteration items="{!v.PaginationList}" var="obj">
+                                <tr>
+                                    <th scope="row" class="slds-text-align_right" style="width:3.25rem;">
+                                        <div class="slds-form-element">
+                                            <div class="slds-form-element__control">
+                                                <label class="slds-checkbox">
+                                                    <ui:inputCheckbox text="{!obj.objAccount.Id}"
+                                                                      value="{!obj.isChecked}"
+                                                                      change="{!c.checkboxSelect}"/>
+                                                    <span class="slds-checkbox_faux"></span>
+                                                    <span class="slds-form-element__label text"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!obj.objAccount.Country__c}">
+                                            <lightning:formattedPhone value="{!obj.objAccount.Country__c}"/>
+                                        </div>
+                                    </th>
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!obj.objAccount.City__c}">
+                                            {!obj.objAccount.City__c}
+                                        </div>
+                                    </th>
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!obj.objAccount.Street__c}">
+                                            {!obj.objAccount.Street__c}
+                                        </div>
+                                    </th>
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!obj.objAccount.Postal_Code__c}">
+                                            {!obj.objAccount.Postal_Code__c}
+                                        </div>
+                                    </th>
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!obj.objAccount.Name}">
+                                            {!obj.objAccount.Name}
+                                        </div>
+                                    </th>
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!obj.objAccount.County__c}">
+                                            {!obj.objAccount.County__c}
+                                        </div>
+                                    </th>     
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!obj.objAccount.No_of_bedrooms__c}">
+                                            {!obj.objAccount.No_of_bedrooms__c}
+                                        </div>
+                                    </th>
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!obj.objAccount.No_of_living_rooms__c	}">
+                                            {!obj.objAccount.No_of_living_rooms__c	}
+                                        </div>
+                                    </th>
+                                    <th scope="row">
+                                        <div class="slds-truncate" title="{!obj.objAccount.Is_Furnished__c	}">
+                                            {!obj.objAccount.Is_Furnished__c	}
+                                        </div>
+                                    </th>
+                                    <th scope="row">
+                                        <lightning:button class="see-all" label="View" value="{!obj.objAccount.Id}" iconName="utility:view" iconPosition="center" onclick="{!c.ViewProperty}" />
+                                    </th>
+                                    <!--  <th scope="row">
+                        <lightning:button class="deleteButtons" label="Delete" value="{!obj.objAccount.Id}" iconName="utility:view" iconPosition="center" variant="destructive" onclick="{!c.Delproperty}"  />
+                    </th> -->
+                                </tr>
+                            </aura:iteration>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        
+        
+        <!-- Button HTML start -->
+        <div class="container text-right">
+            <ul class="list-inline">
+                <li class="list-inline-item "><a href="#" class="learn-more">Delete Property</a></li>
+        <!--        <li class="list-inline-item "><a href="#" data-toggle="modal" data-target="#createAddress" class="see-all">Add New Property</a></li>-->
+            <li class="list-inline-item "><a href="#" data-toggle="modal" data-target="#createUser" class="see-all">Add New Property</a></li>
+            </ul>
+        </div>
+        <!-- Button HTML end-->
+        
+    </section>
+    <!-- Manage Addresses HTMl End -->
+    
+    <!--Popup form start-->
+      <div class="custom-model modal fade" id="createUser" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="createUser" aria-hidden="true">       
+         <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Create New Property</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">
+							<img src="{!$Resource.TDSTheme+'/TDS/assets/img/Cancel-icon.png'}" alt="" onclick="{!c.closeModel }" />
+                        </span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="sf-custom-form">
+                        <form>
+                            <div class="form-row">
+                                <div class="form-group col-md-10">
+                                   <c:Register aura:id="compB" method="{!c.parentPress}" />
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-10">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="gridCheck2"/>
+                                        <label class="form-check-label" for="gridCheck2">Is Furnished</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-10">
+                                    <label for="sf-popup-Bedrooms">No. of Bedrooms</label>
+                                    <input type="Text" class="form-control" id="sf-popup-Bedrooms" placeholder="Enter No. of Bedrooms" value="{!v.Propobj.No_of_bedrooms__c}"/>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-10">
+                                    <label for="sf-popup-Livingrooms">No. of Livingrooms</label>
+                                    <input type="text" class="form-control" id="sf-popup-Livingrooms" placeholder="Enter No. of Livingrooms" value="{!v.Propobj.No_of_living_rooms__c}"/>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-12 text-right">
+                                    <a href="#" class="learn-more">cancel</a>
+                                    <button class="see-all"  onclick="{!c.doSave}">Create</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+      
+      </body>
+    <!--Popup form end-->
+</aura:component>

@@ -1,0 +1,16 @@
+<apex:page >
+     <apex:includeLightning />
+    <div id="Con" />
+    <script>
+        $Lightning.use("c:TestDPCCompAPP", function() {
+            $Lightning.createComponent(
+                "c:TestDPCComp",
+                {},
+                "Con",
+                function(cmp) {
+                    console.log("Component is created!");
+                    console.log(cmp);
+                });
+            });        
+      </script>
+</apex:page>

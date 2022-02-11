@@ -1,0 +1,28 @@
+.THIS.slds-spinner_container {  
+  z-index: 10000;
+  position: fixed;   
+}
+ 
+.THIS.Adddeposit {
+    display:block;
+}
+.THIS .divpicture{
+    background-color: #32669E;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    display: inline-block;
+    border-radius: 0.5rem;
+    -moz-border-radius: 0.5rem;
+    -webkit-border-radius: 0.5rem;
+    -khtml-border-radius: 0.5rem;
+    width: 5rem;
+    height: 5rem;
+    display: flex;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}

@@ -1,0 +1,226 @@
+<aura:component
+  implements="lightning:isUrlAddressable,forceCommunity:themeLayout,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+  access="global"
+>
+  <aura:attribute access="public" name="AddressLine1" type="String" />
+  <aura:attribute access="public" name="Street" type="String" />
+  <aura:attribute access="public" name="Town" type="String" />
+  <aura:attribute access="public" name="County" type="String" />
+  <aura:attribute access="public" name="PostCode" type="String" />
+  <aura:attribute access="public" name="Country" type="String" />
+
+  <aura:attribute
+    access="public"
+    name="IsEditMode"
+    type="Boolean"
+    default="false"
+  />
+
+  <aura:handler
+    access="public"
+    name="init"
+    value="{!this}"
+    action="{!c.doInit}"
+  />
+  <aura:attribute access="public" name="method" type="Aura.action" />
+  <div class=" slds-grid slds-gutters slds-form-element">
+    <div class="slds-col"> </div>
+    <div class="slds-col" style="">
+      <div class="content">
+        <div class="fieldWrap">
+          <!--  <label for="popup-Address"
+            >Address<span class="mandatory-field">*</span></label
+          > -->
+          <div class="slds-form-element">
+            <!-- <label class="slds-form-element__label" for="combobox-id-1"
+              >Address <abbr class="slds-required" title="required">*</abbr></label
+            > -->
+            <div class="slds-form-element__control">
+              <div class="slds-combobox_container">
+                <div
+                  class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click"
+                  aria-expanded="false"
+                  aria-haspopup="listbox"
+                  role="combobox"
+                >
+                  <div
+                    class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right"
+                    role="none"
+                  >
+                    <!--
+                    <input
+                      type="text"
+                      class="slds-input slds-combobox__input"
+                      id="combobox-id-1"
+                      aria-autocomplete="list"
+                      aria-controls="listbox-id-1"
+                      autocomplete="off"
+                      role="textbox"
+                      placeholder="Start typing the Address"
+                      onchange="{!c.findAddress1}"
+                      onkeypress="{!c.enterSearch}"
+                      name="search"
+                    /> -->
+                    <span
+                      class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right"
+                    >
+                    </span>
+                    <div class="slds-form-element">
+                      <label
+                        class="slds-form-element__label"
+                        for="combobox-id-4"
+                        >Address<span class="mandatory-field">*</span></label
+                      >
+                      <div class="slds-form-element__control">
+                        <div class="slds-combobox_container">
+                          <div
+                            class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open"
+                            aria-expanded="true"
+                            aria-haspopup="listbox"
+                            role="combobox"
+                          >
+                            <div
+                              class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right"
+                              role="none"
+                            >
+                              <input
+                                type="text"
+                                class="slds-input slds-combobox__input slds-has-focus slds-combobox__input-value"
+                                id="searchBox"
+                                aria-activedescendant="option1"
+                                aria-autocomplete="list"
+                                aria-controls="listbox-id-4"
+                                autocomplete="off"
+                                role="textbox"
+                                placeholder="Start typing the Address"
+                                value=""
+                                onchange="{!c.findAddress1}"
+                                onkeypress="{!c.enterSearch}"
+                              />
+                              <span
+                                class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right"
+                              >
+                              </span>
+                            </div>
+                            <div
+                              id="listbox-id-4"
+                              class="slds-dropdown slds-dropdown_length-with-icon-7 slds-dropdown_fluid"
+                              role="listbox"
+                            >
+                              <ul
+                                class="slds-listbox slds-listbox_vertical"
+                                role="presentation"
+                              >
+                                <aura:iteration items="4" var="item">
+                                  <li
+                                    role="presentation"
+                                    class="slds-listbox__item"
+                                  >
+                                    <div
+                                      aria-selected="true"
+                                      id="option0"
+                                      class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_term slds-has-focus"
+                                      role="option"
+                                    >
+                                      <span
+                                        class="slds-media__figure slds-listbox__option-icon"
+                                      >
+                                        <span
+                                          class="slds-icon_container slds-icon-utility-search"
+                                          title="Search for term: "
+                                        >
+                                          <span class="slds-assistive-text"
+                                            >Search for term:
+                                          </span>
+                                        </span>
+                                      </span>
+                                      <span class="slds-media__body">
+                                        <span
+                                          class="slds-listbox__option-text slds-listbox__option-text_entity"
+                                          >
+                                            
+                                          </span
+                                        >
+                                      </span>
+                                    </div>
+                                  </li>
+                                </aura:iteration>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- <input type="text" name="search" class="searchInput" id="searchBox" placeholder="Start typing the Address"
+                           onchange="{!c.findAddress1}" onkeypress="{!c.enterSearch}" />
+                    <button class="btn" onclick="{!c.findAddress1}">Search</button> -->
+          <div class="clear" id="clearButton" onclick="{!c.clearSearch}">X</div>
+        </div>
+
+        <div class="fieldWrap">
+          <div class="error" id="errorMessage"></div>
+        </div>
+
+        
+
+        <div class="seperator" id="seperator"></div>
+
+        <div class="fieldWrap">
+          <a class="EnterLink" id="EnterButton" onclick="{!c.enterManually}"
+            >Enter Manually</a
+          >
+          <div class="outputArea" id="output"></div>
+        </div>
+        <div id="manualAddress" class="ManualAddress">
+          <lightning:textarea
+            access="public"
+            aura:id="fieldId"
+            label="Your Address"
+            name="addressLine1"
+            value="{!v.AddressLine1}"
+            required="true"
+          />
+
+          <lightning:input
+            access="public"
+            aura:id="fieldState"
+            label="Town/City"
+            name="town"
+            value="{!v.Town}"
+            required="true"
+          />
+          <lightning:input
+            access="public"
+            aura:id="fieldState"
+            label="County"
+            name="County"
+            value="{!v.County}"
+            required="true"
+          />
+          <lightning:input
+            access="public"
+            aura:id="fieldPostCode"
+            label="PostalCode"
+            name="PostCode"
+            value="{!v.PostCode}"
+            required="true"
+          />
+          <lightning:input
+            access="public"
+            aura:id="fieldCountry"
+            label="Country"
+            name="Country"
+            value="{!v.Country}"
+            required="true"
+          />
+        </div>
+      </div>
+      <div class="slds-col"> </div>
+    </div>
+  </div>
+</aura:component>

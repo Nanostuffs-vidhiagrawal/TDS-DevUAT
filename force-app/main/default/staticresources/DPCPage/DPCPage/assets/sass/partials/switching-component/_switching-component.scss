@@ -1,0 +1,162 @@
+$switch-bg: #F7FBFF;
+.switching-component {
+	background-color: $switch-bg;
+	text-align: center;
+	@include space(padding, top, $s75);
+	@include space(padding, bottom, $s75);
+
+	@include respond-below(sm) {
+		@include space(padding, top, $s25);
+		@include space(padding, bottom, $s25);
+	}
+
+	.switching-steps {
+		
+		width: $full;
+		@include space(margin, top, $s60);
+		@include space(margin, bottom, $s60);
+
+		@include respond-below(sm) {
+			@include space(margin, top, $s30);
+			@include space(margin, bottom, $s30);
+		}
+
+		.switching-step-box {
+			background-color: map-get($color, white);
+			box-shadow: 10px 10px 25px #103C5527;
+			@include space(padding, all, $s15);
+			@include space(padding, top, $zero);
+			@include border_radius($s20);
+			width: 28rem !important;
+			min-height: 22.5rem;
+			outline: none;
+			@include position_relative();
+
+			@include respond-below(xs) {
+				min-height: 15rem;
+			}
+
+			@media (max-width:420px) {
+				width: 22rem !important;
+			}
+
+			&:after {
+				content: '.';
+				background-image: url('../img/arrow-forward.png');
+				height: $s60;
+				width: $s85;
+				@include position_absolute(35%, auto, auto, -45%);
+
+				@include respond-below(xs) {
+					background-size: contain;
+					height: $s35;
+					width: $s50;
+					@include position_absolute(43%, auto, auto, -33%);
+				}
+			}
+
+			&:first-child {
+				&:after {
+					content: none;
+				}
+			}
+
+			.step-count {
+				background-color: map-get($color, white);
+				@include border_radius($half);
+				width: $s65;
+				height: $s65;
+				margin: 0 auto;
+				@include position_relative(-$s25, auto, auto, auto);
+				@include flexbox();
+				@include flex_properties(center, center, no-wrap);
+				font-family: $Aller_Bold;
+
+				@include respond-below(xs) {
+					width: $s35;
+					height: $s35;
+					@include position_relative(-$s15, auto, auto, auto);
+				}
+
+				span {
+					color: map-get($color, blue);
+					@include font_size($step-font);
+					@include border(2px, solid, map-get($color, blue));
+					@include border_radius($half);
+					width: $s45;
+					height: $s45;
+					display: block;
+
+					@include respond-below(xs) {
+						@include font_size($below_base);
+						width: $s25;
+						height: $s25;
+					}
+				}
+			}
+
+			img {
+				max-width: $s60;
+				margin: 0 auto;
+
+				@include respond-below(xs) {
+					max-width: $s40;
+				}
+			}
+
+			h6 {
+				color: map-get($color, blue);
+				@include space(margin, top, $s25);
+
+				@include respond-below(xs) {
+					@include font_size($below_base);
+					@include space(margin, top, $s15);
+					@include space(margin, bottom, $zero);
+				}
+			}
+		}
+
+		.slick-track {
+			@include flexbox();
+			@include flex_properties(space-between, center, wrap);
+			@include space(margin, all, $s25);
+			max-width: 112rem !important;
+
+			@include respond-below(xs) {
+				@include space(margin, left, $zero);
+				@include space(margin, right, $zero);
+			}
+
+			&:before, &:after {
+				content: none;
+			}
+		}
+	}
+
+	.switching-know-more {
+		max-width: 87.5rem;
+		width: $full;
+		@include border(1px, dashed, map-get($color, light_gray));
+		margin: 0 auto;
+		@include space(padding, all, $s15);
+		h4 {
+			@include font_size($step-font);
+			color: map-get($color, blue);
+			@include space(margin, bottom, $s15);
+
+			@include respond-below(sm) {
+				@include font_size($lg);
+			}
+		}
+
+		p {
+			@include font_size($above_base);
+			@include respond-below(sm) {
+				@include font_size($base);
+			}
+			a {
+				color: map-get($color, gray);
+			}
+		}
+	}
+}

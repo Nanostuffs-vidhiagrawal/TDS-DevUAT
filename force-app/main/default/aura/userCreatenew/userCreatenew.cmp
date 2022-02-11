@@ -1,0 +1,88 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global"
+                controller="EI_manageusers">
+    
+    <!-- Attributes -->
+    <aura:attribute name="act" type="Account"
+                    default="{'sObjectType':'Account'}" />
+    <aura:attribute name="Title" type="String"  />
+    <aura:attribute name="UserRole" type="String" />
+    <aura:attribute name="Permission" type="String" />
+    <aura:attribute name="salutation" type="String" />
+    <aura:attribute name="salutationMap" type="Map" />
+    
+    <!-- Handler -->
+    <aura:handler name='init' value='{!this}' action='{!c.doInit}' />
+    <lightning:overlayLibrary aura:id="overlayLib" />
+    
+    <div class="modal-content" style="border: none!important;">
+        <div class="modal-header">
+            <h3 class="modal-title">User Creation</h3>
+        </div>
+        
+        <div class="modal-body">
+            <div class="sf-custom-form">
+                <form>
+                    <div class="form-row">
+                        <div class="form-group col-md-10">
+                            <lightning:select aura:id="salutation"
+                                              name="salutation"
+                                              label="Title"
+                                              value="{!v.Title}" 
+                                              required="true" >
+                                <option value="">-- Please Select --</option>
+                                <option value="Mr.">Mr.</option>
+                                <option value="Ms.">Ms.</option>
+                                <option value="Mrs.">Mrs.</option>
+                                <option value="Dr.">Dr.</option>
+                                <option value="Prof.">Prof.</option>
+                                <option value="Mx.">Mx.</option>
+                            </lightning:select>        
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-5">
+                            <lightning:input aura:id="field" label="First Name" value="{!v.act.FirstName}" required="true" maxlength="40"
+                                             messageWhenTooLong="Title cannot exceed 40 characters" minlength="1"
+                                             messageWhenTooShort="Title should have atleast 1 character" />
+                        </div>
+                        <div class="form-group col-md-5">
+                            <lightning:input aura:id="field" label="Last Name" value="{!v.act.LastName}" required="true" maxlength="80"
+                                             messageWhenTooLong="Title cannot exceed 80 characters" minlength="1"
+                                             messageWhenTooShort="Title should have atleast 1 character" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-10">
+                            <lightning:input aura:id="field" label="Email" value="{!v.act.PersonEmail}" required="true" type="email" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-10">
+                            <lightning:input aura:id="field" type="tel" name="mobile" label="Phone" value="{!v.act.Phone}"
+                                             required="true" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-10">
+                            <ui:inputSelect label="User Role" class="dynamic" value="{!v.UserRole}" required="true" aura:id="jobrole" change=""/> 
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-10">
+                            <ui:inputSelect label="Additional Permission" value="{!v.Permission}" class="dynamic" aura:id="userpermission" change="" /> 
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12 text-right">
+                            <a href="#" class="learn-more">cancel</a>
+                            <lightning:button class="see-all" label="Create" title="Brand action" onclick="{!c.handleClick}" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+    </div>
+    <br />
+    
+</aura:component>

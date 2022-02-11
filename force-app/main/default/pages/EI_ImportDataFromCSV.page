@@ -1,0 +1,48 @@
+<apex:page controller="EI_ImportDataFromCSVController" sidebar="false" showHeader="false" lightningStylesheets="true">
+   <head>
+        <apex:slds />
+    </head>
+    
+   <apex:form id="FormId" >
+       
+      <apex:outputPanel styleClass="error-message">
+                        <apex:pagemessages />
+                    </apex:outputPanel>
+      <table>
+      <apex:pageBlock >
+           <label style = "margin-bottom: 10px; font-size: 16px;">Select File Type</label>
+             <apex:selectList value="{!fileType}" size="1" style="padding: 10px; height: auto;  min-width: 125px;">
+                <apex:selectOption itemValue="BACS" itemLabel="BACS"/>
+                <apex:selectOption itemValue="Cheque" itemLabel="Cheque"/>
+            </apex:selectList>
+         
+         <apex:pageBlockSection columns="2">
+            <apex:inputFile value="{!csvFileBody}"  filename="{!fileName}" style="border: 1px solid #ccc; padding: 10px;"/>
+            <apex:commandButton styleClass="slds-button slds-button_brand" value="Import Inbound Reports To Salesforce" action="{!importCSVFile}" />
+         </apex:pageBlockSection>
+         <apex:outputPanel rendered = "{!totalAmount > 0}">
+         	
+           		<b>Total records</b> :  {!totalCount}<br/>
+                <b>Total amount</b> :  {!totalAmount}
+            
+          	
+         </apex:outputPanel>
+         <apex:pageblocktable value="{!reportList}" var="rep">
+            
+            <apex:column value="{!rep.Id}" />
+             <apex:column value="{!rep.File_Name__c}" />
+            <apex:column value="{!rep.Amount__c}" />
+            <apex:column value="{!rep.Payment_Method__c}" />
+            <apex:column value="{!rep.Collection_Date__c}" />
+            <apex:column value="{!rep.Payee_Name__c}" rendered="{!fileType == 'Cheque'}"/>
+			<apex:column value="{!rep.Reference1__c}" />
+            <apex:column value="{!rep.Reference2__c}" rendered="{!fileType == 'BACS'}"/>
+            <apex:column value="{!rep.Reference3__c}" rendered="{!fileType == 'BACS'}"/>
+            <apex:column value="{!rep.Reference4__c}" rendered="{!fileType == 'BACS'}"/>
+            <apex:column value="{!rep.Reference5__c}" rendered="{!fileType == 'BACS'}"/>
+            <apex:column value="{!rep.Type__c}" rendered="{!fileType == 'BACS'}" />
+         </apex:pageblocktable>
+      </apex:pageBlock>
+      </table>
+   </apex:form>
+</apex:page>

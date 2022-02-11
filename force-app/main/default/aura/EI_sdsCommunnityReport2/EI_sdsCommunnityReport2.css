@@ -1,0 +1,82 @@
+.THIS .left-align {
+  text-align: left;
+}
+.THIS .right-align {
+  text-align: right;
+  margin-right: 1%;
+}
+.THIS .dataTables_empty{
+    display:none!important;
+}
+
+.THIS .headingtext{
+    text-align:left;
+    padding: 16px 18px;
+    border-bottom: none!important;
+    font-weight: bold;
+    background-color: #F5F6FA;
+    font-size: 15px!important;
+    line-height: 1.5;
+    color:#212529;
+    border-top: none!important;
+    font-family: Aller_regular;
+}
+.THIS .pagination {
+    margin-left: 150%;
+}
+.THIS .slds-card {
+    font-size:1.4rem;
+}
+.THIS .slds-p-around_medium{
+    font-size:1.4rem; 
+}
+
+.THIS .slds-form-element{
+     font-size:1.3rem; 
+}
+
+.THIS .slds-form-element__label{
+     font-size:1.3rem; 
+}
+
+.THIS.clrRed {
+    background-color:red;
+}
+.THIS .repayButton{
+    border-color : #32669E;
+    color: white;
+}
+.THIS .clickButton{
+    background-color : #32669E;
+    color: white;
+}
+.THIS .lightInput{
+    width:94%!important;
+   
+}
+.THIS .dateOutput{
+    border-width: 1px;
+    border-style: solid;
+    border-color: #C7C7C7;
+    font-size: initial;
+}
+.THIS .agree-container .agree-detail .request-section .form-group label{
+    font-family: Aller_bold!important;
+}
+.THIS .textalign{
+	text-align: left; 
+}
+
+.THIS .agree-container .agree-detail .request-section .form-group input .agree-container .agree-detail .request-section .form-group textarea{ 
+    text-align: left;
+}
+.THIS.myBtn  {
+    width: 80px;
+    height:30px;
+    font-size:13px;
+}
+.THIS.myBtn1  {
+    width: 140px;
+    height:30px;
+    font-size:13px;
+}

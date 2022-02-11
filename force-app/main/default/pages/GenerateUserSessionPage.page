@@ -1,0 +1,6 @@
+<apex:page showHeader="true" sidebar="false" Controller="GenerateUserSession" action="{!doLogin}" >
+    <apex:form >
+        
+        <apex:commandButton value="qwerty" action="{!doLogin}"/>
+    </apex:form>
+</apex:page>

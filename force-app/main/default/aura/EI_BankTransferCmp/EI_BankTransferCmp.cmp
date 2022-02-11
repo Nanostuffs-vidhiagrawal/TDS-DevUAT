@@ -1,0 +1,55 @@
+<aura:component
+  implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+  access="global"
+  controller="EI_ChangePaymentMethod"
+>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="depositInstallmentInstance" type="object" />
+	<p style= "font-size:30px">Transaction Details</p>
+    <p>Thank you for confirming that you will make payment by bank transfer.</p>
+    <p>Please pay the amount stated below into the following bank account. Please copy the bank details exactly as they are shown or your payment may be rejected.</p>
+    
+    <table>
+        <tr>
+            <td>Payment reference number</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Total deposits</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Amount to pay</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><b>Bank details to make payment to</b></td>
+            <td></td>
+        </tr>
+    </table>
+    <br/>
+    <div>
+    	<p>! Important: The deposit is not protected until TDS Custodial has received payment in cleared funds. This may take upto 3 working days and until then the deposit status on your Deposit Management screen will show as Awaiting Payment.</p>
+    </div>
+    
+    <p style= "font-size:30px">Your Deposits</p>
+    
+    <table>
+        <tr>
+            <th>Address</th>
+            <th>Deposit Account Number</th>
+            <th>Amount to be protected</th>
+            <th></th>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+                <input type="button" value= "Download PI"/><br/>
+                <input type="button" value= "Download PI"/>
+            </td>
+        </tr>
+    </table>
+    
+</aura:component>

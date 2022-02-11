@@ -1,0 +1,185 @@
+<aura:component access="global" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes"
+                controller="TransferDepositController">
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="depositRecordId" type="String" />
+    <aura:attribute name="emailValue" type="String" />
+    <aura:attribute name="errors" type="String" />
+    <aura:attribute name="emailValidationError" type="boolean" default="false"/>
+	<aura:attribute name="emailNotValid" type="boolean" default="false"/>
+    <aura:attribute name="listOfAllDeposits" type="list"/>
+    <aura:attribute name="selectedDeposits" type="list"/>
+    <aura:attribute name="isSelectAll" type="boolean" default="false"/>
+    <aura:attribute name="openmodel" type="boolean" default="false"/>
+    <aura:attribute name="multipleDeposit" type="boolean" default="false"/>
+    <aura:attribute name="singleDeposit" type="boolean" default="false"/>
+    <aura:attribute name="showDeposits" type="boolean" default="false"/>
+    <aura:attribute name="showConfirmDialog" type="boolean" default="false"/>
+    	
+    <!-- error Message Attribute-->
+    	<aura:attribute name="emailErrorNew" type="String" />        
+    	<aura:attribute name="errorList" type="Error_Message__mdt[]"/>
+    
+    <lightning:navigation aura:id="navService" />
+    
+    <div class="col-md-9">
+        <div class="col-md-12">      
+            <h2>Transfer to landlord</h2>
+        </div>
+        <a href="" class="go-back" onclick="{!c.depositSummaryPage}">
+            <img src="{!$Resource.TDSTheme+'/assets/img/md-arrow-dropleft.png'}" alt="Back Icon"/> 
+            Go back
+        </a>
+    
+    <!-- Deposit Steps HTML Start --> 
+        <section class="deposit_steps tf-other-prop">
+            <div class="deposit_steps_detail">
+                <form>
+                    <div class="form-group row">
+                        <div class="col-xs-12 col-sm-12 col-lg-11">
+                            <p>Please enter the email address of the SafeDeposits Scotland customer that you would like to transfer this deposit to. If they do not have an account , we will invite them to create one before they can accept the transfer.</p>
+                            <aura:if isTrue="{!v.emailValidationError}">
+                                <div id="emailemptyerror" class="alert alert-danger alert-dismissible fade show">
+                                   <!-- <strong>Error!</strong> This field is required and cannot be left empty.-->
+                                    {!v.emailErrorNew}
+                                    <button type="button" class="close" onclick="{!c.hideBootstrapErrors}" name="blankemailcheck" >&times;</button >
+                                </div> 
+                            </aura:if>
+                            <aura:if isTrue="{!v.emailNotValid}">
+                                <div id="emailemptyerror" class="alert alert-danger alert-dismissible fade show">
+                                    <strong>Error!</strong> Please enter a valid email .
+                                    <button type="button" class="close" onclick="{!c.hideBootstrapErrors}" name="validemailcheck" >&times;</button >
+                                </div> 
+                            </aura:if>
+                            <label for="tf_email" class="col-form-label">Email address</label>
+                            <!-- <input type="email" class="form-control" id="tf_email" placeholder="Enter your email address"/>-->
+                            <lightning:input 
+                                             aura:id="emailId"
+                                             value="{!v.emailValue}"
+                                             type="email" name="input" 
+                                             oncommit="{!c.validateEmail}" 
+                                             placeholder="Enter email "/>
+                            <!-- <aura:if isTrue="{!v.emailValidationError}">
+                            <div class="slds-text-color_error slds-p-left_x-small">
+                                {!v.errors}
+                            </div>
+                        </aura:if>-->
+                            
+                            
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-12 col-lg-11 text-right">
+                            <!-- <button type="submit" class="see-all">Transfer Deposit</button>-->
+                            <lightning:button label="Transfer deposit" title="Transfer deposit" 
+                                              onclick="{!c.transferSingleDeposit}" class="see-all"></lightning:button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+        <!-- Deposit Steps HTML End -->
+    </div>
+    
+    
+    <aura:if isTrue="{!v.showDeposits}">
+        <div class="slds-m-around_xx-large">
+            <h1 class="slds-text-heading--medium">Deposits</h1>
+            <br/>
+            <!--Contact List Table-->
+            <table class="slds-table slds-table--bordered slds-table--cell-buffer" role="grid">      
+                <thead>  
+                    <tr class="slds-text-title--caps">
+                        <th>           
+                            <label class="slds-checkbox">
+                                <ui:inputCheckbox value="{!v.isSelectAll}" 
+                                                  change="{!c.handleSelectAllDeposit}" 
+                                                  aura:id="selectAll"/>
+                                <span class="slds-checkbox--faux" />
+                                <span class="slds-form-element__label"></span>
+                            </label>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate" title="DAN">Dan</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate" title="Tenancy address">Tenancy address</div>
+                        </th>
+                        
+                        <th scope="col">
+                            <div class="slds-truncate" title="Protected amount">Protected amount</div>
+                        </th>
+                        
+                        <th scope="col">
+                            <div class="slds-truncate" title="Customer">Customer</div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <aura:iteration items="{!v.listOfAllDeposits}" var="deposit">
+                        <tr>
+                            <th>
+                                <label class="slds-checkbox">
+                                    <ui:inputCheckbox aura:id="checkDeposit" value="" text="{!deposit.Id}"
+                                                      change="{!c.handleSelectedDeposits}"/>
+                                    <span class="slds-checkbox--faux" />
+                                    <span class="slds-form-element__label"></span>
+                                </label>
+                            </th>
+                            <th scope="row">
+                                <div class="slds-truncate" title="{!deposit.Name}">{!deposit.Name}</div>
+                            </th>
+                            <td>
+                                <div  class="slds-truncate slds-cell-wrap" title="{!deposit.Property_Address__c}">{!deposit.Property_Address__c}</div>
+                            </td>
+                            <th scope="row">
+                                <div class="slds-truncate" title="{!deposit.Protected_Amount__c}">{!deposit.Protected_Amount__c}</div>
+                            </th>
+                            <td>
+                                <div class="slds-truncate" title="{!deposit.Customer__r.Name}">{!deposit.Customer__r.Name}</div>
+                            </td>
+                        </tr>
+                    </aura:iteration>
+                    
+                </tbody>
+            </table>
+            <div>
+                <br/>
+                <lightning:button label="Submit" class="slds-button_brand" 
+                                  onclick="{!c.submitTransfers}"  />
+            </div>
+        </div>
+    </aura:if>
+    
+    
+    <aura:if isTrue="{!v.openmodel}">
+            <!--Modal Box Start-->
+            <div role="dialog" class="slds-modal slds-fade-in-open ">
+                <div class="slds-modal__container">
+                    <!--Modal Box Header Start-->
+                    <header class="slds-modal__header">
+                        <h1 class="slds-text-heading--medium"></h1>
+                    </header>
+                    <!--Modal Box Header End-->
+                      
+                    <!--Modal Box Content Start-->
+                    <div class="slds-modal__content slds-p-around--large" style="font-size: 1.5rem!important;color: #32669E!important;">
+                        <center> Do you want to transfer the deposit ?</center>
+                        
+                    </div>
+                    <!--Modal Box Content End-->
+                      
+                    <!--Modal Box Button Start-->
+                    <footer class="slds-modal__footer">                        
+                        <center> <lightning:button variant="brand" name='Continue' label='Continue' onclick='{!c.transferDeposits}' class="see-all "/>
+                            <lightning:button name='Cancel transfer' label='Cancel transfer' onclick='{!c.handleConfirmDialogNo}' class="see-all "/></center>
+                    </footer>
+                    <!--Modal Box Button End-->
+                </div>
+            </div>
+            <div class="slds-backdrop slds-backdrop--open"></div>            
+        </aura:if>
+
+    
+</aura:component>

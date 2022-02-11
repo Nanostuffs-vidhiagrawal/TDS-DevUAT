@@ -1,0 +1,196 @@
+.custom-nav {
+	max-width: $container_size;
+	margin: $zero auto;
+	@include space(padding, top, $s20);
+	@include space(padding, bottom, $s20);
+
+	@include respond-below(md) {
+		@include space(padding, top, $s10);
+		@include space(padding, bottom, $s10);
+	}
+
+	.navbar-brand {
+		img {
+			width: $s140;
+		} 
+	}
+
+	.navbar-toggler {
+		border: none;
+		outline: none;
+	}
+
+	.navbar-collapse {
+
+		@include respond-below(md) {
+			@include space(margin, top, $s15);
+		}
+	}
+
+	.navbar-nav {
+		.nav-item {
+			.nav-link {
+				@include font_size($nav-font);
+				color: map-get($color, gray);
+				transition: 0.3s;
+				@include space(padding, left, $s25);
+				@include space(padding, right, $s25);
+
+				@include respond-below(md) {
+					@include space(padding, left, $s05);
+					@include space(padding, right, $s05);
+				}
+
+				&:hover {
+					color: map-get($color, blue);
+				}
+
+				img {
+					width: $s30;
+					@include respond-below(md) {
+						width: $s20;
+					}
+				}	
+			}
+
+			.dropdown-menu {
+				@include space(margin, top, $s25);
+				background-color: map-get($color, gray-black);
+				@include border-radius($s20);
+				@include position_absolute(auto, auto, auto, -50%);
+				@include space(padding, all, $s15);
+				@include space(padding, left, $s25);
+
+				@include respond-below(md) {
+					@include space(padding, all, $s05);
+					@include space(padding, left, $s15);
+				}
+
+				.dropdown-item {
+					@include font_size($base);
+					color: map-get($color, white);
+					background-color: transparent;
+					@include space(padding, top, $s10);
+					@include space(padding, bottom, $s10);
+					@include space(padding, left, $zero);
+					@include space(padding, right, $s35);
+
+					@include respond-below(md) {
+						@include space(padding, right, $s05);
+						@include space(padding, top, $s05);
+						@include space(padding, bottom, $s05);
+						@include font_size($below_base);
+					}
+				}
+
+				&::before {
+					content: '.';
+					background-image: url('../img/arrow-dropup.png');
+					width: $s40;
+					height: $s25;
+					background-repeat: no-repeat;
+					@include position_absolute(-$s20, 36%, auto, auto);
+
+					@include respond-below(md) {
+						background-size: $s20;
+						@include position_absolute(-$s10, 26%, auto, auto);
+					}
+				}
+
+				@include respond-below(md) {
+					@include space(margin, top, $s10);
+					@include position_absolute(auto, auto, auto, -$s20);
+				}
+			}
+
+			&.dropdown {
+				@include border(1px, solid, map-get($color, light_gray));
+				@include border-radius($s35);
+				@include space(padding, bottom, $zero);
+
+				.nav-link {
+					@include space(padding, left, $s10);
+					@include space(padding, right, $s30);
+
+					@include respond-below(md) {
+						@include space(padding, right, $s15);
+						@include space(padding, left, 0.7rem);
+						@include space(padding, top, 0.3rem);
+					}
+
+					&.dropdown-toggle {
+						background-image: url('../img/Icon-arrow-down.png');
+						background-position-x: 85%;
+						background-position-y: center;
+
+						@include respond-below(md) {
+							background-size: 1.3rem;
+						}
+
+						background-repeat: no-repeat;
+
+						&::after {
+							border: $zero;
+						}
+					}
+				}
+
+				&.show {
+					.nav-link {
+						&.dropdown-toggle {
+							//background-image: url('../img/Icon-arrow-up.png');
+							//background-position-x: 85%;
+							//background-position-y: center;
+
+							@include respond-below(md) {
+								//background-position-x: 98%;
+							}
+
+							@include respond-below(xs) {
+								//background-position-x: 98%;
+							}
+
+							//background-repeat: no-repeat;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	& > .navbar-nav {
+		@include respond-below(md) {
+			@include position_absolute(1.7rem, $s45, auto, auto);
+		}
+	}
+}
+
+.form-inline {
+			
+	.search-input {
+		width: $zero;
+		z-index: 99;
+	}
+}
+
+.ui-menu {
+	background: #fff 0% 0% no-repeat padding-box;
+	box-shadow: 0px 9px 17px #00000029;
+	border: 1px solid #DCF4FF;
+	opacity: 0.98;
+
+	.ui-menu-item {
+		@include space(padding, all, $zero);
+
+		.ui-menu-item-wrapper {
+			@include space(padding, all, $s15);
+			color: map-get($color, blue);
+			background-color: rgba(39, 98, 152, 0.12);
+
+			&:hover, &:focus {
+				color: map-get($color, light-black);
+				background-color: map-get($color, white);
+			}
+		}
+	}
+} 

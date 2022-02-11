@@ -1,0 +1,16 @@
+<apex:page standardController="Deposit__c" action="{!method}" extensions="depositList_CX" >
+<apex:form >
+  <apex:pageBlock >
+  <apex:pageblockSection >
+  <apex:pageBlockTable value="{!deptlist}" var="Record">
+  <apex:column value="{!Record.Amount_of_Deposit_Protected_by_TDS__c}"/>
+  
+  
+  </apex:pageBlockTable>
+  <apex:outputText value="{!Record.Date_Deposit_Received__c}"></apex:outputText>
+  </apex:pageblockSection>
+  
+  
+  </apex:pageBlock>
+  </apex:form>
+</apex:page>

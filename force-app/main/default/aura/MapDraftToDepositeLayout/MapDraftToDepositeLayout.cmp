@@ -1,0 +1,3 @@
+<aura:component controller = "MapCertificateDraftToDeposite" implements="forceCommunity:themeLayout,forceCommunity:availableForAllPageTypes,force:appHostable,lightning:isUrlAddressable" access="global" >
+	<c:MapDraftToDeposite></c:MapDraftToDeposite>
+</aura:component>

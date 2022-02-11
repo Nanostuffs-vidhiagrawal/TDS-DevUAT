@@ -1,0 +1,309 @@
+<aura:component implements="forceCommunity:themeLayout,forceCommunity:availableForAllPageTypes,force:hasRecordId" access="global"
+                controller="EI_DownloadBulkCertificatescls">
+    
+    <ltng:require scripts="{!$Resource.EI_ZD_Assets  + '/js/jszip.js'}" />
+    <ltng:require scripts="{!$Resource.EI_ZD_Assets  + '/js/fileSave.js'}" />
+    
+    <aura:attribute name="currentUser" type="User" />
+    <force:recordData
+                      aura:id="recordLoader"
+                      recordId="{!$SObjectType.CurrentUser.Id}"
+                      fields="Name,User_Role__c,Addition_Permission__c,Profile.Name"
+                      targetFields="{!v.currentUser}"
+                      />
+    
+    <!-- call doInit method on component load -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+    <!-- aura attributes to store data/values -->
+    <aura:attribute name="listOfAllDeposits" type="list"/>
+    <aura:attribute name="showDeposits" type="boolean" default="false"/>
+    <aura:attribute name="disbleDownloadButton" type="boolean" default="false"/>
+    <aura:attribute name="PaginationList" type="list" />
+    <aura:attribute name="selectedDepositIds" type="List"/>
+    <aura:attribute name="emailValidationError" type="boolean" default="false"/>
+	<aura:attribute name="emailNotValid" type="boolean" default="false"/>
+    <aura:attribute name="selectedCount" type="integer" default="0"
+                    description="selected Records Count"/>
+    <aura:attribute name="startPage" type="Integer" />
+    <aura:attribute name="endPage" type="Integer"/>
+    <aura:attribute name="totalRecordsCount" type="Integer" default="0"/>
+    <aura:attribute name="pageSize" type="Integer" default="50"
+                    description="number of records to be display on per page"/>
+    <aura:attribute name="currentPage" type="integer" default="1"/>
+    <aura:attribute name="totalPagesCount" type="integer"/>
+    <aura:attribute name="bNoRecordsFound" type="boolean" default="false"/>
+    
+    <aura:attribute name="nodepositSelected" type="boolean" default="false"/>
+    
+    <aura:attribute name="listOfPropertyAlocations" type="list" />
+    
+    <!-- pagination -->
+    <aura:attribute name="startPageLandlord" type="Integer" />
+    <aura:attribute name="endPageLandlord" type="Integer" />  
+    <aura:attribute name="currentPageLandlord" type="integer" default="1" />
+    <aura:attribute name="pageSizeLandlord" type="Integer" default="4" description="number of records to be display on per page"/> 
+    <aura:attribute name="totalPagesCountLandlord" type="integer" default="1" />
+    <aura:attribute name="totalRecordsCountLandlord" type="Integer" /> 
+    <aura:attribute name="emailValue" type="string" /> 
+    
+    <aura:attribute name="showViewPage" type="boolean" default="true"/>   
+    <aura:attribute name="fromParentComp" type="boolean" default="false"/> 
+    
+    <aura:attribute name="strRecordId" type="String" />
+    <aura:attribute name="LandlordList" type="List" />   
+    <aura:attribute name="property" type="Object"/>
+    <aura:attribute name="PaginationLandlordList" type="list" />
+    
+    <aura:attribute name="showdiv" type="boolean" default="false" />
+    <aura:attribute name="Recid" type="string" />
+    <aura:attribute name="searchText" type="string" />
+    <aura:attribute name="openmodel" type="boolean" default="false" />
+    
+    <!-- Address Fields-->
+    <aura:attribute access="public" name="Street" type="String" />
+    <aura:attribute access="public" name="Town" type="String" />
+    <aura:attribute access="public" name="PostCode" type="String" />
+    <aura:attribute access="public" name="Country" type="String" />
+    <aura:attribute access="public" name="County" type="String" />
+    <aura:attribute access="public" name="LocalAreaCode" type="String" />
+    <aura:attribute
+                    name="Propobj"
+                    type="Property__c"
+                    default="{ 'sobjectType': 'Property__c'}"
+                    />
+    
+    
+    
+    <aura:attribute name="emailBelongToTenant" type="boolean" default="false"/>
+    <aura:attribute name="showSuccessMsg" type="boolean" default="false"/>
+    
+    
+    
+    <lightning:overlayLibrary aura:id="overlayLib" />
+    <lightning:overlayLibrary aura:id="overlayLibDemo" />
+    
+    <lightning:navigation aura:id="navServiceMyProperty" />
+    
+    
+    <html>
+        <body>
+            <!-- Protect Search HTML Start -->
+            <section class="protect-search">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- Protect Search HTML End -->
+            
+            <!-- left Tabs HTML Start -->
+            <div class="secondary-tab-container">
+                <nav class="left-custom-tab">
+                    <div class="nav nav-tabs" id="left-nav-tab" role="tablist">
+                        <a onclick="{!c.transferMultipleDepositSubTabs}" class="nav-link" id="left_nav-sf-presonal-tab"
+                           data-toggle="tab" href="#left_nav-sf-presonal" role="tab" aria-controls="left_nav-sf-presonal"
+                           aria-selected="false" >
+                            <img class="initial-state" src="{!$Resource.TDSTheme + '/assets/img/newspaper_icon.svg'}"
+                                 alt="" />
+                            Transfer multiple deposits
+                        </a>
+                        <ul id="uList" class="org-detail-list">
+                            <li class="account-detail" >
+                                <a onclick="{!c.transferrabledeposits}"><span class="arrow-left"></span>Transfer multiple deposits</a>
+                            </li>
+                            <li class="account-detail">
+                                <a onclick="{!c.viewtransffered}"><span class="arrow-left"></span>Transfers in progress</a>
+                            </li>
+                            <li class="account-detail" >
+                                <a onclick="{!c.addClick}"><span class="arrow-left"></span>Transfer awaiting approval</a>
+                            </li>
+                        </ul>
+                        <aura:if isTrue="{!and(v.currentUser.Profile.Name!='Landlord', or(v.currentUser.Profile.Name=='Agent', v.currentUser.Profile.Name=='Head Office User'))}">
+                        <a  class="nav-link" id="left_nav-sf-organisation-tab" onclick="{!c.regMultipleDepositSubTabs}" 
+                           data-toggle="tab" href="#left_nav-sf-organisation" role="tab"
+                           aria-controls="left_nav-sf-organisation" aria-selected="false" >
+                            <img class="initial-state" src="{!$Resource.TDSTheme + '/assets/img/Organisation_icon.svg'}"
+                                 alt="" />
+                            Register multiple deposits
+                        </a>
+                        <ul id="uList" class="org-detail-list">
+                            <li class="account-detail" >
+                                <a onclick="{!c.handleClickNewUpload}"><span class="arrow-left"></span>New upload</a>
+                            </li>
+                            <li class="account-detail">
+                                <a onclick="{!c.handleClickViewImportLogs}"><span class="arrow-left"></span>View import logs</a>
+                            </li>
+                        </ul>
+                        </aura:if>
+                        
+                        <a onclick="{!c.downloadMultiplecertificatesTabs}" class="nav-link" id="left_nav-sf-dpc-tab"
+                           data-toggle="tab" href="#left_nav-sf-dpc" role="tab"
+                           aria-controls="left_nav-sf-dpc" aria-selected="false" >
+                            <img class="initial-state" src="{!$Resource.TDSTheme + '/assets/img/Organisation_icon.svg'}"
+                                 alt="" />
+                            Download multiple certificates
+                        </a>
+                        
+                        <a onclick="{!c.downloadPIFormsTabs}" class="nav-link active" id="left_nav-sf-pi-tab"
+                           data-toggle="tab" href="#left_nav-sf-pi" role="tab"
+                           aria-controls="left_nav-sf-pi" aria-selected="true" >
+                            <img class="initial-state" src="{!$Resource.TDSTheme + '/assets/img/Organisation_icon.svg'}"
+                                 alt="" />
+                            Download prescribed information forms
+                        </a>
+                    </div>
+                </nav>
+                <!-- transferrable deposits list start-->     
+                <aura:if isTrue="{!v.showDeposits}">
+                    
+                    <aura:if isTrue="{!v.showSuccessMsg}">
+                        <div id="passwordAlert"
+                             class="alert alert-success alert-dismissible fade show">
+                            <strong>Success!</strong> Request submitted - we have contacted the other party and invited them to accept the transfer. We will notify you when they accept the transfer, after which you will no longer have access to the deposit(s).
+                            
+                            <button type="button" class="close" onclick="{!c.hideBootstrapErrors}"
+                                    name="passSuccessMessage"
+                                    >&times;</button
+                                >
+                        </div>
+                    </aura:if>
+                    
+                    <aura:if isTrue="{!v.bNoRecordsFound}">
+                        
+                        <p>No record to show.</p>
+                        
+                        <aura:set attribute="else">
+                            <div class="slds-m-around_xx-large">
+                                <h5 class="slds-text-heading--medium" style="font-size: x-large;">Download prescribed information forms</h5>
+                                <br/>
+                                <p class="slds-m-around_small" style="font-family: Aller_regular!important;">
+                                    <span style="display:inline-block">
+                                       Please ensure that the information relating to deposit clauses in your tenancy agreement are correct before downloading any forms.
+                                    </span>
+                                </p>
+                                <br />
+                                <section class="protect-search">
+                                    <div class="container">
+                                        <div class="row">
+                                            
+                                            <div class="col-sm-6">
+                                            </div>
+                                            
+                                            <div class="col-sm-6">
+                                                <div class="filter-search">
+                                                    <input type="text" onkeypress="{!c.handleSearch}" id="searchValue" class="form-control" placeholder="Enter your search here...." value="{!v.searchText}"/>
+                                                    <button type="button" onclick="{!c.handleSearch}"></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                                
+                                <aura:if isTrue="{!v.nodepositSelected}">
+                                    <div id="emailemptyerror" class="alert alert-danger alert-dismissible fade show">
+                                        <strong>Error!</strong> Please select atleast one deposit.
+                                        <button type="button" class="close" onclick="{!c.hideBootstrapErrors}" name="nodeposit" >&times;</button >
+                                    </div> 
+                                </aura:if><br/><br/>
+                                <p class="slds-m-around_small" style="font-family: Aller_regular!important;">
+                                    <span style="display:inline-block">
+                                        Total records : {!v.selectedCount > 0 ? v.selectedCount + '/' : ''} {!v.totalRecordsCount} 
+                                    </span>
+                                </p>
+                                <div class="container">
+                                    <div class="table-container">
+                                        <table class="slds-table slds-table--striped" style="width:100%">
+                                            <thead style="font-size:1.5rem;">
+                                                <tr>
+                                                    <th class="headingtext">
+                                                        <div class="tenant_cover_table" style="box-shadow:none;">
+                                                            <div class="form-check form-check-inline">
+                                                                <label class="main">
+                                                                    <ui:inputCheckbox disabled="{!v.totalRecordsCount == 0}"
+                                                                                      aura:id="selectAllId" 
+                                                                                      change="{!c.selectAllCheckbox}"/>
+                                                                    <span class="geekmark"></span>
+                                                                </label> 
+                                                            </div>
+                                                            <label style=" margin-left:10px; font-size:1.5rem;">Select all</label>
+                                                        </div>
+                                                    </th>
+                                                    <th class="headingtext">DAN</th>
+                                                    <th class="headingtext" style="width:45%;">Tenancy address</th>
+                                                    <th class="headingtext">Deposit amount <br/> held</th>
+                                                    <th class="slds-cell-wrap headingtext">No. of tenants</th>
+                                                    
+                                                </tr>
+                                            </thead>
+                                            <tbody style="font-size:1.5rem;">
+                                                <aura:iteration items="{!v.PaginationList}" var="deposit">
+                                                    <tr>
+                                                        <td  class="slds-cell-wrap slds-text-align_left textcss">
+                                                            <div class="tenant_cover_table" style="box-shadow:none;">
+                                                                <div class="form-check form-check-inline">
+                                                                    <label class="main">
+                                                                        <!-- <input type="checkbox"/>-->
+                                                                        <ui:inputCheckbox text="{!deposit.objDeposit}"
+                                                                                          value="{!deposit.isChecked}" aura:id="checkDeposit"
+                                                                                          change="{!c.checkboxSelect}"/>
+                                                                        <span class="geekmark"></span> 
+                                                                    </label> 
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td class="slds-cell-wrap slds-text-align_left textcss">{!deposit.objDeposit.Name}</td>
+                                                        <td class="slds-cell-wrap slds-text-align_left textcss">{!deposit.objDeposit.Property_Address__c}</td>
+                                                        <td class="slds-cell-wrap slds-text-align_left textcss"><lightning:formattedNumber value="{!deposit.objDeposit.Protected_Amount__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></td>
+                                                        <td class="slds-cell-wrap slds-text-align_left textcss">{!deposit.objDeposit.Number_of_Tenants__c}</td>
+                                                    </tr>
+                                                </aura:iteration>
+                                            </tbody>
+                                        </table>
+                                    </div> 
+                                    
+                                    <div class="text-right">
+                                        <br/>
+                                        <lightning:button class="see-all" label="Download selected prescribed information forms" 
+                                                          disabled="{!v.disbleDownloadButton}"
+                                                          onclick="{!c.downloadCertificates}"  />
+                                    </div>
+                                    
+                                    <div>
+                                        <nav aria-label="Page navigation">
+                                            <ul class="pagination">
+                                                <aura:if isTrue="{!or(v.startPage == 0,v.PaginationList.length==0)}">
+                                                    <li class="page-item disabled"><a class="page-link" href="" >Previous</a></li>
+                                                    <aura:set attribute="else">
+                                                        <li class="page-item"><a class="page-link" id="previousId" style="width :120px" href="" onclick="{!c.navigation}">Previous</a></li>
+                                                    </aura:set>
+                                                </aura:if>
+                                                <li class="page-item"><a class="page-link" href="" style="width :120px">Page {!v.currentPage} out of {!v.totalPagesCount}</a></li>
+                                                <aura:if isTrue="{!or((v.endPage + 1) >= v.totalRecordsCount,v.PaginationList.length==0 )}">
+                                                    <li class="page-item disabled"><a class="page-link" href="" >Next</a></li>							
+                                                    <aura:set attribute="else">
+                                                        <li class="page-item"><a class="page-link" id="nextId" href="" onclick="{!c.navigation}">Next</a></li>
+                                                    </aura:set>
+                                                </aura:if>
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                </div>
+                                <!-- <div class="text-right download-btns new-deposit-width">
+                                    <br/>
+                                    <lightning:button class="see-all" label="Download selected certificates" 
+                                                      onclick="{!c.downloadCertificates}"  />
+                                </div> -->
+                            </div>
+                            
+                        </aura:set>
+                    </aura:if>
+                </aura:if>
+              
+            </div>
+        </body>
+    </html>
+</aura:component>

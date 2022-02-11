@@ -1,0 +1,45 @@
+.single_square_box {
+	@include space(padding, top, $s15);
+	@include space(padding, bottom, $s15);
+	@include space(padding, left, $s20);
+	@include space(padding, right, $s20);
+	@include border(1px, solid, map-get($gray_shade, gray04));
+	@include space(margin, bottom, $s30);
+
+	@include respond-below(sm) {
+		@include space(margin, bottom, $s15);
+	}
+
+	h5 {
+		font-family: $AllerRegular;
+		color: map-get($color, light-black);
+	}
+
+	p {
+		color: map-get($color, light_gray);
+	}
+
+	picture {
+		background-color: map-get($color, blue);
+		@include space(padding, all, $s10);
+		@include space(margin, bottom, $s15);
+		display: inline-block;
+		@include border_radius($s05);
+		width: $s50;
+		height: $s50;
+		@include flexbox();
+		@include flex_properties(center, center, wrap);
+
+		img {
+			width: $full;
+			max-height: 2.8rem;
+		}
+	}
+}
+
+.account-staus-square-box {
+	@include space(padding, top, $s55);
+	@include respond-below(sm) {
+		@include space(padding, top, $s25);
+	}
+}

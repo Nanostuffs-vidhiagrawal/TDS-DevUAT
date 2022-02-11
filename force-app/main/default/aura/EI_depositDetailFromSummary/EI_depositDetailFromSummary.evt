@@ -1,0 +1,4 @@
+<aura:event type="COMPONENT" description="Event to pass data from Deposit  Summary to Deposit Detail">
+  <aura:attribute name="leadTenantObj" type="object" />
+  <aura:attribute name="arrObj" type="object[]" />
+</aura:event>

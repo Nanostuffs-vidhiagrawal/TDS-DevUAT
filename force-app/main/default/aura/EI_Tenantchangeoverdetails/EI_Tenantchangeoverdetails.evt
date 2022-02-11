@@ -1,0 +1,3 @@
+<aura:event type="COMPONENT" description="Event to Pass tenants object array from EI_tenants details">
+    <aura:attribute name="arrObj" type="object" />
+</aura:event>

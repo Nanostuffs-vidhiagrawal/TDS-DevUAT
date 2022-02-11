@@ -1,0 +1,73 @@
+.landlord-login {
+	
+	@include respond-above(sm) {
+		max-height: 130vh !important;
+	}
+
+	h3, h5 {
+		text-align: left;
+	}
+
+	.look-up {
+		top: $s90;
+	}
+
+	h3 {
+		@include space(margin, bottom, $s15);
+	}
+
+	h5 {
+		color: map-get($color, light-black);
+
+		&.contact-heading {
+			@include space(margin, top, $s15);
+			@include space(margin, bottom, $s25);
+
+			@include respond-below(sm) {
+				@include space(margin, top, $s05);
+				@include space(margin, bottom, $s15);
+			}
+		}
+	}
+
+	form {
+		.landlord-btn {
+			text-align: left;
+			@include space(margin, top, $s25);
+			@include space(margin, bottom, $s25);
+
+			.learn-more {
+				@include border(1px, solid, map-get($gray_shade, gray03));
+				@include space(margin, left, $zero);
+				width: 45%;
+				text-transform: initial;
+
+				&.active, &:hover {
+					@include border(1px, soli, map-get($color, blue));
+				}
+
+				&:first-child {
+					@include space(margin, right, $s15);
+				}
+			}
+		}
+
+		.see-all {
+			text-transform: initial;
+		}
+
+		.go-back {
+			@include space(margin, right, $s05);
+		}
+	}
+}
+
+.landlord-banner {
+	height: 125vh !important;
+}
+
+.landlord-details {
+	@include respond-below(sm) {
+		height: auto;
+	}
+}

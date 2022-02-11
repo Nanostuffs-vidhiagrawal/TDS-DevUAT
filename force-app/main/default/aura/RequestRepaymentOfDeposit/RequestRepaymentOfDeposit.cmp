@@ -1,0 +1,810 @@
+<aura:component  access="global" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes"
+                controller="RequestRepaymentOfDepositController"  
+                >
+    <!--create myDate aura attribute for store date field value-->  
+    <aura:attribute name="myDate" type="date" />
+    <aura:attribute name="todayDate" type="date" />
+    <aura:attribute name="cleanAmt" type="decimal" default="0" />
+    <aura:attribute name="damageAmt" type="decimal" default="0" />
+    <aura:attribute name="redecorationAmt" type="decimal" default="0" />
+    <aura:attribute name="gardeningAmt" type="decimal" default="0" />
+    <aura:attribute name="arrearsAmt" type="decimal" default="0"/>
+    <aura:attribute name="otherAmt" type="decimal" default="0" />
+    <aura:attribute name="otherAmtReason" type="String" />
+	<aura:attribute name="cleanAmtValidation" type="boolean" default="false" />
+    <aura:attribute name="damageAmtValidation" type="boolean" default="false" />
+    <aura:attribute name="redecorationAmtValidation" type="boolean" default="false" />
+    <aura:attribute name="gardeningAmtValidation" type="boolean" default="false" />
+    <aura:attribute name="arrearsAmtValidation" type="boolean" default="false" />
+    <aura:attribute name="otherAmtValidation" type="boolean" default="false" />
+	<aura:attribute name="blankTenantAmountValidation" type="boolean" default="false" />
+    <aura:attribute name="blankAgentAmountValidation" type="boolean" default="false" />
+	<aura:attribute name="blankTenantAmountValidationNoButton" type="boolean" default="false" />
+    <aura:attribute name="remainderAmt" type="decimal" />
+    <aura:attribute name="tenantAmt" type="decimal" />
+    <aura:attribute name="totalNoTenant" type="integer" />
+    <aura:attribute name="totalAmount" type="decimal" />
+    <aura:attribute name="repaymentId" type="String" />
+    <aura:attribute name="dateValidationError" type="boolean" />
+    <aura:attribute name="dateBlankValidation" type="boolean" default="false"/>
+    <aura:attribute name="RepaymentoptionsBlankValidation" type="boolean" default="false"/>
+    <aura:attribute name="otherAmtValidationError" type="boolean" />
+    <aura:attribute name="displaySplitSection" type="boolean" default="false"/>
+    <aura:attribute name="futureValidationError" type="boolean" default="false"/>
+    <aura:attribute name="displayAllTenantButton" type="boolean" default="false"/>
+    <aura:attribute name="displayNegaiveAmtSection" type="boolean" default="false"/>
+    <aura:attribute name="yesButton" type="boolean" default="false"/>
+    <aura:attribute name="noButton" type="boolean" default="false"/>
+	<aura:attribute name="noButtonOnCommit" type="boolean" default="false"/>
+    <aura:attribute name="leftToAllocate" type="boolean" default="false"/>
+    <aura:attribute name="displayNoSection" type="boolean" default="false"/>
+	<aura:attribute name="displaySummarySection" type="boolean" default="false"/>
+    <aura:attribute name="displayRequestSection" type="boolean" default="false"/>
+    <aura:attribute name="amountDividedByTenant" type="decimal" default="0.0" />
+        <aura:attribute name="lastTenantAmount" type="decimal" default="0.0" />
+    <aura:attribute name="depositRecordId" type="String" />
+    <aura:attribute name="leftToAllocateMessage" type="String" />
+    <aura:attribute name="buttonText" type="String" />
+    <aura:attribute name="deposit" type="Deposit__c"/>
+    <aura:attribute name="depositAllocation" type="Object[]"/>
+    <aura:attribute name="tenInfo" type="Map" access="global"/>
+    <aura:attribute name="lstOfRepReqObj" type="List" access="global"/>
+    <aura:attribute name="totalAmtToTenant" type="decimal" default="0.0" />
+    <aura:attribute name="totalAmtToAgent" type="decimal" default="0.0" />
+    
+    <!-- <aura:handler name="init" value="{!this}" action="{!c.doInit}"/> -->
+    
+	<!-- Create myDate aura attribute for store date field value-->
+    <aura:attribute name="repaymentRequest" type="Repayment_Request__c"/>
+    <aura:attribute name="dontAgreeSection" type="Boolean" default="false"/>
+    <aura:attribute name="iAgree" type="Boolean" default="false"/>
+    <aura:attribute name="agreeSection" type="Boolean" default="false"/>
+    <aura:attribute name="repaymentRequestLine" type="Object[]"/>
+    <aura:attribute name="repaymentRequestRecordId" type="String"/>
+    <aura:attribute name="repaymentRequestLineTotal" type="Currency"/>
+	<aura:attribute name="currentUser" type="User" />
+    <aura:attribute name="summaryWindow" type="Boolean" default="false"/>
+    <aura:attribute name="disableSumbit" type="Boolean" default="false"/>
+    
+    <!-- Error Messages Attribute-->
+    <aura:attribute name="futureDateErrorNew" type="String" />
+    <aura:attribute name="totalDepositErrorNew" type="String" />
+    <aura:attribute name="tenantAmountErrorNew" type="String" />
+    <aura:attribute name="agentAmountErrorNew" type="String" />
+    <aura:attribute name="negativeAmountErrorNew" type="String" />
+    <aura:attribute name="depositAmountErrorNew" type="String" />
+    <aura:attribute name="agreeErrorNew" type="String" />
+    <aura:attribute name="doNotAgreeErrorNew" type="String" /> 
+    <aura:attribute name="blankDateErrorNew" type="String" />
+    <aura:attribute name="errorList" type="Error_Message__mdt[]"/> 
+    
+      <aura:attribute name="agentAmountIssue" type="boolean" default="false"/>
+        <aura:attribute name="repTenantErrorNew" type="String" />
+    
+    <aura:attribute name="helpTextName1" type="String" default="If you are requesting that money is to be repaid to "/>
+	<aura:attribute name="helpTextName3" type="String" default=", these fields must add up to the total requested."/>
+    
+    
+    <aura:attribute name="blankAllocationList" type="List" access="global"/>
+    <aura:attribute name="showAddressFlag" type="Boolean" default = "false"/>
+    <aura:handler name="cmpEvent" event="c:ceEvent" action="{!c.handleComponentEvent}"/>
+    
+	
+	<force:recordData aura:id="recordLoader" recordId="{!$SObjectType.CurrentUser.Id}"  
+	 fields="Name,ContactId,AccountId,User_Role__c,Addition_Permission__c" targetFields="{!v.currentUser}"/>
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <lightning:navigation aura:id="navService" />
+    
+	<aura:if isTrue="{!v.displayRequestSection}">
+		<!--<div class="tab-content custom-tab-content" id="sf-tabContent">-->
+			<!--<div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">-->
+				<!--<div class="deposit-agent">-->
+					<div class="container">
+						<div class="row">
+							<div class="col-md-12">
+                                <!--<div class="col-md-12">-->   
+             						<h2 id="errorShow">Repayment request</h2>
+         						 <!--</div>-->
+								<a href="" class="go-back" onclick="{!c.goBackHandle}">
+									<img src="{!$Resource.TDSTheme + '/assets/img/md-arrow-dropleft.png'}" alt="Back Icon"/> Go back
+								</a>
+								 <aura:if isTrue="{!v.blankAgentAmountValidation}">
+                                    <div id="errorShow" class="alert alert-danger alert-dismissible fade show">
+                                        <!-- <strong>Error!</strong> You have indicated that you have agreed to some deductions. Please enter them in to the fields below. Alternatively, please press No if you have not agreed to any deductions.--> 
+                                        {!v.repTenantErrorNew}
+                                        <button type="button" class="close" onclick="{!c.hideBootstrapErrors}" name="tenZeroAmount" >&times;</button >
+                                    </div>                 
+                                </aura:if>
+                                
+                               <aura:if isTrue="{!v.blankTenantAmountValidation}">
+                                    <div id="errorShow" class="alert alert-danger alert-dismissible fade show">
+                                        <!-- <strong>Error!</strong> You have indicated that you have agreed to some deductions. Please enter them in to the fields below. Alternatively, please press No if you have not agreed to any deductions.--> 
+                                        {!v.repTenantErrorNew}
+                                        <button type="button" class="close" onclick="{!c.hideBootstrapErrors}" name="agentZeroAmount" >&times;</button >
+                                    </div>                 
+                                </aura:if>
+								<!-- Deposit Steps HTML Start -->
+								<section class="deposit_steps tf-other-prop">
+									<div class="deposit_steps_detail">
+										<div class="row">
+											<div class="col-xs-12 col-md-12 col-lg-8">
+												<div class="deposit_box_container">
+													<div class="deposit_box ">
+														<div>
+															<h5 class="text-secondary">Deposit status:</h5>
+															<h6>{!$Label.c.Deposits_held_by_SafeDeposits_Scotland}</h6>
+														</div>
+													</div>
+													<div class="deposit_box bg-blue-light">
+														<div>
+															<h5 class="text-secondary">Total deposit held:</h5>
+															<h6><lightning:formattedNumber value="{!v.deposit.Protected_Amount__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></h6>
+														</div>
+														<img src="{!$Resource.TDSTheme + '/assets/img/pound_icon.png'}" alt=""/>
+													</div>
+												</div>
+											</div>
+										</div>
+										<form>
+                                            
+                                            <aura:if isTrue="{!v.showAddressFlag}">
+                                                <c:EI_ForwardingAddress depositId = "{!v.depositRecordId}" allocationList = "{!v.blankAllocationList}"/>
+                                            </aura:if>
+                                            <aura:if isTrue="{!!v.showAddressFlag}">
+                                                <div class="form-group row">
+                                                    <label class="col-sm-4 col-lg-3 col-form-label">Tenancy end date</label>
+                                                    <div class="col-sm-12 col-lg-5">
+                                                        <label>Please tell us the date the tenancy ended</label>
+                                                        <div id="dateError" class="d-flex">
+                                                            <div class="flex3">
+                                                                <select class="form-control" id="tenancyStartDate" name="day">
+                                                                    <option value="" disabled="true" selected="true">Select Day</option>
+                                                                    <option id="tsd01" value="01">1</option>
+                                                                    <option id="tsd02" value="02">2</option>
+                                                                    <option id="tsd03" value="03">3</option>
+                                                                    <option id="tsd04" value="04">4</option>
+                                                                    <option id="tsd05" value="05">5</option>
+                                                                    <option id="tsd06" value="06">6</option>
+                                                                    <option id="tsd07" value="07">7</option>
+                                                                    <option id="tsd08" value="08">8</option>
+                                                                    <option id="tsd09" value="09">9</option>
+                                                                    <option id="tsd10" value="10">10</option>
+                                                                    <option id="tsd11" value="11">11</option>
+                                                                    <option id="tsd12" value="12">12</option>
+                                                                    <option id="tsd13" value="13">13</option>
+                                                                    <option id="tsd14" value="14">14</option>
+                                                                    <option id="tsd15" value="15">15</option>
+                                                                    <option id="tsd16" value="16">16</option>
+                                                                    <option id="tsd17" value="17">17</option>
+                                                                    <option id="tsd18" value="18">18</option>
+                                                                    <option id="tsd19" value="19">19</option>
+                                                                    <option id="tsd20" value="20">20</option>
+                                                                    <option id="tsd21" value="21">21</option>
+                                                                    <option id="tsd22" value="22">22</option>
+                                                                    <option id="tsd23" value="23">23</option>
+                                                                    <option id="tsd24" value="24">24</option>
+                                                                    <option id="tsd25" value="25">25</option>
+                                                                    <option id="tsd26" value="26">26</option>
+                                                                    <option id="tsd27" value="27">27</option>
+                                                                    <option id="tsd28" value="28">28</option>
+                                                                    <option id="tsd29" value="29">29</option>
+                                                                    <option id="tsd30" value="30">30</option>
+                                                                    <option id="tsd31" value="31">31</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="flex3">
+                                                                <select class="form-control" id="tenancyStartMonth" name="month">
+                                                                    <option value="" disabled="true" selected="true">Select Month</option>
+                                                                    <option id="tsm01" value="01">January</option>
+                                                                    <option id="tsm02" value="02">February</option>
+                                                                    <option id="tsm03" value="03">March</option>
+                                                                    <option id="tsm04" value="04">April</option>
+                                                                    <option id="tsm05" value="05">May</option>
+                                                                    <option id="tsm06" value="06">June</option>
+                                                                    <option id="tsm07" value="07">July</option>
+                                                                    <option id="tsm08" value="08">August</option>
+                                                                    <option id="tsm09" value="09">September</option>
+                                                                    <option id="tsm10" value="10">October</option>
+                                                                    <option id="tsm11" value="11">November</option>
+                                                                    <option id="tsm12" value="12">December</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="flex3">
+                                                                <select class="form-control" id="tenancyStartYear" name="year">
+                                                                    <option value="" disabled="true" selected="true">Select Year</option>
+                                                                    <option id="tsy2015" value="2015">2015</option>
+                                                                    <option id="tsy2016" value="2016">2016</option>
+                                                                    <option id="tsy2017" value="2017">2017</option>
+                                                                    <option id="tsy2018" value="2018">2018</option>
+                                                                    <option id="tsy2019" value="2019">2019</option>
+                                                                    <option id="tsy2020" value="2020">2020</option>
+                                                                    <option id="tsy2021" value="2021">2021</option>
+                                                                    <option id="tsy2022" value="2022">2022</option>
+                                                                    <option id="tsy2023" value="2023">2023</option>
+                                                                    <option id="tsy2024" value="2024">2024</option>
+                                                                </select>
+                                                            </div>
+                                                            <!--<div class="flex1">
+                                                                <div class="calander-icon">
+                                                                    <input name="datepicker-ui" type="text"
+                                                                           id="datepicker-ui" />
+                                                                </div>
+                                                            </div>-->
+                                                        </div>
+                                                        <p  class="error-msg">
+                                                            <aura:if isTrue="{!v.dateValidationError}">
+                                                                Please Enter a valid Date 
+                                                            </aura:if>
+                                                            <aura:if isTrue="{!v.dateBlankValidation}">
+                                                                <!--{!$Label.c.BlankDateValidation}-->
+                                                                {!v.blankDateErrorNew}
+                                                            </aura:if>
+                                                            <aura:if isTrue="{!v.futureValidationError}">
+                                                                <!--{!$Label.c.RepaymentDateValidation}-->
+                                                                 {!v.futureDateErrorNew}
+                                                            </aura:if>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group row">
+                                                    <label class="col-sm-4 col-lg-3 col-form-label">Repayment Option</label>
+                                                    <div class="col-sm-8 col-lg-5">
+                                                        <label>Do you want to make deductions from the deposit?</label><br/>
+                                                        <!--<a id="property_yes" class="learn-more mr-3">Yes</a>
+                                                        <a id="property_no" class="learn-more">No</a>-->
+                                                        <lightning:button label="Yes" aura:id="landlordCompYes" title="Yes" onclick="{!c.handleOnYesClick}" 
+                                                                          class="learn-more mr-3 yesnobtn"></lightning:button>
+                                                        <lightning:button label="No" aura:id="landlordCompNo" title="No" onclick="{!c.handleOnNoClick}" 
+                                                                          class="learn-more yesnobtn"></lightning:button>
+                                                        <aura:if isTrue="{!v.RepaymentoptionsBlankValidation}">
+                                                            <div class="error-msg">
+                                                                {!$Label.c.RepaymentoptionsValidation}
+                                                            </div>
+                                                        </aura:if>
+                                                    </div>
+                                                </div>
+                                            </aura:if>
+											
+                                            <!-- Make deductions YES section -->
+											<aura:if isTrue="{!v.displaySplitSection}">
+												<div>
+													<div class="form-group row">
+														<label class="col-sm-4 col-lg-3 col-form-label">Amount of deposit to be repaid to tenant(s)</label>
+														<div class="col-sm-12 col-lg-5">
+															<div class="deposit_box pt-3 pb-2">
+																<div class="row">
+																	<div class="col-6 col-sm-8">
+																		<h5 class="text-secondary mb-3">Remainder to allocate
+																		</h5>
+																	</div>
+																	<div class="col-sm-4 col-6">
+																		<h6 class="mb-3">
+                                                                            <lightning:formattedNumber value="{!v.remainderAmt}" style="currency" 
+                                                                                                       currencyCode="GBP" minimumFractionDigits="2" 
+                                                                                                       maximumFractionDigits="2"/>
+                                                                        </h6>
+																	</div>
+																</div>
+																<div class="row">
+																	<div class="col-6 col-sm-8">
+																		<h5 class="text-secondary mb-3">Total deposit repayment
+																		</h5>
+																	</div>
+																	<div class="col-sm-4 col-6">
+																		<h6 class="mb-3">
+                                                                            <lightning:formattedNumber value="{!v.deposit.Protected_Amount__c}" 
+                                                                                                       style="currency" currencyCode="GBP" 
+                                                                                                       minimumFractionDigits="2" 
+                                                                                                       maximumFractionDigits="2"/>
+                                                                        </h6>
+																	</div>
+																</div>
+																<aura:if isTrue="{!v.displayNegaiveAmtSection}">
+																	<div class="error-msg">
+																		<!--{!$Label.c.RemainderAmtMessage}-->
+                                                                         {!v.negativeAmountErrorNew}
+																	</div>
+																</aura:if>
+															</div>
+                                                            <aura:if isTrue="{!v.leftToAllocate}">
+                                                                <div id="errorCon" class="error-msg">
+                                                                    Your claimed amount must match the amount of the deposit held by SafeDeposits Scotland.
+                                                                </div>
+                                                                <br/><br/>
+                                                            </aura:if>
+															
+                                                            <p>Please enter in  the fields below how much of the deposit you want to be paid to the tenant(s) 
+                                                                and to the agent/landlord. These amounts must match the amount of the deposit held by 
+                                                                SafeDeposits Scotland, which is 
+                                                                <lightning:formattedNumber value="{!v.deposit.Protected_Amount__c}" 
+                                                                                           style="currency" currencyCode="GBP" 
+                                                                                           minimumFractionDigits="2" 
+                                                                                           maximumFractionDigits="2"/>
+                                                            </p>
+															
+															<div id="errorShow" class="form-group mt-5 mb-0">														
+																<aura:if isTrue="{!not(empty(v.depositAllocation))}">
+                                                                    <aura:iteration items="{!v.depositAllocation}" var="count" indexVar="index">
+                                                                        <span onkeypress="{!c.numberCheck}">
+                                                                            <lightning:input aura:id="boxes" value="{!count.value}" onchange="{!c.removeZero}"
+                                                                                             type="number" name="input" placeholder="£0"  onfocus="{!c.removeZero}"
+                                                                                             title="{!count.Deposit_Holder__c}" 
+                                                                                             label="{!count.Deposit_Holder__r.Name}"
+                                                                                             formatter="currency" step="0.01" 
+                                                                                             oncommit="{!c.calculateTenRemainder}" 
+                                                                                             messageWhenValueMissing="This field is required and cannot be left empty."/>
+                                                                            <br/>
+                                                                        </span> 
+                                                                    </aura:iteration>
+																	<aura:set attribute="else">
+																		<div class="error-msg">
+																			{!$Label.c.NoTenantsToShow}
+																		</div>
+																	</aura:set>
+																 <!--	<aura:if isTrue="{!v.blankTenantAmountValidation}">
+																		<div id="errorShow" class="error-msg">
+																		
+                                                                             {!v.tenantAmountErrorNew}
+																		</div>
+																	</aura:if>
+                                                                   <aura:if isTrue="{!v.blankAgentAmountValidation}">
+																		<div id="errorShow" class="error-msg">
+																			
+                                                                             {!v.agentAmountErrorNew}
+																		</div>
+																	</aura:if>-->
+																</aura:if>															
+																<!--<label for="rep-name2">Vicky Leah</label>
+				   												<input type="text" name="" class="form-control" id="rep-name2" placeholder="&#163;300.00"/>-->
+															</div>
+														
+                                                        </div>
+													</div>
+													
+													<div class="form-group row">
+														<label class="col-xs-12 col-sm-4 col-lg-3 col-form-label">Amount of deposit to be repaid to 
+                                                            {!v.deposit.Customer__r.Name} for: 
+															<button type="button" class="questionsmark" data-toggle="tooltip" data-placement="bottom" 
+                                                                    title="{!v.helpTextName1 + v.currentUser.Name + v.helpTextName3}"> 
+                                                                <img src="{!$Resource.TDSTheme + '/assets/img/question-circle.png'}" alt="Question Mark"/> 
+                                                                Question?
+                                                            </button> 
+														</label>
+														<div class="col-sm-8 col-lg-5">
+															<!--<label for="Cleaning" class="col-form-label">Cleaning</label>
+				  											<input type="email" class="form-control" id="Cleaning" placeholder="&#163;"/>-->
+															<lightning:input aura:id="cleaning" onchange="{!c.removeZero}" onfocus="{!c.removeZero}"
+																			 value="{!v.cleanAmt}" type="number" name="input" 
+																			 label="{!$Label.c.Cleaning}" placeholder="£0" formatter="currency" 
+                                                                             step="0.01" oncommit="{!c.calculateRemainder}" 
+																			 messageWhenBadInput="Please enter number"
+																			 messageWhenValueMissing="This field is required and cannot be left empty."/>
+															<aura:if isTrue="{!v.cleanAmtValidation}">
+																<div class="error-msg">
+																	This field is required and cannot be left empty.
+																</div>
+															</aura:if>				 
+														</div>
+													</div>
+													
+													<div class="form-group row">
+														<!--<label for="Damage" class="col-sm-4 offset-lg-3 offset-sm-4 col-form-label">Damage to property or contents</label>-->
+														<div class="col-sm-8 col-lg-5 offset-lg-3 offset-sm-4">
+															<!--<input type="text" name="" class="form-control" id="Damage" placeholder="&#163;"/>-->
+															<lightning:input aura:id="DamageToProperty" onchange="{!c.removeZero}" onfocus="{!c.removeZero}"
+																			 value="{!v.damageAmt}" type="number" name="input" placeholder="£0"
+                                                                             formatter="currency" step="0.01" label="{!$Label.c.DamageToProperty}" 
+																			 oncommit="{!c.calculateRemainder}" 
+                                                                             messageWhenBadInput="Please enter number"
+																			 messageWhenValueMissing="This field is required and cannot be left empty."/>
+															<aura:if isTrue="{!v.damageAmtValidation}">
+																<div class="error-msg">
+																	This field is required and cannot be left empty.
+																</div>
+															</aura:if>
+														</div>
+													</div>
+													
+													<div class="form-group row">
+														<!--<label for="Redecoration" class="col-sm-4 offset-lg-3 offset-sm-4 col-form-label">Redecoration</label>-->
+														<div class="col-sm-8 col-lg-5 offset-lg-3 offset-sm-4">
+															<lightning:input aura:id="Redecoration" onchange="{!c.removeZero}" onfocus="{!c.removeZero}"
+																			 value="{!v.redecorationAmt}" type="number" name="input"
+																			 placeholder="£0" formatter="currency" step="0.01"
+																			 label="{!$Label.c.Redecoration}" oncommit="{!c.calculateRemainder}" 
+																			 messageWhenBadInput="Please enter number"
+																			 messageWhenValueMissing="This field is required and cannot be left empty."/>
+															<aura:if isTrue="{!v.redecorationAmtValidation}">
+																<div class="error-msg">
+																	This field is required and cannot be left empty.
+																</div>
+															</aura:if>
+														</div>
+													</div>
+													
+													<div class="form-group row">
+														<!--<label for="Redecoration" class="col-sm-4 offset-lg-3 offset-sm-4 col-form-label">Redecoration</label>-->
+														<div class="col-sm-8 col-lg-5 offset-lg-3 offset-sm-4">
+                                                            <lightning:input aura:id="Gardening" onchange="{!c.removeZero}" onfocus="{!c.removeZero}"
+                                                                             value="{!v.gardeningAmt}" type="number" name="input"
+                                                                             label="{!$Label.c.Gardening}" oncommit="{!c.calculateRemainder}" 
+                                                                             placeholder="£0" formatter="currency" step="0.01"
+                                                                             messageWhenBadInput="Please enter number"
+                                                                             messageWhenValueMissing="This field is required and cannot be left empty."/>
+                                                            <aura:if isTrue="{!v.gardeningAmtValidation}">
+																<div class="error-msg">
+																	This field is required and cannot be left empty.
+																</div>
+															</aura:if>
+														</div>
+													</div>
+													
+													<div class="form-group row">
+														<!--<label for="Rent" class="col-sm-4 offset-lg-3 offset-sm-4 col-form-label">Rent arreas</label>-->
+														<div class="col-sm-8 col-lg-5 offset-lg-3 offset-sm-4">
+															<lightning:input aura:id="RentArrears" onchange="{!c.removeZero}" onfocus="{!c.removeZero}"																			 
+																			 value="{!v.arrearsAmt}" type="number" name="input"
+																			 placeholder="£0" formatter="currency" step="0.01"
+																			 label="{!$Label.c.RentArrears}" oncommit="{!c.calculateRemainder}"
+																			 messageWhenBadInput="Please enter number"
+																			 messageWhenValueMissing="This field is required and cannot be left empty."/>
+															<aura:if isTrue="{!v.arrearsAmtValidation}">
+																<div class="error-msg">
+																	This field is required and cannot be left empty.
+																</div>
+															</aura:if>
+														</div>
+													</div>
+													<div class="form-group row">
+														<!--<label for="Other" class="col-sm-4 offset-lg-3 offset-sm-4 col-form-label">Other</label>-->
+														<div class="col-sm-8 col-lg-5 offset-lg-3 offset-sm-4">
+															<lightning:input aura:id="OtherOrUnknown" onchange="{!c.removeZero}" onfocus="{!c.removeZero}" 
+                                                                             class="{! v.otherAmtValidationError ? 'slds-has-error' : ''}"
+																			 value="{!v.otherAmt}" type="number" name="input" 
+																			 label="Other" oncommit="{!c.validateOtherAmt}" 
+																			 placeholder="£0" formatter="currency" step="0.01"
+																			 messageWhenBadInput="Please enter number"
+																			 messageWhenValueMissing="This field is required and cannot be left empty."/>
+															<aura:if isTrue="{!v.otherAmtValidation}">
+																<div class="error-msg">
+																	This field is required and cannot be left empty.
+																</div>
+															</aura:if>
+															
+															<lightning:input class="{! v.otherAmtValidationError ? 'slds-has-error' : ''}"
+																			 aura:id="OtherAmtReason"
+																			 value="{!v.otherAmtReason}"
+																			 type="text" name="input" 
+																			 label="If any payment is for 'other' please state the reason" 
+																			 onchange="{!c.validateOtherAmt}" 
+																			 messageWhenValueMissing="This field is required and cannot be left empty."/>
+															
+															<aura:if isTrue="{!v.otherAmtValidationError}">
+																<div class="error-msg">
+																	{!$Label.c.OtherPaymentReasonError}
+																</div>
+															</aura:if>
+														</div>
+													</div>
+													
+													<div class="form-group row">
+														<div class="col-sm-12 col-lg-8 text-right">
+															<!--<button type="submit" class="see-all">Continue</button>-->
+															<lightning:button class="see-all" label="Continue" 
+																			  title="Continue" onclick="{!c.insertRequestRepaymentRecord}">
+															</lightning:button>
+														</div>
+													</div>
+												</div>
+											</aura:if>
+                                            <!-- Make deductions YES section -->
+                                            
+                                            <!-- Make deductions NO section -->
+											<aura:if isTrue="{!v.displayNoSection}">
+												<div>
+													<div class="form-group row">
+														<div class="col-xs-12 col-sm-4 col-lg-3 form-group ">
+															<label class="col-form-label">Amount of deposit to be repaid to tenant(s)</label>
+														</div>
+														
+														<div class="col-sm-12 col-lg-5">
+															<div class="deposit_box pt-3 pb-2">
+																<div class="row">
+																	<div class="col-6 col-sm-8">
+																		<h5 class="text-secondary">Remainder to allocate
+																		</h5>
+																	</div>
+																	<div class="col-sm-4 col-6"><!--&pound; 0.00  -->
+																		<h6 class="mb-3"><lightning:formattedNumber value="{!v.remainderAmt}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></h6>
+																	</div>
+																</div>
+																<div class="row">
+																	<div class="col-6 col-sm-8">
+																		<h5 class="text-secondary">Total deposit repayment
+																		</h5>
+																	</div>
+																	<div class="col-sm-4 col-6">
+																		<h6 class="mb-3"><lightning:formattedNumber value="{!v.deposit.Protected_Amount__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></h6>
+																	</div>
+																</div>
+																<aura:if isTrue="{!v.displayNegaiveAmtSection}">
+																	<div class="error-msg">
+																		{!$Label.c.RemainderAmtMessage}
+																	</div>
+																</aura:if>
+															</div>
+                                                            <aura:if isTrue="{!v.leftToAllocate}">
+                                                                <div class="error-msg">
+                                                                    <!-- You have to allocate total deposit amount.-->
+                                                                    {!v.totalDepositErrorNew}
+                                                                </div>
+                                                                <br/><br/>
+                                                            </aura:if>
+															
+															<div class="form-group">
+                                                                <aura:if isTrue="{!not(empty(v.depositAllocation))}">
+                                                                    <aura:if isTrue="{!v.depositAllocation.length == 1}">
+                                                                        <aura:iteration items="{!v.depositAllocation}" var="registeredRecord" indexVar="index"><!--value="{!v.amountDividedByTenant}"-->
+                                                                            <lightning:input aura:id="displayLeadTenant1"
+                                                                                             value="{!registeredRecord.value}"
+                                                                                             type="text" name="input" 
+                                                                                             disabled="true"
+                                                                                             placeholder="{!'&#163;'+v.amountDividedByTenant}"
+                                                                                             title="{!registeredRecord.Deposit_Holder__c}" 
+                                                                                             label="{!registeredRecord.Deposit_Holder__r.Name}" 
+                                                                                             oncommit="{!c.calculateTenAmount}" /><br/>
+                                                                        </aura:iteration>
+                                                                    </aura:if>
+																	<aura:if isTrue="{!v.depositAllocation.length > 1}">
+																		<aura:iteration items="{!v.depositAllocation}" var="registeredRecord" indexVar="index"><!--value="{!v.amountDividedByTenant}"-->
+                                                                    
+                                                                            <aura:if isTrue="{!and(index == (v.depositAllocation.length - 1), v.lastTenantAmount != 0)}">
+                                                                                <lightning:input aura:id="displayLeadTenant1"
+                                                                                                 value="{!registeredRecord.value}"
+                                                                                                 type="text" name="input" 
+                                                                                                 disabled="false"
+                                                                                                 placeholder="£0"
+                                                                                                 title="{!registeredRecord.Deposit_Holder__c}" 
+                                                                                                 label="{!registeredRecord.Deposit_Holder__r.Name}" 
+                                                                                                 oncommit="{!c.calculateTenAmount}" />
+                                                                                <aura:set attribute="else">
+                                                                                    <lightning:input aura:id="displayLeadTenant1"
+                                                                                                     value="{!registeredRecord.value}"
+                                                                                                     type="text" name="input" 
+                                                                                                     disabled="false"
+                                                                                                     placeholder="£0"
+                                                                                                     title="{!registeredRecord.Deposit_Holder__c}" 
+                                                                                                     label="{!registeredRecord.Deposit_Holder__r.Name}" 
+                                                                                                     oncommit="{!c.calculateTenAmount}" /><br/>
+                                                                                </aura:set>
+                                                                            </aura:if>
+                                                                            
+																		</aura:iteration>
+																	</aura:if>
+																	<aura:set attribute="else">
+																		<div class="error-msg">
+																			{!$Label.c.NoTenantsToShow}
+																		</div>
+																	</aura:set>
+																</aura:if>
+                                                                <!-- <aura:if isTrue="{!v.blankTenantAmountValidationNoButton}">
+                                                                    <div class="error-msg">
+                                                                        Please fill the amount for all tenants
+                                                                    </div>
+                                                                </aura:if> -->
+															</div>
+                                                            
+														</div>
+													</div>
+													<div class="form-group row text-right">
+														<div class="col-sm-12 col-lg-8">
+															<lightning:button class="see-all" label="Continue" 
+																			  title="Continue" onclick="{!c.insertRequestRepaymentRecord}">
+															</lightning:button>
+														</div>
+													</div>
+												</div>
+											</aura:if>
+											<!-- Make deductions NO section -->
+                                            
+										</form>
+									</div>
+								</section>
+								<!-- Deposit Steps HTML End -->
+							</div>
+							<div class="col-md-3">
+								
+							</div>
+						</div>
+					</div>
+				<!--</div>-->
+			<!--</div>-->
+		<!--</div>-->
+    </aura:if>
+
+    <!-- Summary section START -->
+    <aura:if isTrue="{!v.displaySummarySection}">
+        <div class="tab-content custom-tab-content" id="sf-tabContent">
+            <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+                <div class="deposit-agent">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h2>Repayment request summary</h2>
+                                <a href="" class="go-back" onclick="{!c.editDetailsOfRequest}">
+                                    <img src="{!$Resource.TDSTheme + '/assets/img/md-arrow-dropleft.png'}" alt="Back Icon" /> Go back
+                                </a>
+                                <!-- Deposit Steps HTML Start -->
+                                <section class="deposit_steps tf-other-prop">
+                                    <div class="deposit_steps_detail">
+                                        <form>
+                                            <div class="form-group row">
+                                                <label class="col-sm-4 col-md-4 col-lg-3 col-form-label">{!$Label.c.Tenancy_EndDate} 
+                                                </label>
+                                                <div class="ol-sm-8 col-md-6 col-lg-5">
+                                                    <label for="Supplied" class="col-form-label">{!$Label.c.SuppliedByAgentLandlord}</label>
+                                                    <!--   <input type="text" class="form-control" id="Supplied" placeholder="&#163;" disabled="true" value="{!v.repaymentRequest.Tenancy_End_Date__c}"/>-->
+                                                    <lightning:formattedDateTime year="numeric" month="2-digit" day="2-digit" id="Supplied" 
+                                                                                 class="form-control dateOutput" 
+                                                                                 value="{!v.myDate}"  />
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                
+                                                <!-- Tenant's repayment summary START -->
+                                                <div class="col-sm-12 col-md-5 col-lg-4">
+                                                    <div class="request_table">
+                                                        <label class="col-form-label">{!$Label.c.RepaymentsToTenant}</label>
+                                                        <p class="text-right"><strong>{!$Label.c.Agent_LanlordRequest}</strong></p>
+                                                        <div class="request_table_box">
+                                                            <aura:iteration items="{!v.tenInfo}" var="record">
+                                                                <p class="request_table_text">
+                                                                    <span>{!record.name}</span>
+                                                                    <span><lightning:formattedNumber value="{!record.value}" style="currency" 
+                                                                                                     currencyCode="GBP" minimumFractionDigits="2" 
+                                                                                                     maximumFractionDigits="2"/></span>
+                                                                </p>
+                                                            </aura:iteration>
+                                                        </div>
+                                                        <div class="request_table_total">
+                                                            <p class="request_table_text">
+                                                                <span>Total</span>
+                                                                <span>
+                                                                    <!-- <lightning:formattedNumber value="{!v.repaymentRequestLineTotal}" style="currency" 
+                                                                                                 currencyCode="GBP" minimumFractionDigits="2" 
+                                                                                                 maximumFractionDigits="2"/> -->
+                                                                    <lightning:formattedNumber value="{!v.totalAmtToTenant}" style="currency" 
+                                                                                               currencyCode="GBP" minimumFractionDigits="2" 
+                                                                                               maximumFractionDigits="2"/>
+                                                                </span> 
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- Tenant's repayment summary END -->
+                                                
+                                                <!-- Agent's repayment summary START -->
+                                                <div class="col-sm-12 col-md-5 col-lg-4">
+                                                    <div class="request_table">
+                                                        <!-- <label class="col-form-label">Repayment to {!v.repaymentRequest.Account__r.Name}</label> -->
+                                                        <label class="col-form-label">Repayment to {!v.deposit.Customer__r.Name}</label>
+                                                        <p class="text-right"><strong>{!$Label.c.Agent_LanlordRequest}</strong></p>
+                                                        <div class="request_table_box">
+                                                            <p class="request_table_text">
+                                                                <span>{!$Label.c.Cleaning}</span>
+                                                                <span><lightning:formattedNumber value="{!v.cleanAmt}" style="currency" 
+                                                                                                 currencyCode="GBP" minimumFractionDigits="2" 
+                                                                                                 maximumFractionDigits="2"/></span>
+                                                            </p>
+                                                            <p class="request_table_text">
+                                                                <span>{!$Label.c.DamageToProperty}</span>
+                                                                <span><lightning:formattedNumber value="{!v.damageAmt}" style="currency" 
+                                                                                                 currencyCode="GBP" minimumFractionDigits="2" 
+                                                                                                 maximumFractionDigits="2"/></span>
+                                                            </p>
+                                                            <p class="request_table_text">
+                                                                <span>{!$Label.c.Redecoration}</span>
+                                                                <span><lightning:formattedNumber value="{!v.redecorationAmt}" style="currency" 
+                                                                                                 currencyCode="GBP" minimumFractionDigits="2" 
+                                                                                                 maximumFractionDigits="2"/></span>
+                                                            </p>
+                                                            <p class="request_table_text">
+                                                                <span>{!$Label.c.Gardening}</span>
+                                                                <span><lightning:formattedNumber value="{!v.gardeningAmt}" style="currency" 
+                                                                                                 currencyCode="GBP" minimumFractionDigits="2" 
+                                                                                                 maximumFractionDigits="2"/></span>
+                                                            </p>
+                                                            <p class="request_table_text">
+                                                                <span>{!$Label.c.RentArrears}</span>
+                                                                <span><lightning:formattedNumber value="{!v.arrearsAmt}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></span>
+                                                            </p>
+                                                            <p class="request_table_text">
+                                                                <span>{!$Label.c.OtherOrUnknown}</span>
+                                                                <span><lightning:formattedNumber value="{!v.otherAmt}" style="currency" 
+                                                                                                 currencyCode="GBP" minimumFractionDigits="2" 
+                                                                                                 maximumFractionDigits="2"/></span>
+                                                            </p>
+                                                            <p class="request_table_text">
+                                                                <span>{!$Label.c.Lanlord_AgentReasonForOther}</span>
+                                                                <!-- <span style="word-break:break-all;">{!v.repaymentRequest.AL_Other_Reason__c}</span> -->
+                                                                <span style="word-break:break-all;">{!v.otherAmtReason}</span>
+                                                            </p>
+                                                        </div>
+                                                        <div class="request_table_total">
+                                                            <p class="request_table_text">
+                                                                <span>Total</span>
+                                                                <span>
+                                                                    <!-- <lightning:formattedNumber value="{!v.repaymentRequest.Total_Amount_Requested_AL__c}" style="currency" 
+                                                                                               currencyCode="GBP" minimumFractionDigits="2" 
+                                                                                               maximumFractionDigits="2"/> -->
+                                                                    <lightning:formattedNumber value="{!v.totalAmtToAgent}" style="currency" 
+                                                                                               currencyCode="GBP" minimumFractionDigits="2" 
+                                                                                               maximumFractionDigits="2"/>
+                                                                </span>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- Agent's repayment summary END -->
+                                                
+                                            </div>
+                                            <div class="form-group row">
+                                                <div class="col-sm-12 col-md-10 col-lg-8">
+                                                    <p>By clicking 'Submit' you confirm that you wish to request repayment of the deposit as set out above. This cannot be amended later.</p>
+                                                    <p>You consent to SafeDeposits Scotland copying the form and any supporting documents to the other parties to the tenancy, the appointed 
+                                                        adjudicator if necessary, and to anyone else involved in resolving any dispute about how the deposit should be paid.
+                                                        <br/></p>
+                                                </div>
+                                            </div>
+                                           <!-- <div class="form-group row">
+                                                <div class="col-sm-12 col-md-10 col-lg-8">
+                                                    <p>Copying the form and any supporting documents to the other parties to the tenancy, 
+                                                        the appointed adjudicator if necessary, and to anyone else involved in resolving a dispute about the deposit
+                                                        <br/></p>
+                                                </div>
+                                            </div>-->
+                                            <div class="form-group row">
+                                                <div class="col-sm-12 col-md-10 col-lg-8">
+                                                    <lightning:button label="{!$Label.c.IAgree}" title="I Agree" aura:id="agreeCompYes" 
+                                                                      onclick="{!c.handleAgree}" class="learn-more yesnobtn">
+                                                    </lightning:button>
+                                                    <lightning:button variant="brand-outline" label="{!$Label.c.IdontAgree}" aura:id="agreeCompNo" 
+                                                                      title="I don't Agree" onclick="{!c.handleDontAgree}" class="learn-more yesnobtn">
+                                                    </lightning:button>
+                                                    <aura:if isTrue="{!v.dontAgreeSection}"><br/>
+                                                        <div class="error-msg">
+                                                            <!--{!$Label.c.IdontAgreeMessage}-->
+                                                            {!v.doNotAgreeErrorNew}
+                                                        </div>
+                                                    </aura:if>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <div class="col-sm-12 col-md-10 col-lg-8 text-right">
+                                                    <lightning:button class="see-all" label="Submit" title="Submit" 
+                                                                      disabled="{!v.disableSumbit}" onclick="{!c.submitTheForm}" />
+                                                    <aura:if isTrue="{!v.agreeSection}"><br/>
+                                                        <div class="error-msg">
+                                                            <!--{!$Label.c.PleaseAgreeTheForm}-->
+                                                            {!v.agreeErrorNew}
+                                                        </div>
+                                                    </aura:if>
+                                                    <!--<button type="submit" class="see-all">Submit</button>-->
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </section>
+                                <!-- Deposit Steps HTML End -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aura:if>
+    <!-- Summary section START -->
+    
+</aura:component>

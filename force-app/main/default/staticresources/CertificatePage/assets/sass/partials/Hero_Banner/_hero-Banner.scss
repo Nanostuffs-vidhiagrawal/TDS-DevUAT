@@ -1,0 +1,93 @@
+.hero-banner {
+	background-size: cover;
+	background-position: top;
+	width: $full;
+	color: map-get($color, white);
+	@include space(padding, top, $s45);
+	@include space(padding, bottom, $s45);
+
+	@include respond-below(sm) {
+		@include space(padding, top, $s10);
+		@include space(padding, bottom, $s10);
+	}
+
+	@include color-theme(map-get($color, white));
+	
+	.container {
+		@include position_relative();
+
+		@include respond-below(sm) {
+			@include space(padding, left, $s10);
+			@include space(padding, right, $s10);
+		}
+
+		figure {
+			@include space(margin, bottom, $zero);
+			img {
+				width: $full;
+
+				&.banner-frame {
+					@include respond-below(sm) {
+						height: 40rem;
+					}
+
+					@include respond-below(xs) {
+						height: 46rem;
+					}
+				}
+			}
+		}
+
+		.hero-banner-text {
+			@include position_absolute(11%, 10%, auto, 8%);
+
+			@include respond-below(sm) {
+				@include position_absolute(9%, 10%, auto, 10%);
+			}
+
+			h4 {
+				@include respond-above(sm) {
+					@include space(margin, bottom, $s50);
+				}
+
+				@include respond-below(md) {
+					@include font_size($lg);
+					@include line_height($xx_lg);
+					@include space(margin, bottom, $s15);
+				}
+
+				@include respond-below(xs) {
+					@include font_size($base);
+					@include line_height($x_lg);
+					@include space(margin, bottom, $s25);
+				}
+			}
+
+			h5 {
+				@include font_size($above_base);
+				@include line_height($x_lg);
+				@include space(margin, bottom, $s10);
+
+				@include respond-above(md) {
+					@include font_size($x_lg);
+					@include line_height($xxx_lg);
+				}
+
+				@include respond-below(xs) {
+					@include font_size($below_base);
+					@include line_height($lg);
+				}
+			}
+
+			h6 {
+				font-family: $AllerRegular;
+			}
+		}
+	}
+
+	&.fix-width {
+		max-width: $container_size !important;
+		width: $full !important; 
+		margin: 0 auto;
+	}
+}

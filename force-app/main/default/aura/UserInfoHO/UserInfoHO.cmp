@@ -1,0 +1,15 @@
+<aura:component
+    implements="lightning:isUrlAddressable,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes">
+    <aura:attribute name="IdRecord" type="Boolean" default="optionalDefault" />
+    <!-- Record Display -->
+    <div class="slds-p-bottom_large slds-p-left_large" style="width:500px">
+        <lightning:recordViewForm recordId="{! v.IdRecord}" objectApiName="Contact">
+            <div class="slds-box">
+                <lightning:outputField fieldName="FirstName" />
+                <lightning:outputField fieldName="LastName" />
+                <lightning:outputField fieldName="Email" />
+                <lightning:outputField fieldName="Phone" />
+            </div>
+        </lightning:recordViewForm>
+    </div>
+</aura:component>

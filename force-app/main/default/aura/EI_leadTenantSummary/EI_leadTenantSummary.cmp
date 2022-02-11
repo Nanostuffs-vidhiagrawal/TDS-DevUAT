@@ -1,0 +1,23 @@
+<aura:component
+    implements="lightning:isUrlAddressable,forceCommunity:themeLayout,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+    access="global">
+    <aura:attribute name="leadTenantObj" type="object" />
+
+
+    <aura:if isTrue="{!v.leadTenantObj.IsOrg}">
+        <p class="slds-text-color_success">Company Name : {!v.leadTenantObj.companyName} </p> <br />
+        <p class="slds-text-color_success">Email : {!v.leadTenantObj.email} </p> <br />
+        <p class="slds-text-color_success">Phone : {!v.leadTenantObj.phone} </p> <br />
+        <aura:set attribute="else">
+            <p style="background:aliceblue;">
+            <p class="slds-text-color_success">Title : {!v.leadTenantObj.title} </p> <br />
+            <p class="slds-text-color_success">First name : {!v.leadTenantObj.firstName} </p> <br />
+            <p class="slds-text-color_success">SurName : {!v.leadTenantObj.SurName} </p> <br />
+            <p class="slds-text-color_success">Email : {!v.leadTenantObj.email} </p> <br />
+            <p class="slds-text-color_success">Phone : {!v.leadTenantObj.phone} </p> <br />
+            </p>
+        </aura:set>
+    </aura:if>
+
+
+</aura:component>

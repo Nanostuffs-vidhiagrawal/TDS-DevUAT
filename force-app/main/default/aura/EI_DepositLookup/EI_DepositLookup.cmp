@@ -1,0 +1,220 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" 
+                controller="EI_DepositLookupapex">
+    
+     <lightning:navigation aura:id="navService" />
+    <aura:attribute name="dan" type="string"  />
+    <aura:attribute name="postcode" type="string" />
+    <aura:attribute name="depositamount" type="currency" />
+    <aura:attribute name="surname" type="string" />
+    <aura:attribute name="selectedyear" type="string" />
+    <aura:attribute name="selectedmonth" type="string" />
+    <aura:attribute name="year" type="List" default="[]"/>
+    <aura:attribute name="selecteddeposit" type="Deposit_Allocation__c[]" default="{ 'sobjectType': 'Deposit_Allocation__c'}" />
+     <aura:attribute name="monthno" type="List" default="[
+    {'label': 'January', 'value': '1'},
+    {'label': 'Febuary', 'value': '2'},
+    {'label': 'March', 'value': '3'},
+    {'label': 'April', 'value': '4'},
+    {'label': 'May', 'value': '5'},
+    {'label': 'June', 'value': '6'},
+    {'label': 'July', 'value': '7'},
+    {'label': 'August', 'value': '8'},
+    {'label': 'September', 'value': '9'},
+    {'label': 'October', 'value': '10'},
+    {'label': 'November', 'value': '11'},
+    {'label': 'December', 'value': '12'}                                                     
+    ]"/>
+  
+     <aura:handler name="init" value="{! this }" action="{! c.init }"/>
+    
+    
+    <aura:attribute name="postcodeError" type="boolean" default="false" />
+    <aura:attribute name="depositamountError" type="boolean" default="false" />
+    <aura:attribute name="surnameError" type="boolean" default="false" />
+    <aura:attribute name="selectedyearError" type="string" />
+    <aura:attribute name="selectedmonthError" type="string" />
+    
+  
+    <!--<lightning:card  title="Is my deposit protected" class="mycard">
+        <lightning:input name="DAN"  label="Do you have a Deposit Account Number?(optional)" placeholder="The DAN should be presented in the format of DAN123456." value="{!v.dan}" /> <br/>
+        <lightning:input name="PostCode" aura:id="mandatory" label="What is the postcode of your tenancy address?" value="{!v.postcode}" required="true" /> <br/>
+        When did your tenancy start?
+        <lightning:combobox name="Month" aura:id="mandatory" label="Month" required="true"  placeholder="Select Month" options="{! v.monthno }" onchange="{! c.selectmonth }"/>
+        <lightning:combobox name="Year" aura:id="mandatory" label="Year" required="true" placeholder="Select Year" options="{! v.year }" onchange="{! c.selectyear }"/> <br/>
+        <lightning:input name="Depositamount" aura:id="mandatory" label="What is the amount of your tenancy deposit?" value="{!v.depositamount}" required="true" /><br/>
+        <lightning:input name="surname" aura:id="mandatory" label="What is your surname?" value="{!v.surname}" required="true" /><br/><br/>
+        <lightning:button variant="brand"  label="Lookup" title="Lookup" onclick="{! c.showdeposit }"/>
+  </lightning:card>-->
+    
+    <div class="tab-content custom-tab-content" id="sf-tabContent">
+            <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+                <div class="container">
+                <div class="col-md-12">      
+         			<h2> Deposit lookup</h2>
+     			</div> 
+                </div>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <!--{!$Resource.EI_ZD_Assets + '/img/md-arrow-dropleft.png'}-->
+                            <a onclick="{!c.goBack }" class="go-back" ><img src="{!$Resource.TDSTheme + '/assets/img/md-arrow-dropleft.png'}" alt="Back Icon"/> Go Back</a>
+                            <section class="deposit_steps deposit_lookup space-top">
+                                
+                                <div class="deposit_steps_detail">
+                                    <p>If you don't have access to your deposit account number, please use the form below to search for your deposit by entering information about your tenancy.</p>
+                                    <aura:if isTrue="{!v.postcodeError}">
+                                        <div id="postcodeErrorAlert" class="alert alert-danger alert-dismissible fade show">
+                                           <!-- <strong>Error!</strong> Tenancy postcode is mandatory.-->
+                                            Tenancy postcode is mandatory.
+                                            <button type="button" class="close" onclick="{!c.hideBootstrapErrors}" name="postcode" >&times;</button >
+                                        </div>                 
+                                    </aura:if>
+                                    
+                                    <aura:if isTrue="{!v.selectedmonthError}">
+                                        <div id="selectedmonthErrorAlert" class="alert alert-danger alert-dismissible fade show">
+                                           <!-- <strong>Error!</strong> Month is mandatory.-->
+                                              Month is mandatory.
+                                            <button type="button" class="close" onclick="{!c.hideBootstrapErrors}" name="month" >&times;</button >
+                                        </div>                 
+                                    </aura:if>
+                                    <aura:if isTrue="{!v.selectedyearError}">
+                                        <div id="selectedyearErrorAlert" class="alert alert-danger alert-dismissible fade show">
+                                           <!-- <strong>Error!</strong> Year is mandatory.-->
+                                             Year is mandatory.
+                                            <button type="button" class="close" onclick="{!c.hideBootstrapErrors}" name="year" >&times;</button >
+                                        </div>                 
+                                    </aura:if>
+                                    
+                                    
+                                    <aura:if isTrue="{!v.depositamountError}">
+                                        <div id="depositamountErrorAlert" class="alert alert-danger alert-dismissible fade show">
+                                            <!--<strong>Error!</strong> Deposit amount is mandatory.-->
+                                            Deposit amount is mandatory.
+                                            <button type="button" class="close" onclick="{!c.hideBootstrapErrors}" name="depositamount" >&times;</button >
+                                        </div>                 
+                                    </aura:if>
+                                    <aura:if isTrue="{!v.surnameError}">
+                                        <div id="surnameErrorAlert" class="alert alert-danger alert-dismissible fade show">
+                                           <!-- <strong>Error!</strong> Tenant surname is mandatory.-->
+                                            Tenant surname is mandatory.
+                                            <button type="button" class="close" onclick="{!c.hideBootstrapErrors}" name="surname" >&times;</button >
+                                        </div>                 
+                                    </aura:if>
+                                    <form>
+                                        
+                                        <div class="form-group row">
+                                            <div class="col-md-12">
+                                                <label for="account" class="col-form-label">Deposit account number <span class="optional">(Optional)</span></label>
+                                                <!--<input type="number" class="form-control" id="account" placeholder="Deposit account number"/>-->
+                                                <lightning:input aura:id="account" name="DAN"  placeholder="Deposit account number" value="{!v.dan}" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-12">
+                                                <label for="mandatory" class="col-form-label">Tenancy postcode</label>
+                                                <!--<input type="number" class="form-control" id="postcode" placeholder="Tenancy postcode"/>-->
+                                                <lightning:input name="PostCode" aura:id="mandatory" placeholder="Tenancy postcode" value="{!v.postcode}" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="start_date" class="col-sm-12 col-form-label">Tenancy start date</label>
+                                            <div class="col-xs-12 col-sm-4">
+                                                <lightning:combobox name="Month" aura:id="mandatory" placeholder="Month" options="{! v.monthno }" onchange="{! c.selectmonth }"/>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-4">
+                                            <lightning:combobox name="Year" aura:id="mandatory" placeholder="Year" options="{! v.year }" onchange="{! c.selectyear }"/> <br/>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-4">
+                                            </div>
+                                            <!--<div class="col-xs-12 col-sm-4">
+                                                <select class="form-control" id="start_date">
+                                                    <option > Day</option>
+                                                    <option>01</option>
+                                                    <option>02</option>
+                                                    <option>03</option>
+                                                    <option>04</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-4">
+                                                <select class="form-control">
+                                                    <option > Month</option>
+                                                    <option>01</option>
+                                                    <option>02</option>
+                                                    <option>03</option>
+                                                    <option>04</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-4">
+                                                <select class="form-control">
+                                                    <option > Year</option>
+                                                    <option>01</option>
+                                                    <option>02</option>
+                                                    <option>03</option>
+                                                    <option>04</option>
+                                                </select>
+                                            </div>-->
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="Deposit_amount" class="col-sm-12 col-form-label">Deposit amount</label>
+                                            <div class="col-sm-12">
+                                                <!--<input type="number" class="form-control" id="Deposit_amount" placeholder="&#163;"/>-->
+                                                <lightning:input name="depositamount" aura:id="mandatory" value="{!v.depositamount}" type="number" placeholder="£" formatter="currency" step="0.01"/>
+                                                
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="Tenant_Surname" class="col-sm-12 col-form-label">Tenant surname</label>
+                                            <div class="col-sm-12">
+                                                <!--<input type="number" class="form-control" id="Tenant_Surname" placeholder="Tenant Surname"/>-->
+                                                <lightning:input name="surname" aura:id="mandatory" value="{!v.surname}" placeholder="Tenant Surname"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-sm-12 text-right">
+                                                <!--<button type="submit" class="see-all">Search</button>-->
+                                                <lightning:button variant="brand"  label="Search" title="Search" onclick="{! c.showdeposit }" class="see-all"/>
+                                            </div>
+                                        </div>
+                                        <aura:if isTrue="{!v.selecteddeposit.length>0}">
+      <!--<lightning:card class="mycard">
+        <strong>“We have found a deposit that matches the details you have provided. Click ‘Link deposit' to associate this to your account.”</strong> 
+          <br/>
+       <lightning:button variant="brand"  label="Link deposit" title="Link deposit" onclick="{!c.linkdeposit }"/>    
+     </lightning:card>-->
+         <div>
+             <div class="form-group row">
+                 <div class="col-sm-12">
+                     <p>We have found a deposit that matches the details you have provided. Click ‘Link deposit' to associate this to your account.</p>
+                 </div>
+             </div>
+             <div class="form-group row">
+                 <div class="col-sm-12 text-right">
+                     <!--<button type="submit" class="see-all">Link deposit</button>-->
+                     <lightning:button variant="brand"  label="Link deposit" title="Link deposit" onclick="{!c.linkdeposit }" class="see-all"/>
+                 </div>
+             </div>
+         </div>
+    </aura:if>
+    <aura:if isTrue="{!v.selecteddeposit.length==0}">
+      <!--<lightning:card class="mycard">
+      <strong>“We cannot find a deposit that matches the details you have provided. It may not have been protected with SafeDeposits Scotland yet, or may be registered under different details.</strong>
+      <strong> Please ask your landlord or letting agent for information about your deposit protection. Alternatively, you can visit the other tenancy deposit protection schemes, LPS or MyDeposits Scotland, to use their deposit lookup functions.”</strong>
+     </lightning:card>-->
+        <div>
+            <div class="form-group row">
+                <div class="col-sm-12">
+                    <p>We cannot find a deposit that matches the details you have provided. It may not have been protected with SafeDeposits Scotland yet, or may be registered under different details. Please ask your landlord or letting agent for information about your deposit protection. Alternatively, you can visit the other tenancy deposit protection schemes, LPS or MyDeposits Scotland, to use their deposit lookup functions.</p>
+                </div>
+            </div>
+        </div>
+    </aura:if>
+                                    </form>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+     
+</aura:component>

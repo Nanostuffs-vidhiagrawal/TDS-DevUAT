@@ -1,0 +1,24 @@
+//Bootstrap File
+@import "bootstrap/bootstrap";
+@import "bootstrap/bootstrap-grid";
+@import "bootstrap/bootstrap-reboot";
+
+
+
+// Partial Files
+@import "partials/global/variable";
+@import "partials/global/mixin";
+@import "partials/global/base";
+@import "partials/font/fonts";
+@import "partials/global/typography";
+@import "partials/buttons/buttons";
+@import "partials/forms_element/forms-element";
+@import "partials/navigation/navigation";
+@import "partials/footer/footer";
+@import "partials/footer/copyright";
+@import "partials/Hero_Banner/hero-Banner";
+
+
+html {
+	font-size: 62.5%; /* Sets up the Base 10 stuff */
+}

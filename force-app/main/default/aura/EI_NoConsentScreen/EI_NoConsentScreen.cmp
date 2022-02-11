@@ -1,0 +1,88 @@
+<aura:component implements="force:appHostable,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global"
+controller="EI_Tenantevidencegatheringclass">
+ 
+    <!--- attribute start -->
+    <aura:attribute name="ClaimsDetails" type="list" />
+    <aura:attribute name="viewclaimsection" type="Boolean" default="true" />
+    <aura:attribute name="viewcancelsummary" type="Boolean" default="false" />
+    <aura:attribute name="disputedamount" type="Decimal" default="0.00" />
+    <aura:attribute name="caserecid" type="string" />
+    
+    <aura:attribute name="showConfirmDiv" type="boolean" default = "true" description="turn this to false to close this component"/>
+    
+    <aura:attribute name="userType" type="string" default = 'AGLL'/>
+    <!--- attribute end -->
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <lightning:navigation aura:id="navService"/>
+    <aura:if isTrue="{!v.showConfirmDiv}">
+        
+        <div class="tab-content custom-tab-content" id="sf-tabContent">
+            
+            <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+                
+                <div class="list-of-btns">
+                    <div class="container">
+                        <div class="col-md-12">      
+   							<h2>Submit evidence</h2>
+      					</div>
+                        <lightning:button onclick="{!c.goBack}" aura:id="div0" class="go-back"><img  src="{!$Resource.TDSTheme  + '/assets/img/md-arrow-dropleft.png'}" alt="Back Icon"/> Go Back</lightning:button>
+                        <lightning:button variant="brand" label="Cancel Dispute" title="Cancel dispute"
+                                              onclick="{!c.doAgreeToClaim }" class="see-all"/>
+                    </div>
+                </div>
+                
+                <div class="deposit-agent">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <section class="deposit_steps">
+                                    <div class="deposit_steps_detail">
+                                        
+                                        <div class="claim-summary_gray-panel border">
+                                            <h6>Thank you for telling us you do not consent to SafeDeposits resolving the dispute</h6>
+                                            
+                                            <div class="form-group row">
+                                                <div class="col-6 col-md-3">
+                                                    <label>Amount to be paid to agent/landlord</label>
+                                                </div>
+                                                <div class="col-6 col-md-5">
+                                                        <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="{!v.disputedamount}"/>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="form-group row">
+                                                <div class="col-6 col-md-3">
+                                                    <label>Amount to be paid to tenant(s)</label>
+                                                </div>
+                                                <div class="col-6 col-md-5">
+                                                   <!-- <input class="form-control"  placeholder="£340.00"/>-->
+                                                   
+                                                        <lightning:input variant="label-hidden" type="number" disabled='true'  placeholder="£" formatter="currency" step="0.01" value="0.00"/>
+                                                    
+                                                </div>
+                                            </div>
+                                            <p>If you click ‘Submit’ we will close the case and notify the agent/landlord that you do not agree with their claim, but do not wish SafeDeposits to resolve the dispute. You will then need to resolve your dispute independently of the scheme.</p>
+                                            <br/>
+                                            <p>We will continue to hold the disputed amount until 30 working days from now, after which we will pay the deposit as above. </p>
+                                            <br/>
+                                            <p>Should you change your mind before 30 working days from now, you may contact us with your consent.                                            </p>
+                                            <p>Any amount previously agreed is unaffected and either has been, or will be, paid separately.</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <a href="" class="see-all mw-auto" onclick="{!c.submit}">Submit</a>
+                                        </div>
+                                    </div>
+                                </section>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </aura:if>
+
+</aura:component>

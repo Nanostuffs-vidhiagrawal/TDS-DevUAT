@@ -1,0 +1,144 @@
+.percentage_completion {
+	@include space(padding, top, $s40);
+
+	@include respond-below(sm) {
+		@include space(padding, top, $s10);
+	}
+	@include respond-above(sm) {
+		@include space(padding, bottom, $s15);
+	}
+
+	form {
+		@include position_relative();
+		@include border_radius($s30);
+		@include space(padding, top, $s10);
+		@include space(padding, bottom, $s10);
+		@include space(padding, left, $s20);
+		@include space(padding, right, $s20);
+		background-color: map-get($gray_shade, gray06);
+	}
+	
+	label {
+		@include font_size($sm);
+		color: map-get($color, light_gray);
+	}
+
+	strong {
+		@include position_absolute(auto, 40%, auto, auto);
+		@include font_size($sm);
+		color: map-get($color, light-black);
+
+	}
+
+	.form-check-inline {
+		@include space(margin, right, $s30);
+		@include respond-below(sm) {
+			@include space(margin, right, $s10);
+		}
+
+		.main { 
+	        display: block;
+	        @include position_relative();
+	        @include space(padding, left, $s25);
+	        cursor: pointer; 
+
+	        /* Hide the default checkbox */ 
+
+	        input[type=checkbox] { 
+	            visibility: hidden; 
+	        } 
+
+	        /* Creating a custom checkbox based on demand */ 
+
+	        .geekmark { 
+	        	@include position_absolute(0.2rem, auto, auto, 0,);
+	            height: 13px; 
+	            width: 14px; 
+	            background-color: transparent;
+	            @include border(1px, solid, map-get($color, gray));
+
+	            /* Checkmark to be shown in checkbox */ 
+		        /* It is not be shown when not checked */ 
+
+		        &:after { 
+		            content: ""; 
+		            position: absolute; 
+		            display: none; 
+		        } 
+	        }
+
+	        /* Specify the background color to be shown when checkbox is checked */
+
+	        input {
+	        	&:checked {
+	        		& ~ .geekmark {
+	        			background-color: map-get($color, green); 
+
+	        			/* Display checkmark when checked */ 
+
+	        			&:after { 
+				            display: block; 
+				        } 
+	        		}
+	        	}
+	        }
+	    } 
+	}   
+          
+    /* Styling the checkmark using webkit */ 
+    /* Rotated the rectangle by 45 degree and showing only two border to make it look like a tickmark */ 
+
+    .main .geekmark:after { 
+        left: 5px; 
+        bottom: 2px; 
+        width: 3px; 
+        height: 10px; 
+        border: solid white; 
+        border-width: 0 1px 1px 0; 
+        -webkit-transform: rotate(45deg); 
+        -ms-transform: rotate(45deg); 
+        transform: rotate(45deg); 
+    } 
+
+	/*Chrome*/
+	@media screen and (-webkit-min-device-pixel-ratio:0) {
+		input[type='range'] {
+			overflow: hidden;
+			-webkit-appearance: none;
+			background-color: map-get($gray_shade, gray02);
+		}
+    
+		input[type='range']::-webkit-slider-runnable-track {
+			-webkit-appearance: none;
+			color: #13bba4;
+		}
+    
+		input[type='range']::-webkit-slider-thumb {
+			width: 10px;
+			-webkit-appearance: none;
+			height: 10px;
+			cursor: ew-resize;
+			background: #434343;
+			box-shadow: -1200px 0 0 1200px map-get($color, green);
+		}
+
+	}
+	/** FF*/
+	
+	input[type="range"]::-moz-range-progress {
+		background-color: map-get($color, green); 
+	}
+
+	input[type="range"]::-moz-range-track {  
+		background-color: map-get($gray_shade, gray02);
+	}
+
+	/* IE*/
+
+	input[type="range"]::-ms-fill-lower {
+		background-color: map-get($color, green); 
+	}
+	input[type="range"]::-ms-fill-upper {  
+		background-color: map-get($gray_shade, gray02);
+	}
+}

@@ -1,0 +1,106 @@
+.job_description-section {
+	@include space(padding, top, $s50);
+
+	@include respond-below(sm) {
+		@include space(padding, top, $s25);
+	}
+
+	.job_description-heading {
+		background-color: map-get($gray_shade, gray05);
+		@include font_size($base);
+		text-transform: uppercase;
+		@include flexbox();
+		@include flex_properties(space-between, center, wrap);
+		@include space(padding, top, $s15);
+		@include space(padding, bottom, $s15);
+		@include space(padding, left, $s25);
+		@include space(padding, right, $s15);
+
+		@include respond-below(sm) {
+			@include space(padding, all, $s10);
+			@include font_size($below_base);
+		}
+
+		.job-description {
+			@include flexbox();
+			@include flex_properties(space-between, center, wrap);
+
+			div {
+				@include space(margin, right, $s65);
+
+				@include respond-below(sm) {
+					@include space(margin, right, $s45);
+				}
+
+				@include respond-below(xs) {
+					@include space(margin, right, $zero);
+
+					&:first-child {
+						@include space(margin, right, $s15);
+					}
+				}
+			}
+		}
+	}
+
+	.job_description-detail {
+		@include font_size($base);
+		font-family: $Aller_Bold;
+		@include flexbox();
+		@include flex_properties(space-between, center, no-wrap);
+		@include space(padding, top, $s15);
+		@include space(padding, bottom, $s15);
+		@include space(padding, left, $s25);
+		@include space(padding, right, $s15);
+
+		@include respond-below(sm) {
+			@include space(padding, all, $s10);
+			@include space(padding, right, $zero);
+			@include font_size($below_base);
+		}
+
+		&.no_vacancies {
+			font-family: $AllerRegular;
+			text-align: center;
+		}
+
+		p {
+			text-align: center;
+			width: $full;
+			font-family: $AllerRegular;
+		}
+
+		div {
+			&:first-child {
+				@include respond-below(xs) {
+					max-width: 12rem;
+				}
+			}
+		}
+
+		.job_description-btn {
+			@include flexbox();
+			@include flex_properties(space-between, center, no-wrap);
+			font-family: $AllerRegular;
+
+			a {
+				@include space(margin, left, $s05);
+
+				@include respond-above(sm) {
+					@include font_size($base);
+					@include space(margin, left, $s35);
+				}
+
+				@include respond-below(xs) {
+					@include font_size($sm);
+					@include space(padding, all, $s10);
+					text-transform: none;
+				}
+
+				&.see-all {
+					min-width: auto;
+				}
+			}
+		}
+	}
+}

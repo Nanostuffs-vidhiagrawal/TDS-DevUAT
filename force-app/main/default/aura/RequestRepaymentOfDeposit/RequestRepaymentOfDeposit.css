@@ -1,0 +1,43 @@
+.THIS .slds-form-element__label{
+    font-family: Aller_bold!important;
+    font-size: 1.6rem!important;
+    color: #212529!important;
+}
+
+.THIS .slds-form-element__help{
+    font-family: Aller_Regular!important;
+    font-size: 1.6rem!important;
+}
+
+.THIS .borderDiv{
+    
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgba(0,0,0,0.1);
+    width: 66%;
+        margin-bottom: 10px;
+}
+
+.THIS .deposit_steps .learn-more {
+  min-width: 20% !important;
+}
+
+.THIS .clickButton{
+    background-color : #32669E;
+    color: white;
+}
+.THIS .notclickButton{
+    background-color : white;
+    color: #32669E;
+}
+
+.THIS .myclass{
+    width : 50%;
+    font-size: medium;
+}
+.THIS .dateOutput{
+height: 40px;
+    font-size: medium;
+    padding-left: 9px;
+    padding-top: 6px;
+}

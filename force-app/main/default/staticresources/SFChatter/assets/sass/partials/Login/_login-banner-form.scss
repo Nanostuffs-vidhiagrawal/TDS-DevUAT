@@ -1,0 +1,65 @@
+.login-banner-form {
+	text-align: center;
+	max-width: 44rem;
+	margin: 0 auto;
+	figure {
+		&.logo {
+			@include space(margin, bottom, $s30);
+			@include space(margin, top, $s15);
+		}
+
+		& ~ p {
+			color: map-get($color, gray);
+			opacity: 0.5;
+		}
+	}
+
+	.get_In_Touch_form {
+		box-shadow: 0 0 black;
+
+		input[type="checkbox"] {
+			& ~ label {
+				@include space(margin, left, $s15);
+			}
+		}
+
+		label {
+			a {
+				&.forgot-password {
+					color: map-get($color, light_gray);
+					display: block;
+					@include space(margin, top, $s15);
+				}
+			}
+		}
+
+		.form-check {
+			@include space(margin, top, $s15);
+		}
+
+		.see-all, .learn-more {
+			@include font_size($base);
+		}
+
+		.learn-more {
+			min-width: 13.5rem;
+			@include space(margin, left, $s15);
+		}
+	}
+
+	&.signUp {
+		p.have-account {
+			opacity: 1;
+			@include space(margin, top, $s20);
+		}
+
+		.get_In_Touch_form {
+			text-align: right;
+
+			.col-md-6 {
+				@include space(padding, left, $s05);
+				@include space(padding, right, $s05);
+			}
+		}
+	}
+}

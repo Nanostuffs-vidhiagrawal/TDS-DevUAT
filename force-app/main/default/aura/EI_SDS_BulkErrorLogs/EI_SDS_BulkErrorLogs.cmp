@@ -1,0 +1,251 @@
+<aura:component implements="forceCommunity:themeLayout,forceCommunity:availableForAllPageTypes" access="global"
+                controller="EI_RegisterMultipleDepositsCls">
+
+    <ltng:require styles="{!$Resource.TDSTheme  + '/assets/css/custom.css'}" />
+    
+    <aura:attribute name="currentUser" type="User" />
+    
+    <aura:attribute name="isDisableImport" type="Boolean" default="false" />
+    
+    <aura:attribute name="isSummSecFileValidate" type="Boolean" default="false" />
+    <aura:attribute name="showChildSection" type="Boolean" default="false" />
+    
+    <aura:attribute name="validatedDate" type="Date" />
+    <aura:attribute name="isValidateOnly" type="Boolean" />
+    <aura:attribute name="updatesucceessmessage" type="Boolean" default="false" />
+    <aura:attribute name="fileName" type="string" default=""/>
+    <aura:attribute name="noOfDeposits" type="Integer" />
+    <aura:attribute name="totalTenants" type="Integer" />
+    <aura:attribute name="totalLandlords" type="Integer" />
+    <aura:attribute name="totalFailures" type="Integer" />
+    <aura:attribute name="statusOfValidate" type="String" default="" />
+
+    <aura:attribute name="postalCodePicklist" type="List"/> 
+    <aura:attribute name="isUpdateError" type="boolean" default="false" />  
+    <aura:attribute name="fileList" type="List" />
+    <aura:attribute name="ListOfTenancies" type="List"/> 
+    <aura:attribute name="validationErrorList" type="List" />
+    <aura:attribute name="showfailuresList" type="List" />
+    
+    <aura:attribute name="startPage" type="Integer" />
+    <aura:attribute name="endPage" type="Integer" />  
+    <aura:attribute name="currentPage" type="integer" default="1" />
+    <aura:attribute name="pageSize" type="Integer" default="50" description="number of records to be display on per page"/> 
+    <aura:attribute name="totalPagesCount" type="integer" default="1" />
+    <aura:attribute name="totalRecordsCount" type="Integer" /> 
+    <aura:attribute name="showModal" type="boolean" default="false"/>
+    <aura:attribute name="indextoRemove" type="Integer" />
+    
+    <aura:attribute name="secureURI" type="String" default=""/>
+    <aura:attribute name="azureLink" type="String" default=""/>
+    <aura:attribute name="fileNameInAzure" type="string" default=""/>
+    
+    <aura:attribute name="uploadBar" type="Integer" default="10" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.validatingTheFile}"/>
+
+    <!-- Summary Section of File Validation START(SECTION-2) -->
+    <aura:if isTrue="{!v.isSummSecFileValidate}">
+        
+        <aura:if isTrue="{!v.updatesucceessmessage}">
+            <div
+                 id="successAlert"
+                 class="alert alert-success alert-dismissible fade show"
+                 >
+                Your bulk upload is in progress. Once completed successfully, you will be notified via email.
+            </div> 
+        </aura:if>  
+        <div class="table-container">
+            <table class="slds-table slds-table--striped" style="width:100%">
+                <thead>
+                    <tr>
+                        <th class="headingtext">Date</th>
+                        <th class="headingtext">Valildate <br/> only?</th>
+                        <th class="headingtext">File name</th>
+                        <th class="headingtext">Total tenancies</th>
+                        <th class="headingtext">Failures</th>
+                        <th class="headingtext">Status</th>
+                        <th class="headingtext"></th>
+                    </tr>
+                </thead>
+                <tbody style="font-size:1.5rem;">
+                    
+                    <tr>
+                        <td class="slds-cell-wrap slds-text-align_left textcss">{!v.validatedDate}</td>
+                        <td class="slds-cell-wrap slds-text-align_left textcss">
+                            <aura:if isTrue="{!v.isValidateOnly}"> 
+                                <div>Yes</div>
+                                <aura:set attribute="else"> 
+                                    <div>No</div>
+                                </aura:set>
+                            </aura:if>
+                        </td>
+                        <td class="slds-cell-wrap slds-text-align_left textcss">{!v.fileName}</td>
+                        <td class="slds-cell-wrap slds-text-align_left textcss">{!v.noOfDeposits}</td>
+                        <td class="slds-cell-wrap slds-text-align_left textcss">{!v.totalFailures}</td>
+                        <td class="slds-cell-wrap slds-text-align_left textcss">
+                            <aura:if isTrue="{!v.statusOfValidate == ''}">
+                                {!v.uploadBar}% Complete
+                                <aura:set attribute="else" >
+                                    <aura:if isTrue="{!v.statusOfValidate != 'Successful'}">
+                                        <a href="" data-toggle="modal" onclick="{!c.handleUnsuccessful}" >
+                                            {!v.statusOfValidate}
+                                        </a>
+                                        <aura:set attribute="else" >
+                                            {!v.statusOfValidate}
+                                        </aura:set>
+                                    </aura:if>
+                                </aura:set>
+                            </aura:if>
+                        </td>
+                        <td class="slds-text-align_left textcss1">
+                            <aura:if isTrue="{!v.statusOfValidate == 'Successful'}">
+                                <a href="#" class="tbl-btn" data-toggle="modal" onclick="{!c.handleImport}" >
+                                    <lightning:button disabled="{!v.isDisableImport}"> 
+                                        Import </lightning:button>
+                                    
+                                </a>
+                            </aura:if>
+                        </td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+        
+    </aura:if>
+    <!-- Summary Section of File Validation END(SECTION-2) -->
+    
+    <!-- CHILD section Errors List BODY Start -->
+    <aura:if isTrue="{!v.showChildSection}" >  
+        
+        <p class="slds-m-around_small" style="font-family: Aller_regular!important;">
+            <span style="display:inline-block">
+                Total records : {!v.totalRecordsCount} 
+            </span>
+        </p>
+        <br/>
+        
+        <!-- View and Edit Error Section START -->
+        <div class="table-container">
+            <table class="slds-table slds-table--striped" style="width:100%">
+                <thead style="font-size:1.5rem;">
+                    <tr>
+                        <th class="headingtext">CSV row</th>
+                        <th class="headingtext">Tenants</th>
+                        <th class="headingtext">Landlords</th>
+                        <th class="headingtext">Status</th> 
+                        <th class="headingtext">Field name</th>
+                        <th class="headingtext">Data in field</th> 
+                        <th class="headingtext">Error</th>
+                        <th class="headingtext"></th>
+                    </tr>
+                </thead>
+                <tbody style="font-size:1.5rem;">
+                    <aura:iteration items="{!v.showfailuresList}" var="obj" indexVar="index">
+                   <!-- <aura:iteration items="{!obj.value}" var="mapValue"> -->
+                        <tr>
+                            <td class="slds-cell-wrap slds-text-align_left textcss"> {!obj.value.depoKey} </td>
+                            <td class="slds-cell-wrap slds-text-align_left textcss"> {!obj.value.tenants} </td>
+                            <td class="slds-cell-wrap slds-text-align_left textcss"> {!obj.value.landlords} </td>
+                            <td class="slds-cell-wrap slds-text-align_left textcss"> {!obj.value.status} </td>
+                            <td class="slds-cell-wrap slds-text-align_left textcss"> {!obj.value.fieldName} </td>
+                            <td class="slds-cell-wrap slds-text-align_left textcss">
+                                <aura:if isTrue="{!v.isUpdateError}">
+                                    <lightning:input required="true" variant="label-hidden" label="" value="{!obj.value.fieldValue}" title="{!index}" onblur="{!c.handleUpdateFieldData}" />
+                                    <aura:set attribute="else">
+                                        {!obj.value.fieldValue}
+                                    </aura:set>
+                                </aura:if>  
+                            </td>
+                            <td class="slds-cell-wrap slds-text-align_left textcss"> {!obj.value.errorMessage} </td>
+                            
+                            <td  class="slds-text-align_left textcss1">
+                                <a href="#" class="tbl-btn" data-target="#showModel" data-toggle="modal" id="{!index}" onclick="{!c.handleShowModel}" >
+                                    Remove from import
+                                </a>
+                            </td>
+                        </tr>
+                  <!--  </aura:iteration> -->
+                    </aura:iteration>
+                </tbody>
+            </table>
+        </div>
+        
+        <aura:if isTrue="{!!v.isUpdateError}">
+            <lightning:button class="see-all"
+                              label="Update Errors"
+                              onclick="{!c.handleUpdateErrors}"
+                              />
+            <aura:set attribute="else">
+                <lightning:button class="see-all"
+                                  label="Validate"
+                                  onclick="{!c.handleValidate}"
+                                  />
+            </aura:set>
+        </aura:if>
+        <!-- View and Edit Error Section END -->
+        
+        <!-- Pagination START -->
+        <div style="margin-left:420px!important;">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <aura:if isTrue="{!or(v.startPage == 0,v.showfailuresList.length==0)}">
+                        <li class="page-item disabled"><a class="page-link" href="" >Previous</a></li>
+                        <aura:set attribute="else">
+                            <li class="page-item"><a class="page-link" id="previousId" style="width :120px" href="" onclick="{!c.navPage}">Previous</a></li>
+                        </aura:set>
+                    </aura:if>
+                    <li class="page-item"><a class="page-link" href="" style="width :120px">Page {!v.currentPage} out of {!v.totalPagesCount}</a></li>
+                    <aura:if isTrue="{!or((v.endPage + 1) >= v.totalPagesCount,v.showfailuresList.length==0 )}">
+                        <li class="page-item disabled"><a class="page-link" href="" >Next</a></li>							
+                        <aura:set attribute="else">
+                            <li class="page-item"><a class="page-link" id="nextId" href="" onclick="{!c.navPage}">Next</a></li>
+                        </aura:set>
+                    </aura:if>
+                </ul>
+            </nav>
+        </div>
+        <!-- Pagination END -->
+        
+        <!-- Confirm for removing the tenancy from Deposit List START -->
+        <aura:if isTrue="{!v.showModal}">
+            <div class="custom-model modal fade" id="showModel" data-backdrop="static" data-keyboard="false" aria-labelledby="showModel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 class="modal-title">Remove from transfer</h3>
+                            <button type="button" class="close" data-dismiss="modal" onclick="{!c.hideModel}" aria-label="Close">
+                                <span aria-hidden="true"> 
+                                    <img src="{!$Resource.TDSTheme + '/assets/img/Cancel-icon.png'}" alt=""/>
+                                </span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <h5> Are you sure you wish to remove this tenancy from the import? </h5> <br /> <br /> <br /> 
+                            <div class="text-right">   
+                                <lightning:button 
+                                                  class="see-all"
+                                                  label="Yes"
+                                                  title="Yes"
+                                                  onclick="{!c.handleYes }"
+                                                  />
+                                <button type="button" class="learn-more" style="min-width:auto;" data-dismiss="modal" 
+                                        onclick="{!c.hideModel}">
+                                    &nbsp; &nbsp; No &nbsp;&nbsp;
+                                </button>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aura:if>
+        <!-- Confirm for removing the tenancy from Deposit List END -->
+        
+        
+    </aura:if>
+    <!-- CHILD section Errors List BODY End -->    
+    
+    
+</aura:component>

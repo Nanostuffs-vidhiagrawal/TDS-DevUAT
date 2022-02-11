@@ -1,0 +1,4 @@
+<aura:event type="COMPONENT" description="Sample Component Event">
+    <aura:attribute name="leadTenantObj" type="object" />
+    <aura:attribute name="arrObj" type="object[]" />
+</aura:event>

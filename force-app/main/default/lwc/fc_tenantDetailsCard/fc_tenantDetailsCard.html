@@ -1,0 +1,40 @@
+<!-- Fc Tenant Details Card -->
+<template>
+    <div class="slds-box tenant-details-card">
+        <lightning-card variant="base">
+            <div slot="title" class="slds-p-right_small slds-truncate" title={tenantRecord.name}>
+                    {tenantRecord.name}
+            </div>
+            <template if:true={editEnabled}>
+                <div slot="actions">
+                    <lightning-button-icon alternative-text="" icon-class="" variant="border-filled" icon-name="custom:custom83" size="x-small" onclick={editTenant}></lightning-button-icon>
+                </div>
+            </template>
+            <div class="slds-card__body_inner">
+                <div class="slds-form-element slds-border_bottom  "><span class="slds-form-element__label">Email</span>
+                    <div class="slds-form-element__control"><span class="slds-form-element__static">{privateTenantRecord.email}</span>
+                    </div>
+                </div>
+                <div class="slds-form-element slds-border_bottom  "><span class="slds-form-element__label">Phone</span>
+                    <div class="slds-form-element__control"><span class="slds-form-element__static">{privateTenantRecord.phone}</span></div>
+                </div>
+            </div>
+        </lightning-card>
+    </div>
+    <c-fc_modal header={tenantRecord.name}>
+        <lightning-input class="slds-p-around_small" label="Email" type="email" name="email" variant="standard" value={privateTenantRecord.email} message-when-type-mismatch={labels.email_validation}></lightning-input>
+        <lightning-input class="slds-p-around_small" label="Phone" type="string" name="phone" variant="standard" value={privateTenantRecord.phone} ></lightning-input>
+        <div slot="footer">
+            <lightning-button
+                    label="Save"
+                    variant="brand"
+                    onclick={saveRecord}
+            ></lightning-button>
+            <lightning-button
+                    label="Cancel"
+                    variant="negative"
+                    onclick={hideModal}
+            ></lightning-button>
+        </div>
+    </c-fc_modal>
+</template>

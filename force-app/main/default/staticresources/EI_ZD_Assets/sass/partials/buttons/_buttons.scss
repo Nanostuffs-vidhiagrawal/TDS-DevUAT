@@ -1,0 +1,375 @@
+.search-btn {
+	
+	box-shadow: none!important;
+
+	@include respond-below(md) {
+		@include position_absolute(1.3rem, $s95, auto, auto);
+	}
+
+	img {
+		width: $s35;
+		height: $s35;
+
+		@include respond-below(md) {
+			width: $s30;
+			height: $s30;
+		}
+	}
+}
+
+%custom-btn {
+	border: none;
+	background-color: transparent;
+	text-transform: uppercase;
+	@include space(padding, top, $s10);
+	@include space(padding, bottom, $s10);
+	@include space(padding, left, $s20);
+	@include space(padding, right, $s20);
+	@include font_size($base);
+	color: map-get($banner-form-color, light-gray);
+	display: inline-block;
+	outline: 0 !important;
+	text-decoration: none !important;
+	text-align: center;
+}
+
+.help-btn {
+	@extend %custom-btn;
+	color: map-get($color, white);
+	@include position_fixed(auto, $s15, $s15, auto);
+	@include border_radius($s15);
+	@include font_size($above_base);
+	z-index: 99;
+	@include flexbox();
+	@include flex_properties(left, center, no-wrap);
+	text-transform: initial;
+	tansition: 0.3s;
+	background: transparent linear-gradient(90deg, var(--unnamed-color-457cbf) 0%, var(--unnamed-color-32669e) 100%) 0% 0% no-repeat padding-box;
+	background: transparent linear-gradient(90deg, #457CBF 0%, #32669E 100%) 0% 0% no-repeat padding-box;
+
+	img {	
+		width: $s30;
+		@include space(margin, left, $s10);
+	}
+
+	&:hover {
+		color: map-get($color, white);
+
+		background: transparent linear-gradient(90deg, var(--unnamed-color-457cbf) 0%, var(--unnamed-color-32669e) 100%) 0% 0% no-repeat padding-box;
+		background: transparent linear-gradient(90deg, #32669E 0%, #457CBF 100%) 0% 0% no-repeat padding-box;
+	}
+
+	@include respond-below(sm) {
+		display: none;
+	}
+}
+
+$btn-border: #DFDFDF;
+
+.learn-more, .learn-less {
+	@extend %custom-btn;
+	background-color: map-get($color, white);
+	color: map-get($color, blue);
+	@include border_radius($s30);
+	@include font_size($below_base);
+	@include border(1px, solid, $btn-border);
+	transition: 0.3s;
+
+	&:hover {
+		@include border(1px, solid, map-get($color, light_blue));
+	}
+}
+
+.agree-btn {
+	@extend %custom-btn;
+	background-color: map-get($color, white);
+	color: map-get($gray_shade, gray03);
+	@include border_radius($s30);
+	@include font_size($below_base);
+	@include border(1px, solid, $btn-border);
+	width: $full;
+	text-transform: initial;
+	@include space(margin, top, $s20);
+	@include space(margin, bottom, $s20);
+	@include space(padding, left, $s10);
+	@include space(padding, right, $s10);
+	transition: 0.3s;
+
+	&:hover, &.active {
+		color: map-get($color, blue);
+		@include border(1px, solid, map-get($color, light_blue));
+	}
+}
+
+.go-back {
+	@extend %custom-btn;
+	background-color: map-get($color, white);
+	color: map-get($color, blue);
+	@include border_radius($s30);
+	@include font_size($below_base);
+	transition: 0.3s;
+    text-transform: initial;
+    cursor: pointer;
+    @include border(1px, solid, map-get($color, blue));
+
+    img {
+        @include space(margin, right, 0.3rem);
+        display: inline-block;
+        height: 1.7rem;
+    }
+
+    &.download {
+    	max-width: 21rem;
+    	text-align: left;
+    	display: flex;
+    	@include line_height($base);
+    	@include space(margin, left, $s10);
+    	@include space(margin, bottom, $s10);
+    	align-items: center;
+    }
+
+    &.edit {
+    	img {
+    		height: auto !important;
+    	}
+    }
+}
+
+.download-btns {
+	display: flex;
+	justify-content: flex-end;
+
+	.see-all, .learn-more {
+		@include space(margin, left, $s10);
+		min-width: auto !important;
+	}
+}
+
+.see-all {
+	@extend %custom-btn;
+	background-color: map-get($color, blue);
+	color: map-get($color, white);
+	@include border_radius($s30);
+	@include font_size($below_base);
+	min-width: 13.5rem;
+	transition: 0.3s;
+	text-transform: initial;
+
+	&:hover, &:focus {
+		color: map-get($color, white); 
+		background-color: map-get($color, light_blue);
+	}
+
+	img {
+		margin-right: .5rem;
+    	margin-top: -0.5rem;
+	}
+
+	&.danger {
+		background-color: map-get($color, maroon); 
+	}
+}
+
+.tbl-btn {
+    display: inline-block;
+    @include border(1px, solid, map-get($color, blue));
+    padding: 2px 10px;
+    @include border-radius($s20);
+    @include font-size($sm);
+    color: map-get($color, blue);
+    text-decoration: none !important;
+
+    img {
+    	display: inline-block;
+    }
+
+    &.blue {
+    	background-color: map-get($color, blue);
+    	color: map-get($color, white);
+    	@include space(margin, left, $s05);
+    }
+}
+
+.spinner-btn {
+	@extend %custom-btn;
+	background-color: map-get($color, blue);
+	color: map-get($color, white);
+	@include border_radius($s30);
+	@include font_size($below_base);
+	min-width: 13.5rem;
+	margin: 0 auto;
+	@include space(margin, top, $s10);
+	display: block;
+	transition: 0.3s;
+
+	&:hover {
+		color: map-get($color, white); 
+		background-color: map-get($color, light_blue);
+	}
+
+	.spinner-border {
+		width: $s15;
+		height: $s15;
+	}
+}
+
+.tag {
+	@extend %custom-btn;
+	text-transform: none;
+	@include font_size($below_base);
+	background-color: map-get($gray_shade, gray02);
+	@include border_radius($s30);
+	transition: 0.3s;
+
+	&:hover, &.active {
+		background-color: map-get($gray_shade, gray01);
+		color: map-get($color, white);
+	}
+}
+
+.look-up {
+	@extend %custom-btn;
+	@include font_size($sm);
+	@include border_radius($s30);
+	@include border(2px, solid, map-get($color, blue));
+	background-color: map-get($color, white);
+	color: map-get($color, blue);
+	transition: 0.3s;
+	@include space(paddinf, top, .7rem);
+	@include space(paddinf, bottom, .7rem);
+	@include space(paddinf, left, $s25);
+	@include space(paddinf, right, $s25);
+
+	&:hover {
+		background-color: map-get($color, blue);
+		color: map-get($color, white);
+	}
+
+}
+
+.forgot-btn {
+	@extend %custom-btn;
+	@include space(padding, all, $zero);
+	color: map-get($color, blue);
+
+	@include respond-below(sm) {
+		@include font_size($below_base);
+		@include space(margin, top, $s05);
+		@include space(margin, bottom, $s05);
+	}
+
+	@media(max-width: 420px) {
+		@include space(margin, top, $zero);
+		@include space(margin, bottom, $s10);
+	}
+}
+
+.close-btn {
+	@extend %custom-btn;
+	cursor: pointer;
+
+	@include respond-below(sm) {
+		@include font_size($below_base);
+		@include space(padding, top, $s05);
+		@include space(padding, bottom, $s05);
+	}
+}
+
+.submit-btn {
+	@extend %custom-btn;
+	background-color: map-get($color, blue);
+	@include border_radius($s30);
+	color: map-get($color, white);
+	@include border(2px, solid, map-get($color, light_blue));
+	@include space(padding, left, $s35);
+	@include space(padding, right, $s35);
+	transition: 0.3s;
+
+	@include respond-below(sm) {
+		@include font_size($below_base);
+		@include space(padding, left, $s25);
+		@include space(padding, right, $s25);
+		@include space(padding, top, $s05);
+		@include space(padding, bottom, $s05);
+	}
+
+	&:hover {
+		background-color: map-get($color, light_blue);
+		@include border(2px, solid, map-get($color, blue));
+	}
+}
+
+.agent-btn {
+	@include space(margin, top, $s25);
+	@include space(margin, bottom, $s15);
+}
+
+.auto-wd {
+	min-width: auto !important;
+	margin-right: 0.5rem !important;
+}
+
+.accept_btn {
+	@include border(2px, solid, map-get($color, ZD_red));
+	@include font_size($base);
+	color: map-get($color, ZD_red);
+	@include space(padding, all, $s15);
+	transition: 0.3s;
+	background-color: transparent;
+	@include border_radius(6px);
+	@include space(margin, left, $s25);
+
+	&:hover, &:focus, &.active {
+		color: map-get($color, white);
+		background-color: map-get($color, ZD_red);
+	}
+
+	&:focus {
+		outline: 0;
+	}
+
+	&:first-child {
+		@include space(margin, left, $zero);
+	}
+}
+
+.agree_btn {
+	@include font_size($below_base);
+	color: map-get($color, gray);
+	@include border(1px, solid, rgba(0, 0, 0, 0.08));
+	@include space(padding, all, $s20);
+	text-decoration: none;
+	display: inline-block;
+	cursor: pointer;
+	transition: 0.3s;
+	text-align: left;
+
+	&:hover,
+	&.active {
+		@include border(1px, solid, map-get($color, blue));
+		color: map-get($color, blue);
+	}
+
+	&:focus {
+		outline: none;
+	}
+
+	img {
+		display: block;
+		margin: 0 auto;
+		@include space(margin, bottom, $s05);
+	}
+
+	&.mx_wd {
+		max-width: 95px;
+    	text-align: center;
+    	@include space(padding, all, $s10);
+    	@include space(margin, right, $s15);
+    	@include line_height($base);
+
+    	&:last-child {
+    		@include space(margin, right, $zero);
+    	}
+	}
+}
+

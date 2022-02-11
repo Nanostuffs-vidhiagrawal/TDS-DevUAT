@@ -1,0 +1,64 @@
+<aura:component controller="EI_ZD_MailEventsViewerController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    
+    <aura:attribute name="MessageData" type="List" />
+    <aura:attribute name="EventList" type="List" />
+    <aura:attribute name="openedCount" type="Integer" default = "0"/>
+    <aura:attribute name="spinner" type="boolean" default="true"/>
+    <aura:attribute name="data" type="Object"/>
+    <aura:attribute name="columns" type="List"/> 
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
+    <aura:attribute name="activeSectionsMessage" type="String" default="" />
+    <!--loading spinner start--> 
+    <aura:if isTrue="{!v.spinner}">
+      <div class="exampleHolder">
+         <lightning:spinner alternativeText="Loading" size="large" />
+      </div>
+    </aura:if>
+   <!-- Loading spinner end-->
+    <lightning:accordion aura:id="accordion" onsectiontoggle="{! c.handleSectionToggle }">
+        <aura:iteration items="{!v.MessageData}" var="item">
+            <lightning:accordionSection name="{!item.Message_Id__c}" label="{!item.Subject__c}">
+                <div class="slds-size--1-of-2 slds-m-around--x-small">
+                    <h4 id="element-with-table-label" class="slds-text-title slds-m-bottom_small">Opened : {!v.openedCount}</h4>
+                    <aura:if isTrue="{!and(item.Sent_Message__c != '',item.Sent_Message__c != undefined)}">
+                    	<a href="{!'/one/one.app?#/sObject/'+ item.Id + '/view'}" target="_blank" tabindex="-1">View Message</a>
+                    </aura:if>
+                    <table class="slds-table slds-table_bordered slds-table_col-bordered .slds-has-flexi-truncate" aria-labelledby="element-with-table-label other-element-with-table-label">
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                
+                                <th class="" scope="col">
+                                    <div class="slds-truncate">Email Address</div>
+                                </th>
+                                <th class="" scope="col">
+                                    <div class="slds-truncate">Status</div>
+                                </th>
+                                <th class="" scope="col">
+                                    <div class="slds-truncate">Time</div>
+                                </th>
+                                
+                            </tr>
+                        </thead>
+                        <aura:iteration items="{!v.EventList}" var="el">
+                            <tbody>
+                                <tr class="slds-hint-parent">
+                                    
+                                    <td><div class="slds-truncate wid" >{!item.Email_ID__c }</div></td>
+                                    <td class="{!el.EventType}"><div class="slds-truncate" >{!el.EventType}</div></td>
+                                    <td><div class="slds-truncate" >{!el.EventAt}</div></td>
+                                    
+                                </tr>
+                            </tbody>
+                        </aura:iteration>
+                    </table>
+                    <!--<lightning:datatable
+                keyField="id"
+                data="{! v.EventList }"
+                columns="{! v.columns }"
+                hideCheckboxColumn="true"/>-->
+                </div>
+            </lightning:accordionSection>
+        </aura:iteration>
+    </lightning:accordion>
+       
+</aura:component>

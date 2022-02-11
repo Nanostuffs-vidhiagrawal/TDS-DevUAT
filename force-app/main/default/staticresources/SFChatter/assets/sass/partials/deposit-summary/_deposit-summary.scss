@@ -1,0 +1,122 @@
+.list-of-btns {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    @include space(margin, bottom, $s30);
+
+    @include respond-below(sm) {
+        @include space(margin, bottom, $s20);
+    }
+
+    .see-all {
+        text-transform: initial;
+        @include space(margin, bottom, $s15);
+        @include space(margin, left, 0.3rem);
+
+        &:first-child {
+            @include space(margin, left, $zero);
+        }
+    }
+
+    .go-back {
+        @include space(margin, bottom, $s15);
+    }
+
+    & ~ .deposit-agent {
+        @include space(padding, top, $zero);
+    }
+
+    &.no-space {
+        @include space(margin, bottom, $s25);
+    }
+}
+
+.deposit-summary {
+    .sub-heading {
+        font-size: 18px;
+    }
+}
+
+.table-header {
+    @include font_size($below_base);
+    @include border(1px, solid, map-get($color, light_border));
+    background-color: shade(map-get($color, white), 1%);
+    @include space('padding', 'top', $s20);
+    @include space('padding', 'bottom', $s20);
+    @include space('padding', 'left', $s10);
+    @include space('padding', 'right', $s10);
+}
+
+.slick-slide {
+    .tbl-btn {
+        @include space('padding', 'top', $s05);
+        @include space('padding', 'bottom', $s05);
+        @include space('padding', 'left', $s15);
+        @include space('padding', 'right', $s15);
+    }
+}
+
+.questionsmark {
+    display: block;
+    color: #6C7890 !important;
+    @include font_size($sm);
+    border: none;
+    background: transparent;
+    @include space('margin', 'top', $s05);
+
+    &:hover {
+        text-decoration: none;
+    }
+
+    &:focus {
+        outline: 0;
+    }
+
+    img {
+        display: inline-block;
+    }
+
+    &.in {
+       display: inline-block; 
+    }
+}
+
+.deposit-summary-btn {
+    text-align: right;
+    @include space('margin', 'top', $s25);
+
+    button {
+        margin-right: $s05 !important;
+        @include space('margin', 'bottom', $s10);
+
+        img {
+            @include space('margin', 'right', $s05);
+            @include space('margin', 'top', -$s05);
+        }
+    }
+
+    .learn-more {
+        min-width: auto !important;
+        margin-left: 0 !important;
+    }
+}
+
+.another_landlord {
+    @include space('margin', 'top', $s30);
+
+    select {
+        width: 86%;
+    }
+
+    .learn-more {
+        min-width: auto !important;
+    }
+
+    @include respond-below(sm) {
+        @include space('margin', 'top', $s15);
+    }
+
+    @include respond-below(md) {
+        select {
+            width: 100%;
+        }
+    }
+}

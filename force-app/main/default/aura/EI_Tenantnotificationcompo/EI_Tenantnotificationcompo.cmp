@@ -1,0 +1,17 @@
+<aura:component controller="EI_TenantNotificationClass" implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	
+   <aura:handler name="init" value="{! this }" action="{! c.init }" />
+    <aura:attribute name="totalRecord" type="Integer"/>
+    
+      <ul class="headeNav__notification show-tab">
+                <li>
+                  <a href="#"  action="{!c.init}" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                      <img src="../assets/img/notify-icon.png" alt="Notification Icon"/> 
+                    <span class="badge">{!v.totalRecord}</span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#" title="My Profile">My Profile</a></li>
+                        <li><a href="#" title="Notification 13">Notification 13</a></li>
+                    </ul>
+                </li>
+            </ul>
+</aura:component>

@@ -1,0 +1,32 @@
+.hero-banner {
+	background-size: cover;
+	width: $full;
+	color: map-get($color, white);
+	@include space(padding, top, $s45);
+	@include space(padding, bottom, $s45);
+
+	@include respond-below(sm) {
+		@include space(padding, top, $s15);
+		@include space(padding, bottom, $s15);
+	}
+	
+	.container {
+		@include position_relative();
+
+		figure {
+			@include space(margin, bottom, $zero);
+			img {
+				width: $full;
+			}
+		}
+
+		.hero-banner-text {
+			@include position_absolute(0%, auto, auto, auto);
+			@include space(padding, all, $s60);
+
+			@include respond-below(sm) {
+				@include space(padding, all, $s30);
+			}
+		}
+	}
+}

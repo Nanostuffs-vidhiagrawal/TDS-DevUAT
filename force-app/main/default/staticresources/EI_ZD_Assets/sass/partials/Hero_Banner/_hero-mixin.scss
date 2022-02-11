@@ -1,0 +1,29 @@
+// Banner Text Color Mixin
+@mixin color-theme($theme-color: $color) {
+	.container {
+		.hero-banner-text {
+			h4, h5 {
+				color: $theme-color;
+			}
+		}
+	}
+}
+
+// Banner Content Align Mixin 
+@mixin align-item($text-align, $form-align) {
+
+	text-align: $text-align;
+
+	.banner_form {
+		justify-content: $form-align;
+	}
+}
+
+// Banner Form Alignment Mixin
+@mixin align-form($form-align, $form-float) {
+
+	.banner_form-expand {
+		margin: $form-align;
+		float: $form-float;
+	}
+}

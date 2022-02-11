@@ -1,0 +1,15 @@
+.THIS .slds-required{
+	text-decoration: none!important;
+}
+
+.THIS .slds-form-element__label{
+    font-size:1.4rem!important;    
+}
+
+.THIS .dynamic{
+    height: 4rem!important;
+}
+
+.THIS .slds-form-element__help{
+    	font-size: 1.3rem!important;
+}

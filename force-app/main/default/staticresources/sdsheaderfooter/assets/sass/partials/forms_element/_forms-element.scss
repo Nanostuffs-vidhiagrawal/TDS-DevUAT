@@ -1,0 +1,14 @@
+.form-control {
+	&:focus {
+		@include border(1px, solid, map-get($color, blue));
+		box-shadow: 0 0 0 0.2rem rgba(50, 102, 158, 0.25)
+	}
+}
+
+// Input Style
+.search-input {
+	@include font_size($base);
+	border: none;
+	@include space(padding, all, $zero);
+	transition: all 0.3s;
+}

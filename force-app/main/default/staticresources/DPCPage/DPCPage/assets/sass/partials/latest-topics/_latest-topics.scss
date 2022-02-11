@@ -1,0 +1,149 @@
+$latest-topic-bg: #F7F8FF;
+
+.latest-topics {
+	text-align: center;
+	@include space(padding, top, $s75);
+	@include space(padding, bottom, $s75);
+	background-color: $latest-topic-bg;
+
+	@include respond-below(sm) {
+		@include space(padding, top, $s25);
+		@include space(padding, bottom, $s25);
+	}
+
+	.latest_topic_slider {
+		@include space(margin, top, $s60);
+		@include respond-below(sm) {
+			@include space(margin, top, $s25);
+		} 
+
+		&__item {
+			text-align: left;
+			background-size: cover !important;
+			outline: $zero;
+
+			&:nth-child(odd) {
+				@include respond-above(sm) {
+					@include space(margin, right, $s25);
+				}
+			}
+
+			&:nth-child(even) {
+				@include respond-above(sm) {
+					@include space(margin, left, $s25);
+				}
+			}
+
+			&--content {
+				color: map-get($color, white);
+				@include space(padding, all, $s40);
+				float: left;
+				width: $full;
+				position: relative;
+				min-height: 27.5rem;
+				@include respond-below(sm) {
+					min-height: 19rem;
+				}
+
+				@include respond-below(sm) {
+					@include space(padding, top, $s20);
+					@include space(padding, bottom, $s20);
+					@include space(padding, left, $s15);
+					@include space(padding, right, $s15);
+				}
+
+				h5, p {
+					color: map-get($color, white);
+				}
+
+				h5 {
+					overflow: hidden;
+				    display: -webkit-box;
+				    -webkit-line-clamp: 1;
+				    -webkit-box-orient: vertical;
+				}
+
+				p {
+					@include font_size($above_base);
+					@include line_height($xxx_lg);
+					overflow: hidden;
+				    display: -webkit-box;
+				    -webkit-line-clamp: 3;
+				    -webkit-box-orient: vertical;
+
+					@include respond-below(sm) {
+						@include font_size($below_base);
+						@include line_height($x_lg);
+					}
+				}
+
+				h5 {
+					@include respond-above(sm) {
+						@include space(margin, bottom, $s20);
+					}
+				}
+
+				.learn-more {
+					float: right;
+					@include position_absolute(auto, $s40, $s40, auto);
+					@include respond-below(sm) {
+						@include position_absolute(auto, $s15, $s15, auto);
+					}
+				}
+			}
+		}
+
+		ul 	{
+			&.slick-dots {
+				@include space(margin, top, $s60);
+				@include space(margin, bottom, $s40);
+				@include respond-below(sm) {
+					@include space(margin, top, $s25);
+					@include space(margin, bottom, $s15);
+				}
+				li {
+					@include font_size(0);
+					@include space(padding, all, $zero);
+					display: inline-block;
+
+					button {
+						height: $s20;
+						width: $s20;
+						@include border_radius($half);
+						@include border(1px, solid, map-get($color, light_gray));
+						background-color: transparent;
+						@include space(margin, left, $s10);
+						outline: $zero;
+
+						@include respond-below(sm) {
+							height: 1.4rem;
+							width: 1.3rem;
+						}
+					} 
+
+					&.slick-active {
+						button {
+							background-color: map-get($color, light_blue);
+							@include border(1px, solid, map-get($color, light_blue));
+							outline: $zero;
+						}
+					}
+				}
+			}
+		}
+	}
+} 
+
+.latest_topic_slider__item {
+	&:nth-child(odd) {
+		.latest_topic_slider__item--content {
+			//background-color: rgba(69,124,191,0.8);
+		}
+	}
+
+	&:nth-child(even) {
+		.latest_topic_slider__item--content {
+			//background-color: rgba(0,0,0,0.6);
+		}
+	}
+}

@@ -1,0 +1,170 @@
+<aura:component  access="global" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes"
+                >
+	<body class="SDS_default_theme">
+            <div class="tab-content custom-tab-content" id="sf-tabContent">
+
+        <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+            <!-- Resolution Section HTML Start -->
+            <section class="resolution_section">
+                <div class="container">
+                    <div>
+                        <a href="#" class="go-back"><img src="../assets/img/md-arrow-dropleft.png" alt="Back Icon"/> Go Back</a>
+                    </div>
+                        <img src="../assets/img/resolution.png" alt="Resolution"/>
+                </div>
+            </section>
+            <!-- Resolution Section HTML End -->
+            <div class="deposit-agent">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-9">
+                            <section class="deposit_steps">
+                                <div class="deposit_steps_detail">
+                                    <div class="claim-summary_gray-panel">
+                                        <h5>Claim Summary</h5>
+                                        <div class="row">
+                                            <div class="col-lg-6 col-sm-9">
+                                                <p>Amount requested by agent/landlord</p>
+                                            </div>
+                                            <div class="col-lg-6 col-sm-3">
+                                                <p>&pound; 400.00</p>
+                                            </div>
+                                        </div>
+                                        <div class="row my-4">
+                                            <div class="col-lg-6 col-sm-9">
+                                                <p class="text-right">- Of which is agreed by tenant</p>
+                                            </div>
+                                            <div class="col-lg-6 col-sm-3">
+                                                <p>(&pound; 10.00)</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6 col-sm-9">
+                                                <p><b>Unresolved Amount</b></p>
+                                            </div>
+                                            <div class="col-lg-6 col-sm-3">
+                                                <p><b>&pound; 390.00</b></p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <h6>You have until[deadline] to try to reach a resolution. Please indicate how you wish to proceed below.</h6>
+
+                                    <div class="row">
+                                        <div class="col-lg-8 col-md-12">
+                                            <div class="agree-container">
+                                                <div class="agree-detail" style="display: block;">
+                                                    <div class="form-group row">
+                                                        <div class="col-sm-6">
+                                                            <div class="request-section">
+                                                                <label>Requested By you</label>
+
+                                                                <div class="form-group">
+                                                                    <label for="Cleaning" class=" col-form-label">Cleaning</label>
+                                                                    <input type="number" class="form-control" id="Cleaning" placeholder="&#163;50.00"/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="response-section">
+                                                                <label>Previously agreed by tenant</label>
+
+                                                                <div class="form-group">
+                                                                    <label class="col-form-label">Cleaning</label>
+                                                                    <input type="number" disabled="true" class="form-control" placeholder="&#163;0.00"/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <div class="request-section">
+                                                                <div class="form-group">
+                                                                    <label for="Rent" class=" col-form-label">Rent arrears</label>
+                                                                    <input type="number" class="form-control" id="Rent" placeholder="&#163;50.00"/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-sm-6">
+                                                            <div class="response-section">
+                                                                <div class="form-group">
+                                                                    <label class="col-form-label">Rent arrears</label>
+                                                                    <input type="number" disabled="true" class="form-control" placeholder="&#163;0.00"/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-sm-6">
+                                                            <div class="request-section">
+                                                                <div class="form-group">
+                                                                    <label for="Others" class=" col-form-label">Others</label>
+                                                                    <textarea rows="3" class="form-control" id="Others">&#163;50.00 &#13;&#10; Lightboxs</textarea>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-sm-6">
+                                                            <div class="response-section">
+                                                                <div class="form-group">
+                                                                    <label class="col-form-label">Others</label>
+                                                                    <input type="number" disabled="true" class="form-control" placeholder="&#163;10.00"/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-11 col-md-12">
+                                            <div class="list_of_btns">
+                                                <button type="button" class="accept_btn active">Accept tenant's response</button>
+                                                <button type="button" class="accept_btn">Don't accept tenant's response</button>
+                                                <button type="button" class="accept_btn">Cancel Claim</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-11 col-md-12">
+                                            <div class="claim-summary_gray-panel border">
+                                                <h6>The claim has now been finalised as below</h6>
+
+                                                <div class="form-group row">
+                                                    <div class="col-6 col-md-3">
+                                                        <label>Amount to be paid</label>
+                                                    </div>
+                                                    <div class="col-6 col-md-5">
+                                                        <input class="form-control" disabled="true" placeholder="£10.00"/>
+                                                    </div>
+                                                </div>
+                                                <p>By clicking ‘Submit’ you confirm that you agree with the tenant's proposal. This cannot be amended later. Payment will be made within 3 working days of us receiving your bank details. If you have already provided them,then we will commence payment immediately.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-11 col-md-12 text-right">
+                                            <a href="" class="see-all mw-auto"> Submit</a>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </section>
+                        </div>
+                        <div class="col-md-3 info-right-tab">
+                            <p>The tenant has not yet agreed to the claim, so this step is an opportunity for both parties to come to an acceptable solution. Over 50% of customers reach an agreement at this stage.</p>
+                            <p>Now you have seen the tenant's initial response, you can either accept the tenant's proposal. If you don’t accept their proposal you can amend, maintain, or cancel the claim.</p>
+                            <p>If you cannot reach agreement, the case will be passed through for formal resolution by an adjudicator. This can take 8-12 weeks and will involve a third party imposing a binding decision based on the evidence that you and the tenant submit.</p>
+                            <p>You have until [date] to come to an agreement with your tenant. During this period you can adjust your response and we will propose any amendments you make to your tenants. We will also inform you of any value that they accept.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    </body>
+</aura:component>

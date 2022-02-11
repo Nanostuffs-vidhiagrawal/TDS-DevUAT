@@ -1,0 +1,136 @@
+<aura:component access="global" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes"
+   controller="EI_ForwardingAddressControler">
+   <aura:attribute name = "showEmailInput" type = "String" default = ""/>
+   <aura:attribute name = "selectForwardingAddress" type = "String" default = ""/>
+   <aura:attribute name = "showAddInput" type = "String" default = ""/>
+   <aura:attribute name = "depositId" type = "String" />
+   <aura:attribute name = "allocationList" type = "List" />
+   <aura:attribute name = "houseName" type = "String" default = "" />
+   <aura:attribute name = "streetName" type = "String" default = ""/>
+   <aura:attribute name = "cityName" type = "String" default = ""/>
+   <aura:attribute name = "countryName" type = "String" default = ""/>
+   <aura:attribute name = "postCode" type = "String" default = ""/>
+   <aura:attribute name = "emailAddress" type = "String" default = ""/>
+   <aura:attribute name = "tenantName" type = "String" default = "Vikas Kumar"/>
+   <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+   <aura:registerEvent name="cmpEvent" type="c:ceEvent"/>
+   <ltng:require styles="{!$Resource.TDSTheme+'/assets/css/custom.css'}"
+      scripts="{!join(',',
+      $Resource.TDSTheme+'/assets/js/plugin.min.js',
+      $Resource.TDSTheme+'/assets/js/custom.js',
+      $Resource.TDSTheme+'/assets/js/plugin.min.js',
+      $Resource.TDSTheme+'/assets/js/jquery.dataTables.min.js',
+      $Resource.TDSTheme+'/assets/js/datepicker.js'
+      )}"/>
+   <body>
+      <div class="tab-content custom-tab-content" id="sf-tabContent">
+         <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+            <div class="deposit-agent">
+               <div class="container">
+                  <div class="row">
+                     <div class="col-md-12">
+                        
+                        <!-- Deposit Steps HTML Start -->
+                        <section class="deposit_steps tf-other-prop fad">
+                           <form>
+                              <div class="form-group row">
+                                 <div class="col-sm-12 col-md-8 col-lg-5">
+                                    <label style = "font-size: initial;font-weight: bold;">We do not appear to hold an email address for  {!v.allocationList[0].Deposit_Holder__r.Name}. <br/>Do you have an email address for this tenant?</label>
+                                    <div class="mt-5 text-center">
+                                       <a class="{!v.showEmailInput == 'Yes'?'learn-more mr-3 active':'learn-more mr-3'}" onclick = "{!c.selectEmailAddress}" >Yes</a>
+                                       <a  class="{!v.showEmailInput == 'No'?'learn-more active':'learn-more'}" onclick = "{!c.noEmailAddress}">No</a>
+                                    </div>
+                                 </div>
+                              </div>
+                              <aura:if isTrue = "{!v.showEmailInput == 'Yes'}">
+                                 <div class="">
+                                    <div class="form-group row">
+                                       <div class="col-sm-12 col-lg-5">
+                                          <div class="form-group mt-5 mb-0">
+                                             <label style = "font-size: initial;font-weight: bold;" for="rep-name2">Please enter email address</label>
+                                             <lightning:input  label=""  placeholder="Enter email address" value="{!v.emailAddress}" pattern="^((([A-Z,a-z]|\d|[!#\$%'&amp;''\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([A-Z,a-z]|\d|[!#\$%&amp;'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([A-Z,a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([A-Z,a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([A-Z,a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([A-Z,a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([A-Z,a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([A-Z,a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([A-Z,a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([A-Z,a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))$"/>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </div>
+                              </aura:if>
+                              <aura:if isTrue = "{!v.selectForwardingAddress == 'Yes'}">
+                                 <div class="">
+                                    <div class="form-group row">
+                                       <div class="col-sm-12 col-md-8 col-lg-5">
+                                          <label style = "font-size: initial;font-weight: bold;">Do you have a forwarding address for this tenant?</label>
+                                          <div class="mt-5 text-center">
+                                             <a  class="{!v.showAddInput == 'Yes'?'learn-more mr-3 active':'learn-more mr-3'}" onclick = "{!c.showAddInput}">Yes</a>
+                                             <a  class="{!v.showAddInput == 'No'?'learn-more active':'learn-more'}" onclick = "{!c.hideAddInput}">No</a>
+                                          </div>
+                                       </div>
+                                    </div>
+                                    <aura:if isTrue = "{!v.showAddInput == 'Yes'}">
+                                       <div class="">
+                                          <div class="form-group row">
+                                             <div class="col-sm-12 col-md-8 col-lg-5">
+                                                <label style = "font-size: initial;font-weight: bold;">Please enter following address</label>
+                                                <div class="form-group row mt-5">
+                                                   <label style = "font-size: initial;font-weight: bold;" for="House" class="col-sm-4 col-form-label">House no. or name</label>
+                                                   <div class="col-sm-8">
+                                                      <lightning:input label=""    value="{!v.houseName}"/>
+                                                   </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                   <label style = "font-size: initial;font-weight: bold;" for="Street" class="col-sm-4 col-form-label">Street name</label>
+                                                   <div class="col-sm-8">
+                                                      <lightning:input label=""    value="{!v.streetName}"/>
+                                                   </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                   <label style = "font-size: initial;font-weight: bold;" for="Town" class="col-sm-4 col-form-label">Town/City</label>
+                                                   <div class="col-sm-8">
+                                                      <lightning:input label=""    value="{!v.cityName}"/>
+                                                   </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                   <label style = "font-size: initial;font-weight: bold;" for="Country" class="col-sm-4 col-form-label">County</label>
+                                                   <div class="col-sm-8">
+                                                      <lightning:input label=""    value="{!v.countryName}"/>
+                                                   </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                   <label style = "font-size: initial;font-weight: bold;" for="Postcode" class="col-sm-4 col-form-label">Postcode</label>
+                                                   <div class="col-sm-8">
+                                                      <lightning:input label=""    value="{!v.postCode}"/>
+                                                   </div>
+                                                </div>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </aura:if>
+                                 </div>
+                              </aura:if>
+                              <div class="form-group row text-right">
+                                 <div class="col-sm-12 col-lg-8">
+                                    <aura:if isTrue = "{!or(and(v.emailAddress != '' , v.showEmailInput == 'Yes'),and(v.showAddInput == 'No',v.showEmailInput == 'No'))}">
+                                       <lightning:button class="see-all" onclick="{!c.saveData}">Continue</lightning:button>
+                                    </aura:if>
+                                    <aura:if isTrue = "{!and(v.showAddInput == 'Yes',v.showEmailInput == 'No')}">
+                                       <aura:if isTrue = "{!and(v.houseName != '',v.streetName != '')}">
+                                          <aura:if isTrue = "{!and(v.cityName != '',v.countryName != '')}">
+                                             <aura:if isTrue = "{!v.postCode != ''}">
+                                                <lightning:button class="see-all" onclick="{!c.saveData}">Continue</lightning:button>
+                                             </aura:if>
+                                          </aura:if>
+                                       </aura:if>
+                                    </aura:if>
+                                 </div>
+                              </div>
+                           </form>
+                        </section>
+                        <!-- Deposit Steps HTML End -->
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- Tabs HTML End -->
+   </body>
+</aura:component>

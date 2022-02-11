@@ -1,0 +1,112 @@
+.sf-custom-form {
+	@include space(padding, top, $s45);
+	@include respond-below(sm) {
+		@include space(padding, top, $s15);
+	}
+	.form-group {
+		@include respond-above(sm) {
+			@include space(margin, bottom, $s25);
+		}
+	}
+
+	label {
+		@include font_size($base);
+		color: map-get($color, black);
+		width: $full;
+
+		span {
+			&.mandatory-field {
+				color: map-get($color, red);
+			}
+		}
+	}
+
+	input, textarea, select {
+		@include border(1px, solid, map-get($gray_shade, gray03));
+		background-color: map-get($gray_shade, gray02);
+		@include font_size($below_base);
+		@include space(padding, all, $s10);
+		@include border_radius(0.4rem);
+		transition: 0.3s;
+		height: auto;
+	}
+
+	input[type="checkbox"] {
+		& ~ label {
+			@include space(margin, left, $s15);
+		}
+	}
+
+	textarea {
+		resize: none;
+	}
+
+	.see-all, .learn-more {
+		@include space(padding, left, $s30);
+		@include space(padding, right, $s30);
+	}
+
+	.see-all {
+		min-width: auto;
+		@include space(margin, left, $s10);
+	}
+
+	.text-right {
+		@include space(margin, top, $s25);
+		@include space(margin, bottom, $s25);
+	}
+
+	.look-up {
+		@include position_absolute(auto, 15px, 15px, auto);
+	}
+
+	.custom-search-input {
+		border: none;
+		border-bottom: 1px solid rgba(0,0,0,0.3);
+		@include font_size($base);
+		@include space(padding, all, $zero);
+		@include space(padding, bottom, $s15);
+		@include border_radius($zero);
+		transition: 0.3s;
+
+		&:hover, &:focus {
+			border: none;
+			border-bottom: 1px solid rgba(0,0,0,0.3);
+			outline: $zero;
+		    box-shadow: 0 0 black;
+		}
+	}
+
+
+	&.datepicker-section {
+		@include space(padding, top, $s25);
+		max-width: 117rem;
+		margin: 0 auto;
+		@include space(margin, bottom, $s35);
+
+		@include respond-below(sm) {
+			@include space(padding, top, $s15);
+			@include space(padding, bottom, $s15);
+			@include space(margin, bottom, $s25);
+		}
+
+		h3, .text-right {
+			@include space(margin, bottom, $zero);
+			@include space(margin, top, $zero);
+		}
+
+		.row {
+			align-items: center;
+		}
+
+		.date-picker {
+			.form-control:disabled {
+				background-color: map-get($gray_shade, gray02);
+			}
+		} 
+	}
+
+	.form-control:disabled {
+		background-color: #e9ecef !important;
+	}
+}

@@ -1,0 +1,15 @@
+<template>
+    <div class="slds-m-around_xx-large">
+        <lightning-button
+                variant="brand"
+                label={buttonLabelToShow}
+                title={addEvidenceLabel}
+                onclick={showModal}
+        ></lightning-button>
+    </div>
+
+    <c-fc_modal label={attachmentLabel} header={addEvidenceLabel}>
+        <c-fc_evidence-upload class="evidenceUpload" case-id={caseId} dispute-item-id={disputeItemId} user-type={userType} onclosemodal={hideModal} is-internal={isInternal}></c-fc_evidence-upload>
+    </c-fc_modal>
+
+</template>

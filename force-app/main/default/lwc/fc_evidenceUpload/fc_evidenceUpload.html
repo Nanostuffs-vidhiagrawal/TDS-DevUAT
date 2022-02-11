@@ -1,0 +1,59 @@
+<template>
+    <div class="slds-is-relative">
+        <div class="slds-p-around_medium">
+            <lightning-input type="file" label={fileAttachmentLabel} required
+                             onchange={handleUploadFinished}
+                             accept={allowedFileTypes}>
+            </lightning-input>
+            
+            <div class="slds-m-top--medium">
+                <p class="slds-m-bottom--medium">{fileSizeLabel}</p>    
+                <p class="slds-m-bottom--medium">{securityLabel}</p>    
+                <p class="slds-m-bottom--medium">{supportedTypesLabel}</p>
+            </div>
+    
+            <lightning-input label="Filename" value={fileName} required
+                             onchange={handleFileNameChange}>
+            </lightning-input>
+            
+            <template if:true={isInternal}>
+                <lightning-combobox label="User Type" value={selectedUserType} options={userTypeOptions}
+                                    dropdown-alignment="left" variant="standard" required
+                                    onchange={handleUserTypeChange} >
+                </lightning-combobox>
+
+                <lightning-input label="Dispute" value={disputeNumber} read-only></lightning-input>
+                
+                <lightning-combobox label="Dispute Item" value={disputeItemId} options={disputeItemsOptions}
+                                    dropdown-alignment="left" variant="standard"
+                                    onchange={handleDisputeItemChange}>
+                </lightning-combobox>
+            </template>
+    
+            <div class="slds-align_absolute-center">
+                <lightning-button class="slds-m-around_small slds-theme_brand" variant="brand" label="Add"
+                                  onclick={addFile} disabled={isAddButtonDisabled}></lightning-button>
+            </div>
+    
+            <template if:false={noFilesUploaded}>
+                    <c-fc_evidence-attachment-table
+                        field-set={columns}
+                        evidence-list={files}
+                        allow-delete="true"
+                        onevidencerowdeleted={handleDelete}
+                    >
+                    </c-fc_evidence-attachment-table>
+            </template>
+            
+            <template if:true={showLoadingSpinner}>
+                <div class="slds-spinner_container">
+                    <lightning-spinner alternative-text={loadingLabel} size="medium"></lightning-spinner>
+                </div>
+            </template>
+        </div>
+
+        <footer class="slds-modal__footer slds-m-around--none">
+            <lightning-button disabled={noFilesUploaded} class="slds-theme_neutral" variant="brand" label={saveLabel} onclick={handleSave}></lightning-button>
+        </footer>
+    </div>
+</template>

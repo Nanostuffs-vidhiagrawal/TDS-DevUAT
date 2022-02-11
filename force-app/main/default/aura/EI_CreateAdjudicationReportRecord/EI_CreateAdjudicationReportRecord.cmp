@@ -1,0 +1,49 @@
+<aura:component access="global" implements="force:lightningQuickActionWithoutHeader,force:hasRecordId,force:hasSObjectName" 
+                controller="EI_CreateAdjudicationReportRecordCls" >
+
+    <aura:attribute name="nextButton" type="Boolean" default="false" />
+    <aura:attribute name="decisionType" type="String" default="" />
+    <aura:attribute name="recordId" type="String" default="" />
+    <aura:attribute name="caseList" type="List" />
+    
+    <aura:attribute name="currentUser" type="User" />
+    <force:recordData aura:id="recordLoader" recordId="{!$SObjectType.CurrentUser.Id}"  
+                      fields="Name,ContactId,AccountId,User_Role__c,Profile.Name,Addition_Permission__c" 
+                      targetFields="{!v.currentUser}"/>
+    
+    <aura:registerEvent name="navEvt" type="force:navigateToSObject"/>
+    <lightning:navigation aura:id="navService"/>
+    
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <aura:if isTrue="{!!v.nextButton}">
+        <!-- <lightning:select name="decType" aura:id="decType" value="{!v.decisionType}" label="Decision Type" >
+            <option value="Adjudication">Adjudication</option>
+            <option value="Default">Default</option>
+            <option value="Review">Review</option>
+        </lightning:select> -->
+        <aura:if isTrue="{!or(v.currentUser.Profile.Name != 'Sds Internal User', 
+                         	  and(v.currentUser.Profile.Name == 'Sds Internal User', 
+                                  and(v.caseList[0].Status=='Awaiting evidence review', 
+                                      or(v.caseList[0].No_Landlord_Evidence__c, v.caseList[0].No_Tenant_Evidence__c)
+                         	 	 	 )
+                                 )
+                             )
+                         }" >
+                <select id="decType" style="height: 30px;width: max-content;margin-top: 10px;" name="decType" label="Title" >
+                    <option value="Adjudication">Adjudication</option>
+                    <option value="Default">Default</option>
+                    <option value="Review">Review</option>
+                </select> <br/><br/>
+            <lightning:button variant="brand" label="Next" onclick="{!c.handleClick }" />
+        </aura:if>
+        <aura:if isTrue="{!and(v.currentUser.Profile.Name == 'Sds Internal User', 
+                               and(v.caseList[0].Status=='Awaiting evidence review', 
+                                   or(v.caseList[0].No_Landlord_Evidence__c, v.caseList[0].No_Tenant_Evidence__c)
+                                  )
+                              )
+                         }" >
+        </aura:if>
+	</aura:if>
+    
+</aura:component>

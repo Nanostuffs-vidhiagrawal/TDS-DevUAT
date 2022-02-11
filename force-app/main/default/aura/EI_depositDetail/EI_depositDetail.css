@@ -1,0 +1,8 @@
+.THIS .slds-has-error .slds-form-element__help{
+    font-size: initial;
+}
+.THIS .dateClass {
+    margin-bottom: 1rem;
+    font-family: Aller_bold;
+    font-size: 1.6rem;
+}

@@ -1,0 +1,290 @@
+.help-btn {
+	background: map-get($color, ew_blue);
+	&:after {
+		background-image: url('../img/help_icon_ew.png');
+	}
+	&:hover {
+		background: map-get($color, ew_blue);
+	}
+}
+
+.search-btn {
+	&:after {
+		background-image: url('../img/Search_Bg_icon_ew.png');
+	}
+
+	@include respond-below(md) {
+		top: 1.7rem;
+	}
+}
+
+.banner_form-expand__heading--sort-desc {
+	color: map-get($color, white);
+}
+
+.copyright_part {
+	p {
+		color: map-get($color, ew_blue);
+	}
+}
+
+.latest-topics {
+	.latest_topic_slider__item--content {
+		background-color: rgba(19, 24, 92, 0.7);
+	}
+}
+
+.learn-more, .learn-less {
+	color: map-get($color, ew_blue);
+
+	&:hover, &.active {
+		border-color: map-get($color, ew_blue);
+	}
+}
+
+.wizard-btn {
+	.learn-more, .learn-less {
+		color: map-get($color, blue);
+
+		&:hover, &.active {
+			border-color: map-get($color, blue);
+		}
+	}
+}
+
+.custom-nav {
+	.navbar-nav {
+		.nav-item {
+			.nav-link {
+				&:hover {
+					color: map-get($color, ew_blue);
+				}
+			}
+		}
+	}
+}   
+
+.custom-nav {
+	
+	& > .navbar-nav {
+		@include respond-below(md) {
+			top: 2.1rem;
+		}
+	}
+
+	.navbar-brand {
+		&:nth-child(1) {
+			img {
+				width: $s100;
+
+				@include respond-below(md) {
+					width: $s70;
+				}
+			}
+		}
+
+		&:nth-child(2) {
+			@include respond-below(md) {
+				@include space(margin, right, $zero);
+			}
+			img {
+				width: $s100;
+
+				@include respond-below(md) {
+					width: $s70;
+				}
+			}
+		}
+
+		&:nth-child(3) {
+			@include respond-below(md) {
+				@include space(margin, right, $zero);
+			}
+			img {
+				width: $s70;
+
+				@include respond-below(md) {
+					width: $s50;
+				}
+			}
+		}
+	}
+}
+
+.banner_form {
+	.banner_form-detail {
+		&.tanent, &.agent {
+			.banner_form-detail__tab {
+				background-color: map-get($color, ew_blue);
+			}
+		}
+
+		&.agent {
+			.banner_form-detail__tab {
+				border-left: 1px solid rgba(255, 255, 255, 0.2);
+			}
+		}
+
+		.banner_form-detail__tab {
+			border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+		}
+	}
+}
+
+.banner_form-expand {
+	@include respond-above(sm) {
+		width: 50rem;
+	}
+
+	.banner_form-expand__tab {
+		border: none;
+
+		form {
+			background-color: map-get($color, ew_blue);
+			@include space(padding, all, $zero);
+
+			.banner_form-detail__tab {
+				@include space(padding, top, $s15);
+				@include space(padding, bottom, $s15);
+
+				img {
+					top: $s15;
+				}
+			}
+		}
+	}
+}   
+
+.custom-nav {
+	.navbar-nav {
+		.nav-item {
+			.nav-link {
+				@media(max-width: 1079px) {
+					@include space(padding, left, $s15);
+					@include space(padding, right, $s15);
+				}
+			}
+		}
+	}
+}
+
+.custom-tab {
+	.nav-tabs {
+		a {
+			&.nav-link {
+				&.active, &:hover {
+					color: map-get($color, ew_blue);
+					border-bottom: 2px solid map-get($color, ew_blue);
+				}
+			}
+		}
+	}
+}
+
+.overlay-box__text {
+	background-color: rgba(19, 24, 92, 0.7);
+}  
+
+.three_column-block {
+	.view-all {
+		color: map-get($color, ew_blue);
+	}
+}
+
+.layout_text {
+	a {
+		color: #6a859e;
+
+		&.call-text {
+			color: map-get($color, ew_blue);
+		}
+
+		&.see-all {
+			color: map-get($color, white);
+		}
+	}
+}
+
+.form-inline {
+	.search-input-btn {
+		@include respond-above(md) {
+			top: $s50;
+		}
+		
+	}
+} 
+
+#autocomplete_mobile {
+	border-bottom: none !important;
+}
+
+.support-block__heading--text {
+	background-color: rgba(19, 24, 92, 0.7);
+}
+
+.switching-component {
+	.switching-steps {
+		.switching-step-box {
+			.step-count {
+				span {
+					color: map-get($color, ew_blue);
+					border-color: map-get($color, ew_blue);
+				}
+			} 
+
+			h6 {
+				color: map-get($color, ew_blue);
+			}
+		}
+	}
+
+	.switching-know-more {
+		h4 {
+			color: map-get($color, ew_blue);
+		}
+	}
+}
+
+.lookupbtn {
+	color: map-get($color, blue);
+	border-color: map-get($color, blue);
+
+	&:hover {
+		background-color: map-get($color, blue);
+	}
+} 
+
+.buiding-certification {
+	.form-view {
+		.form-view-inner {
+			.text-blue {
+				color: map-get($color, ew_blue);
+			}
+		}
+	}
+}
+
+.search-on-input {
+	&.date {
+		position: relative;
+
+		.add-on {
+			right: 7% !important;
+    		top: 18% !important;
+		}
+	}
+} 
+
+.lang_section {
+
+	select {
+		border-color: map-get($color, ew_blue);
+	}
+}   
+
+.preview-deposit-header {
+	span {
+		color: map-get($color, ew_blue);
+	}
+}
+

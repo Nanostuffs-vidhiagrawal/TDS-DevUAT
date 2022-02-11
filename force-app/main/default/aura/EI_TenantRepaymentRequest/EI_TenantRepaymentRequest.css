@@ -1,0 +1,43 @@
+.THIS .slds-has-error .slds-form-element__help
+{
+    font-size: initial;
+}
+.THIS .slds-card {
+    font-size:1.4rem;
+}
+.THIS .slds-p-around_medium{
+    font-size:1.4rem; 
+}
+
+.THIS .slds-form-element{
+     font-size:1.3rem; 
+}
+
+.THIS .slds-form-element__label{
+     font-size:1.3rem; 
+}
+
+.THIS.clrRed {
+    background-color:red;
+}
+.THIS .repayButton{
+    border-color : #32669E;
+    color: white;
+}
+.THIS .clickButton{
+    background-color : #32669E;
+    color: white;
+}
+.THIS .lightInput{
+    width:94%!important;
+   
+}
+.THIS .dateOutput{
+    border-width: 1px!important;
+    border-style: solid!important;
+    border-color: #C7C7C7!important;
+    font-size: initial!important;
+}
+.THIS .agree-container .agree-detail .request-section .form-group label{
+    font-family: Aller_bold!important;
+}

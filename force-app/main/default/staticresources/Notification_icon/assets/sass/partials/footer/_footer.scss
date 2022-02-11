@@ -1,0 +1,54 @@
+footer {
+	@include space(padding, top, $s75);
+
+	@include respond-below(sm) {
+		@include space(padding, top, $s25);
+	}
+
+	h3 {
+		@include space(margin, bottom, $s30);
+
+		@include respond-below(sm) {
+			@include space(margin, bottom, $s15);
+		}
+	}
+
+	figure {
+		display: inline-block;
+		@include space(margin, right, $s10);
+		img {
+			width: $s70;
+
+			@include respond-below(sm) {
+				width: $s35;
+			}
+		}
+
+		&:last-child {
+			@include space(margin, right, $zero);
+		}
+	}
+
+	ul {
+		li {
+			@include font_size($below_base);
+			@include line_height($above_base);
+
+			@include respond-above(sm) {
+				@include space(padding, bottom, $s20);
+			}
+		}
+
+		&.Social_Media_list {
+			li {
+				@include space(padding, bottom, $s10);
+
+				a {
+					img {
+						@include space(margin, right, $s05);
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,592 @@
+<aura:component
+  implements="lightning:isUrlAddressable,forceCommunity:themeLayout,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+  access="global"
+  controller="EI_AddDeposit"
+>
+  <aura:attribute name="activeSections" type="List" default="[]" />
+  <lightning:navigation aura:id="navService" />
+     <aura:attribute name="btnClicked" type="Boolean" default="false" />
+  <!-- EI_SummaryDepositAmount Attributes -->
+  <aura:attribute
+    name="rentAmount"
+    type="Decimal"
+    access="global"
+    default="0"
+  />
+  <aura:attribute
+    name="depositAmount"
+    type="Decimal"
+    access="global"
+    default="0"
+  />
+  <aura:attribute
+    name="amountToProtect"
+    type="Decimal"
+    access="global"
+    default="0"
+  />
+  <aura:attribute name="depositRecievedDate" type="Date" access="global" />
+  <aura:attribute name="tenancyStartDate" type="Date" access="global" />
+  <aura:attribute name="noOfTenants" type="Integer" access="global" />
+  <aura:attribute name="depositReference" type="String" access="global" />
+  <aura:attribute name="Landlord" type="List" access="global" />
+  <!-- To pass parameter to summary child comp -->
+  <aura:attribute name="arrObj" type="object[]" />
+  <aura:attribute name="leadTenantObj" type="object" />
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+  <!-- To pass paramter to selected property -->
+  <aura:attribute
+    name="selectedProperty"
+    type="Property__c"
+    default="{'sobjectType': 'Property__c'}"
+  />
+  <aura:attribute name="BranchID" type="String" access="global" />
+  <aura:attribute name="selecedPrimeLandlord" type="String" access="global" />
+  <aura:attribute name="selectedPrimarylandlord" type="List" />
+
+  <aura:attribute name="landRegisterNumber" type="String" access="global" />
+  <aura:attribute name="landRegisterstatus" type="String" access="global" />
+
+  <!-- Bootstrap Error Attributes -->
+  <aura:attribute name="errorDepositCreation" type="Boolean" default="false" />  
+    
+  <!-- Event Register -->
+
+  <aura:registerEvent name="EI_backToTenantComp" type="c:EI_backToTenantComp" />
+  <aura:registerEvent
+    name="EI_backToDepositHome"
+    type="c:EI_backToDepositHome"
+  />
+  <aura:registerEvent name="EI_tenantHome" type="c:EI_tenantHome" /> 
+  <aura:registerEvent name="EI_depositDetailFromSummary" type="c:EI_depositDetailFromSummary" />   
+  <aura:registerEvent name="EI_PopulateProperty" type="c:EI_PopulateProperty" />	
+  <div>
+      <aura:if isTrue="{!v.errorDepositCreation}">
+          <div id="errorDepositCreation" class="alert alert-danger alert-dismissible fade show">
+              <strong>Error!</strong>There is issue with deposit creation. Please contact SDS support.
+              <button
+                      type="button"
+                      class="close"
+                      onclick="{!c.hideBootstrapErrors}"
+                      name="errorDepositCreation"
+                      >&times;</button
+                  >
+          </div>
+      </aura:if>
+    <h5>Please review your deposit details</h5>
+    <p
+      >before proceeding please ensure that all details are correct. If you need
+      to make any amendments, please use the edit button within the relevant
+      section below.</p
+    >
+
+    <!-- Table HTML Start -->
+    <div class="mt-5">
+      <div class=" at-container">
+        <div id="accordion-at" class="accordion">
+          <div class="card mb-0">
+            <div
+              class="card-header collapsed "
+              type="button"
+              data-toggle="collapse"
+              data-target="#collapseOne"
+              aria-controls="collapseOne"
+            >
+              <div class="card-title">
+                <div class="container">
+                  <div class="row">
+                    <div class="col-md-8 col-12"> Property </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              id="collapseOne"
+              class="card-body collapse"
+              data-parent="#accordion-at"
+            >
+              <div class="table-container-at">
+                <table
+                  id="table"
+                  class="display table-at table w-100"
+                  cellspacing="0"
+                >
+                  <tbody>
+                    <tr>
+                      <td><b>Address:</b></td>
+                      <!--  <td>{!v.selectedProperty[0].Street__c +
+                                                                                    ' ' + v.selectedProperty[0].Town__c + ' '
+                                                                                    + v.selectedProperty[0].City__c + ' '+ v.selectedProperty[0].County__c + ' '+
+                                                                                    v.selectedProperty[0].Postal_Code__c}</td>-->
+                      <td
+                        >{!v.selectedProperty[0].Street__c},{!v.selectedProperty[0].Town__c},{!v.selectedProperty[0].City__c},{!v.selectedProperty[0].County__c},{!v.selectedProperty[0].Postal_Code__c}
+                      </td>
+                    </tr>
+                 <!--   <tr>
+                      <td><b>No. of Bedrooms:</b></td>
+                      <td>{!v.selectedProperty[0].No_of_bedrooms__c}</td>
+                    </tr>
+                    <tr>
+                      <td><b>No. of Living Rooms:</b></td>
+                      <td>{!v.selectedProperty[0].No_of_living_rooms__c}</td>
+                    </tr>
+                    <tr>
+                      <td><b>Landlord Registration Number:</b></td>
+                      <td>{!v.landRegisterNumber}</td>
+                    </tr>
+                    <tr>
+                      <td><b>Landlord Registration Status:</b></td>
+                      <td>{!v.landRegisterstatus}</td>
+                    </tr> -->
+                    <tr>
+                      <td colspan="2">
+                        <a
+                          href=""
+                          class="tbl-btn"
+                          onclick="{!c.goToDepositComp}"
+                          ><img
+                            src="{!$Resource.TDSTheme + '/assets/img/md-arrow-dropleft.png'}"
+                            alt="View Icon"
+                          />
+                          Edit</a
+                        >
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="card mb-0">
+            <div
+              class="card-header collapsed "
+              type="button"
+              data-toggle="collapse"
+              data-target="#collapseTwo"
+              aria-controls="collapseTwo"
+            >
+              <div class="card-title">
+                <div class="container">
+                  <div class="row">
+                    <div class="col-md-8 col-12"> Deposit </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              id="collapseTwo"
+              class="card-body collapse"
+              data-parent="#accordion-at"
+            >
+              <div class="table-container-at">
+                <table
+                  id="table"
+                  class="display table-at table w-100"
+                  cellspacing="0"
+                >
+                  <tbody>
+                   <tr>
+                      <td><b>Rent amount (per month):</b></td> <td>
+                        <lightning:formattedNumber value="{!v.rentAmount}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/>
+                        </td>
+                    </tr>
+                    <tr>
+                      <td><b>Deposit amount:</b></td>
+                      <td> <lightning:formattedNumber value="{!v.depositAmount}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><b>Amount to protect:</b></td>
+                      <td><lightning:formattedNumber value="{!v.amountToProtect}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/>
+                    </td>
+                    </tr>
+                    <tr>
+                      <td><b>Deposit received date:</b></td>
+                      <td>
+                           <ui:outputDate aura:id="oDate"  value="{!v.depositRecievedDate}" format="DD/MM/YYYY" />
+                        </td>
+                    </tr>
+                    <tr>
+                      <td><b>Tenancy start date:</b></td>
+                      <td>
+                             <ui:outputDate aura:id="oDate"  value="{!v.tenancyStartDate}" format="DD/MM/YYYY" />
+                        </td>
+                    </tr>
+                    <tr>
+                      <td><b>Number of tenants:</b></td>
+                      <td>{!v.noOfTenants}</td>
+                    </tr>
+                    <tr>
+                      <td><b>Deposit reference:</b></td>
+                      <aura:if isTrue="{!v.depositReference}">
+                        <td>{!v.depositReference}</td>
+                      </aura:if>
+                      <aura:if isTrue="{!v.depositReference==null}">
+                        <td>Not supplied</td>
+                      </aura:if>
+                    </tr>
+
+                    <tr>
+                      <td colspan="2">
+                        <a href="" class="tbl-btn" onclick="{!c.backToDepositDetailForm}"
+                          ><img
+                            src="{!$Resource.TDSTheme + '/assets/img/md-arrow-dropleft.png'}"
+                            alt="View Icon"
+                          />
+                          Edit</a
+                        >
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="card mb-0">
+            <div
+              class="card-header collapsed "
+              type="button"
+              data-toggle="collapse"
+              data-target="#collapseThree"
+              aria-controls="collapseThree"
+            >
+              <div class="card-title">
+                <div class="container">
+                  <div class="row">
+                    <div class="col-md-8 col-12"> Landlord details   </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              id="collapseThree"
+              class="card-body collapse"
+              data-parent="#accordion-at"
+            >
+              <div class="table-container-at">
+                <table
+                  id="table"
+                  class="display table-at table w-100"
+                  cellspacing="0"
+                >
+                  <aura:if isTrue="{!v.selectedPrimarylandlord!=null}">
+                    <aura:iteration
+                      items="{!v.selectedPrimarylandlord}"
+                      var="pl"
+                    >
+                      <tbody>
+                        <tr>
+                          <td><b>Title:</b></td> <td>{!pl.Salutation}</td>
+                        </tr>
+                        <tr>
+                          <td><b>First name:</b></td> <td>{!pl.FirstName}</td>
+                        </tr>
+                        <tr>
+                          <td><b>Surname:</b></td> <td>{!pl.LastName}</td>
+                        </tr>
+                        <tr>
+                          <td><b>Email:</b></td> <td>{!pl.Email}</td>
+                        </tr>
+
+                    <!--    <tr>
+                          <td colspan="2">
+                            <a href="" class="tbl-btn"
+                              ><img
+                                src="{!$Resource.TDSTheme + '/assets/img/md-arrow-dropleft.png'}"
+                                alt="View Icon"
+                              />
+                              Edit</a
+                            >
+                          </td>
+                        </tr> -->
+                          <tr><br/></tr>
+                      </tbody>
+                    </aura:iteration>
+                  </aura:if>
+
+                  <aura:if isTrue="{!or(v.selectedPrimarylandlord==null,v.Landlord !=null)}">
+                    <aura:iteration items="{!v.Landlord}" var="item">
+                      <tbody>
+                        <tr>
+                          <td><b>Landlord type:</b></td>
+                          <td>{!item.Relation_to_Property__c}</td>
+                        </tr>
+                        <tr>
+                          <td><b>Title:</b></td>
+                          <td>{!item.Contact__r.Salutation}</td>
+                        </tr>
+                        <tr>
+                          <td><b>First name:</b></td>
+                          <td>{!item.Contact__r.FirstName}</td>
+                        </tr>
+                        <tr>
+                          <td><b>Surname:</b></td>
+                          <td>{!item.Contact__r.LastName}</td>
+                        </tr>
+                        <tr>
+                          <td><b>Email:</b></td>
+                          <td>{!item.Contact__r.Email}</td>
+                        </tr>
+                        <tr>
+                          <td><b>Phone:</b></td>
+                          <td>{!item.Contact__r.Phone}</td>
+                        </tr>
+                    <!--    <tr>
+                          <td colspan="2">
+                            <a href="" class="tbl-btn"
+                              ><img
+                                src="{!$Resource.TDSTheme + '/assets/img/md-arrow-dropleft.png'}"
+                                alt="View Icon"
+                              />
+                              Edit</a
+                            >
+                          </td>
+                        </tr> -->
+                          
+                          <tr><br/></tr>
+                      </tbody>
+                    </aura:iteration>
+                  </aura:if>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="card mb-0">
+            <div
+              class="card-header collapsed "
+              type="button"
+              data-toggle="collapse"
+              data-target="#collapseFour"
+              aria-controls="collapseFour"
+            >
+              <div class="card-title">
+                <div class="container">
+                  <div class="row">
+                    <div class="col-md-8 col-12"> Tenants details </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              id="collapseFour"
+              class="card-body collapse"
+              data-parent="#accordion-at"
+            >
+              <div class="table-container-at">
+                <table
+                  id="table"
+                  class="display table-at table w-100"
+                  cellspacing="0"
+                >
+                  <tbody>
+
+                    <aura:if isTrue="{!v.leadTenantObj.IsOrg}">
+                      <tr>
+                        <td><b>Company name:</b></td>
+                        <td>{!v.leadTenantObj.companyName}</td>
+                      </tr>
+                      <tr>
+                          <td><b>Email:</b></td>
+                          <aura:if isTrue="{!v.leadTenantObj.email}">
+                            <td>{!v.leadTenantObj.email}</td>
+                          </aura:if>
+                          <aura:if isTrue="{!v.leadTenantObj.email==''}">
+                            <td>Not supplied</td>
+                          </aura:if>
+                        </tr>
+                     <!-- <tr>
+                        <td><b>Phone:</b></td> <td>{!v.leadTenantObj.phone}</td>
+                      </tr> -->
+                        <tr>
+                          <td><b>Phone:</b></td>
+                          <aura:if isTrue="{!v.leadTenantObj.phone}">
+                            <td>{!v.leadTenantObj.phone}</td>
+                          </aura:if>
+                          <aura:if isTrue="{!v.leadTenantObj.phone==''}">
+                            <td>Not supplied</td>
+                          </aura:if>
+                        </tr>
+                      <aura:set attribute="else">
+                        <tr>
+                          <td><b>Title:</b></td>
+                          <td>{!v.leadTenantObj.title}</td>
+                        </tr>
+                        <tr>
+                          <td><b>First name:</b></td>
+                          <td>{!v.leadTenantObj.firstName}</td>
+                        </tr>
+                        <tr>
+                          <td><b>Surname:</b></td>
+                          <td>{!v.leadTenantObj.SurName}</td>
+                        </tr>
+                        <tr>
+                          <td><b>Email:</b></td>
+                          <aura:if isTrue="{!v.leadTenantObj.email}">
+                            <td>{!v.leadTenantObj.email}</td>
+                          </aura:if>
+                          <aura:if isTrue="{!v.leadTenantObj.email==''}">
+                            <td>Not supplied</td>
+                          </aura:if>
+                        </tr>
+                        <tr>
+                          <td><b>Phone:</b></td>
+                          <aura:if isTrue="{!v.leadTenantObj.phone}">
+                            <td>{!v.leadTenantObj.phone}</td>
+                          </aura:if>
+                          <aura:if isTrue="{!v.leadTenantObj.phone==''}">
+                            <td>Not supplied</td>
+                          </aura:if>
+                        </tr>
+                      </aura:set>
+                    </aura:if>
+                      <tr><br/>
+                      <!-- <td colspan="2">
+                        <a href="" class="tbl-btn"
+                          ><img
+                            src="{!$Resource.TDSTheme + '/assets/img/md-arrow-dropleft.png'}"
+                            alt="View Icon"
+                          />
+                          Edit</a
+                        >
+                      </td>-->
+                    </tr>
+                      
+                      <!-- For Additional Tenants -->
+                      <aura:iteration items="{!v.arrObj}" var="item">
+                          <aura:if isTrue="{!item.IsOrg}">
+                              <tr>
+                                  <td><b>Company name:</b></td>
+                                  <td>{!item.companyName}</td>
+                              </tr>
+                              <tr>
+                                  <td><b>Email:</b></td>
+                                  <aura:if isTrue="{!item.email}">
+                                      <td>{!item.email}</td>
+                                  </aura:if>
+                                  <aura:if isTrue="{!item.email==''}">
+                                      <td>Not supplied</td>
+                                  </aura:if>
+                              </tr>
+                              <!-- <tr>
+                        <td><b>Phone:</b></td> <td>{!v.leadTenantObj.phone}</td>
+                      </tr> -->
+                              <tr>
+                                  <td><b>Phone:</b></td>
+                                  <aura:if isTrue="{!item.phone}">
+                                      <td>{!item.phone}</td>
+                                  </aura:if>
+                                  <aura:if isTrue="{!item.phone==''}">
+                                      <td>Not supplied</td>
+                                  </aura:if>
+                              </tr>
+                          <aura:set attribute="else">
+                          <tr>
+                              <td><b>Title:</b></td> <td>{!item.title}</td>
+                          </tr>
+                          <tr>
+                              <td><b>First name:</b></td> <td>{!item.firstName}</td>
+                          </tr>
+                          <tr>
+                              <td><b>Surname:</b></td> <td>{!item.SurName}</td>
+                          </tr>
+                          <tr>
+                              <td><b>Email:</b></td>
+                              <aura:if isTrue="{!item.email!=''}">
+                                  <td>{!item.email}</td>
+                              </aura:if>
+                              <aura:if isTrue="{!item.email==''}">
+                                  <td>Not supplied</td>
+                              </aura:if>
+                          </tr>
+                          <tr>
+                              <td><b>Phone:</b></td>
+                              <aura:if isTrue="{!item.phone!=''}">
+                                  <td>{!item.phone}</td>
+                              </aura:if>
+                              <aura:if isTrue="{!item.phone==''}">
+                                  <td>Not supplied</td>
+                              </aura:if>
+                          </tr>
+                               <tr><br/>
+                          </tr>
+                          </aura:set>    
+                         </aura:if> 
+                         
+                      </aura:iteration>
+                      <tr>
+                        <!--  <td colspan="2">
+                          <a href="" class="tbl-btn"
+                            ><img
+                              src="../assets/img/feather-edit.svg"
+                              alt="View Icon"
+                            />
+                            Edit</a
+                          >
+                        </td> -->
+                        <td colspan="2">
+                          <a
+                            href=""
+                            class="tbl-btn"
+                            onclick="{!c.backToTenantComp}"
+                            ><img
+                              src="{!$Resource.TDSTheme + '/assets/img/md-arrow-dropleft.png'}"
+                              alt="View Icon"
+                            />
+                            Edit</a
+                          >
+                        </td>
+                      </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Table HTML End -->
+    <br />
+    <div class="deposit-summary-btn">
+      <!--   <button class="learn-more">Cancel deposit</button>
+                                                <button class="learn-more"><img src="../assets/img/add-new-property.svg" alt="Add Icon"/> Add another deposit</button>
+                                                <button class="see-all">Save and pay later</button>
+                                                <button class="see-all">Pay custodial deposit</button>-->
+      <lightning:button disabled="{!v.btnClicked}"   
+        aura:id="backToTenantComp"
+        variant="brand"
+        label="Back"
+        class="learn-more"                
+        onclick="{! c.backToTenantComp }"
+      />
+      <lightning:button disabled="{!v.btnClicked}"   
+        aura:id="cancelDepositBtn"
+        class="learn-more"
+        variant="brand"
+        label="Cancel deposit"
+        onclick="{! c.doCancelDeposit }"
+      />
+      <lightning:button disabled="{!v.btnClicked}"   
+        aura:id="addAnotherDepositBtn"
+        class="learn-more"
+        variant="brand"
+        label="Add another deposit"
+        onclick="{! c.doAddAnotherDeposit }"
+      />
+      <lightning:button disabled="{!v.btnClicked}"   
+        aura:id="saveAndPayLaterBtn"
+        variant="brand"
+        class="see-all"
+        label="Save and pay later"
+        onclick="{! c.doAddAnotherDeposit }"
+      />
+      <lightning:button disabled="{!v.btnClicked}"   
+        aura:id="payCustodialDepositBtn"
+        variant="brand"
+        class="see-all"
+        label="Pay deposit"
+        onclick="{! c.doAddAnotherDeposit }"
+      />
+    </div>
+  </div>
+</aura:component>

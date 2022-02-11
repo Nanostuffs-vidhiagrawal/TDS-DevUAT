@@ -1,0 +1,138 @@
+<aura:component  implements="lightning:isUrlAddressable,forceCommunity:themeLayout,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:method name="mandatoryMethod" action="{!c.showMandatory}" >
+        <aura:attribute name="flagvalue" type="boolean" default="true"/>
+    </aura:method>
+        <aura:attribute name="propList" type="List" access="global" />
+    <aura:attribute access="public"  name="IsEditMode" type="Boolean"  />
+     <aura:attribute access="public"  name="wrongPostCode" type="Boolean"  />
+    <aura:attribute access="public"  name="AddressLine1" type="String"  />
+    <aura:attribute access="public"  name="Street" type="String"  />
+    <aura:attribute access="public"  name="Town" type="String"  />
+    <aura:attribute access="public"  name="County" type="String"  />
+    <aura:attribute access="public"  name="PostCode" type="String"  />
+    <aura:attribute access="public"  name="Country" type="String"  />
+    <aura:handler access="public"  name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute access="public"  name="method" type="Aura.action"/>
+     <aura:attribute name="noMatchFound" type="Boolean" default="false"/>
+     <aura:attribute name="showhouseNo" type="Boolean" access="global" default="false"/>
+    <aura:attribute name="flagMandatory" type="Boolean" access="global" default="true"/>
+	<aura:attribute  name="localAuthorityArea"  access="global" type="String" /> 
+    <aura:attribute  name="houseNo"  access="global" type="String" /> 
+      <aura:attribute name="PostcodeErrorNew" access="global"  type="string"/>
+    <div class=" slds-grid slds-gutters slds-form-element">
+        <div class="slds-col">
+            
+        </div>
+        <div class="slds-col" style="">
+            <div class="content">
+                       <aura:if isTrue="{!v.wrongPostCode}">
+                <div id="wrongPost" class="alert alert-danger alert-dismissible fade show">
+                   <!-- <strong>Error!</strong> This postcode is not allowed-->
+                    {!v.PostcodeErrorNew}
+                    <button
+                            type="button"
+                            class="close"
+                            onclick="{!c.hideBootstrapErrors}"
+                            name="wrongPostCode"
+                            >&times;</button
+                        >
+                </div>
+            </aura:if>
+              <aura:if isTrue="{!v.noMatchFound}">
+                <div id="titleErrorErrorAlert" class="alert alert-danger alert-dismissible fade show">
+                    <strong>Error!</strong> We cannot find a property that matches these details. Please click ‘Enter manually’ to provide the property’s details.
+                    <button
+                            type="button"
+                            class="close"
+                            onclick="{!c.hideBootstrapErrors}"
+                            name="noMatchFound"
+                            >&times;</button
+                        >
+                </div>
+            </aura:if>
+                <div class="fieldWrap">
+                    
+                    <aura:if isTrue="{!v.flagMandatory}">
+                        <label style="margin-bottom:10px;" for="searchBox">&nbsp;&nbsp;&nbsp;Address</label>
+                        <aura:set attribute="else">
+                            <label for="searchBox" style="margin-left: 8px!important;">
+                                Address</label>
+                        </aura:set>
+                    </aura:if>
+                    <div style="margin-top: 10px;">
+                        
+                        <input required="true" type="text" name="search" style="margin-top: -14px;margin-right: 36px;font-family: Aller_regular!important;width: 90%!important;font-size: 1.6rem!important;" class="addressFind" id="searchBox2" placeholder="Please enter postcode and press search" onchange="{!c.showClear}" onkeypress="{!c.enterSearch}"/>
+                        <div class="clear" id="clearButton" onclick="{!c.clearSearch}">X</div><br/><br/>
+                           <!-- <button class="lookupbtn" style="font-family: Aller_regular!important;"  onclick="{!c.findAddress1}">Search</button> -->
+                        <lightning:button aura:id="srchButton" label="Search" class="lookupbtn" variant="brand" onclick="{!c.findAddress1}"
+          />
+                    </div>  
+                    <!--<lightning:button label="Search"
+                              class="btn"
+                              variant="brand"
+                              onclick="{!c.findAddress1}"/>-->                    
+                </div>
+                
+                <div class="fieldWrap">
+                    <div class="error" id="errorMessage"></div>
+                </div>
+                
+                <div class="fieldWrap">
+                    <div style="width: 90%!important;font-family: Aller_regular!important;" id="result2"></div>
+                </div>	
+                
+                <div class="seperator" id="seperator2"></div> 
+                <br/>
+                <div class="fieldWrap">
+                    <a class="EnterLink" style="color: #32669E;font-family: Aller_regular;" id ="EnterButton" onclick="{!c.enterManually}">Enter manually</a>
+                    <div class="outputArea" style="font-family: Aller_regular;!important" id="output2"></div>
+                    
+                </div>
+                <div id="manualAddress2" class="ManualAddress">
+                     
+                 
+                     <aura:if isTrue="{!v.showhouseNo}">
+                    <lightning:input class="addressHeading" onclick="{!c.enterManually}"  access="public" aura:id="fieldState" label="House no. or name"
+                                     name="town"
+                                     placeholder="House no. or name"
+                                     value="{!v.houseNo}"
+                                     />
+                          </aura:if>
+                    <br></br>
+                       <lightning:textarea class="textarea" onclick="{!c.enterManually}"  access="public"  aura:id="fieldId"
+                                        label="Street name"
+                                        name="addressLine1" 
+                                        placeholder="Enter street name"
+                                        value="{!v.AddressLine1}"
+                                        
+                                        />
+                    <br></br>
+                    <lightning:input class="addressHeading" onclick="{!c.enterManually}"  access="public" aura:id="fieldState" label="Town/City"
+                                     name="town"
+                                     placeholder="Enter town"
+                                     value="{!v.Town}"
+                                     /><br></br>
+                    <lightning:input class="addressHeading" onclick="{!c.enterManually}"  access="public" aura:id="fieldState" label="County"
+                                     name="County"
+                                     placeholder="Enter county"
+                                     value="{!v.County}"
+                                    />   <br></br> 
+                    <lightning:input class="addressHeading" onclick="{!c.enterManually}"  access="public" aura:id="fieldPostCode" label="Postcode"
+                                     name="PostCode"
+                                     placeholder="Enter postcode"
+                                     value="{!v.PostCode}"
+                                     /><br></br>
+                    <lightning:input class="addressHeading" onclick="{!c.enterManually}"  access="public" aura:id="fieldCountry" label="Country"
+                                     name="Country"
+                                     placeholder="Enter country"
+                                     value="{!v.Country}"
+                                    
+                                     />
+                    
+                </div>
+            </div>
+            <div class="slds-col">  
+            </div>
+        </div>
+    </div>    
+</aura:component>

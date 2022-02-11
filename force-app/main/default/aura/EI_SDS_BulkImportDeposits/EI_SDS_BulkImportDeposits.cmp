@@ -1,0 +1,5 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes" controller="EI_SDS_BulkImportDeposits" access="global" >
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}" /> 
+    <aura:attribute name="rec" type="String" /> 
+    Comming Soon
+</aura:component>

@@ -1,0 +1,35 @@
+<!-- Fc Claim Details -->
+<template>
+        <lightning-card class="slds-p-around_medium" title="Claim Details" icon-name="standard:case" variant="base">
+            <div slot="actions"></div>
+            <div class="slds-card__body_inner">
+                <lightning-layout class="slds-wrap" multiple-rows="true">
+                    <lightning-layout-item  size="6"  >
+                        <div class="slds-form-element"><span class="slds-form-element__label">Claim Reference</span>
+                            <div class="slds-form-element__control"><span class="slds-form-element__static">{claimRecord.claimReference}</span></div>
+                        </div>
+                        <div class="slds-form-element"><span class="slds-form-element__label">Claim Amount</span>
+                            <div class="slds-form-element__control"><span class="slds-form-element__static"><lightning-formatted-number value={claimRecord.totalClaimAmount} format-style="currency" currency-code="GBP"></lightning-formatted-number></span></div>
+                        </div>
+                        <div class="slds-form-element"><span class="slds-form-element__label">Guarantee Value</span>
+                            <div class="slds-form-element__control"><span class="slds-form-element__static"><lightning-formatted-number value={claimRecord.guaranteeValue} format-style="currency" currency-code="GBP"></lightning-formatted-number></span></div>
+                        </div>
+                    </lightning-layout-item>
+                    <lightning-layout-item>
+                        <div class="slds-form-element"><span class="slds-form-element__label">Lead Tenant</span>
+                            <div class="slds-form-element__control"><span class="slds-form-element__static">{claimRecord.leadTenant}</span></div>
+                        </div>
+                        <div class="slds-form-element"><span class="slds-form-element__label">Landlord</span>
+                            <div class="slds-form-element__control"><span class="slds-form-element__static">{claimRecord.landlord}</span></div>
+                        </div>
+                        <div class="slds-form-element"><span class="slds-form-element__label">Agent</span>
+                            <div class="slds-form-element__control"><span class="slds-form-element__static">{claimRecord.agent}</span></div>
+                        </div>
+                        <div class="slds-form-element"><span class="slds-form-element__label">Agent Contact</span>
+                            <div class="slds-form-element__control"><span class="slds-form-element__static">{claimRecord.agentContact}</span></div>
+                        </div>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+        </lightning-card>
+</template>

@@ -1,0 +1,330 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global"  controller="EI_sdsDepositReportController">
+	
+   <!-- <aura:attribute name="dateCantGreat" type="Boolean" default="false"/>-->
+    <!--<aura:attribute name="showRecievedDateError" type="Boolean" default="false"/>-->
+    <aura:attribute name="url" type="String"/>
+    <aura:attribute name="startDateByTenant" type="Date" />
+    <aura:attribute name="endDateByTenant" type="Date" />
+    <aura:attribute name="listOfdepositDownload" type="list" />    
+     <lightning:navigation aura:id="navService" />       
+  
+    <!-- aura attributes to store data/values -->    
+    <aura:attribute name="deplist" type="Deposit__c[]"/>
+    <aura:attribute name="searchdate" type="date"/>
+    
+   <!-- Pagination List-->
+   
+  		 <aura:attribute name="PaginationList" type="list" />
+    	 <aura:attribute name="startPageLandlord" type="Integer" />
+ 		 <aura:attribute name="endPageLandlord" type="Integer" />  
+         <aura:attribute name="currentPageLandlord" type="integer" default="1" />
+         <aura:attribute name="pageSizeLandlord" type="Integer" default="10" description="number of records to be display on per page"/> 
+         <aura:attribute name="totalPagesCountLandlord" type="integer" default="1" />
+         <aura:attribute name="totalRecordsCountLandlord" type="Integer" /> 
+    
+         <aura:attribute name="showViewPage" type="boolean" default="true"/>   
+         <aura:attribute name="fromParentComp" type="boolean" default="false"/> 
+         <aura:attribute name="bNoRecordsFound" type="boolean" />
+         <aura:attribute name="currentPage" type="integer" default="1" />
+         <aura:attribute name="totalPagesCount" type="integer" default="1" />
+         <aura:attribute name="startPage" type="Integer" />
+         <aura:attribute name="endPage" type="Integer" />
+         <aura:attribute name="totalRecordsCount" type="Integer" />
+         <aura:attribute name="pageSize" type="Integer" default="10"
+         description="number of records to be display on per page"  />    
+    
+   
+    <!--Date Start-->    
+    <div class="tab-content custom-tab-content" id="sf-tabContent">
+        <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+            <div class="deposit-agent">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h5 class="slds-text-heading--medium" style="font-size: x-large; color:black">Historic deposit repayments</h5>
+                            
+                        	<form>
+                                <lightning:button variant="brand" disabled="{!v.disabledBtn}" label="Back to reports" title="Submit"  onclick="{!c.backtoList}" class="see-all mb-5"/>
+                                <div class="form-group row">                                 
+                                    <div class="col-sm-12 col-lg-6">
+                                        <label class="col-form-label" style="font-size: 1.6rem">Deposit start date</label>
+                                        <div class="d-flex">
+                                            <div class="flex3">
+                                                <select class="form-control" id="depositeStartDate" name="day" style="font-size: 1.6rem">
+                                                    <option value="" disabled="true" selected="true">Select Day</option>
+                                                    <option id="tsd01" value="01">1</option>
+                                                    <option id="tsd02" value="02">2</option>
+                                                    <option id="tsd03" value="03">3</option>
+                                                    <option id="tsd04" value="04">4</option>
+                                                    <option id="tsd05" value="05">5</option>
+                                                    <option id="tsd06" value="06">6</option>
+                                                    <option id="tsd07" value="07">7</option>
+                                                    <option id="tsd08" value="08">8</option>
+                                                    <option id="tsd09" value="09">9</option>
+                                                    <option id="tsd10" value="10">10</option>
+                                                    <option id="tsd11" value="11">11</option>
+                                                    <option id="tsd12" value="12">12</option>
+                                                    <option id="tsd13" value="13">13</option>
+                                                    <option id="tsd14" value="14">14</option>
+                                                    <option id="tsd15" value="15">15</option>
+                                                    <option id="tsd16" value="16">16</option>
+                                                    <option id="tsd17" value="17">17</option>
+                                                    <option id="tsd18" value="18">18</option>
+                                                    <option id="tsd19" value="19">19</option>
+                                                    <option id="tsd20" value="20">20</option>
+                                                    <option id="tsd21" value="21">21</option>
+                                                    <option id="tsd22" value="22">22</option>
+                                                    <option id="tsd23" value="23">23</option>
+                                                    <option id="tsd24" value="24">24</option>
+                                                    <option id="tsd25" value="25">25</option>
+                                                    <option id="tsd26" value="26">26</option>
+                                                    <option id="tsd27" value="27">27</option>
+                                                    <option id="tsd28" value="28">28</option>
+                                                    <option id="tsd29" value="29">29</option>
+                                                    <option id="tsd30" value="30">30</option>
+                                                    <option id="tsd31" value="31">31</option>
+                                                </select>
+                                            </div>
+                                            <div class="flex3">
+                                                <select class="form-control" id="depositeStartMonth" name="month" style="font-size: 1.6rem">
+                                                    <option value="" disabled="true" selected="true">Select Month</option>
+                                                    <option id="tsm01" value="01">January</option>
+                                                    <option id="tsm02" value="02">February</option>
+                                                    <option id="tsm03" value="03">March</option>
+                                                    <option id="tsm04" value="04">April</option>
+                                                    <option id="tsm05" value="05">May</option>
+                                                    <option id="tsm06" value="06">June</option>
+                                                    <option id="tsm07" value="07">July</option>
+                                                    <option id="tsm08" value="08">August</option>
+                                                    <option id="tsm09" value="09">September</option>
+                                                    <option id="tsm10" value="10">October</option>
+                                                    <option id="tsm11" value="11">November</option>
+                                                    <option id="tsm12" value="12">December</option>
+                                                    
+                                                </select>
+                                            </div>
+                                            <div class="flex3">
+                                                <select class="form-control" id="depositeStartYear" name="year" style="font-size: 1.6rem">
+                                                    <option value="" disabled="true" selected="true">Select Year</option>
+                                                    <option id="tsy2015" value="2015">2015</option>
+                                                    <option id="tsy2016" value="2016">2016</option>
+                                                    <option id="tsy2017" value="2017">2017</option>
+                                                    <option id="tsy2018" value="2018">2018</option>
+                                                    <option id="tsy2019" value="2019">2019</option>
+                                                    <option id="tsy2020" value="2020">2020</option>
+                                                    <option id="tsy2021" value="2021">2021</option>
+                                                    <option id="tsy2022" value="2022">2022</option>
+                                                    <option id="tsy2023" value="2023">2023</option>
+                                                    <option id="tsy2024" value="2024">2024</option>
+                                                </select>
+                                            </div>            
+                                        </div>
+                                       <!-- <aura:if isTrue="{!v.showRecievedDateError}">
+                                            <p class="mb-0 ml-2 mt-3 text-danger"
+                                               >Please Enter a valid Date
+                                            </p>
+                                        </aura:if> 
+                                        <aura:if isTrue="{!v.dateCantGreat}">
+                                            <p class="mb-0 ml-2 mt-3 text-danger"
+                                               >This cannot be a date in the future
+                                            </p>
+                                        </aura:if>-->
+                                    </div>
+                                    <div class="col-sm-12 col-lg-6">
+                                        <label class="col-form-label" style="font-size: 1.6rem" >Deposit end date</label>
+                                        <div class="d-flex">
+                                            <div class="flex3">
+                                                <select class="form-control" id="depositeEndDate" name="day" style="font-size: 1.6rem">
+                                                    <option value="" disabled="true" selected="true">Select Day</option>
+                                                    <option id="tsd01" value="01">1</option>
+                                                    <option id="tsd02" value="02">2</option>
+                                                    <option id="tsd03" value="03">3</option>
+                                                    <option id="tsd04" value="04">4</option>
+                                                    <option id="tsd05" value="05">5</option>
+                                                    <option id="tsd06" value="06">6</option>
+                                                    <option id="tsd07" value="07">7</option>
+                                                    <option id="tsd08" value="08">8</option>
+                                                    <option id="tsd09" value="09">9</option>
+                                                    <option id="tsd10" value="10">10</option>
+                                                    <option id="tsd11" value="11">11</option>
+                                                    <option id="tsd12" value="12">12</option>
+                                                    <option id="tsd13" value="13">13</option>
+                                                    <option id="tsd14" value="14">14</option>
+                                                    <option id="tsd15" value="15">15</option>
+                                                    <option id="tsd16" value="16">16</option>
+                                                    <option id="tsd17" value="17">17</option>
+                                                    <option id="tsd18" value="18">18</option>
+                                                    <option id="tsd19" value="19">19</option>
+                                                    <option id="tsd20" value="20">20</option>
+                                                    <option id="tsd21" value="21">21</option>
+                                                    <option id="tsd22" value="22">22</option>
+                                                    <option id="tsd23" value="23">23</option>
+                                                    <option id="tsd24" value="24">24</option>
+                                                    <option id="tsd25" value="25">25</option>
+                                                    <option id="tsd26" value="26">26</option>
+                                                    <option id="tsd27" value="27">27</option>
+                                                    <option id="tsd28" value="28">28</option>
+                                                    <option id="tsd29" value="29">29</option>
+                                                    <option id="tsd30" value="30">30</option>
+                                                    <option id="tsd31" value="31">31</option>
+                                                </select>
+                                            </div>
+                                            <div class="flex3">
+                                                <select class="form-control" id="depositeEndMonth" name="month" style="font-size: 1.6rem">
+                                                    <option value="" disabled="true" selected="true">Select Month</option>
+                                                    <option id="tsm01" value="01">January</option>
+                                                    <option id="tsm02" value="02">February</option>
+                                                    <option id="tsm03" value="03">March</option>
+                                                    <option id="tsm04" value="04">April</option>
+                                                    <option id="tsm05" value="05">May</option>
+                                                    <option id="tsm06" value="06">June</option>
+                                                    <option id="tsm07" value="07">July</option>
+                                                    <option id="tsm08" value="08">August</option>
+                                                    <option id="tsm09" value="09">September</option>
+                                                    <option id="tsm10" value="10">October</option>
+                                                    <option id="tsm11" value="11">November</option>
+                                                    <option id="tsm12" value="12">December</option>
+                                                    
+                                                </select>
+                                            </div>
+                                            <div class="flex3">
+                                                <select class="form-control" id="depositeEndYear" name="year" style="font-size: 1.6rem">
+                                                    <option value="" disabled="true" selected="true">Select Year</option>
+                                                    <option id="tsy2015" value="2015">2015</option>
+                                                    <option id="tsy2016" value="2016">2016</option>
+                                                    <option id="tsy2017" value="2017">2017</option>
+                                                    <option id="tsy2018" value="2018">2018</option>
+                                                    <option id="tsy2019" value="2019">2019</option>
+                                                    <option id="tsy2020" value="2020">2020</option>
+                                                    <option id="tsy2021" value="2021">2021</option>
+                                                    <option id="tsy2022" value="2022">2022</option>
+                                                    <option id="tsy2023" value="2023">2023</option>
+                                                    <option id="tsy2024" value="2024">2024</option>
+                                                </select>
+                                            </div>            
+                                        </div>
+                                       <!-- <aura:if isTrue="{!v.showRecievedDateError}">
+                                            <p class="mb-0 ml-2 mt-3 text-danger"
+                                               >Please Enter a valid Date
+                                            </p>
+                                        </aura:if> 
+                                        <aura:if isTrue="{!v.dateCantGreat}">
+                                            <p class="mb-0 ml-2 mt-3 text-danger"
+                                               >This cannot be a date in the future
+                                            </p>
+                                        </aura:if>-->
+                                    </div>
+                                </div>                                
+                                 
+                                <div class="form-group row">
+                                    <div class="col-sm-12 text-right">
+                                        <lightning:button variant="brand" disabled="{!v.disabledBtn}" label="Search" title="Submit"  onclick="{!c.searchrecord}" class="see-all" />                 
+                                    </div>
+                                </div>
+                                <lightning:button variant="brand" disabled="{!v.disabledBtn}" label="Download as csv" title="Submit"  onclick="{!c.downloadCsv}" class="see-all slds-float_right"/>
+
+                            </form>    
+                        </div>                                                                            
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+    
+    <!--date end-->  
+    
+   
+    
+    
+    <!--New Table start..-->
+    <div class="table-container my-option-table">
+        <table  class="slds-table--striped" style="table-layout: fixed;">
+            <thead>
+                <tr>
+                    <th class="headingtext">DAN</th>
+                    <th class="headingtext" >Tenancy address</th>
+                    <th class="headingtext">Deposit protection <br/> start date </th>
+                    <th class="headingtext" >Deposit protection <br/> end date</th> 
+                    <th class="headingtext" >Repaid reason <br/>(dispute / transfer / end tenancy)</th>
+                    <th class="headingtext" >Deposit amount</th>
+                    <th class="headingtext">Amount request by <br/> agent/landlord</th>
+                    <th class="headingtext" >Amount to tenant(s)</th>
+                    <th class="headingtext">Amount to agent/landlord</th>                             
+                </tr>
+            </thead>
+            <tbody style="font-size:1.5rem;">
+                <aura:if isTrue="{!not(empty(v.PaginationList))}">
+                    <aura:iteration items="{!v.PaginationList}" var="registeredRecord">
+                        <tr>
+                            <td><a href="{!v.url}" id="{!registeredRecord.Id}" class="tbl-btn" onclick="{!c.onDepositePageController}">{!registeredRecord.Deposit_Account_Number__c}</a></td>
+                            <td class="slds-cell-wrap textcss" style="padding:10px">
+                                <!--<div aria-label="" class="slds-text-area__content slds-grow slds-cell-wrap">-->
+                                <ui:outputRichText value="{!registeredRecord.Property_Address__c}"/>
+                                <!--</div>-->
+                            </td>
+                            <td class="slds-cell-wrap textcss" style="padding:10px">
+                               <!-- {!registeredRecord.Protection_Start_Date__c}-->
+                            <ui:outputDate aura:id="oDate" value="{!registeredRecord.Protection_Start_Date__c}" format="DD/MM/YYYY"/> 
+                            </td>                            
+                            <td class="slds-cell-wrap textcss" style="padding:10px">
+                               <!-- {!registeredRecord.End_Date__c}-->
+                               <ui:outputDate aura:id="oDate" value="{!registeredRecord.End_Date__c}" format="DD/MM/YYYY"/> 
+                            </td>                   
+                            <td class="slds-cell-wrap textcss" style="padding:10px">{!registeredRecord.Repaid_reason_status__c}</td>                            
+                            <td class="slds-cell-wrap textcss" style="padding:10px">
+                                <lightning:formattedNumber value="{!registeredRecord.Deposit_Amount__c}" style="currency" currencyCode="GBP" 
+                                                           minimumFractionDigits="2" maximumFractionDigits="2"/>
+                               <!-- {!registeredRecord.Deposit_Amount__c}-->
+                            </td>
+                            <td class="slds-cell-wrap textcss" style="padding:10px">
+                                <aura:iteration items="{!registeredRecord.Repayment_Requests__r}" var="dep">
+                                    <lightning:formattedNumber value="{!dep.Total_Amount_Requested_AL__c}" style="currency" currencyCode="GBP"
+                                                               minimumFractionDigits="2" maximumFractionDigits="2"/>
+                                    <!--{!dep.Total_Amount_Requested_AL__c}-->
+                                </aura:iteration>
+                            </td>                          
+                            <td class="slds-cell-wrap textcss" style="padding:10px">
+                               <!-- {!registeredRecord.Amount_paid_to_TenantNew__c}-->
+                                 <lightning:formattedNumber value="{!registeredRecord.Amount_paid_to_TenantNew__c}" style="currency" currencyCode="GBP"
+                                                               minimumFractionDigits="2" maximumFractionDigits="2"/>
+                            </td>
+                            <td class="slds-cell-wrap textcss" style="padding:10px">
+                               <!-- {!registeredRecord.Amount_paid_to_AG_LL__c}-->
+                                <lightning:formattedNumber value="{!registeredRecord.Amount_paid_to_AG_LL__c}" style="currency" currencyCode="GBP"
+                                                               minimumFractionDigits="2" maximumFractionDigits="2"/>
+                            </td>
+                                                    
+                        </tr>
+                    </aura:iteration>
+                    <aura:set attribute="else">
+                        There are no deposits to show.
+                    </aura:set>
+                </aura:if>
+                  <div style="margin-left:500px!important;">
+                         <aura:if isTrue="{!!v.bNoRecordsFound}">
+                        <nav aria-label="Page navigation">
+							<ul class="pagination">
+								<aura:if isTrue="{!or(v.startPage == 0,v.PaginationList.length==0)}">
+									<li class="page-item disabled"><a class="page-link" href="" >Previous</a></li>
+									<aura:set attribute="else">
+										<li class="page-item"><a class="page-link" id="previousId" style="width :120px" href="" onclick="{!c.navigation}">Previous</a></li>
+									</aura:set>
+								</aura:if>
+								 <li class="page-item"><a class="page-link" href="" style="width :120px">Page {!v.currentPage} out of {!v.totalPagesCount}</a></li>
+								<aura:if isTrue="{!or((v.endPage + 1) >= v.totalRecordsCount,v.PaginationList.length==0 )}">
+									<li class="page-item disabled"><a class="page-link" href="" >Next</a></li>							
+									<aura:set attribute="else">
+										<li class="page-item"><a class="page-link" id="nextId" href="" onclick="{!c.navigation}">Next</a></li>
+									</aura:set>
+								</aura:if>
+							</ul>
+						   </nav>
+                        </aura:if>
+                        </div>
+                
+                
+            </tbody>            
+        </table>
+    </div>
+    <!--New Table End..-->    
+</aura:component>

@@ -1,0 +1,19 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" 
+                controller="EI_manageusers">
+    <aura:attribute name="strRecordId" type="String" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="obj" type="User" default="{ 'sobjectType': 'User'}"/>
+    
+    <section class="manage-address">
+        <h4>View user details</h4>
+        <div class="container">
+            <div class="slds-p-left_xxx_large" style="font-size: 1.5rem!important;">
+                <strong>Title</strong>      :   {!v.obj.Title}<br/><br/>
+                <strong>First Name</strong> :   {!v.obj.FirstName}<br/><br/>
+                <strong>Last Name</strong>  :   {!v.obj.LastName}<br/><br/>
+                <strong>Email</strong>      :   {!v.obj.Email}<br/><br/>
+                <strong>Phone</strong>      :   {!v.obj.Phone}
+            </div>
+        </div>
+    </section>
+</aura:component>

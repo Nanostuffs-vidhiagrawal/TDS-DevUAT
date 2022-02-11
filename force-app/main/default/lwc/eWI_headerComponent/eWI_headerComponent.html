@@ -1,0 +1,75 @@
+<template>
+    
+    <!--      <ltng:require    
+                          styles={!$Resource.TDSTheme  + '/assets/css/custom.css'}
+                          scripts="{!join(',',
+                                   $Resource.TDSTheme+'/assets/js/plugin.min.js',
+                                   $Resource.TDSTheme+'/assets/js/jquery.dataTables.min.js',
+                                   $Resource.TDSTheme+'/assets/js/dataTables.responsive.js',
+                                   $Resource.TDSTheme+'/assets/js/datepicker.js',
+                                   $Resource.TDSTheme+'/assets/js/custom.js')}"
+                                                   />-->
+             <!-- Navigation HTML Start -->
+             <div class="search-overlay"></div>
+             <nav class="custom-nav navbar navbar-expand-lg">
+                 <a class="navbar-brand" href="#">
+                     <img src={LogoFiles} alt="TDS Logo" />
+                 </a>
+                 
+                  <form class="form-inline show-tab">
+                      <input class="form-control search-input" type="search" placeholder="Search" aria-label="Search"/>
+                         <span class="btn search-btn"><img src={SearchBgIcon} alt="search icon"/></span>
+                 </form>
+                 
+                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                     <span class="navbar-toggler-icon"></span>
+                 </button>
+                 
+                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                     <li class="nav-item active">
+                         <a class="nav-link" href="#">Resource centre <span class="sr-only">(current)</span></a>
+                     </li>
+                     <li class="nav-item">
+                         <a class="nav-link" href="#">Tenants</a>
+                     </li>
+                     <li class="nav-item">
+                         <a class="nav-link" href="#">Landlords/Agents</a>
+                     </li>
+                     <li class="nav-item">
+                         <a class="nav-link" href="#">Sign up</a>
+                     </li>
+                 </ul>
+                     <form class="form-inline">
+                         <input class="form-control search-input" type="search" placeholder="Search" aria-label="Search"></input>
+                         <span class="btn search-btn"><img src={SearchBgIcon} alt="search icon"/></span>
+                     </form> 
+                     
+                     
+            <ul class="navbar-nav">
+                 <li>       				             
+                      <a href="" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" >
+                     <img src={NotificationIcon} alt="Notification_icon" ></img>
+                      </a>
+                 </li>
+             </ul>
+              
+                     <ul class="navbar-nav">
+                         <li class="nav-item dropdown">
+                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <img src={UserIcon}  alt="User Icon"/>
+                             </a>
+                             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                 <a class="dropdown-item" href="#" >Logout</a>
+                          <!--       <a class="dropdown-item" href="#">Sign Up</a>
+                                 <a class="dropdown-item" href="#">Contact Us</a> -->
+                             </div>
+                         </li>
+                     </ul>
+                 </div>
+             </nav>
+             <!-- Navigation HTML End -->
+
+
+            
+       
+</template>

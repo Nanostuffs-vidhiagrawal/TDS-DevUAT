@@ -1,0 +1,10 @@
+.THIS.mycard {
+	width:40%;
+    height:45%;
+    margin-left:10%;
+    margin-top:1%;
+}
+.THIS .slds-dropdown-trigger_click .slds-dropdown
+{
+    font-size: 14px;
+}

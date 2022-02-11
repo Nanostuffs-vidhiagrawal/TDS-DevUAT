@@ -1,0 +1,16 @@
+.THIS .headingtext{
+    text-align:left;
+    padding: 16px 18px;
+    border-bottom: none!important;
+    font-weight: bold;
+    background-color: #F5F6FA;
+    font-size: 15px!important;
+    line-height: 1.5;
+    color:#212529;
+    border-top: none!important;
+    font-family: Aller_regular;
+}
+
+.THIS .dataTables_empty{
+    display:none!important;
+}

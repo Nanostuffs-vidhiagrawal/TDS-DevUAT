@@ -1,0 +1,2 @@
+<apex:page standardcontroller="Case" standardStylesheets="true" sidebar="false" action="{!URLFOR($Resource.Deposit_form)}"> 
+</apex:page>

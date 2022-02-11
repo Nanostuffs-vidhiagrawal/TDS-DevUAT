@@ -1,0 +1,91 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,flexipage:availableForAllPageTypes" access="global"
+    controller="EI_getBranch">
+
+    <!-- Attributes -->
+    <aura:attribute name="branchTitle" type="String" default="View Branches" />
+    <aura:attribute name="manageUsers" type="String" default="Manage Users" />
+    <aura:attribute name="clientAccountReport" type="String" default="View Account Report" />
+    <aura:attribute name="logout" type="String" default="Logout" />
+    <aura:attribute name="changeMyDetails" type="String" default="Change my Details" />
+    <aura:attribute name="accName" type="String" />
+    <aura:attribute name="accId" type="String" />
+
+
+    <!-- Navigation Service -->
+    <lightning:navigation aura:id="navService" />
+
+    <!-- Handler -->
+
+    <aura:handler name='init' value='{!this}' action='{!c.doInit}' />
+
+    <!-- Organization Header -->
+    <center>
+        <div>
+            <lightning:card>
+                <div style="text-align: left;">
+                    &nbsp; &nbsp;
+                    <lightning:avatar src="/bad/image/url.jpg" fallbackIconName="utility:company"
+                        alternativeText="Branch" class="slds-m-right_small" />
+                    {! v.accName}
+
+                </div>
+            </lightning:card>
+        </div>
+    </center>
+    <br />
+    <div class="slds-grid slds-gutters">
+        <!-- View Branch -->
+
+        <div class="slds-col slds-size_1-of-4">
+            <lightning:card iconName="standard:hierarchy">
+                <p class="slds-p-horizontal_small">
+                    <lightning:button variant="success" label="{! v.branchTitle }" title="{! v.branchTitle }"
+                        onclick="{! c.openBranchTable }" />
+                </p>
+            </lightning:card>
+        </div>
+
+        <!-- Manage Users -->
+
+        <div class="slds-col slds-size_1-of-4">
+            <lightning:card iconName="utility:adduser">
+                <p class="slds-p-horizontal_small">
+                    <lightning:button variant="success" label="{! v.manageUsers }" title="{! v.manageUsers }"
+                        onclick="{! c.openManageUsers }" />
+                </p>
+            </lightning:card>
+        </div>
+
+        <div class="slds-col slds-size_1-of-4">
+            <!-- Client Account Report -->
+            <lightning:card iconName="standard:report">
+                <p class="slds-p-horizontal_small">
+                    <lightning:button variant="success" label="{! v.clientAccountReport }"
+                        title="{! v.clientAccountReport }" onclick="{! c.openAccountReport }" />
+                </p>
+            </lightning:card>
+        </div>
+
+        <div class="slds-col slds-size_1-of-4">
+            <!-- logout -->
+            <lightning:card iconName="utility:logout">
+                <p class="slds-p-horizontal_small">
+                    <lightning:button variant="success" label="{! v.logout }" title="{! v.logout }"
+                        onclick="{! c.logOut }" />
+                </p>
+            </lightning:card>
+        </div>
+    </div>
+    <div class="slds-col slds-size_1-of-4">
+        <!-- Change My Details -->
+        <br />
+        <br />
+        <lightning:card iconName="utility:user_role">
+            <p class="slds-p-horizontal_small">
+                <lightning:button variant="success" label="{! v.changeMyDetails }" title="{! v.logout }"
+                    onclick="{! c.navigateTochangeMyDetails }" />
+            </p>
+        </lightning:card>
+    </div>
+
+</aura:component>

@@ -1,0 +1,194 @@
+<apex:page showHeader="false" sidebar="false" controller="EI_SDS_EvidenceUploadToAzure" action="{!fetchAzureLink}" lightningStylesheets="true">  
+    <html>
+        <head>
+            <apex:includeScript value="{!$Resource.EI_ZD_Assets  + '/js/jszip.js'}"/>
+            <apex:includeScript value="{!$Resource.EI_ZD_Assets  + '/js/fileSave.js'}"/>
+            
+            <script>
+            //var x = document.getElementById("myDIV1");
+            //document.getElementById("myDIV1").style.display = "none";
+            var azureLocation= new Array();
+            var azureFileName= new Array();
+            var azureLocation2= new Array();
+            var azureFileName2= new Array();
+            var azureLocation3= new Array();
+            var azureFileName3= new Array();
+            var azureFileSizeTen =0;
+            var azureFileSizeAgent =0;
+            var azureFileSizeLandlord =0;
+            <apex:repeat value="{!AzureUrl}" var="accn">
+                azureLocation.push('{!accn.Location__c}');
+                azureFileName.push('{!accn.Azure_File_Name__c}');
+            	azureFileSizeAgent =azureFileSizeAgent + {!accn.File_Size__c}
+            </apex:repeat>
+            <apex:repeat value="{!AzureUrl2}" var="accn2">
+                azureLocation2.push('{!accn2.Location__c}');
+                azureFileName2.push('{!accn2.Azure_File_Name__c}');
+            	azureFileSizeLandlord =azureFileSizeLandlord + {!accn2.File_Size__c}
+            </apex:repeat>
+            <apex:repeat value="{!AzureUrl3}" var="accn3">
+                azureLocation3.push('{!accn3.Location__c}');
+                azureFileName3.push('{!accn3.Azure_File_Name__c}');
+                azureFileSizeTen =azureFileSizeTen + {!accn3.File_Size__c}
+            </apex:repeat>
+            
+            
+            var setTimeDelayTen;
+            if(azureFileSizeTen <1000){
+                setTimeDelayTen = 5000;
+            }
+            if(azureFileSizeTen <3000){
+                setTimeDelayTen = 10000;
+            }
+            if(azureFileSizeTen <7550){
+                setTimeDelayTen = 15000;
+            }
+            if(azureFileSizeTen <75500){
+                setTimeDelayTen = 30000;
+            }
+            if(azureFileSizeTen <130000){
+                setTimeDelayTen = 60000;
+            }
+            if(azureFileSizeTen >=130000){
+                setTimeDelayTen = 110000;
+            }
+            
+            var setTimeDelayAgent;
+            if(azureFileSizeAgent <1000){
+                setTimeDelayAgent = 5000;
+            }
+            if(azureFileSizeAgent <3000){
+                setTimeDelayAgent = 10000;
+            }
+            if(azureFileSizeAgent <7550){
+                setTimeDelayAgent = 15000;
+            }
+            if(azureFileSizeAgent <75500){
+                setTimeDelayAgent = 30000;
+            }
+            if(azureFileSizeAgent <130000){
+                setTimeDelayAgent = 60000;
+            }
+            if(azureFileSizeAgent >=130000){
+                setTimeDelayAgent = 110000;
+            }
+            
+            var setTimeDelayLand;
+            if(azureFileSizeLandlord <1000){
+                setTimeDelayLand = 5000;
+            }
+            if(azureFileSizeLandlord <3000){
+                setTimeDelayLand = 10000;
+            }
+            if(azureFileSizeLandlord <7550){
+                setTimeDelayLand = 15000;
+            }
+            if(azureFileSizeLandlord <75500){
+                setTimeDelayLand = 30000;
+            }
+            if(azureFileSizeLandlord <130000){
+                setTimeDelayLand = 60000;
+            }
+            if(azureFileSizeLandlord >=130000){
+                setTimeDelayLand = 110000;
+            }
+            
+            
+            function toDataURL(url, callback) {
+                var xhr = new XMLHttpRequest();
+                xhr.onload = function() {
+                    var reader = new FileReader();
+                    reader.onloadend = function() {
+                        callback(reader.result);
+                    }
+                    reader.readAsDataURL(xhr.response);
+                };
+                xhr.open('GET', url); 
+                xhr.responseType = 'blob';
+                xhr.send();
+            }
+            
+            function abc() {
+                document.getElementById("myDIV").style.display = "none";
+				document.getElementById("myDIV1").style.display = "block";	
+                var zip = new JSZip();
+                for(let i=0;i < azureLocation.length;i++){                
+                    toDataURL(azureLocation[i], function(dataUrl) {
+                        base64String = dataUrl.substring(dataUrl.indexOf("base64")+7,dataUrl.length);
+                        console.log('base64String -> i ',base64String);
+                        zip.file(azureFileName[i], base64String, {base64: true});
+                    })
+                }
+                setTimeout(function(){
+                    zip.generateAsync({type:"blob"})
+                    .then(function(content) {
+                        saveAs(content, "Evidence.zip");
+                        
+                        document.getElementById("myDIV").style.display = "block";
+                        document.getElementById("myDIV1").style.display = "none";
+                    });
+                }, setTimeDelayAgent); 
+            }
+            function abc2() {
+                document.getElementById("myDIV").style.display = "none";
+				document.getElementById("myDIV1").style.display = "block";	
+                var zip = new JSZip();
+                console.log('azureFileSizeLandlord -> ',azureFileSizeLandlord);
+                console.log('setTimeDelayLand -> ',setTimeDelayLand);
+                
+                for(let i=0;i < azureLocation2.length;i++){                
+                    toDataURL(azureLocation2[i], function(dataUrl) {
+                        base64String = dataUrl.substring(dataUrl.indexOf("base64")+7,dataUrl.length);
+                        console.log('base64String -> i ',base64String);
+                        zip.file(azureFileName2[i], base64String, {base64: true});
+                    })
+                }
+                setTimeout(function(){
+                    zip.generateAsync({type:"blob"})
+                    .then(function(content) {
+                        saveAs(content, "Evidence.zip");
+                        
+                        document.getElementById("myDIV").style.display = "block";
+                        document.getElementById("myDIV1").style.display = "none";
+                    });
+                }, setTimeDelayLand); 
+            }
+            function abc3() {
+                document.getElementById("myDIV").style.display = "none";
+				document.getElementById("myDIV1").style.display = "block";	
+                var zip = new JSZip();
+                for(let i=0;i < azureLocation3.length;i++){                
+                    toDataURL(azureLocation3[i], function(dataUrl) {
+                        base64String = dataUrl.substring(dataUrl.indexOf("base64")+7,dataUrl.length);
+                        console.log('base64String -> i ',base64String);
+                        zip.file(azureFileName3[i], base64String, {base64: true});
+                    })
+                }
+                setTimeout(function(){
+                    zip.generateAsync({type:"blob"})
+                    .then(function(content) {
+                        saveAs(content, "Evidence.zip");
+                        
+                        document.getElementById("myDIV").style.display = "block";
+                        document.getElementById("myDIV1").style.display = "none";
+                    });
+                }, setTimeDelayTen); 
+            }
+            
+            </script>
+        </head>
+        <body>   
+            <apex:form id="FormId" >
+                <div id="myDIV">
+                    <apex:commandButton styleClass="slds-button slds-button_brand" value="Zip Agent Download" onclick="abc();return false;" rendered="{!showAgent}" />
+                    <apex:commandButton styleClass="slds-button slds-button_brand" value="Zip Landlord Download" onclick="abc2();return false;" rendered="{!showLandlord}"/>
+                    <apex:commandButton styleClass="slds-button slds-button_brand" value="Zip Tenant Download" onclick="abc3();return false;" rendered="{!showTenant}" />
+                    
+                </div>
+                <div id="myDIV1" style="display:none">
+                    Downloading....
+                </div>
+            </apex:form>
+        </body>
+    </html>   
+</apex:page>

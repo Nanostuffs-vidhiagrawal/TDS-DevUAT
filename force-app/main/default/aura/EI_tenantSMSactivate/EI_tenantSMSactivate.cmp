@@ -1,0 +1,114 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global"
+       controller="EI_Tenantactivation" >
+	
+    <aura:attribute name="email" type="string" /> 
+    <aura:attribute name="phone" type="string" />
+    <aura:attribute name="activationcode" type="string" />
+    <aura:attribute name="successmessage" type="boolean" default="false" /> 
+    
+    <aura:attribute name="emailError" type="boolean" default="false" />
+    <aura:attribute name="phoneError" type="boolean" default="false" />
+    <aura:attribute name="activationcodeError" type="boolean" default="false" />
+    <aura:attribute name="phoneoractivationcodeError" type="boolean" default="false" />
+    <aura:attribute name="duplicateemailError" type="boolean" default="false" />
+    <aura:attribute name="usercreatederror" type="boolean" default="false" />
+    
+    
+    <aura:if isTrue="{!v.successmessage==false}">
+    <!--<lightning:input required="true"  type="email" aura:id="txtEmail" label="Email" value="{!v.email}" />
+    <lightning:input required="true"  aura:id="txtEmail" label="Phone" value="{!v.phone}" />
+    <lightning:input required="true"  aura:id="txtEmail" label="Activation Code" value="{!v.activationcode}" />
+        
+    <br/>
+    <lightning:button variant="brand" label="Submit" title="Submit" onclick="{!c.Submit }" />-->
+        <div class="tab-content custom-tab-content" id="sf-tabContent">
+            
+            <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <!--<a href="index.html" class="go-back"><img src="../assets/img/md-arrow-dropleft.png" alt="Back Icon"> Go Back</a>-->
+                            <section class="deposit_steps deposit_lookup space-top">
+                                <div class="deposit_steps_detail">
+                                    <aura:if isTrue="{!v.emailError}">
+                                        <div id="emailErrorAlert" class="alert alert-danger alert-dismissible fade show">
+                                            <strong>Error!</strong> email is mandatory.
+                                            <button type="button" class="close" onclick="{!c.hideBootstrapErrors}" name="email" >&times;</button >
+                                        </div>                 
+                                    </aura:if>                                    
+                                    <aura:if isTrue="{!v.phoneError}">
+                                        <div id="phoneErrorAlert" class="alert alert-danger alert-dismissible fade show">
+                                            <strong>Error!</strong> phone is mandatory.
+                                            <button type="button" class="close" onclick="{!c.hideBootstrapErrors}" name="phone" >&times;</button >
+                                        </div>                 
+                                    </aura:if>
+                                    <aura:if isTrue="{!v.activationcodeError}">
+                                        <div id="activationcodeErrorAlert" class="alert alert-danger alert-dismissible fade show">
+                                            <strong>Error!</strong> Activation code is mandatory.
+                                            <button type="button" class="close" onclick="{!c.hideBootstrapErrors}" name="activationcode" >&times;</button >
+                                        </div>                 
+                                    </aura:if>
+                                    <aura:if isTrue="{!v.phoneoractivationcodeError}">
+                                        <div id="phoneoractivationcodeErrorAlert" class="alert alert-danger alert-dismissible fade show">
+                                            <strong>Error!</strong> Phone or activation Code is incorrect.
+                                            <button type="button" class="close" onclick="{!c.hideBootstrapErrors}" name="phoneoractcode" >&times;</button >
+                                        </div>                 
+                                    </aura:if>
+                                    <aura:if isTrue="{!v.duplicateemailError}">
+                                        <div id="duplicateemailErrorAlert" class="alert alert-danger alert-dismissible fade show">
+                                            <strong>Error!</strong> Already user created with same email address.
+                                            <button type="button" class="close" onclick="{!c.hideBootstrapErrors}" name="duplicateemail" >&times;</button >
+                                        </div>                 
+                                    </aura:if>
+                                    <aura:if isTrue="{!v.usercreatederror}">
+                                        <div id="usercreatederrorErrorAlert" class="alert alert-danger alert-dismissible fade show">
+                                            <strong>Error!</strong> User already created.
+                                            <button type="button" class="close" onclick="{!c.hideBootstrapErrors}" name="usercreate" >&times;</button >
+                                        </div>                 
+                                    </aura:if>
+                                    <form>
+                                        <div class="form-group row">
+                                            <div class="col-md-12">
+                                                <lightning:input  name = "email" label="Email" aura:id="txtEmail" value="{!v.email}" />
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-group row">
+                                            <div class="col-sm-12">
+                                                <lightning:input aura:id="txtPhone" name="phone" label="Phone" value="{!v.phone}" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-sm-12"><lightning:input name="activationcode" label="Activation code" aura:id="txtActivationCode" value="{!v.activationcode}" />
+                                                
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-sm-12 text-right">
+                                                <!--<button type="submit" class="see-all">Search</button>-->
+                                                <lightning:button variant="brand" label="Submit" title="Submit" onclick="{!c.Submit }" class="see-all"/>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aura:if>
+    <aura:if isTrue="{!v.successmessage==true}" >
+    <!--<p><strong> A Activation link  has been sent on Email. Please activate your account from that link </strong></p>-->
+        <div>
+            <div class="form-group row">
+                <div class="col-sm-12">
+                    <p>An activation link has been sent on email. Please activate your account from that link.</p>
+                </div>
+            </div>                                            
+        </div>
+    
+    </aura:if>
+    
+    
+</aura:component>

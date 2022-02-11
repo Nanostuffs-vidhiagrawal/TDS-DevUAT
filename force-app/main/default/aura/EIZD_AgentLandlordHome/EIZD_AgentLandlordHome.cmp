@@ -1,0 +1,379 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes" 
+                access="global" controller="EI_ZD_HomePage">
+    
+    
+<!-- <ltng:require scripts="{!$Resource.EI_ZD_Assets + '/js/plugin.min.js'}" />  -->
+   
+    <ltng:require
+                  scripts="{!join(',',
+                           $Resource.EI_ZD_Assets + '/js/plugin.min.js',
+                           $Resource.EI_ZD_Assets + '/js/custom.js')}"/>
+    
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="CaseParticipant" type="Case_Participant__c" />
+    <aura:attribute name="Cleaning" type="Decimal" />
+    <aura:attribute name="Damage" type="Decimal" />
+    <aura:attribute name="Redecoration" type="Decimal" />
+    <aura:attribute name="Gardening" type="Decimal"  />
+    <aura:attribute name="RentArrears" type="Decimal"  />
+    <aura:attribute name="Other" type="Decimal"  />
+    <aura:attribute name="OtherReason" type="string" default="" />
+    <aura:attribute name="showError" type="boolean"  default="false"/>
+    <aura:attribute name="ErrorMassage" type="string"  default=""/>
+    <aura:attribute name="claimExceedsFlag" type="Boolean" default="false" />
+    <aura:attribute name="showOtherReason" type="Boolean" default="false" />
+    <aura:attribute name="showErrorOther" type="Boolean" default="false" />
+    
+    <aura:attribute name="claimId" type="string" default="" />
+    <aura:attribute name="startdateDay" type="string" default=""/>
+    <aura:attribute name="startdateMonth" type="string" default=""/>
+    <aura:attribute name="startdateYear" type="string" default=""/>
+    <aura:attribute name="isOpen" type="boolean" default="false"/>
+    <!--<ltng:require styles="{! $Resource.EI_ZD_Assets + '/css/custom.css'}"/> 
+    <ltng:require scripts="{! $Resource.EI_ZD_Assets + '/js/plugin.min.js'}"/> 
+    <ltng:require scripts="{! $Resource.EI_ZD_Assets + '/js/jquery.dataTables.min.js'}"/> 
+    <ltng:require scripts="{! $Resource.EI_ZD_Assets + '/js/custom.js'}"/> -->
+    <aura:handler event="aura:doneWaiting" action="{!c.doneWaiting}"></aura:handler>
+    <aura:attribute name="PageSpinner" type="Boolean" default="true"></aura:attribute>
+    <!-- <div class="exampleHolder">
+        <lightning:spinner aura:id="mySpinner" variant="brand" size="large" />
+    </div> -->
+    <aura:renderIf isTrue="{!v.PageSpinner}">
+        <div aura:id="ring" class="lds-dual-ring"></div>
+        <aura:set attribute="else">
+    
+    
+    <c:EI_ZD_CommonHeader />
+     <div class="tab-content custom-tab-content" id="sf-tabContent">            
+            <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+            </div>
+        </div>
+    <aura:if isTrue="{!v.CaseParticipant != null}">
+        
+        <aura:if isTrue="{!v.CaseParticipant.Case__r.Total_Claimed_by_Landlord__c ==0}">
+            <body class="ZD_theme">
+                
+                <!-- Tabs HTML Start -->
+                
+                <div class="tab-content custom-tab-content" id="sf-tabContent">
+                    
+                    <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+                        <!-- Resolution Section HTML Start -->
+                        <section class="resolution_section image-only">
+                            <div class="container">
+                                <img src="{!$Resource.EI_ZD_Assets  + '/img/resolution.png'}" alt="Resolution" />
+                                
+                            </div>
+                        </section>
+                        <!-- Resolution Section HTML End -->
+                        <div class="container">
+                            <section class="deposit_steps">       
+                                <div class="deposit_steps_detail">
+                                    <form>
+                                        <div class="form-group row">
+                                            <label class="col-sm-3 col-lg-2 col-form-label">Tenancy end date</label>
+                                            <div class="col-sm-9 col-lg-6">
+                                                <label for="tenant_calendar" class="col-form-label">Please tell us the date the tenancy ended</label>
+                                                <div class="row">
+                                                    <div class="col-xs-12 col-sm-4 col-lg-4">
+                                                        <lightning:input  name="input1" disabled="true" value="{!v.startdateDay}" />
+                                                        <!--<select class="form-control" id="Deposit_received" value="{!v.startdateDay}"  > 
+                                                        <lightning:select value="{!v.startdateDay}" disabled="true">
+                                                            <option value="Day"> Day</option>
+                                                            <option value="1">01</option><option value="2">02</option>
+                                                            <option value="3">03</option><option value="4">04</option>
+                                                            <option value="5">05</option><option value="6">06</option>
+                                                            <option value="7">07</option><option value="8">08</option>
+                                                            <option value="9">09</option><option value="10">10</option>
+                                                            <option value="11">11</option><option value="12">12</option>
+                                                            <option value="13">13</option><option value="14">14</option>
+                                                            <option value="15">15</option><option value="16">16</option>
+                                                            <option value="17">17</option><option value="18">18</option>
+                                                            <option value="19">19</option><option value="20">20</option>
+                                                            <option value="21">21</option><option value="22">22</option>
+                                                            <option value="23">23</option><option value="24">24</option>
+                                                            <option value="25">25</option><option value="26">26</option>
+                                                            <option value="27">27</option><option value="28">28</option>
+                                                            <option value="29">29</option><option value="30">30</option>
+                                                            <option value="31">31</option>
+                                                        </lightning:select>-->
+                                                        <!-- </select> -->
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-4 col-lg-4">
+                                                        <lightning:input  name="input1" disabled="true" value="{!v.startdateMonth}" />
+                                                        <!--<select class="form-control" value="{!v.startdateMonth}" >
+                                                        <lightning:select value="{!v.startdateMonth}" disabled="true">
+                                                            <option value="Month"> Month</option>
+                                                            <option value="1">01</option><option value="2">02</option>
+                                                            <option value="3">03</option><option value="3">04</option>
+                                                            <option value="5">05</option><option value="6">06</option>
+                                                            <option value="7">07</option><option value="8">08</option>
+                                                            <option value="9">09</option><option value="10">10</option>
+                                                            <option value="11">11</option><option value="12">12</option>
+                                                        </lightning:select> -->
+                                                        <!--  </select> -->
+                                                    </div>
+                                                    <div class="col-xs-12 col-sm-4 col-lg-4" >
+                                                        <lightning:input  name="input1" disabled="true" value="{!v.startdateYear}" />
+                                                        <!-- <select class="form-control" value="{!v.startdateYear}"> 
+                                                        <lightning:select value="{!v.startdateYear}" disabled="true">
+                                                            <option value="Year"> Year</option>
+                                                            <option value="2019">2019</option>
+                                                            <option value="2020">2020</option>
+                                                            <option value="2021">2021</option>
+                                                            <option value="2022">2022</option>
+                                                            <option value="2023">2023</option>
+                                                            <option value="2024">2024</option>
+                                                        </lightning:select> -->
+                                                        <!-- </select> -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        
+                                        <div class="form-group row" aura:id="errorMsg" id="errorMsg">
+                                            <label class="col-sm-3 col-lg-2 col-form-label">Claim <button type="button" class="questionsmark in" data-toggle="tooltip" data-placement="bottom" title="This is the total you have told us that you want to claim for. You now must break this down by the categories below. If the total you're seeking from your tenants exceeds the maximum Zero Deposit Guarantee value, you will be able to indicate this at a later stage."> <img src="{!$Resource.EI_ZD_Assets  + '/img/question-circl.png'}" alt="Question mark" /></button>
+                                               <!-- <img src="{!$Resource.EI_ZD_Assets  + '/img/question-circl.png'}" alt="Question mark" /> -->
+                                            </label>
+                                            <div class="col-sm-9 col-lg-6">
+                                                <label for="claim" class="col-form-label">Total claim amount</label>
+                                                <lightning:input type="number" value="{!v.CaseParticipant.Case__r.Total_Claim_Amount__c}" placeholder="£" formatter="currency" disabled="true" />
+                                                <!-- <input type="text" class="form-control" id="claim" placeholder="&#163;"/> -->
+                                                <aura:if isTrue="{!v.showError}">
+                                                    <!-- <div aura:id="depositWarning" style="color: rgb(194,57,52);"> -->
+                                                    <div class="error-msg">
+                                                        {!v.ErrorMassage}
+                                                    </div>
+                                                    <!-- </div> -->
+                                                    
+                                                </aura:if>
+                                                
+                                                
+                                                
+                                                <!-- <div class="error-msg">The guarantee provides you with cover up to the equivalent of 6 weeks' rent. You cannot enter a higher figure than this maximum cover. This does not affect your ability to seek payment directly from the tenant for any amount beyond the guarantee maximum cover. If formal adjudication is required, then The Dispute Service will ask for your total claim value and supporting information.</div>  -->
+                                                <aura:if isTrue="{!v.CaseParticipant.Case__r.Total_Claim_Amount__c ==v.CaseParticipant.Case__r.Total_Deposit__c}">
+                                                    <div class="tenant_cover_table">
+                                                        <div class="form-check form-check-inline">
+                                                            <label class="main">Please indicate here if your claim exceeds the total level of cover
+                                                                <input type="checkbox"   onchange="{!c.onClickCheckBox}" id="checkBoxId" /> 
+                                                                <span class="geekmark"></span> 
+                                                            </label> 
+                                                        </div>
+                                                    </div> 
+                                                </aura:if>
+                                                
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-group row">
+                                            <div class="col-sm-9 col-lg-6 offset-sm-2">
+                                                <label for="Cleaning" class="col-form-label">Cleaning</label>
+                                                <lightning:input type="number" value="{!v.Cleaning}" step=".01"  placeholder="£" formatter="currency"  />
+                                                <!-- <input type="text" class="form-control" id="Cleaning" placeholder="&#163;"/> -->
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-sm-9 col-lg-6 offset-sm-2">
+                                                <label for="Redecoration" class="col-form-label">Redecoration</label>
+                                                <lightning:input type="number" step=".01" value="{!v.Redecoration}"  placeholder="£" formatter="currency" />
+                                                <!-- <input type="text" class="form-control" id="Redecoration" placeholder="&#163;"/> -->
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-sm-9 col-lg-6 offset-sm-2">
+                                                <label for="Damage" class="col-form-label">Damage to property or contents</label>
+                                                <lightning:input type="number" step=".01" value="{!v.Damage}"  placeholder="£" formatter="currency"/>
+                                                <!--<input type="text" class="form-control" id="Damage" placeholder="&#163;"/> -->
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-sm-9 col-lg-6 offset-sm-2">
+                                                <label for="Rent" class="col-form-label">Rent arrears</label>
+                                                <lightning:input type="number" step=".01"  value="{!v.RentArrears}"  placeholder="£" formatter="currency" />
+                                                <!-- <input type="text" class="form-control" id="Rent" placeholder="&#163;"/> -->
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-sm-9 col-lg-6 offset-sm-2">
+                                                <label for="Gardening" class="col-form-label">Gardening</label>
+                                                <lightning:input type="number" step=".01" value="{!v.Gardening}"  placeholder="£" formatter="currency" />
+                                                <!-- <input type="text" class="form-control" id="Gardening" placeholder="&#163;"/> -->
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-sm-9 col-lg-6 offset-sm-2">
+                                                <label for="Other" class="col-form-label">Other</label>
+                                                <lightning:input type="number" step=".01"  value="{!v.Other}" placeholder="£" formatter="currency" oncommit="{!c.showOtherReasonMethod}" />
+                                                <!-- <input type="text" class="form-control other_input" id="Other" placeholder="&#163;"/>  -->
+                                            </div>
+                                        </div>
+                                        <aura:if isTrue="{!v.showOtherReason}">
+                                            <div class="form-group row ">
+                                                <div class="col-sm-9 col-lg-6 offset-sm-2">
+                                                    <lightning:textarea type="text" aura:id="OtherReason" value="{!v.OtherReason}"  placeholder="Please enter your description"/>
+                                                    <!--<textarea type="text" class="form-control" id="Other" placeholder="Please enter your description"></textarea>  -->
+                                                </div>
+                                                <aura:if isTrue="{!v.showErrorOther}">
+                                                    <div class="col-sm-9 col-lg-6 offset-sm-2">
+                                                        <div class="error-msg">
+                                                            Please describe the Reason
+                                                        </div>
+                                                    </div>
+                                                </aura:if>
+                                            </div>
+                                            
+                                        </aura:if>
+                                        <div class="form-group row">
+                                            <div class="col-sm-12 col-lg-8 text-right">
+                                                <lightning:button variant="brand" class="see-all" label="Submit" title="title"
+                                                                  onclick="{!c.doSubmit}" />
+                                                <!--<button type="submit" class="see-all">Submit</button> -->
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                    
+                </div>
+                <!-- Tabs HTML End -->
+                
+            </body>  
+        </aura:if>
+        <aura:if isTrue="{!or((v.CaseParticipant.Case__r.Status =='Invitation to view the claim'),(and(v.CaseParticipant.Case__r.Status =='On Hold',v.CaseParticipant.Case__r.PreviousStatus__c=='Invitation to view the claim')))}" >
+            <c:EI_ZD_AGLLRespondToTenantClaim  claimId="{!v.claimId}" />
+        </aura:if>
+        <aura:if isTrue="{!or((v.CaseParticipant.Case__r.Status =='Self-resolution'),(and(v.CaseParticipant.Case__r.Status =='On Hold',v.CaseParticipant.Case__r.PreviousStatus__c=='Self-resolution')))}">
+           
+            <c:EI_ZD_AGLLRespondToTenantClaim  claimId="{!v.claimId}" />
+        </aura:if>
+        
+        <aura:if  isTrue="{!or((v.CaseParticipant.Case__r.Status =='Evidence gathering agent/landlord'),(and(v.CaseParticipant.Case__r.Status =='On Hold',v.CaseParticipant.Case__r.PreviousStatus__c=='Evidence gathering agent/landlord')))}" >
+            <c:EI_ZD_AGLLRespondEvidanceGathering  claimId="{!v.claimId}"  isEditable="true" />
+        </aura:if>
+        
+        
+        <aura:if isTrue="{!v.CaseParticipant.Case__r.Status =='Evidence gathering tenant'}">
+             <c:EI_ZD_AGLLRespondEvidanceGathering  claimId="{!v.claimId}"  isEditable="false" />
+            <!-- add View only comp for agent --> 
+        </aura:if>
+        
+         <aura:if isTrue="{!v.CaseParticipant.Case__r.Status =='Awaiting evidence review'}">
+                <c:EI_ZD_AgentLandlordAwaitingclaim claimId="{!v.claimId}" isEditable="false"  isLead ='false'/>
+            </aura:if>
+        
+        <aura:if isTrue="{!v.CaseParticipant.Case__r.Status =='Evidence review complete'}">
+             <c:EI_ZD_AgentLandlordAwaitingclaim claimId="{!v.claimId}" isEditable="false"  isLead ='false'/>
+           <!-- <c:EI_ZD_AGLLRespondToTenantClaim  claimId="{!v.claimId}" /> -->
+        </aura:if>
+        
+        <aura:if isTrue="{!v.CaseParticipant.Case__r.Status =='Adjudication'}">
+             <c:EI_ZD_AgentLandlordAwaitingclaim claimId="{!v.claimId}" isEditable="false"  isLead ='false'/>
+           <!-- <c:EI_ZD_AGLLRespondToTenantClaim  claimId="{!v.claimId}" /> -->
+        </aura:if>
+       <!-- 
+        <aura:if isTrue="{!or((v.CaseParticipant.Case__r.Status =='Adjudication'),(and(v.CaseParticipant.Case__r.Status =='On Hold',v.CaseParticipant.Case__r.PreviousStatus__c=='Adjudication')))}">
+             test wording 
+        </aura:if> -->
+        
+        
+        
+       <!-- <aura:if isTrue="{!v.CaseParticipant.Case__r.Status =='On Hold'}">
+             <c:EI_ZD_AgentLandlordAwaitingclaim claimId="{!v.claimId}" isEditable="false"  isLead ='false'/>
+        </aura:if> -->
+        <!-- New Requirement to show claim Summary if claim is closed-->
+        <aura:if isTrue="{!or(or(or((v.CaseParticipant.Case__r.Status =='Decision issued'),((v.CaseParticipant.Case__r.Status =='Case closed - no response from either party'))),(v.CaseParticipant.Case__r.Status =='Case cancelled')),or((v.CaseParticipant.Case__r.Status =='Case closed - no response from agent/landlord'),(v.CaseParticipant.Case__r.Status =='Case closed - agreement reached')))}">
+            <c:EI_ZD_AGLLRespondToTenantClaim  claimId="{!v.claimId}" />
+        </aura:if>
+       
+    </aura:if> 
+    
+    <aura:if isTrue="{!v.isOpen}">
+        <body class="ZD_theme">
+            <div class="custom-model modal fade show" id="createUser" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="createUser" aria-hidden="false" area-model="true" role="dialog" style="display: block;">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <img src="{! $Resource.EI_ZD_Assets + '/img/thankful.png'}" alt=""/>
+                            <!--<img src="../assets/img/thankful.png" alt=""/>-->
+                            <h4 class="modal-title">Thank you!</h4>
+                            <p>You have successfully submitted your claim.</p>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="{! c.closeModel }">
+                                <span aria-hidden="true"> 
+                                    <!--<img src="../assets/img/Cancel-icon.png" alt="">-->
+                                    <img src="{! $Resource.EI_ZD_Assets + '/img/Cancel-icon.png'}" alt=""/>
+                                </span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <h5>What happens next?</h5>
+                            <p>We will now contact your tenant(s) about your claim. They have 5 working days (excluding today) to respond to your claim. They can either accept or make a counter-offer. We recommend you <a href="https://app.zerodeposit.com/claim-overview" target="_blank">review the full claims process</a> now to understand how your claim can proceed.</p>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            <!--Popup form HTMl end-->
+           <!-- <ltng:require scripts="{! $Resource.EI_ZD_Assets + '/js/plugin.min.js'}"/> -->
+           <!-- <ltng:require scripts="{! $Resource.EI_ZD_Assets + '/js/jquery.dataTables.min.js'}"/> 
+            <ltng:require scripts="{! $Resource.EI_ZD_Assets + '/js/custom.js'}"/>  -->
+            
+        </body>
+    </aura:if>
+     
+    <!--
+    <aura:if isTrue="{!v.CaseParticipant != null}">
+        
+        <aura:if isTrue="{!v.CaseParticipant.Case__r.Total_Claimed_by_Landlord__c ==0}">
+            <span>
+                <lightning:input aura:id="browserDate" type="date" label="Tenancy End Date"
+                                 value="{!v.CaseParticipant.Case__r.Deposit_Account_Number__r.End_Date__c}" disabled="true" />
+            </span>
+            <lightning:input type="number" value="{!v.CaseParticipant.Case__r.Total_Deposit__c}" label="Total level of cover" placeholder="£" formatter="currency" disabled="true" />
+            <div class="slds-grid">
+                <div class="slds-col slds-m-left_small slds-m-top_large">
+                    <lightning:input type="number" value="{!v.CaseParticipant.Case__r.Total_Claim_Amount__c}" label="Total claim Amount" placeholder="£" formatter="currency" disabled="true" />
+                    <aura:if isTrue="{!v.showError}">
+                        <div aura:id="depositWarning" style="color: rgb(194,57,52);">
+                            {!v.ErrorMassage}
+                        </div>
+                        
+                    </aura:if>
+                    
+                    <span>
+                        <aura:if isTrue="{!v.CaseParticipant.Case__r.Total_Claim_Amount__c ==v.CaseParticipant.Case__r.Total_Deposit__c}">
+                            <lightning:input type="checkbox" aura:id="checkboxAuraId" Checked="{!v.claimExceedsFlag}" label="Please indicate here if your claim exceeds the total level of cover." />
+                        </aura:if>
+                        <lightning:input type="number" value="{!v.Cleaning}" label="Cleaning claim value" placeholder="£" formatter="currency"  />
+                        <lightning:input type="number" value="{!v.Damage}" label="Damage claim value" placeholder="£" formatter="currency"/>
+                        <lightning:input type="number"  value="{!v.Redecoration}" label="Redecoration claim value" placeholder="£" formatter="currency" />
+                        <lightning:input type="number" value="{!v.Gardening}" label="Gardening claim value" placeholder="£" formatter="currency" />
+                        <lightning:input type="number"  value="{!v.RentArrears}" label="Rent arrears claim value" placeholder="£" formatter="currency" />
+                        <lightning:input type="number"  value="{!v.Other}" label="Other claim value" placeholder="£" formatter="currency" />
+                        <lightning:textarea type="text" aura:id="OtherReason" value="{!v.OtherReason}"  label="Other Reason"/>
+                    </span>
+                    <lightning:button variant="brand" label="Submit" title="title"
+                                      onclick="{!c.doSubmit}" />
+                </div>
+                
+            </div>
+            
+        </aura:if>
+        
+        
+        
+        <aura:if isTrue="{!v.CaseParticipant.Case__r.Status =='Self-Resolution'}">
+            <c:EI_ZD_AGLLRespondToTenantClaim  claimId="{!v.claimId}" />
+        </aura:if>
+        
+        <aura:set attribute="else">
+            You don't have access for this page 
+        </aura:set>
+    </aura:if>  -->
+    <c:EI_ZD_CommonFooter />
+        </aura:set>
+    </aura:renderIf>
+</aura:component>

@@ -1,0 +1,137 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" 
+                controller="EI_ChangemyDetails" access="global" >
+      
+    <!-- Attributes -->
+     <aura:handler name="init" value="{!this}" action="{!c.fetchdata}"/>
+     <aura:attribute name="userInfo" type="user"/>  
+    <aura:attribute name="currentUser" type="User" />
+    
+    <force:recordData aura:id="recordLoader" recordId="{!$SObjectType.CurrentUser.Id}"  fields="Name,User_Role__c,Addition_Permission__c" targetFields="{!v.currentUser}"/>
+    <aura:attribute name="Viewdeposit" type="String" default="View deposits"/>
+    <aura:attribute name="Adddeposit" type="String" default="Add Deposit"/>
+    <aura:attribute name="recentlydeleted" type="String" default="Recently Deleted"/>
+    <aura:attribute name="requestrepayment" type="String" default="Request Repayment"/>
+    <aura:attribute name="updatemydetails" type="String" default="Update my Details"/>
+    <aura:attribute name="manageyouraddresses" type="String" default="Manage Your Addresses"/>
+    <aura:attribute name="reporting" type="String" default="Reporting"/>
+    <aura:attribute name="manageusers" type="String" default="Manage Users"/>
+    <aura:attribute name="logout" type="String" default="logout"/>
+       <aura:handler event="aura:waiting" action="{!c.waiting}"></aura:handler>
+<aura:handler event="aura:doneWaiting" action="{!c.doneWaiting}"></aura:handler>
+    <aura:attribute name="HideSpinner" type="Boolean" default="false"></aura:attribute>
+      <aura:attribute name="PageSpinner" type="Boolean" default="false"></aura:attribute>
+    
+    <lightning:navigation aura:id="navService" />
+    <lightning:overlayLibrary aura:id="overlayLib"/>
+
+ <html lang="en">   
+   
+    <body>
+    <section class="account-staus-square-box">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6 col-lg-4">
+                            <!-- Square Box HTML Start -->
+                            <div class="single_square_box">
+                                 <div class="divpicture">
+                                    <img src="/sfsites/c/resource/TDSTheme/TDS/assets/img/deposit-icon.svg" alt="Icons"/>
+                                </div>
+                                <h5>View Deposit</h5>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris congue commodo turpis.</p>
+                                <div class="text-right">
+                                    <a onclick="{! c.Viewdeposit }" label="{! v.Viewdeposit }" title="{! v.Viewdeposit }" class="learn-more">View Deposits</a>
+                                </div>
+                            </div>
+                            <!-- Square Box HTML End -->
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <!-- Square Box HTML Start -->
+                            <div class="single_square_box">
+                                 <div class="divpicture">
+                                    <img src="/sfsites/c/resource/TDSTheme/TDS/assets/img/wallet-icon.svg" alt="Icons"/>
+                                </div>
+                                <h5>Add Deposit</h5>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris congue commodo turpis.</p>
+                                <div class="text-right">
+                                    <a   onclick="{! c.AddDeposit }" label="{! v.Adddeposit }" title="{! v.Adddeposit }" class="learn-more">Add Deposits</a>
+                                </div>
+                            </div>
+                            <!-- Square Box HTML End -->
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <!-- Square Box HTML Start -->
+                            <div class="single_square_box">
+                                <div class="divpicture">
+                                    <img src="/sfsites/c/resource/TDSTheme/TDS/assets/img/deposit2-icon.svg" alt="Icons"/>
+                                </div>
+                                <h5>Request Repayment</h5>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris congue commodo turpis.</p>
+                                <div class="text-right">
+                                    <a href="#" label="{! v.requestrepayment }" title="{! v.requestrepayment }" class="learn-more">Request Repayment</a>
+                                </div>
+                            </div>
+                            <!-- Square Box HTML End -->
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <!-- Square Box HTML Start -->
+                            <div class="single_square_box">
+                                 <div class="divpicture">
+                                    <img src="/sfsites/c/resource/TDSTheme/TDS/assets/img/Update_Profile-icon.svg" alt="Icons"/>
+                                </div>
+                                <h5>Update My Details</h5>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris congue commodo turpis.</p>
+                                <div class="text-right">
+                                    <a  onclick="{! c.updatemydetails }" label="{! v.updatemydetails }" title="{! v.updatemydetails }" class="learn-more">Update My Details</a>
+                                </div>
+                            </div>
+                            <!-- Square Box HTML End -->
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <!-- Square Box HTML Start -->
+                            <div class="single_square_box">
+                                <div class="divpicture">
+                                    <img src="/sfsites/c/resource/TDSTheme/TDS/assets/img/Pin_Setting-icon.svg" alt="Icons"/>
+                                </div>
+                                <h5>Manage Your Address</h5>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris congue commodo turpis.</p>
+                                <div class="text-right">
+                                    <a onclick="{! c.manageyouraddresses }" label="{! v.manageyouraddresses }" title="{! v.manageyouraddresses }" class="learn-more">Manage Your Address</a>
+                                </div>
+                            </div>
+                            <!-- Square Box HTML End -->
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <!-- Square Box HTML Start -->
+                            <div class="single_square_box">
+                                 <div class="divpicture">
+                                    <img src="/sfsites/c/resource/TDSTheme/TDS/assets/img/Graph-icon.svg" alt="Icons"/>
+                                </div>
+                                <h5>Reporting</h5>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris congue commodo turpis.</p>
+                                <div class="text-right">
+                                    <a onclick="{! c.reporting }" label="{! v.reporting }" title="{! v.reporting }" class="learn-more">Reporting</a>
+                                </div>
+                            </div>
+                            <!-- Square Box HTML End -->
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <!-- Square Box HTML Start -->
+                            <div class="single_square_box">
+                                <div class="divpicture">
+                                    <img src="/sfsites/c/resource/TDSTheme/TDS/assets/img/users-icon.svg" alt="Icons"/>
+                                </div>
+                                <h5>Manage Users</h5>
+                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris congue commodo turpis.</p>
+                                <div class="text-right">
+                                    <a onclick="{! c.manageusers }" label="{! v.manageusers }" title="{! v.manageusers }" class="learn-more">Manage Users</a>
+                                </div>
+                            </div>
+                            <!-- Square Box HTML End -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+       </body>
+    
+    </html>
+</aura:component>

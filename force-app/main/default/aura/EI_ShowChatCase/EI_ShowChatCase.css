@@ -1,0 +1,39 @@
+.THIS .container {
+  border: 2px solid #dedede;
+  background-color: #93CCF9 ;
+  border-radius: 5px;
+  margin-right: 20px;
+  margin: 0px 0;
+  float : left;
+   margin-top: 5px;
+    
+   
+    white-space: pre-wrap;      /* CSS3 */   
+   white-space: -moz-pre-wrap; /* Firefox */    
+   white-space: -pre-wrap;     /* Opera <7 */   
+   white-space: -o-pre-wrap;   /* Opera 7 */    
+   word-wrap: break-word;      /* IE */
+    max-width: fit-content;
+    border-radius: 7px;
+    min-width: 30px;
+}
+
+.THIS .darker {
+  border-color: white;
+  background-color: #ddd;
+    float: right;
+    
+    white-space: pre-wrap;      /* CSS3 */   
+   white-space: -moz-pre-wrap; /* Firefox */    
+   white-space: -pre-wrap;     /* Opera <7 */   
+   white-space: -o-pre-wrap;   /* Opera 7 */    
+   word-wrap: break-word;      /* IE */
+    max-width: fit-content;
+    border-radius: 7px;
+    margin-top: 5px;
+    min-width: 30px;
+}
+
+.THIS .icn {
+    background-color: red ;
+}

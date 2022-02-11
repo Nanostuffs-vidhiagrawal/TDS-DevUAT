@@ -1,0 +1,4 @@
+<aura:event type="COMPONENT" description="Get New Inserted Property">
+     <aura:attribute name="Property" type="Property__c" default="{ 'sobjectType': 'Property__c'}" />
+    <aura:attribute name="primaryLandlord" type="String"  access="global" />
+</aura:event>

@@ -1,0 +1,161 @@
+.SDS_default_theme {
+	.custom-nav {
+	    @include space(padding, top, $s10);
+	    .navbar-collapse {
+	      justify-content: flex-end;
+
+	      .navbar-text {
+	        display: flex;
+	        align-items: center;
+	        @include font_size($above_base);
+	        @include line_height($above_base);
+	        @include space(margin, right, $s15);
+
+	        a {
+	          color: map-get($color, gray);
+	        }
+
+	        span {
+	          @include font_size($base);
+	          color: map-get($color, blue);
+	          border-left: 2px solid map-get($gray_shade, gray01);
+	          @include space(margin, left, $s10);
+	          @include space(padding, left, $s10);
+	        }
+	      }
+
+	      .navbar-nav {
+	        .nav-item {
+	          .dropdown-menu {
+	            left: $zero;
+	          }
+	        }
+	      }
+	    }
+
+	    .nav-link {
+	      &:hover {
+	        color: map-get($color, gray) !important;
+	      }
+
+	      &.dropdown-toggle {
+	        background-position-x: 92% !important;
+	      }
+	    }
+  	}
+
+  	.resolution_section {
+	    .container {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+			@include space(padding, top, $s25);
+			@include space(padding, bottom, $s25);
+			@include space(margin, bottom, $s50);
+
+			@include respond-below(sm) {
+				@include space(padding, top, $s15);
+				@include space(padding, bottom, $s15);
+				@include space(margin, bottom, $s25);
+			}
+
+			h3 {
+				@include space(margin, bottom, $s05);
+				}
+			}
+
+			&.image-only {
+				.container {
+				justify-content: flex-end;
+			}
+		}
+  	}
+
+  	footer {
+		.container {
+		background-color: map-get($gray_shade, gray02);
+		@include space(padding, top, $s50);
+		@include space(padding, bottom, $s50);
+		@include space(padding, left, $s50);
+		@include space(padding, right, $s50);
+
+		@include respond-below(sm) {
+		@include space(padding, top, $s15);
+		@include space(padding, bottom, $s15);
+		@include space(padding, left, $s15);
+		@include space(padding, right, $s15);
+		}
+
+		ul {
+		@include space(margin, bottom, $zero);
+		li {
+		  @include space(padding, bottom, $s25);
+
+		  @include respond-below(sm) {
+		    @include space(padding, bottom, $s15);
+		  }
+
+		  a {
+		    @include font_size($base);
+
+		    &:hover {
+		      color: map-get($color, ZD_red);
+		    }
+		  }
+
+		  &:last-child {
+		    @include space(padding, bottom, $zero);
+		  }
+		}
+		}
+		}
+  	}
+
+  	.deposit-agent {
+	    @include space(padding, top, $zero);
+
+	    .info-right-tab {
+	      @include space(margin, top, $zero);
+	    }
+  	}
+
+  	.accept_btn {
+		@include border(2px, solid, map-get($color, blue));
+		color: map-get($color, blue);
+
+		&:hover, &:focus, &.active {
+			color: map-get($color, white);
+			background-color: map-get($color, blue);
+		}
+	}
+
+	.claim-summary_gray-panel {
+		p {
+		 	@include space(margin, bottom, $s15);
+		}
+	}
+
+	.ZD_custom_table {
+	    @include font_size($below_base);
+	    @include space(margin, top, $s30);
+	    @include space(margin, bottom, $s30);
+
+	    @include respond-below(sm) {
+	      @include space(margin, top, $s20);
+	      @include space(margin, bottom, $s20);
+	    }
+
+	    tr {
+	      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+	      td {
+	        @include space(padding, top, $s15);
+	        @include space(padding, bottom, $s15);
+	        @include space(padding, left, $s05);
+	        @include space(padding, right, $s05);
+	      }
+	    }
+	  }
+}

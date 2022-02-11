@@ -1,0 +1,144 @@
+<aura:component  access="global" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes"
+                controller="RequestRepaymentOfDepositController"  
+                >
+    <!--create myDate aura attribute for store date field value-->
+    <aura:attribute name="repaymentRequest" type="Repayment_Request__c"/>
+    <aura:attribute name="dontAgreeSection" type="Boolean" default="false"/>
+    <aura:attribute name="iAgree" type="Boolean" default="false"/>
+    <aura:attribute name="agreeSection" type="Boolean" default="false"/>
+    <aura:attribute name="repaymentRequestLine" type="Object[]"/>
+    <aura:attribute name="repaymentRequestRecordId" type="String"/>
+    <aura:attribute name="repaymentRequestLineTotal" type="Currency"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <lightning:navigation aura:id="navService" />
+    
+     <div class="tab-content custom-tab-content" id="sf-tabContent">
+        <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+            <div class="deposit-agent">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <a href="" class="go-back" onclick="{!c.editDetailsOfRequest}">
+                                <img src="{!$Resource.TDSTheme + '/assets/img/md-arrow-dropleft.png'}" alt="Back Icon" /> Go Back
+                            </a>
+                            <!-- Deposit Steps HTML Start -->
+                            <section class="deposit_steps tf-other-prop">
+                                <div class="deposit_steps_detail">
+                                    <form>
+                                        <div class="form-group row">
+                                            <label class="col-sm-4 col-md-4 col-lg-3 col-form-label">{!$Label.c.Tenancy_EndDate} 
+                                            </label>
+                                            <div class="ol-sm-8 col-md-6 col-lg-5">
+                                                <label for="Supplied" class="col-form-label">{!$Label.c.SuppliedByAgentLandlord}</label>
+                                                <input type="text" class="form-control" id="Supplied" placeholder="&#163;" disabled="true" value="{!v.repaymentRequest.Tenancy_End_Date__c}"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-sm-12 col-md-5 col-lg-4">
+                                                <div class="request_table">
+                                                    <label class="col-form-label">{!$Label.c.RepaymentsToTenant}</label>
+                                                    <p class="text-right"><strong>{!$Label.c.Agent_LanlordRequest}</strong></p>
+                                                    <div class="request_table_box">
+														<aura:iteration items="{!v.repaymentRequestLine}" var="record">
+															<p class="request_table_text">
+																<span>{!record.Account__r.Name}</span>
+																<span><lightning:formattedNumber value="{!record.AL_ReqAmt__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></span>
+															</p>
+														 </aura:iteration>
+                                                    </div>
+													<div class="request_table_total">
+                                                        <p class="request_table_text">
+                                                            <span>Total</span>
+                                                            <span><lightning:formattedNumber value="{!v.repaymentRequestLineTotal}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></span>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12 col-md-5 col-lg-4">
+                                                <div class="request_table">
+                                                    <label class="col-form-label">Repayment to {!v.repaymentRequest.Account__r.Name}</label>
+                                                    <p class="text-right"><strong>{!$Label.c.Agent_LanlordRequest}</strong></p>
+													<div class="request_table_box">
+                                                        <p class="request_table_text">
+                                                            <span>{!$Label.c.Cleaning}</span>
+                                                            <span><lightning:formattedNumber value="{!v.repaymentRequest.AL_CleaningAmt__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></span>
+                                                        </p>
+                                                        <p class="request_table_text">
+                                                            <span>{!$Label.c.DamageToProperty}</span>
+                                                            <span><lightning:formattedNumber value="{!v.repaymentRequest.AL_DmgPropAmt__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></span>
+                                                        </p>
+                                                        <p class="request_table_text">
+                                                            <span>{!$Label.c.Redecoration}</span>
+                                                            <span><lightning:formattedNumber value="{!v.repaymentRequest.AL_RedecorationAmt__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></span>
+                                                        </p>
+                                                        <p class="request_table_text">
+                                                            <span>{!$Label.c.Gardening}</span>
+                                                            <span><lightning:formattedNumber value="{!v.repaymentRequest.AL_GardeningAmt__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></span>
+                                                        </p>
+                                                        <p class="request_table_text">
+                                                            <span>{!$Label.c.RentArrears}</span>
+                                                            <span><lightning:formattedNumber value="{!v.repaymentRequest.AL_Rent_Arrears__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></span>
+                                                        </p>
+                                                        <p class="request_table_text">
+                                                            <span>{!$Label.c.OtherOrUnknown}</span>
+                                                            <span><lightning:formattedNumber value="{!v.repaymentRequest.AL_OtherAmt__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></span>
+                                                        </p>
+                                                        <p class="request_table_text">
+                                                            <span>{!$Label.c.Lanlord_AgentReasonForOther}</span>
+                                                            <span style="word-break:break-all;">{!v.repaymentRequest.AL_Other_Reason__c}</span>
+                                                        </p>
+                                                    </div>
+                                                    <div class="request_table_total">
+                                                        <p class="request_table_text">
+                                                            <span>Total</span>
+                                                            <span><lightning:formattedNumber value="{!v.repaymentRequest.Total_Amount_Requested_AL__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></span>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+										<div class="form-group row">
+                                            <div class="col-sm-12 col-md-10 col-lg-8">
+                                                <p>By clicking 'Submit' you confirm that you wish to request repayment of the deposit as set out above. This can not be amended later.</p>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-sm-12 col-md-10 col-lg-8">
+                                                <p>Copying the form and any supporting documents to the other parties to the tenancy, 
+												the appointed adjudicator if necessary, and to anyone else involved in resolving a dispute about the deposit
+												<br/></p>
+                                            </div>
+                                        </div>
+										<div class="form-group row">
+                                            <div class="col-sm-12 col-md-10 col-lg-8">
+												<lightning:button label="{!$Label.c.IAgree}" title="I Agree" onclick="{!c.handleAgree}" class="see-all"></lightning:button>
+												<lightning:button variant="brand-outline" label="{!$Label.c.IdontAgree}" title="I don't Agree" onclick="{!c.handleDontAgree}" class="see-all"></lightning:button>
+												<aura:if isTrue="{!v.dontAgreeSection}"><br/>
+													<div class="error-msg">
+														{!$Label.c.IdontAgreeMessage}
+													</div>
+												</aura:if>
+											</div>
+										</div>
+                                        <div class="form-group row">
+                                            <div class="col-sm-12 col-md-10 col-lg-8 text-right">
+												<lightning:button label="{!$Label.c.Submit}" title="Submit" onclick="{!c.submitTheForm}" class="see-all"></lightning:button>
+												<aura:if isTrue="{!v.agreeSection}"><br/>
+													<div class="error-msg">
+														{!$Label.c.PleaseAgreeTheForm}
+													</div>
+												</aura:if>
+                                                <!--<button type="submit" class="see-all">Submit</button>-->
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </section>
+                            <!-- Deposit Steps HTML End -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</aura:component>

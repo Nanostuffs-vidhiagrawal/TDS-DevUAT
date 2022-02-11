@@ -1,0 +1,98 @@
+.accordion.white-accordion {
+    a:hover {
+        text-decoration: none;
+    }
+
+    & > .card {
+        border: none;
+        background-color: transparent;
+
+        & > .card-header {
+            background-color: map-get($accordion-color, accordion_body);
+            border-bottom: none;
+            position: relative;
+            @include space(padding, top, $zero);
+            @include space(padding, bottom, $zero);
+            @include space(padding, left, $s25);
+            @include space(padding, right, $s35);
+            @include Single_side_Border_radius($s40, $s40, 0, 0);
+            // @include border(1px, solid, lighten(map-get($color, light_gray), 50%));
+            box-shadow: 10px 10px 50px rgba(211, 211, 211, 0.15);
+
+            .card-title:after {
+                content: '-'
+            }
+
+            &.collapsed {
+                @include space(margin, bottom, $s15);
+                @include border_radius($s40);
+                background-color: map-get($color, white);
+                .card-title:after {
+                    content: '+'
+                }
+            }
+            &:hover {
+                background-color: map-get($accordion-color, accordion_body);
+            }
+
+            .card-title {
+                @include font_size($above_base);
+                @include space(padding, top, $s20);
+                @include space(padding, bottom, $s20);
+                color: map-get($color, $black);
+                display: block;
+                @include space(margin, bottom, $zero);
+                &:after {
+                    position: absolute;
+                    right: $s20;
+                    @include font_size($xxx_lg);
+                    @include line_height( $xx_lg);
+                    top: calc(50% - 12px);
+                }
+            }
+        }
+
+        & > [id^=collapse] {
+            .card-body {
+                background-color: map-get($accordion-color, accordion_body);
+                @include space(margin, bottom, $s15);
+                @include space(padding, left, $s25);
+                @include space(padding, right, $s15);
+                //@include space(padding, top, $zero);
+                @include Single_side_Border_radius(0, 0, $s40, $s40);
+            }
+        } 
+    }
+}
+
+.accordion.white-accordion {
+    
+    .accordion {
+
+        .card {
+            border: none;
+            background: transparent;
+
+            .card-header {
+                border: none;
+                @include space(margin, bottom, $zero);
+                @include space(padding, left, $zero);
+                @include space(padding, right, $zero);
+                @include font_size($base);
+                background: transparent;
+
+                a {
+                    display: block;
+                }
+            }
+
+            [id^=collapse] {
+                .card-body {
+                    @include space(padding, left, $zero);
+                    @include space(padding, right, $zero);
+                    @include space(padding, bottom, $zero);
+                }
+            }
+        }
+    }
+}

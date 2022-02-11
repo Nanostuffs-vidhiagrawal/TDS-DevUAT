@@ -1,0 +1,7 @@
+.get_In_Touch {
+	@include space(padding, bottom, $s75);
+
+	@include respond-below(sm) {
+		@include space(padding, bottom, $s25);
+	}
+}

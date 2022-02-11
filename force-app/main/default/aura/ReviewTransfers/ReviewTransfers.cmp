@@ -1,0 +1,349 @@
+<aura:component access="global" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes"
+                controller="TransferDepositController">
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <!-- aura attributes to store data/values --> 
+    <aura:attribute name="listOfAllDeposits" type="list"/>
+    <aura:attribute name="selectedDepositIds" type="List"/>
+    <aura:attribute name="PaginationList" type="list"/> 
+    <aura:attribute name="selectedCount" type="integer" default="0"
+                    description="selected Records Count"/>
+    <aura:attribute name="startPage" type="Integer" />
+    <aura:attribute name="endPage" type="Integer"/>
+    <aura:attribute name="totalRecordsCount" type="Integer"/>
+    <aura:attribute name="pageSize" type="Integer" default="4"
+                    description="number of records to be display on per page"/>
+    <aura:attribute name="currentPage" type="integer" default="1"/>
+    <aura:attribute name="totalPagesCount" type="integer"/>
+    <aura:attribute name="bNoRecordsFound" type="boolean"/>
+    <aura:attribute name="enterTenantName" type="boolean" default="false"/>
+    <aura:attribute name="displayDepositTable" type="boolean" default="true"/>
+	<aura:attribute name="enterTenantNameMultiple" type="boolean" default="false"/>
+    <aura:attribute name="tenantValidationError" type="boolean" default="false"/>
+    <aura:attribute name="acceptSingleDeposit" type="boolean" default="false"/>
+    <aura:attribute name="acceptMultipleDeposit" type="boolean" default="false"/>
+    <aura:attribute name="caseExist" type="boolean" default="false"/>
+	<aura:attribute name="nodepositSelected" type="boolean" default="false"/>
+	<aura:attribute name="singleBlankValue" type="boolean" default="false"/>
+	<aura:attribute name="acceptedThankSection" type="boolean" default="false"/>
+	<aura:attribute name="rejectedThankSection" type="boolean" default="false"/>
+    <aura:attribute name="caseObj" type="Case" />
+    <aura:attribute name="errors" type="String" />
+    <aura:attribute name="tenantValue" type="String" />
+    <aura:attribute name="tenantMultipleValue" type="String" />
+    <aura:attribute name="deposits" type="List"/>
+    <aura:attribute name="depositInfo" type="Map" access="global"/>
+    
+    <!-- Message Attribute-->
+    <aura:attribute name="acceptDepositErrorNew" type="String"/>   
+   	<aura:attribute name="errorList" type="Error_Message__mdt[]"/>
+    
+    <lightning:navigation aura:id="navService" />
+    
+	<aura:if isTrue="{!v.displayDepositTable}">
+		<!-- Deposit Steps HTML Start --> 
+		<section class="deposit_steps">
+			<div class="deposit_steps_detail">
+				<div>
+					<div class="new-deposit-width">
+						<h5>Accepting/rejecting the transfer</h5>
+					</div>
+					
+					<aura:if isTrue="{!v.nodepositSelected}">
+						<div id="emailemptyerror" class="alert alert-danger alert-dismissible fade show">
+							<!--<strong>Error!</strong> Please select atleast one deposit.-->
+                             {!v.acceptDepositErrorNew}
+							<button type="button" class="close" onclick="{!c.hideBootstrapErrors}" name="nodeposit" >&times;</button >
+						</div> 
+                    </aura:if><br/><br/>
+                    
+                    <p class="slds-m-around_small" style="font-family: Aller_regular!important;">
+                        <span style="display:inline-block">
+                            Total records : {!v.selectedCount > 0 ? v.selectedCount + '/' : ''} {!v.totalRecordsCount} 
+                        </span>
+                    </p>
+					
+					<div class="table-container">
+						<table class="slds-table slds-table--striped" style="width:100%">
+							<thead>
+								<tr>
+									<th class="headingtext">
+										<div class="tenant_cover_table" style="box-shadow:none;">
+											<div class="form-check form-check-inline">
+                                                <label class="main">
+												   <!-- <input type="checkbox"/>-->
+													<ui:inputCheckbox disabled="{!v.totalRecordsCount == 0}"
+																	  aura:id="selectAllId" 
+																	  change="{!c.selectAllCheckbox}"/>
+													<span class="geekmark"></span>
+												</label> 
+											</div>
+                                           <!--  <label style=" margin-left:10px;">Select all</label>-->
+										</div>
+									</th>
+									<th class="headingtext">DAN</th>
+									<th class="headingtext">Tenancy address</th>
+									<th class="headingtext">Protected amount</th>
+									<th class="slds-cell-wrap headingtext">
+                                        Current customer that holds the deposit
+                                    </th>
+								</tr>
+							</thead>
+							<tbody>
+							   <aura:iteration items="{!v.PaginationList}" var="obj">
+								<tr>
+									<td  class="slds-cell-wrap slds-text-align_left textcss">
+										<div class="tenant_cover_table" style="box-shadow:none;">
+											<div class="form-check form-check-inline">
+												<label class="main">
+												   <!-- <input type="checkbox"/>-->
+													<ui:inputCheckbox text="{!obj.objDeposit.Id}"
+																	  value="{!obj.isChecked}" aura:id="checkDeposit"
+																	  change="{!c.checkboxSelect}"/>
+													<span class="geekmark"></span> 
+												</label> 
+											</div>
+										</div>
+									</td>
+									<td class="slds-cell-wrap slds-text-align_left textcss">{!obj.objDeposit.Name}</td>
+									<td class="slds-cell-wrap slds-text-align_left textcss">{!obj.objDeposit.Property_Address__c}</td>
+									<td class="slds-cell-wrap slds-text-align_left textcss">{!obj.objDeposit.Protected_Amount__c}</td>
+									<td class="slds-cell-wrap slds-text-align_left textcss">{!obj.objDeposit.Customer_Name__c}</td>
+								</tr>
+								</aura:iteration>
+							</tbody>
+						</table>
+					</div>
+					
+					<div>
+						<nav aria-label="Page navigation">
+							<ul class="pagination">
+								<aura:if isTrue="{!or(v.startPage == 0,v.PaginationList.length==0)}">
+									<li class="page-item disabled"><a class="page-link" href="" >Previous</a></li>
+									<aura:set attribute="else">
+										<li class="page-item"><a class="page-link" id="previousId" style="width :120px" href="" onclick="{!c.navigation}">Previous</a></li>
+									</aura:set>
+								</aura:if>
+								 <li class="page-item"><a class="page-link" href="" style="width :120px">Page {!v.currentPage} out of {!v.totalPagesCount}</a></li>
+								<aura:if isTrue="{!or((v.endPage + 1) >= v.totalRecordsCount,v.PaginationList.length==0 )}">
+									<li class="page-item disabled"><a class="page-link" href="" >Next</a></li>							
+									<aura:set attribute="else">
+										<li class="page-item"><a class="page-link" id="nextId" href="" onclick="{!c.navigation}">Next</a></li>
+									</aura:set>
+								</aura:if>
+							</ul>
+						</nav>
+					</div>
+
+					<div class="text-right download-btns new-deposit-width">
+					   <!-- <a href="#" class="see-all">Accept selected deposits</a>
+						<a href="#" class="see-all">Reject selected deposits</a>-->
+						<lightning:button class="see-all"  label="Accept selected deposits" onclick="{!c.handleAcceptMultipleDeposits}"/>
+						<lightning:button class="see-all"  label="Reject selected deposits" onclick="{!c.handleRejectMultipleDeposits}"/>
+
+					</div>
+				</div>                          
+			</div>
+		</section>
+		<!-- Deposit Steps HTML End -->
+	</aura:if>
+    
+    <aura:if isTrue="{!v.enterTenantName}">
+        <div role="dialog" tabindex="-1" aria-labelledby="header99" class="slds-modal slds-fade-in-open slds-scrollable ">
+            <div class="slds-modal__container ">
+                <form>
+                    <div class="slds-modal__header" style="width:550px;">
+                        Tenant name
+                        <button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onclick="{!c.closeModel}">
+                            X
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                    </div>
+                    <div class="slds-modal__content slds-p-around--medium " style="width:550px;height:300px;top:50px;">
+                        Please provide the surname of one of the tenants associated to that deposit
+                        <lightning:input 
+                                         aura:id="tenantId"
+                                         value="{!v.tenantValue}"
+                                         type="text" name="input" 
+                                         oncommit="{!c.tenantCheck}" 
+                                         required="true"
+                                         placeholder="Enter Tenant name"/>
+                        <aura:if isTrue="{!v.tenantValidationError}">
+                            <div class="slds-text-color_error slds-p-left_x-small">
+                                {!v.errors}
+                            </div>
+                        </aura:if><br/><br/>
+                        <aura:if isTrue="{!v.acceptSingleDeposit}">
+                            <lightning:button variant="brand" label="Accept" onclick="{!c.handleAcceptSingleDeposit}"/>
+                        </aura:if>
+                        <aura:if isTrue="{!v.caseExist}">
+                            <div class="slds-text-color_error slds-p-left_x-small">
+                                There is an outstanding {!v.caseObj.Type} against this deposit. The deadline is {!v.caseObj.Deadline_Date__c}. Do you want to respond now?
+                            </div>
+                            <lightning:button variant="brand" label="Yes" onclick="{!c.handleYesCase}"/>
+                            <lightning:button variant="brand" label="No" onclick="{!c.handleNoCase}"/>
+                        </aura:if>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="slds-backdrop slds-backdrop--open"></div>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.enterTenantNameMultiple}">
+		<div class="tab-content custom-tab-content" id="sf-tabContent">
+            
+            <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+                <div class="deposit-agent">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="col-md-12">      
+   									<h2>Review transfer</h2>
+      							</div>
+                                <a href="" class="go-back" onclick="{!c.goBackTransferPage}"><img src="{!$Resource.TDSTheme + '/assets/img/md-arrow-dropleft.png'}" alt="Back Icon" /> Go back</a>
+
+                                <!-- Deposit Steps HTML Start --> 
+                                <section class="deposit_steps tf-other-prop verification_step">
+                                    <div class="deposit_steps_detail">
+                                        <form>
+                                            <div class="form-group row">
+                                                <div class="col-xs-12 col-sm-12 col-lg-9">
+                                                    <p>In order for us to check that this deposit is being transferred to the correct landlord/agent, please enter the surname of one of the tenants associated to the deposit.</p>
+
+                                                    <!--<h5>Deposit account number: DAN000114</h5>
+
+                                                    <p><strong>Tenancy address:</strong> 28 reading close Manchester Greater Manchester M11 1UA United Kingdom</p>
+
+                                                    <label for="tf_surname" class="col-form-label">Tenant Surname</label>
+                                                    <input type="text" class="form-control" id="tf_surname" placeholder="Enter tenant’s surname"/>-->
+													
+													<aura:if isTrue="{!v.deposits.length==1}">
+														<aura:iteration items="{!v.deposits}" var="cus" indexVar="key">
+															<aura:if isTrue="{!v.singleBlankValue}">
+																<div id="emailemptyerror" class="alert alert-danger alert-dismissible fade show">
+																	<strong>Error!</strong> This field is required and cannot be left empty.
+																	<button type="button" class="close" onclick="{!c.hideBootstrapErrors}" name="singleBlank" >&times;</button >
+																</div> 
+															</aura:if>
+															<h5>Deposit account number: {!cus.value.Name}</h5><br/>
+															<p><strong>Tenancy address:</strong> {!cus.value.Property_Address__c}</p>
+															<!--{!cus.key}-->
+															<br/>                            
+															<lightning:input 
+																			 aura:id="tenantMultipleId"
+																			 value="{!v.tenantMultipleValue}"
+																			 type="text" name="input" 
+																			 oncommit="{!c.multipleTenantCheck}"
+																			 title="{!cus.key}"
+																			 label="Tenant surname" 
+																			 placeholder="Enter tenant’s surname"/>
+															<aura:if isTrue="{!v.tenantValidationError}">
+																<div class="error-msg">
+																	{!v.errors}
+																</div>                                
+															</aura:if>
+														</aura:iteration>
+														<br/>
+														<!--<lightning:button variant="brand" label="Accept" onclick="{!c.acceptMultipleDeposit}"/>-->
+													</aura:if>
+													
+													<aura:if isTrue="{!v.deposits.length > 1}">
+														<aura:if isTrue="{!v.tenantValidationError}">
+															<div class="error-msg">
+																{!v.errors}
+															</div>                                
+														</aura:if><br/>
+														<aura:iteration items="{!v.deposits}" var="customer" indexVar="key">
+															<h5>Deposit account number: {!customer.value.Name}</h5><br/>
+															<p><strong>Tenancy address:</strong> {!customer.value.Property_Address__c}</p>
+															<br/>                          
+															<lightning:input 
+																			 aura:id="{!customer.value.Id}"
+																			 value=""
+																			 type="text" name="input"
+																			 id="{!globalId+'_div'}"
+																			 onblur="{!c.multipleTenantCheckValue}"
+																			 title="{!customer.key}"
+																			 label="Tenant Surname"
+																			 placeholder="Enter tenant’s surname"/><br/><br/>
+														</aura:iteration>
+														<br/>
+														<!--<lightning:button variant="brand" label="Accept" onclick="{!c.acceptMultipleDepositData}"/>-->
+													</aura:if>
+                                                </div>
+                                            </div>
+											<aura:if isTrue="{!v.deposits.length==1}">
+												<div class="form-group row">
+													<div class="col-sm-12 col-lg-9 text-right">
+														<lightning:button class="see-all" label="Submit" onclick="{!c.acceptMultipleDeposit}"/>
+														<!--<button type="submit" class="see-all">Submit</button>-->
+													</div>
+												</div>
+											</aura:if>
+											<aura:if isTrue="{!v.deposits.length>1}">
+												<div class="form-group row">
+													<div class="col-sm-12 col-lg-9 text-right">
+														<lightning:button class="see-all" label="Submit" onclick="{!c.acceptMultipleDepositData}"/>
+														<!--<button type="submit" class="see-all">Submit</button>-->
+													</div>
+												</div>
+											</aura:if>
+                                        </form>
+                                    </div>
+                                </section>
+                                <!-- Deposit Steps HTML End -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        
+    </aura:if>
+    
+	<aura:if isTrue="{!v.acceptedThankSection}">
+		<div class="tab-content custom-tab-content" id="sf-tabContent">            
+			<div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+				<div class="thank_you">
+					<div class="container">
+						<div class="row">
+							<div class="col-md-12">
+								<img src="{!$Resource.TDSTheme + '/assets/img/thank-you.png'}" alt="thank you"/>
+                                <h2>Thank you!</h2>
+                                <p>Thank you for your response. We have notified the other landlord/agent that you have accepted the transfer of the selected deposit(s).</p><br/><br/>
+								<div class="error-msg">
+									{!v.errors}
+								</div>
+                                <a href="" class="see-all" onclick="{!c.acceptedDepositSummaryPage}">Go to deposit summary</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+	</aura:if>
+		
+		
+    <aura:if isTrue="{!v.rejectedThankSection}">
+        <div class="tab-content custom-tab-content" id="sf-tabContent">            
+            <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+                <div class="thank_you">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <img src="{!$Resource.TDSTheme + '/assets/img/thank-you.png'}" alt="thank you"/>
+								<h2>Thank You!</h2>
+								<p>Thank you for your response. We have notified the other landlord/agent that you have rejected the transfer of the selected deposit(s).</p>
+                                <a href="" class="see-all" onclick="{!c.rejectedDepositSummaryPage}">Go to deposit summary</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aura:if>
+	
+</aura:component>

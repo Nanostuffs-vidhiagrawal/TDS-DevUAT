@@ -1,0 +1,224 @@
+<aura:component
+    access="global" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes"
+    controller="EI_getBranch">
+
+    <!-- attributes -->
+    <aura:attribute name="data" type="Object" />
+    <aura:attribute name="listOfPropertyAlocations" type="list" />
+    <aura:attribute name="branchlist" type="List" />
+    <aura:attribute name="columns" type="List" />
+    <aura:attribute name="noRecordsMsg" type="String"
+        default="There is no open branch. You may add by clicking 'Add New Branch' Button" />
+    <aura:attribute name="recordFound" type="Boolean" default="false" />
+        <aura:attribute name="currentUser" type="User" />
+
+    <force:recordData
+                      aura:id="recordLoader"
+                      recordId="{!$SObjectType.CurrentUser.Id}"
+                      fields="Name,Profile.Name,Contact.Job_role__c,Contact.Additional_Permission__c"
+                      targetFields="{!v.currentUser}"
+                      />
+    <aura:attribute name="selectedCount" type="integer" default="0" description="selected Records Count" />
+     <lightning:overlayLibrary aura:id="overlayLib" />
+  <aura:attribute name="startPage" type="Integer" />
+  <aura:attribute name="endPage" type="Integer" />
+  <aura:attribute name="totalRecordsCount" type="Integer" />
+  <aura:attribute
+    name="pageSize"
+    type="Integer"
+    default="4"
+    description="number of records to be display on per page"
+  />
+  <aura:attribute name="currentPage" type="integer" default="1" />
+  <aura:attribute name="totalPagesCount" type="integer" default="1" />
+  <aura:attribute name="bNoRecordsFound" type="boolean" default="false" />
+    
+    <aura:attribute name="manageBranches" type="boolean" default="false" />
+      <aura:attribute name="PageSpinner" type="boolean" default="true"/>
+     <aura:handler event="aura:doneWaiting" action="{!c.doneWaiting}"></aura:handler> 
+    
+    
+    
+
+  <!--  <aura:handler event="c:EI_branchDatatableRefresh" action="{!c.refreshPage}" />-->
+
+    <aura:attribute name="branchType" type="List" default="[
+                                {'label': 'All', 'value': 'all'},
+                                {'label': 'Open', 'value': 'open'},
+                                {'label': 'Closed', 'value': 'closed'},
+                                ]" />
+
+    <!-- handlers-->
+  <aura:handler name="init" value="{! this }" action="{! c.init }" />
+
+    <lightning:overlayLibrary aura:id="overlayLib" />
+    <lightning:navigation aura:id="navService" />
+    <!-- Organization Header -->
+
+<!--    <div>
+        <lightning:card>
+            <lightning:layout>
+                <lightning:layoutItem size="10" class="left-align">
+                    <lightning:avatar src="/bad/image/url.jpg" fallbackIconName="utility:hierarchy"
+                        alternativeText="Branch" class="slds-m-right_small" />
+                    Branches
+                </lightning:layoutItem>
+                <lightning:layoutItem size="2" class="right-align">
+
+                    <lightning:combobox aura:id="branchType" name="branchType" label="View Branch" value="open"
+                        placeholder="Select Branch Type" options="{! v.branchType }" onchange="{! c.refreshDatatable }"
+                        class="width-size" />
+
+                </lightning:layoutItem>
+            </lightning:layout>
+        </lightning:card>
+    </div>
+    <br />
+    <div>
+        <lightning:card title="Branch Details">
+
+            <aura:set attribute="actions">
+                <lightning:button label="Add New Branch" onclick="{! c.addNewBranch}" />
+            </aura:set>
+            <aura:if isTrue="{!v.recordFound}">
+                <p class="slds-p-horizontal_small">
+                <div style="height: 300px">
+                    <lightning:datatable columns="{! v.columns }" data="{! v.data }" keyField="id"
+                        onrowaction="{! c.handleRowAction }" hideCheckboxColumn="true" columnWidthsMode="auto" />
+                </div>
+                </p>
+                <aura:set attribute="else">
+                    <p class="slds-p-horizontal_small">
+                        {! v.noRecordsMsg}
+                    </p>
+                </aura:set>
+            </aura:if>
+        </lightning:card>
+    </div>-->
+    <!-- Protect Search HTML Start -->
+      <aura:renderIf isTrue="{!v.PageSpinner}">
+      <div class="lds-dual-ring">
+      </div>
+      <aura:set attribute="else">
+                <section class="protect-search my-option-search">
+                    <div class="container">
+             
+                        <!--<a href="index.html" class="go-back"><img src="{!$Resource.TDSTheme + '/assets/img/md-arrow-dropleft.png'}" alt="Back Icon"/>Go Back </a>-->
+                        <div class="row">
+                            <div class="col-sm-6 col-lg-4">
+                              <!--  <div class="filter-search">
+                                    <label for="branche">Branches</label>
+                                    <div class="row">
+                                        <div class="col-10">
+                                            <select id="branche" class="form-control">
+                                                <option>All</option>
+                                                <option>Open</option>
+                                                <option>Closed</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>-->
+                            </div>
+                            <aura:if isTrue="{!v.manageBranches}">
+                            <div class="col-sm-6 col-lg-8 text-right">
+                                <lightning:button class="see-all"  onclick="{!c.addNewBranches}" >
+                                <img src="{!$Resource.TDSTheme + '/assets/img/add-circle.svg'}" alt="Icon"/> Add new branch
+                                </lightning:button>
+                               <!-- <a href="" class="see-all" onclick="{! c.addNewBranch}"><img src="{!$Resource.TDSTheme + '/assets/img/add-circle.svg'}" alt="Icon"/> Add New Branch</a>-->
+                          &nbsp;&nbsp;
+                                <a href="" class="see-all" onclick="{! c.addNewUser}"><img src="{!$Resource.TDSTheme + '/assets/img/add-circle.svg'}" alt="Icon"/> Add users</a>
+                            </div>
+                        </aura:if>
+                        </div>
+
+                        <h5>Your branches</h5>
+
+                        <!-- Table HTML Start -->
+                        <div class="table-container my-option-table">
+                            <table  class="slds-table slds-table--striped" style="table-layout: fixed;">
+                                <thead>
+                                    <tr>
+                                        <th class="headingtext">Branch name </th>
+                                        <th class="headingtext" >Address</th>
+                                        <th class="headingtext"></th>
+                                         
+                                    </tr>
+                                </thead>
+                                <tbody style="font-size:1.5rem;">
+                                     <aura:iteration items="{!v.branchlist}" var="branch">
+                                        
+                                   <tr>
+                                        <td class="slds-cell-wrap slds-text-align_left textcss">{!branch.Branch_Name__c}</td>
+                                        <td class="slds-cell-wrap slds-text-align_left textcss">{!branch.Address__c}, {!branch.Town_City__c},<br/>{!branch.County__c}, {!branch.Postcode__c}</td>
+                                        <td class="slds-text-align_right textcss">
+                                          <aura:if isTrue="{!v.manageBranches}">
+                                            <lightning:button class="tbl-btn" value="{!branch.Id}"  onclick="{!c.updatebranch}" >
+                                            <img src="{!$Resource.TDSTheme + '/assets/img/View_icon.svg'}" alt="View Icon"/> View / Edit
+                                            </lightning:button>
+                                                  <lightning:button class="tbl-btn blue" value="{!branch.Id}" onclick="{!c.logintobranch}" >
+                                            <img src="{!$Resource.TDSTheme + '/assets/img/open-account-login.png'}" alt="View Icon"/> Login as branch
+                                            </lightning:button>
+                                            </aura:if>
+                                       </td>
+                                        
+                                    </tr>
+                                    </aura:iteration>
+                                </tbody>
+                                <br />
+                      
+                    <div style="margin-left:200px!important;">
+                        <nav aria-label="Page navigation">
+							<ul class="pagination">
+								<aura:if isTrue="{!or(v.startPage == 0,v.branchlist.length==0)}">
+									<li class="page-item disabled"><a class="page-link" href="" >Previous</a></li>
+									<aura:set attribute="else">
+										<li class="page-item"><a class="page-link" id="previousId" style="width :120px" href="" onclick="{!c.navigation}">Previous</a></li>
+									</aura:set>
+								</aura:if>
+								 <li class="page-item"><a class="page-link" href="" style="width :120px">Page {!v.currentPage} out of {!v.totalPagesCount}</a></li>
+								<aura:if isTrue="{!or((v.endPage + 1) >= v.totalRecordsCount,v.branchlist.length==0 )}">
+									<li class="page-item disabled"><a class="page-link" href="" >Next</a></li>							
+									<aura:set attribute="else">
+										<li class="page-item"><a class="page-link" id="nextId" href="" onclick="{!c.navigation}">Next</a></li>
+									</aura:set>
+								</aura:if>
+							</ul>
+						</nav>
+                      <!--<lightning:button
+					  class="page-link"
+                        label="Previous"
+                        disabled="{!or(v.startPage == 0,v.PaginationList.length==0)}"
+                        onclick="{!c.navigation}"
+                        variant="brand"
+                        name="previous"
+                      />
+                      <span
+                        class="slds-badge slds-badge_lightest"
+                        style="margin-right: 10px;margin-left: 10px;"
+                      >
+                        Page {!v.currentPage} out of {!v.totalPagesCount}
+                      </span>
+                      <lightning:button
+					  class="page-link"
+                        label="Next"
+                        disabled="{!or((v.endPage + 1) >= v.totalRecordsCount,v.PaginationList.length==0 )}"
+                        onclick="{!c.navigation}"
+                        variant="brand"
+                        iconPosition="right"
+                        name="next"
+                      /> -->
+                    </div>
+                      <!--Pagination Buttons End -->
+                      <!-- Pagination HTML Start -->
+					  <!-- Pagination HTML Start -->
+						
+                      <!-- Pagination HTML End -->
+                            </table>
+                        </div>
+                        <!-- Table HTML End -->
+                    </div>
+                </section>
+                <!-- Protect Search HTML End -->
+          </aura:set>
+    </aura:renderIf>
+</aura:component>

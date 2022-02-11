@@ -1,0 +1,636 @@
+<aura:component
+  implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes"
+  access="global"
+  controller="EI_AddDeposit"
+>
+  <aura:attribute name="disbableContinueBtn" type="Boolean" default="true" />
+  <aura:handler
+    name="EI_depositEvent"
+    event="c:EI_depositEvent"
+    action="{!c.eventHendle}"
+  />
+  <aura:attribute name="Properties" type="List" />
+  <aura:attribute
+    name="selectedProperty"
+    type="Property__c"
+    default="{'sobjectType': 'Property__c'}"
+  />
+  <aura:attribute name="flaguserInput" type="Boolean" />
+  <aura:attribute name="Continuebtnflag" type="Boolean" default="true" />
+  <aura:attribute name="defaultflag" type="Boolean" default="false" />
+  <aura:attribute name="Livedeposit" type="Boolean" default="false" />
+  <aura:attribute name="selecedPrimeLandlord" type="String" access="global" />
+  <aura:attribute name="showLandlorddetails" type="Boolean" default="false" />
+  <aura:attribute name="showprimaryLandlord" type="Boolean" default="false" />
+  <aura:attribute name="displayYesSection" type="Boolean" default="false" />
+  <aura:attribute name="displayNoSection" type="Boolean" default="false" />
+  <aura:attribute
+    name="Usersdetails"
+    type="User"
+    default="{'sobject' : 'user'}"
+  />
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+  <aura:attribute name="PrimarylandlordDetails" type="List" />
+  <!-- save at the end of the process to link landlord to property if login user is agent -->
+  <aura:attribute name="selectedPrimarylandlord" type="List" />
+  <!-- save at the end of the process to link landlord to property  -->
+  <aura:attribute name="landRegisterNumber" type="String" access="global" />
+  <aura:attribute name="landRegisterstatus" type="String" access="global" />
+  <aura:attribute name="BranchID" type="String" access="global" />
+
+  <!-- Attributes for AddDepositComp -->
+  <aura:attribute name="rentAmount" type="Decimal" access="global" />
+  <aura:attribute name="depositAmount" type="Decimal" access="global" />
+  <aura:attribute name="amountToProtect" type="Decimal" access="global" />
+  <aura:attribute name="depositRecievedDate" type="Date" access="global" />
+  <aura:attribute name="tenancyStartDate" type="Date" access="global" />
+  <aura:attribute name="noOfTenants" type="Integer" access="global" />
+  <aura:attribute name="depositReference" type="String" access="global" />
+
+  <aura:attribute name="leadTenantObj" type="object" />
+  <aura:attribute name="arrObj" type="object[]" />
+  <lightning:navigation aura:id="navService" />
+
+  <!-- Event Handler -->
+  <aura:handler
+    name="EI_backToDepositHome"
+    event="c:EI_backToDepositHome"
+    action="{!c.EI_backToDepositHome}"
+  />
+  <aura:handler
+    name="EI_tenantHome"
+    event="c:EI_tenantHome"
+    action="{!c.EI_tenantHome}"
+  />
+  <aura:handler
+    name="EI_PopulateProperty"
+    event="c:EI_PopulateProperty"
+    action="{!c.EI_PopulateProperty}"
+  />
+
+  <!-- Component Visibility attribute -->
+  <aura:attribute
+    name="showpropertyComp"
+    type="Boolean"
+    default="true"
+    description="Control Visibility of Property Section"
+  />
+  <aura:attribute
+    name="showdepositComp"
+    type="Boolean"
+    default="false"
+    description="Control Visibility of Deposit Section"
+  />
+
+  <aura:attribute
+    name="showdepositHome"
+    type="Boolean"
+    default="true"
+    description="Control Visibility of Home Component"
+  />
+    
+    <aura:attribute
+    name="successProperty"
+    type="Boolean"
+    default="false"
+    description="Show Success Message after Property Creation"
+  />
+    
+     <aura:attribute
+    name="successDeposit"
+    type="Boolean"
+    default="false"
+    description="Show Success Message after Deposit Creation"
+  />
+    
+
+  <!-- Spinner  -->
+  <aura:attribute name="notLoaded" type="Boolean" default="true" />
+  <aura:if isTrue="{! v.notLoaded }">
+    <lightning:spinner alternativeText="Loading" />
+  </aura:if>
+    
+    
+
+  <div class="tab-content custom-tab-content" id="sf-tabContent">
+    <div
+      class="tab-pane fade show active"
+      id="sf-deposit"
+      role="tabpanel"
+      aria-labelledby="sf-deposit-tab"
+    >
+      <div id="maincon" class="deposit-agent">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-9">
+                <div  style="margin-top:-30px">      
+                  <h2 >Add a new deposit</h2>  
+                </div>
+              <a href="" class="go-back" onclick="{!c.Viewdeposit}"
+                ><img
+                  src="{!$Resource.TDSTheme + '/assets/img/md-arrow-dropleft.png'}"
+                  alt="Back Icon"
+                />
+                Go back</a
+              >
+              <!-- Deposit Steps HTML Start -->
+              <section class="deposit_steps">
+                <div class="deposit_steps_count">
+                  <div aura:id="step1" class="state-indicator active">
+                    <span class="circle">1</span> <p>Property details</p>
+                  </div>
+                  <div id="stepdiv2" aura:id="step2" class="state-indicator">
+                    <span class="circle">2</span> <p>Deposit details</p>
+                  </div>
+                  <div aura:id="step3" class="state-indicator">
+                    <span class="circle">3</span> <p>Tenant details</p>
+                  </div>
+                  <div aura:id="step4" class="state-indicator">
+                    <span class="circle">4</span> <p>Deposit summary</p>
+                  </div>
+                </div>
+
+                <div class="deposit_steps_detail slider">
+                    <aura:if isTrue="{!v.successProperty}">
+                <div id="successProperty" class="alert alert-success alert-dismissible fade show">
+                    <strong>Success!</strong>Property has been successfully created. Please search your property.
+                    <button
+                            type="button"
+                            class="close"
+                            onclick="{!c.hideBootstrapErrors}"
+                            name="successProperty"
+                            >&times;</button
+                        >
+                </div>
+            </aura:if>
+                    <aura:if isTrue="{!v.successDeposit}"> 
+                        <div id="successDeposit"  class="alert alert-success alert-dismissible fade show">
+                            <strong>Success!</strong>Deposit has been successfully created.
+                            <button
+                                    type="button"
+                                    class="close"
+                                    onclick="{!c.hideBootstrapErrors}"
+                                    name="successDeposit"
+                                    >&times;</button
+                                >
+                        </div>
+                   </aura:if> 
+                  <aura:renderIf isTrue="{!v.showdepositHome}">
+                    <form>
+                      <div class="form-group row">
+                        <label class="col-sm-4 col-form-label"
+                          >Have you added this property before?</label
+                        >
+                        <div class="col-sm-8">
+                          <a
+                            id="property_yes"
+                            class="learn-more"
+                            href=""
+                            onclick="{!c.clickYes}"
+                            >Yes</a
+                          >
+                          <a
+                            id="property_no"
+                            class="learn-more"
+                            href=""
+                            onclick="{!c.clickNo}"
+                            >No</a
+                          >
+                        </div>
+                      </div>
+                      <aura:if isTrue="{!v.displayYesSection}">
+                        <div>
+                          <div class="form-group row">
+                            <label
+                              for="property"
+                              class="col-sm-4 col-form-label"
+                              >Select property</label
+                            >
+                            <div class="col-sm-8 col-lg-7">
+                              <!--<input type="text" class="form-control" id="property" placeholder="Start typing an address..." value=""/>-->
+                              <div class="slds-form-element slds-p-top_small">
+                                <!-- <label class="slds-form-element__label" for="combobox-id-2">Relate To</label> -->
+                                <div class="slds-form-element__control">
+                                  <div class="slds-combobox_container">
+                                    <div
+                                      class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open"
+                                      aria-expanded="true"
+                                      aria-haspopup="listbox"
+                                      role="combobox"
+                                    >
+                                      <div
+                                        class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right"
+                                        role="none"
+                                      >
+                                        <lightning:input
+                                          type="text"
+                                          name="Property"
+                                          aura:id="searchField"
+                                          onkeyup="{!c.searchKeyChange}"
+                                          placeholder="Start typing an address..."
+                                          onclick="{!c.searchKeyChange}"
+                                          autocomplete="off"
+                                        />
+                                        <span
+                                          class=" slds-icon_container slds-icon-utility-search slds-input__icon
+                                                                                             slds-input__icon_right"
+                                        >
+                                        </span>
+                                      </div>
+                                      <aura:if
+                                        isTrue="{!v.Properties[0].recId!=null}"
+                                      >
+                                        <div
+                                          id="listbox-id-2"
+                                          class="slds-dropdown slds-dropdown_length-with-icon-7 slds-dropdown_fluid"
+                                          role="listbox"
+                                        >
+                                          <ul
+                                            class="slds-listbox slds-listbox_vertical"
+                                            role="presentation"
+                                          >
+                                            <aura:iteration
+                                              items="{!v.Properties}"
+                                              var="p"
+                                            >
+                                              <li
+                                                role="presentation"
+                                                class="slds-listbox__item"
+                                              >
+                                                <div
+                                                  id="option1"
+                                                  class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta"
+                                                  role="option"
+                                                >
+                                                  <span
+                                                    class="slds-media__figure slds-listbox__option-icon"
+                                                  >
+                                                    <span
+                                                      class="slds-icon_container slds-icon-standard-account"
+                                                    >
+                                                    </span>
+                                                  </span>
+                                                  <span
+                                                    class="slds-media__body"
+                                                  >
+                                                    <span
+                                                      onclick="{!c.selectedRecord}"
+                                                      id="{!p.recId+p.proprty}"
+                                                      class="slds-listbox__option-text slds-listbox__option-text_entity"
+                                                      >{!p.proprty}</span
+                                                    >
+                                                  </span>
+                                                </div>
+                                              </li>
+                                            </aura:iteration>
+                                          </ul>
+                                        </div>
+                                      </aura:if>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="slds-card slds-m-top_small">
+                                <aura:iteration
+                                  items="{!v.selectedProperty}"
+                                  var="p"
+                                >
+                                  <div style="border: 1px #32669E;">
+                                    <lightning:card>
+                                      <div>
+                                        <p class="slds-p-horizontal_small">
+                                          <div class="slds-card__body">
+                                            <p
+                                              ><b>Address</b> :
+                                              <ui:outputText
+                                                value="{!p.Street__c + ' ' + p.Town__c + ' ' + p.City__c + ' ' + p.County__c + ' ' + p.Postal_Code__c}"
+                                              />
+                                            </p>
+                                            <!--<p><b>No. of Bedrooms :</b>
+                       <ui:outputText value="{!p.No_of_bedrooms__c}" />
+                      </p>
+                      <p><b>No. of Living Rooms :</b>
+                       <ui:outputText value="{!p.No_of_living_rooms__c}" />
+                      </p>-->
+                                          </div>
+                                          <!--<aura:if isTrue="{!v.Livedeposit}">
+                      <div aura:id="depositWarning" style="color: orange; ">
+                       A deposit is already protected for this property.
+                       You can protect an additional deposit for a different tenancy.
+                       Would
+                       you
+                       like to continue?
+                      </div>
+                     </aura:if>-->
+                                        </p>
+                                      </div>
+                                    </lightning:card>
+                                  </div>
+                                </aura:iteration>
+                              </div>
+                            </div>
+                          </div>
+                          <aura:if isTrue="{!v.Livedeposit}">
+                            <div class="form-group row">
+                              <div class="col-sm-8 col-lg-7 offset-sm-4">
+                                <div
+                                  class="alert alert-warning alert-dismissible fade show"
+                                >
+                                  <img
+                                    src="{!$Resource.TDSTheme + '/assets/img/warning-icon.png'}"
+                                    alt="warning Icon"
+                                  />
+                                  <div>
+                                    <strong>Warning!</strong> A deposit is
+                                    already protected for this property
+                                      <a href="" id="{!v.selectedProperty[0].Deposits__r[0].Id}" class="tbl-btn" onclick="{!c.handleLinktoLiveDeposit}">
+                                          <img id="{!v.selectedProperty[0].Deposits__r[0].Id}" src="{!$Resource.TDSTheme + '/assets/img/View_icon.svg'}" 
+                                               alt="View Icon"/> {!v.selectedProperty[0].Deposits__r[0].Name} </a> 
+                                      . You can
+                                    protect an additional deposit for a
+                                    different tenancy. Would you like to
+                                    continue?
+                                  </div>
+                                  <button
+                                    type="button"
+                                    class="close"
+                                    data-dismiss="alert"
+                                    >×</button
+                                  >
+                                </div>
+                              </div>
+                            </div>
+                          </aura:if>
+                          <div class="form-group row">
+                            <div class="col-sm-12 col-lg-11 text-right">
+                              <!--<button type="submit" class="see-all">Continue</button>-->
+                              <lightning:button
+                                aura:id="propertyContinuetolandlordBtn"
+                                variant="brand"
+                                label="Continue"
+                                title="Continue"
+                                onclick="{! c.continuetolandlord }"
+                                disabled="{!v.disbableContinueBtn}"
+                                class="see-all"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </aura:if>
+                      <aura:if isTrue="{!v.displayNoSection}">
+                        <!-- <c:EI_addNewProperty></c:EI_addNewProperty> -->
+                        <c:EI_addPropertyGeneric />
+                        <!--<div>
+             <div class="form-group row">
+              <label for="address_search" class="col-xs-12 col-sm-4 col-lg-4 col-form-label">Property address</label>
+              <div class="col-xs-12 col-sm-8 col-lg-7">
+               <label for="address_search" class="col-form-label">Address search</label>
+               <input type="text" class="form-control" id="address_search" value="Start typing an address..."/>
+               <span class="manual_entery">Enter Manually</span>
+              </div>
+             </div>
+             <div class="form-group row">
+              <label for="landlord" class="col-xs-12 col-sm-4 col-lg-4 col-form-label">Landlord</label>
+              <div class="col-xs-12 col-sm-8 col-lg-7">
+               <label for="landlord" class="col-form-label">Primary landlord</label>
+               <select class="form-control" id="landlord" >
+                <option>Select option</option>
+                <option>option01</option>
+                <option>option02</option>
+                <option>option03</option>
+                <option>option04</option>
+               </select>
+               <a href="#" data-toggle="modal" data-target="#addlandlord" class="learn-more"> <img src="{!$Resource.TDSTheme + '/assets/img/add-new-property.svg'}" alt="Add Icon"/> Add a new landlord</a>
+              </div>
+             </div>
+             <div class="form-group row">
+              <div class="col-sm-12 col-lg-11 text-right">
+               <button type="submit" class="see-all">Submit</button>
+              </div>
+             </div>
+            </div>-->
+                      </aura:if>
+                    </form>
+                  </aura:renderIf>
+                  <!-- isTrue="{!v.showdepositComp}" -->
+                  <aura:renderIf isTrue="false">
+                    <form>
+                      <div class="form-group row">
+                        <label
+                          for="rent_amount"
+                          class="col-sm-12 col-form-label"
+                          >Rent amount(per month)</label
+                        >
+                        <div class="col-sm-12 col-lg-8">
+                          <input
+                            type="number"
+                            class="form-control"
+                            id="rent_amount"
+                            placeholder="0123456"
+                          />
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label
+                          for="Rent_period"
+                          class="col-sm-12 col-form-label"
+                          >Rent period</label
+                        >
+                        <div class="col-xs-12 col-sm-6 col-lg-4">
+                          <input
+                            type="text"
+                            class="form-control"
+                            id="Rent_period"
+                            placeholder="Monthly Rent"
+                          />
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-lg-4">
+                          <input
+                            type="text"
+                            class="form-control"
+                            id="Rent_period"
+                            placeholder="Weekly Rent"
+                          />
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label
+                          for="Deposit_amount"
+                          class="col-sm-12 col-form-label"
+                          >Deposit amount</label
+                        >
+                        <div class="col-sm-12 col-lg-8">
+                          <input
+                            type="number"
+                            class="form-control"
+                            id="Deposit_amount"
+                            placeholder="&#163;"
+                          />
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label
+                          for="Amount_to_protect"
+                          class="col-sm-12 col-form-label"
+                          >Amount to protect</label
+                        >
+                        <div class="col-sm-12 col-lg-8">
+                          <input
+                            type="number"
+                            class="form-control"
+                            id="Amount_to_protect"
+                            placeholder="&#163;"
+                          />
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label
+                          for="Deposit_received"
+                          class="col-sm-12 col-form-label"
+                          >Deposit received date</label
+                        >
+                        <div class="col-xs-12 col-sm-4 col-lg-2">
+                          <select class="form-control" id="Deposit_received">
+                            <option selected="true"> Day</option>
+                            <option>01</option>
+                            <option>02</option>
+                            <option>03</option>
+                            <option>04</option>
+                          </select>
+                        </div>
+                        <div class="col-xs-12 col-sm-4 col-lg-3">
+                          <select class="form-control">
+                            <option selected="true"> Month</option>
+                            <option>01</option>
+                            <option>02</option>
+                            <option>03</option>
+                            <option>04</option>
+                          </select>
+                        </div>
+                        <div class="col-xs-12 col-sm-4 col-lg-3">
+                          <select class="form-control">
+                            <option selected="true"> Year</option>
+                            <option>01</option>
+                            <option>02</option>
+                            <option>03</option>
+                            <option>04</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label
+                          for="Tenancy_start"
+                          class="col-sm-12 col-form-label"
+                          >Tenancy start date</label
+                        >
+                        <div class="col-xs-12 col-sm-4 col-lg-2">
+                          <select class="form-control" id="Tenancy_start">
+                            <option selected="true"> Day</option>
+                            <option>01</option>
+                            <option>02</option>
+                            <option>03</option>
+                            <option>04</option>
+                          </select>
+                        </div>
+                        <div class="col-xs-12 col-sm-4 col-lg-3">
+                          <select class="form-control">
+                            <option selected="true"> Month</option>
+                            <option>01</option>
+                            <option>02</option>
+                            <option>03</option>
+                            <option>04</option>
+                          </select>
+                        </div>
+                        <div class="col-xs-12 col-sm-4 col-lg-3">
+                          <select class="form-control">
+                            <option selected="true"> Year</option>
+                            <option>01</option>
+                            <option>02</option>
+                            <option>03</option>
+                            <option>04</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label
+                          for="Number_of_tenants"
+                          class="col-sm-12 col-form-label"
+                          >Number of tenants</label
+                        >
+                        <div class="col-sm-12 col-lg-8">
+                          <input
+                            type="number"
+                            class="form-control"
+                            id="Number_of_tenants"
+                          />
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label
+                          for="Deposit_reference"
+                          class="col-sm-12 col-form-label"
+                          >Deposit reference
+                          <span class="optional">Optional</span></label
+                        >
+                        <div class="col-sm-12 col-lg-8">
+                          <input
+                            type="number"
+                            class="form-control"
+                            id="Deposit_reference"
+                          />
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <div class="col-sm-12 col-lg-8 text-right">
+                          <button type="submit" class="see-all"
+                            >Continue</button
+                          >
+                        </div>
+                      </div>
+                    </form>
+                  </aura:renderIf>
+                  <aura:if isTrue="{!v.showdepositComp}">
+                    <c:EI_depositDetail
+                      rentAmount="{!v.rentAmount}"
+                      depositAmount="{!v.depositAmount}"
+                      amountToProtect="{!v.amountToProtect}"
+                      depositRecievedDate="{!v.depositRecievedDate}"
+                      tenancyStartDate="{!v.tenancyStartDate}"
+                      noOfTenants="{!v.noOfTenants}"
+                      depositReference="{!v.depositReference}"
+                      selectedProperty="{!v.selectedProperty}"
+                      leadTenantObj="{!v.leadTenantObj}"
+                      arrObj="{!v.arrObj}"
+                      selecedPrimeLandlord="{!v.selecedPrimeLandlord}"
+                      selectedPrimarylandlord="{!v.selectedPrimarylandlord}"
+                      landRegisterNumber="{!v.landRegisterNumber}"
+                      landRegisterstatus="{!v.landRegisterstatus}"
+                      BranchID="{!v.BranchID}"
+                    />
+                  </aura:if>
+                </div>
+              </section>
+              <!-- Deposit Steps HTML End -->
+            </div>
+            <div class="col-md-3 info-right-tab">
+              <p
+                >For a deposit to be protected we must receive it in cleared
+                funds within 30 working days of the start date of the tenancy.
+                Once we receive your payment, we will allocate it to your
+                deposit registration and send confirmation of protection to you
+                and your tenant(s), usually within 2 working days.</p
+              >
+              <p
+                >The landlord/agent must also provide the tenant(s) with the
+                prescribed information within 30 working days of the start date
+                of the tenancy.</p
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Tabs HTML End -->
+</aura:component>

@@ -1,0 +1,3 @@
+<aura:event type="COMPONENT" description="This event will refresh the view property section">
+    
+</aura:event>

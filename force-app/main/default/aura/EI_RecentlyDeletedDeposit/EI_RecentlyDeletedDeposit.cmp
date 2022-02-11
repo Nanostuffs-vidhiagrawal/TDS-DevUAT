@@ -1,0 +1,63 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" 
+                access="global" controller="EI_RecentlyDeleteddepost" >
+    
+    <aura:attribute type="Deposit__c[]" name="depositlist"/>
+    <aura:handler name="init" value="{!this}" action="{!c.fetchdata}"/>
+    
+    <lightning:card >
+        <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+            <thead>
+                <tr class="slds-text-title_caps">
+                    <th scope="col">
+                        <div class="slds-truncate" title="Name">DAN</div>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate" title="Phone">Property Address</div>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate" title="Phone">Start Date</div>
+                    </th>
+                    <th scope="col">
+                        <div class="slds-truncate" title="Type">Deposit Amount</div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <aura:iteration items="{!v.depositlist}" var="obj">
+                    <tr>
+                        <th scope="row">
+                            <div class="slds-truncate" title="{!obj.Name}">
+                                {!obj.Name}
+                            </div>
+                        </th> 
+                        
+                        <th scope="row">
+                            <div class="slds-truncate" title="{!obj.Property_Address__c}">
+                                {!obj.Property_Address__c}
+                            </div>
+                        </th>
+                        <th scope="row">
+                            <div class="slds-truncate" title="{!obj.Start_Date__c}">
+                                {!obj.Start_Date__c}
+                            </div>
+                        </th>
+                        <th scope="row">
+                            <div class="slds-truncate" title="{!obj.Deposit_Amount__c}">
+                                {!obj.Deposit_Amount__c}
+                            </div>
+                        </th>
+                        <th scope="row">
+                            <lightning:button class="viewbuttons" label="View " variant="brand" value="{!obj.Id}" iconName="utility:view" iconPosition="center" onclick="{!c.Viewdeposit}" />
+                        </th>
+                    </tr>
+                </aura:iteration>
+            </tbody>
+        </table>
+    </lightning:card>
+    
+    
+    
+    
+    
+    
+</aura:component>

@@ -1,0 +1,70 @@
+<aura:component access="global" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes"
+                controller="EI_TenentChangeoverApx">
+    <aura:attribute name="outstandingCases" type="Case[]"/>
+    <aura:attribute name="changeOverList" type="Case[]"/>
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
+    <lightning:navigation aura:id="navService" />
+    
+    <div style="font-size:1.3rem;" class="slds-text-color_error slds-p-left_x-small">
+        <aura:renderIf isTrue="{!empty(v.outstandingCases)}">  
+            <aura:renderIf isTrue="{!!empty(v.changeOverList)}">  
+              <!--  <p>Below are your outstanding actions</p>-->
+                
+                <table style="font-size:1.5rem;">
+                    <aura:iteration items="{!v.changeOverList}" var="dept">   
+                        <tr style="font-size:1.5rem;"><td>
+                            You have pending tenant changeover for DAN :{!dept.Deposit_Account_Number__r.Deposit_Account_Number__c}</td>
+                            <td> <lightning:button variant="brand" value="{!dept.Id}" label="Accept tenant changeover" class="see-all" onclick="{!c.aprvChangeOver}"/>
+                                <lightning:button variant="brand" value="{!dept.Id}" label="Reject tenant changeover" class="see-all" onclick="{!c.rjctChangeOver}"/> 
+                            </td></tr>
+                    </aura:iteration>
+                </table>
+             <!--   <aura:set attribute="else">
+                    <p>No Outstanding Actions</p>
+                </aura:set>-->
+            </aura:renderIf>
+        </aura:renderIf>  
+        <aura:renderIf isTrue="{!!empty(v.outstandingCases)}">  
+            <table style="font-size:1.5rem;color:black; border: 1px solid black;">
+                <thead >
+                    <tr>
+                        <td>
+                            DAN
+                        </td>
+                        <td>
+                            Status
+                        </td>
+                        <td>
+                            Tenant Name
+                        </td>
+                        <td>
+                            Subject
+                        </td>
+                        <td>
+                            Created Date
+                        </td>
+                    </tr>
+                </thead>
+                <aura:iteration items="{!v.outstandingCases}" var="dept">   
+                    <tr style="font-size:1.5rem;border: 1px solid black;"><td>
+                        {!dept.Deposit_Account_Number__r.Deposit_Account_Number__c}
+                        </td>
+                        <td> 
+                            {!dept.Status}
+                        </td>
+                        <td> 
+                            {!dept.Account.Name}
+                        </td>
+                        <td> 
+                            {!dept.Subject}
+                        </td>
+                        <td> 
+                            {!dept.CreatedDate}
+                        </td>
+                    </tr>
+                </aura:iteration>
+            </table>
+        </aura:renderIf>
+    </div>
+    
+</aura:component>

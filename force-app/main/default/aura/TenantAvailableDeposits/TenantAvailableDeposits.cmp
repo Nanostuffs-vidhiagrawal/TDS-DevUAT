@@ -1,0 +1,785 @@
+<aura:component access="global" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes"
+                controller="TenantAvailableDeposit">
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="heldBySafeDepositRecords" type="Object"/>
+    <aura:attribute name="repaymentRequestedTenantRecords" type="Object"/>
+    <aura:attribute name="repaymentRequestedAgentLandlordRecords" type="Object"/>
+    <aura:attribute name="selfResolutionRecords" type="Object"/>
+    <aura:attribute name="inDisputeReolutionRecords" type="Object"/>
+     <aura:attribute name="inDisputeResolRecords" type="Object"/>
+    <aura:attribute name="RepaymentprocessRecords" type="Object"/>
+    <aura:attribute name="repaidinthelastyearRecords" type="Object"/>
+    
+    
+    
+    <aura:attribute name="listOfAllDeposits" type="Object[]"/>
+    <aura:attribute name="unvalidatedRecords" type="Object"/>
+    <aura:attribute name="confirmQuestions" type="Boolean" default="false"/>
+    <aura:attribute name="tenantValidationError" type="boolean" default="false"/>
+    <aura:attribute name="displaySearchDepositRecords" type="Boolean" default="false"/>
+    <aura:attribute name="depositId" type="String"/>
+    <aura:attribute name="postCodeValue" type="String"/>
+    <aura:attribute name="tenantdepositAmount" type="String"/>
+    <aura:attribute name="tenancyStartDateValue" type="String"/>
+    <aura:attribute name="errors" type="String" />
+    <aura:attribute name="searchText" type="string"/>
+    <aura:attribute name="mycolumns" type="List"/>   
+    <aura:attribute name="mycolumns1" type="List"/>
+    <aura:attribute name="mycolumns2" type="List"/>
+    
+    <aura:attribute name="heldBySafeDepositNumber" type="Integer" default="0"/>
+    <aura:attribute name="heldBySafeDepositAmount" type="Decimal" default="0.00"/>
+    <aura:attribute name="inDisputeResolutionNumber" type="Integer" default="0"/>
+    <aura:attribute name="inDisputeResolutionAmount" type="Decimal" default="0.00"/>
+    <aura:attribute name="RepaymentprocessNumber" type="Integer" default="0"/>
+    <aura:attribute name="RepaymentprocessAmount" type="Decimal" default="0.00"/>
+    <aura:attribute name="repaidinthelastyearNumber" type="Integer" default="0"/>
+    <aura:attribute name="repaidinthelastyearAmount" type="Decimal" default="0.00"/>
+    <aura:attribute name="repaymentRequestedTenantNumber" type="Integer" default="0"/>
+    <aura:attribute name="repaymentRequestedAgentLandlordNumber" type="Integer" default="0"/>
+    <aura:attribute name="selfResolutionNumber" type="Integer" default="0"/>
+    <aura:attribute name="repaymentRequestedTenantAmount" type="Decimal" default="0.00"/>
+    <aura:attribute name="repaymentRequestedAgentLandlordAmount" type="Decimal" default="0.00"/>
+    <aura:attribute name="selfResolutionAmount" type="Decimal" default="0.00"/>
+
+    
+
+    <aura:attribute name="selectedyear" type="string" />
+    <aura:attribute name="selectedmonth" type="string" />
+     <aura:attribute name="year" type="List" default="[]"/>
+    <aura:attribute name="noofattampts" type="integer" />
+    <aura:attribute name="remainattempts" type="integer" />
+    <aura:attribute name="answer" type="string" />
+    <aura:attribute name="monthno" type="List" default="[
+    {'label': 'January', 'value': '1'},
+    {'label': 'Febuary', 'value': '2'},
+    {'label': 'March', 'value': '3'},
+    {'label': 'April', 'value': '4'},
+    {'label': 'May', 'value': '5'},
+    {'label': 'June', 'value': '6'},
+    {'label': 'July', 'value': '7'},
+    {'label': 'August', 'value': '8'},
+    {'label': 'September', 'value': '9'},
+    {'label': 'October', 'value': '10'},
+    {'label': 'November', 'value': '11'},
+    {'label': 'December', 'value': '12'}                                                     
+    ]"/>
+    
+    <!--deposit confirmation errors-->
+     <aura:attribute name="postcodeError" type="Boolean" default="false" />
+    <aura:attribute name="depositamountError" type="Boolean" default="false" />
+    <aura:attribute name="monthError" type="Boolean" default="false" />
+    <aura:attribute name="yearError" type="Boolean" default="false" />
+   
+    
+    <!--  new tenant deposit  start -->
+      <body>
+       
+        <!-- Change Detail HTML Start -->
+        <div class="resource-center">
+        
+            <div class="tab-content custom-tab-content" id="sf-tabContent">
+                <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+
+                    <!-- Protect Search HTML Start -->
+                    <section class="protect-search">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="filter-search">
+                                        <input type="text" id="searchValue" class="form-control" placeholder="Enter your search here...." value="{!v.searchText}"/>
+                                        <button type="button" onclick="{! c.handleClick }"></button>
+										<!--<ui:inputText value="{!v.searchText}" class="form-control" placeholder="Search" />
+										<lightning:buttonIcon iconName="utility:search" variant="bare" onclick="{! c.handleClick }" alternativeText="Enter your search here...." class="slds-input__icon" />-->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <!-- Protect Search HTML End -->
+                  <!---  <br/><br/>
+                    <aura:if isTrue="{!v.displaySearchDepositRecords}">
+                        <div class="card mb-0">
+           <div class="table-container-at">
+									<table id="table" class="display table-at table w-100" cellspacing="0" style="word-wrap:break-word;table-layout: fixed;">
+										<thead>
+											<tr>
+                                                <th style="font-weight: bold;font-size: 14px;"> Address</th>
+												<th style="font-weight: bold;font-size: 14px;"> Start date</th>
+												<th style="font-weight: bold;font-size: 14px;">Deposit held</th>
+                                                <th style="font-weight: bold;font-size: 14px;">Deposit account number</th>
+												<th style="font-weight: bold;font-size: 14px;">Tenants</th>
+											</tr>
+										</thead>
+										<tbody>
+										  <aura:if isTrue="{!not(empty(v.listOfAllDeposits))}">
+												<aura:iteration items="{!v.listOfAllDeposits}" var="registeredRecord">
+													<tr>
+                                                        <td style="width:40%;font-size: 14px;"><aura:unescapedHtml value="{!registeredRecord.Property_Address__c}" /></td>
+														<td style="font-size: 14px;">{!registeredRecord.Start_Date_Text__c}</td>
+														<td style="font-size: 14px;">
+                                                         <lightning:formattedNumber value="{!registeredRecord.Deposit_Amount__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/>
+                                                            </td>
+                                                        	<td style="font-size: 14px;">{!registeredRecord.Name}</td>
+														<td style="font-size: 14px;">{!registeredRecord.Number_of_Tenants_Value__c}</td>
+													</tr>
+												</aura:iteration>
+											   <aura:set attribute="else">
+							<tr>
+								<td style="font-size: 14px;">No deposit found as per search</td>
+							</tr>
+						</aura:set>
+					</aura:if> 
+										</tbody>
+									</table>
+								</div>
+                        </div>
+        </aura:if>-->
+
+                    <!-- Table HTML Start -->
+                    <div class="container mt-5">
+                    <div class="at-container">
+                        <div id="accordion-at" class="accordion">
+                            <aura:if isTrue="{!not(empty(v.unvalidatedRecords))}">
+                            <div class="card mb-0">
+                                 <div id="cardHeader1" class="card-header collapsed " type="button" onclick="{!c.hideform}" data-toggle="collapse" data-target="#collapseOne" aria-controls="collapseOne">
+                                    <div class="card-title" >
+										<div class="container" >
+                                            <div class="row">
+                                                <div class="col-md-8 col-6" id="rowHeader11">
+                                                    Your email address is linked to the following deposit(s)–please confirm that you are the tenant
+                                                </div>
+                                                <div class="col-md-2 col-3" id="rowHeader12">
+                                                 <!--  {!v.registeredNotPaidNumber}-->
+                                                </div>
+                                                <div class="col-md-2 col-3" id="rowHeader13">
+                                                 <!--   <lightning:formattedNumber value="{!v.registeredNotPaidAmount}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/>-->
+                           						</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="collapseOne" class="card-body collapse" data-parent="#accordion-at">
+                                    <div class="table-container-at">
+                                        <table id="table" class="display table-at table w-100" cellspacing="0" style="word-wrap:break-word;table-layout: fixed;">
+                                            <thead>
+                                                <tr>
+                                                    <th style="font-weight: bold;">{!$Label.c.Address}</th>
+                                                    <th style="font-weight: bold;">{!$Label.c.Deposit_Account_Number}</th>
+                                                    <th style="font-weight: bold;">{!$Label.c.Number_of_Tenants}</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                              <!--  <aura:if isTrue="{!not(empty(v.unvalidatedRecords))}">-->
+                                                    <aura:iteration items="{!v.unvalidatedRecords}" var="obj">
+                                                        <tr>													
+                                                            <td style="width:40%;"><aura:unescapedHtml value="{!obj.Deposit__r.Property_Address_Without_Postcode__c}" /></td>
+                                                            <td>{!obj.Deposit__r.Name}</td>
+                                                            <td>{!obj.Deposit__r.Number_of_Tenants_Value__c}</td>
+                                                            <td>
+                                                                <aura:if isTrue="{!obj.Number_Of_Attempts__c==3}">
+                                                                    You have used your maximum number of attempts to confirm your deposit’s details. Please contact SafeDeposits Scotland to gain access to your account.
+                                                                  <aura:set attribute="else">
+                                                                <a href="" id="{!obj.Deposit__c}" class="tbl-btn" onclick="{!c.confirmdeposit}"><img id="{!obj.Deposit__c}" src="{!$Resource.TDSTheme + '/assets/img/View_icon.svg'}" alt="View Icon"/> Confirm deposit</a>
+                                                                </aura:set>
+                                                                </aura:if>
+                                                                </td>
+                                                        </tr>
+                                                    </aura:iteration>
+                                                   <!-- <aura:set attribute="else">
+                                                        {!$Label.c.NoUnprotectedDeposits}
+                                                    </aura:set>
+                                                </aura:if> -->    
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <aura:if isTrue="{!v.confirmQuestions}">
+                                    <section class="deposit_steps ">
+                                        <div class="deposit_steps_detail">
+                                        	
+                                        <form>
+                                        <strong style="font-size: 1.2rem">Please confirm the details of your tenancy to see details of the deposit.</strong>
+                                         
+                                            <aura:if isTrue="{!v.postcodeError}">
+                                                <div
+                                                     id="titleErrorErrorAlert"
+                                                     class="alert alert-danger alert-dismissible fade show"
+                                                     >
+                                                    <strong>Error!</strong> Please enter valid postcode.
+                                                    <button
+                                                            type="button"
+                                                            class="close"
+                                                            onclick="{!c.hideBootstrapErrors}"
+                                                            name="postcodecheck"
+                                                            >&times;</button
+                                                        >
+                                                </div>
+                                            </aura:if>
+                                            <aura:if isTrue="{!v.depositamountError}">
+                                                <div
+                                                     id="titleErrorErrorAlert"
+                                                     class="alert alert-danger alert-dismissible fade show"
+                                                     >
+                                                    <strong>Error!</strong> Please enter valid deposit amount.
+                                                    <button
+                                                            type="button"
+                                                            class="close"
+                                                            onclick="{!c.hideBootstrapErrors}"
+                                                            name="depositamountcheck"
+                                                            >&times;</button
+                                                        >
+                                                </div>
+                                            </aura:if>
+                                            <aura:if isTrue="{!v.monthError}">
+                                                <div
+                                                     id="titleErrorErrorAlert"
+                                                     class="alert alert-danger alert-dismissible fade show"
+                                                     >
+                                                    <strong>Error!</strong> Please select the valid month.
+                                                    <button
+                                                            type="button"
+                                                            class="close"
+                                                            onclick="{!c.hideBootstrapErrors}"
+                                                            name="monthcheck"
+                                                            >&times;</button
+                                                        >
+                                                </div>
+                                            </aura:if>
+                                            <aura:if isTrue="{!v.yearError}">
+                                                <div
+                                                     id="titleErrorErrorAlert"
+                                                     class="alert alert-danger alert-dismissible fade show"
+                                                     >
+                                                    <strong>Error!</strong> Please select the valid year.
+                                                    <button
+                                                            type="button"
+                                                            class="close"
+                                                            onclick="{!c.hideBootstrapErrors}"
+                                                            name="yearcheck"
+                                                            >&times;</button
+                                                        >
+                                                </div>
+                                            </aura:if>
+                                            
+                                            
+                                        <div class="form-group row">
+                                            <div class="col-md-6">
+                                    <lightning:input 
+                                         aura:id="postcode"
+                                         value="{!v.postCodeValue}"
+                                         label="Postcode"
+                                         type="text" name="input" 
+                                         placeholder="Enter postcode"/>
+                                            </div>
+                                        </div>
+                                           <div class="form-group row">
+                                            <div class="col-md-6">
+                                        <!--   <lightning:input 
+                                                            aura:id="depositAmount"
+                                                            value="{!v.tenantdepositAmount}"
+                                                            type="Integer" name="input"
+                                                            label="Tenancy deposit amount "
+                                                            title="For joint tenants, please enter the total paid by all tenants, not just your individual contribution."
+                                                            placeholder="Enter deposit amount"
+                                                            messageWhenBadInput="Please enter number"/>-->
+                                                 <lightning:input 
+                                                              aura:id="depositAmount" 
+                                                              type="number"  
+                                                              name="input"
+                                                              label="Tenancy deposit amount"
+                                                              placeholder="Enter deposit amount"
+                                                              formatter="currency"
+                                                              step="0.01" 
+                                                              value="{!v.tenantdepositAmount}"/>
+                                               </div>
+                                               
+                                            </div>
+                                            <div class="form-group row">
+                                          <!--  <div class="col-md-6">
+                        <lightning:input 
+                                         aura:id="tenancyStartDate"
+                                         value="{!v.tenancyStartDateValue}"
+                                         type="month" name="input"  
+                                         placeholder="Enter your tenancy start date"
+                                         label="Tenancy start date"
+                                         messageWhenBadInput="Please enter date"/>
+                                                </div>-->
+                                                <label for="start_date" class="col-sm-12 col-form-label">Tenancy start date</label>
+                                            <div class="col-xs-12 col-sm-3">
+                                                <lightning:combobox class="lightning-dropdown" name="Month" aura:id="mandatory" placeholder="Month" options="{! v.monthno }" onchange="{! c.selectmonth }"/>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-3">
+                                            <lightning:combobox class="lightning-dropdown" name="Year" aura:id="mandatory" placeholder="Year" options="{! v.year }" onchange="{! c.selectyear }"/> <br/>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-4">
+                                            </div>
+                                            </div>
+                                            <aura:if isTrue="{!v.tenantValidationError}">
+                                                <div >
+                                                    <p class="error-msg"> {!v.errors}
+                                                    </p>
+                                                </div>
+                                                <br/>
+                                                <div >
+                                                    <p class="error-msg"> You have {!v.remainattempts} attempts remaining. If you are unsure of your deposit/tenancy details, you may wish to ask your landlord/letting agent or co-tenants for this information
+                                                    </p>
+                                                </div>
+                                            </aura:if>
+                       <div class="form-group row">
+                                            <div class="col-md-12 text-right">
+                                               <!-- <button type="submit" class="see-all" onclick="{! c.handleClick1 }">Create</button>-->
+                                            <lightning:button class="see-all" label="Submit" onclick="{!c.submitTenantDetails}"/>
+                           </div>
+                                            </div>
+                                            </form>
+                                        </div>
+                                        </section><br/><br/><br/><br/>
+                                    </aura:if>
+                                </div>
+                            </div>
+                         </aura:if>  
+                       
+                            <div class="card mb-0">
+                                <div id="cardHeader3" class="card-header collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-controls="collapseThree">
+                                    <div class="card-title">
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col-md-8 col-6" id="rowHeader31">
+                                                    {!$Label.c.Deposits_held_by_SafeDeposits_Scotland}
+                                                </div>
+                                                <div class="col-md-2 col-3" id="rowHeader32">
+                                                    {!v.heldBySafeDepositNumber}
+                                                </div>
+                                                <div class="col-md-2 col-3" id="rowHeader33">
+                                                    <lightning:formattedNumber value="{!v.heldBySafeDepositAmount}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="collapseThree" class="card-body collapse" data-parent="#accordion-at">
+                                    <div class="table-container-at">
+                                        <table id="table" class="display table-at table w-100" cellspacing="0" style="word-wrap:break-word;table-layout: fixed;">
+                                            <thead>
+                                                <tr>
+                                                    <th style="font-weight: bold;">{!$Label.c.Address}</th>
+                                                    <th style="font-weight: bold;">{!$Label.c.Start_Date}</th>
+                                                    <th style="font-weight: bold;">{!$Label.c.Deposit_held}</th>
+                                                    <th style="font-weight: bold;">{!$Label.c.Deposit_Account_Number}</th>
+                                                    <th style="font-weight: bold;">{!$Label.c.Number_of_Tenants}</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <aura:iteration items="{!v.heldBySafeDepositRecords}" var="obj">
+													<tr>													
+														<aura:if isTrue="{!obj.Deposit__c!=null}">
+														<td><aura:unescapedHtml value="{!obj.Deposit__r.Property_Address__c}" /></td>
+														<td>{!obj.Deposit__r.Start_Date_Text__c}</td>
+														<td><lightning:formattedNumber value="{!obj.Deposit__r.Deposit_Amount__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></td>
+														<td>{!obj.Deposit__r.Name}</td>
+														<td>{!obj.Deposit__r.Number_of_Tenants_Value__c}</td>
+														<td>
+															<a href="" id="{!obj.Deposit__c}" class="tbl-btn" onclick="{!c.viewdepositsummary}"><img src="{!$Resource.TDSTheme + '/assets/img/View_icon.svg'}" alt="View Icon"/> View / Edit</a>
+														</td>
+                                                         <aura:set attribute="else">
+                                                          <td><aura:unescapedHtml value="{!obj.Property_Address__c}" /></td>
+														<td>{!obj.Start_Date_Text__c}</td>
+														<td><lightning:formattedNumber value="{!obj.Deposit_Amount__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></td>
+														<td>{!obj.Name}</td>
+														<td>{!obj.Number_of_Tenants_Value__c}</td>
+														<td>
+															<a href="" id="{!obj.Id}" class="tbl-btn" onclick="{!c.viewdepositsummary}"><img src="{!$Resource.TDSTheme + '/assets/img/View_icon.svg'}" alt="View Icon"/> View / Edit</a>
+														</td>
+                                                         </aura:set>      
+                                                      </aura:if>
+													</tr>
+												</aura:iteration>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card mb-0">
+                                <div id="cardHeader4" class="card-header collapsed" type="button" data-toggle="collapse" data-target="#collapseFour"  aria-controls="collapseFour">
+                                    <div class="card-title" >
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col-md-8 col-6" id="rowHeader41">
+                                                    {!$Label.c.Repayment_requested_by_tenant}
+                                                </div>
+                                                <div class="col-md-2 col-3" id="rowHeader42">
+                                                    {!v.repaymentRequestedTenantNumber}
+                                                </div>
+                                                <div class="col-md-2 col-3" id="rowHeader43">
+                                                    <lightning:formattedNumber value="{!v.repaymentRequestedTenantAmount}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="collapseFour" class="card-body collapse" data-parent="#accordion-at">
+                                    <div class="table-container-at">
+                                        <table id="table" class="display table-at table w-100" cellspacing="0" style="word-wrap:break-word;table-layout: fixed;">
+                                            <thead>
+                                                <tr>
+                                                    <th style="font-weight: bold;">{!$Label.c.Address}</th>
+                                                    <th style="font-weight: bold;">{!$Label.c.Start_Date}</th>
+                                                    <th style="font-weight: bold;">{!$Label.c.Deposit_held}</th>
+                                                    <th style="font-weight: bold;">{!$Label.c.Deposit_Account_Number}</th>
+                                                    <th style="font-weight: bold;">{!$Label.c.Number_of_Tenants}</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <aura:iteration items="{!v.repaymentRequestedTenantRecords}" var="obj">
+													<tr>													
+														<aura:if isTrue="{!obj.Deposit__c!=null}">
+														<td><aura:unescapedHtml value="{!obj.Deposit__r.Property_Address__c}" /></td>
+														<td>{!obj.Deposit__r.Start_Date_Text__c}</td>
+														<td><lightning:formattedNumber value="{!obj.Deposit__r.Deposit_Amount__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></td>
+														<td>{!obj.Deposit__r.Name}</td>
+														<td>{!obj.Deposit__r.Number_of_Tenants_Value__c}</td>
+														<td>
+															<a href="" id="{!obj.Deposit__c}" class="tbl-btn" onclick="{!c.viewdepositsummary}"><img src="{!$Resource.TDSTheme + '/assets/img/View_icon.svg'}" alt="View Icon"/> View / Edit</a>
+														</td>
+                                                         <aura:set attribute="else">
+                                                          <td><aura:unescapedHtml value="{!obj.Property_Address__c}" /></td>
+														<td>{!obj.Start_Date_Text__c}</td>
+														<td><lightning:formattedNumber value="{!obj.Deposit_Amount__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></td>
+														<td>{!obj.Name}</td>
+														<td>{!obj.Number_of_Tenants_Value__c}</td>
+														<td>
+															<a href="" id="{!obj.Id}" class="tbl-btn" onclick="{!c.viewdepositsummary}"><img src="{!$Resource.TDSTheme + '/assets/img/View_icon.svg'}" alt="View Icon"/> View / Edit</a>
+														</td>
+                                                         </aura:set>      
+                                                      </aura:if>
+													</tr>
+												</aura:iteration>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+							<div class="card mb-0">
+                                <div id="cardHeader5" class="card-header collapsed" type="button" data-toggle="collapse" data-target="#collapseFive" aria-controls="collapseFive">
+                                    <div class="card-title">
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col-md-8 col-6" id="rowHeader51">
+                                                    {!$Label.c.Repayment_requested_by_agent_landlord}
+                                                </div>
+                                                <div class="col-md-2 col-3" id="rowHeader52">
+                                                    {!v.repaymentRequestedAgentLandlordNumber}
+                                                </div>
+                                                <div class="col-md-2 col-3" id="rowHeader53">
+                                                    <lightning:formattedNumber value="{!v.repaymentRequestedAgentLandlordAmount}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="collapseFive" class="card-body collapse" data-parent="#accordion-at">
+                                    <div class="table-container-at">
+                                         <table id="table" class="display table-at table w-100" cellspacing="0" style="word-wrap:break-word;table-layout: fixed;">
+                                            <thead>
+                                                <tr>
+                                                    <th style="font-weight: bold;">{!$Label.c.Address}</th>
+                                                    <th style="font-weight: bold;">{!$Label.c.Start_Date}</th>
+                                                    <th style="font-weight: bold;">{!$Label.c.Deposit_held}</th>
+                                                    <th style="font-weight: bold;">{!$Label.c.Deposit_Account_Number}</th>
+                                                    <th style="font-weight: bold;">{!$Label.c.Number_of_Tenants}</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <aura:iteration items="{!v.repaymentRequestedAgentLandlordRecords}" var="obj">
+													<tr>													
+														<aura:if isTrue="{!obj.Deposit__c!=null}">
+														<td><aura:unescapedHtml value="{!obj.Deposit__r.Property_Address__c}" /></td>
+														<td>{!obj.Deposit__r.Start_Date_Text__c}</td>
+														<td><lightning:formattedNumber value="{!obj.Deposit__r.Deposit_Amount__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></td>
+														<td>{!obj.Deposit__r.Name}</td>
+														<td>{!obj.Deposit__r.Number_of_Tenants_Value__c}</td>
+														<td>
+															<a href="" id="{!obj.Deposit__c}" class="tbl-btn" onclick="{!c.viewdepositsummary}"><img src="{!$Resource.TDSTheme + '/assets/img/View_icon.svg'}" alt="View Icon"/> View / Edit</a>
+														</td>
+                                                         <aura:set attribute="else">
+                                                          <td><aura:unescapedHtml value="{!obj.Property_Address__c}" /></td>
+														<td>{!obj.Start_Date_Text__c}</td>
+														<td><lightning:formattedNumber value="{!obj.Deposit_Amount__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></td>
+														<td>{!obj.Name}</td>
+														<td>{!obj.Number_of_Tenants_Value__c}</td>
+														<td>
+															<a href="" id="{!obj.Id}" class="tbl-btn" onclick="{!c.viewdepositsummary}"><img src="{!$Resource.TDSTheme + '/assets/img/View_icon.svg'}" alt="View Icon"/> View / Edit</a>
+														</td>
+                                                         </aura:set>      
+                                                      </aura:if>
+													</tr>
+												</aura:iteration>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+							<div class="card mb-0">
+                                <div id="cardHeader6" class="card-header collapsed"  type="button" data-toggle="collapse" data-target="#collapseSix" aria-controls="collapseSix">
+                                    <div class="card-title">
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col-md-8 col-6" id="rowHeader61">
+                                                    {!$Label.c.Self_resolution}
+                                                </div>
+                                                <div class="col-md-2 col-3" id="rowHeader62">
+                                                    {!v.selfResolutionNumber}
+                                                </div>
+                                                <div class="col-md-2 col-3" id="rowHeader63">
+                                                    <lightning:formattedNumber value="{!v.selfResolutionAmount}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="collapseSix" class="card-body collapse" data-parent="#accordion-at">
+                                    <div class="table-container-at">
+                                        <table id="table" class="display table-at table w-100" cellspacing="0" style="word-wrap:break-word;table-layout: fixed;">
+                                            <thead>
+                                                <tr>
+                                                    <th style="font-weight: bold;">{!$Label.c.Address}</th>
+                                                    <th style="font-weight: bold;">{!$Label.c.Start_Date}</th>
+                                                    <th style="font-weight: bold;">{!$Label.c.Deposit_held}</th>
+                                                    <th style="font-weight: bold;">{!$Label.c.Deposit_Account_Number}</th>
+                                                    <th style="font-weight: bold;">{!$Label.c.Number_of_Tenants}</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <aura:iteration items="{!v.selfResolutionRecords}" var="obj">
+													<tr>													
+														<aura:if isTrue="{!obj.Deposit__c!=null}">
+														<td><aura:unescapedHtml value="{!obj.Deposit__r.Property_Address__c}" /></td>
+														<td>{!obj.Deposit__r.Start_Date_Text__c}</td>
+														<td><lightning:formattedNumber value="{!obj.Deposit__r.Deposit_Amount__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></td>
+														<td>{!obj.Deposit__r.Name}</td>
+														<td>{!obj.Deposit__r.Number_of_Tenants_Value__c}</td>
+														<td>
+															<a href="" id="{!obj.Deposit__c}" class="tbl-btn" onclick="{!c.viewdepositsummary}"><img src="{!$Resource.TDSTheme + '/assets/img/View_icon.svg'}" alt="View Icon"/> View / Edit</a>
+														</td>
+                                                         <aura:set attribute="else">
+                                                          <td><aura:unescapedHtml value="{!obj.Property_Address__c}" /></td>
+														<td>{!obj.Start_Date_Text__c}</td>
+														<td><lightning:formattedNumber value="{!obj.Deposit_Amount__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></td>
+														<td>{!obj.Name}</td>
+														<td>{!obj.Number_of_Tenants_Value__c}</td>
+														<td>
+															<a href="" id="{!obj.Id}" class="tbl-btn" onclick="{!c.viewdepositsummary}"><img src="{!$Resource.TDSTheme + '/assets/img/View_icon.svg'}" alt="View Icon"/> View / Edit</a>
+														</td>
+                                                         </aura:set>      
+                                                      </aura:if>
+													</tr>
+												</aura:iteration>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+							
+							<div class="card mb-0">
+                                <div id="cardHeader7" class="card-header collapsed" type="button" data-toggle="collapse" data-target="#collapseSeven" aria-controls="collapseSeven">
+                                    <div class="card-title" id="cardcolor">
+                                        <div class="container" id="divcolor">
+                                            <div class="row" id="rowcolor">
+                                                <div class="col-md-8 col-6" id="rowHeader71">
+                                                    {!$Label.c.In_dispute_resolution}
+                                                </div>
+                                                <div class="col-md-2 col-3" id="rowHeader72">
+                                                    {!v.inDisputeResolutionNumber}
+                                                </div>
+                                                <div class="col-md-2 col-3" id="rowHeader73">
+                                                    <lightning:formattedNumber value="{!v.inDisputeResolutionAmount}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="collapseSeven" class="card-body collapse" data-parent="#accordion-at">
+                                    <div class="table-container-at">
+                                        <table id="table" class="display table-at table w-100" cellspacing="0" style="word-wrap:break-word;table-layout: fixed;">
+                                            <thead>
+                                                <tr>
+                                                    <th style="font-weight: bold;">{!$Label.c.Address}</th>
+                                                    <th style="font-weight: bold;">{!$Label.c.Start_Date}</th>
+                                                    <th style="font-weight: bold;">{!$Label.c.Deposit_held}</th>
+                                                    <th style="font-weight: bold;">{!$Label.c.Deposit_Account_Number}</th>
+                                                    <th style="font-weight: bold;">{!$Label.c.Number_of_Tenants}</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <aura:iteration items="{!v.inDisputeResolRecords}" var="obj">
+													<tr>													
+													<aura:if isTrue="{!obj.Deposit__c!=null}">
+														<td><aura:unescapedHtml value="{!obj.Deposit__r.Property_Address__c}" /></td>
+														<td>{!obj.Deposit__r.Start_Date_Text__c}</td>
+														<td><lightning:formattedNumber value="{!obj.Deposit__r.Deposit_Amount__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></td>
+														<td>{!obj.Deposit__r.Name}</td>
+														<td>{!obj.Deposit__r.Number_of_Tenants_Value__c}</td>
+														<td>
+															<a href="" id="{!obj.Deposit__c}" class="tbl-btn" onclick="{!c.viewdepositsummary}"><img src="{!$Resource.TDSTheme + '/assets/img/View_icon.svg'}" alt="View Icon"/> View / Edit</a>
+														</td>
+                                                         <aura:set attribute="else">
+                                                          <td><aura:unescapedHtml value="{!obj.Property_Address__c}" /></td>
+														<td>{!obj.Start_Date_Text__c}</td>
+														<td><lightning:formattedNumber value="{!obj.Deposit_Amount__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></td>
+														<td>{!obj.Name}</td>
+														<td>{!obj.Number_of_Tenants_Value__c}</td>
+														<td>
+															<a href="" id="{!obj.Id}" class="tbl-btn" onclick="{!c.viewdepositsummary}"><img src="{!$Resource.TDSTheme + '/assets/img/View_icon.svg'}" alt="View Icon"/> View / Edit</a>
+														</td>
+                                                         </aura:set>      
+                                                      </aura:if>
+													</tr>
+												</aura:iteration>
+                                            </tbody>
+                                               
+                                        </table>
+                                    </div>
+                                </div>
+                               
+                            </div>
+							<div class="card mb-0">
+                                <div id="cardHeader8" class="card-header collapsed"  type="button" data-toggle="collapse" data-target="#collapseEight" aria-controls="collapseEight">
+                                    <div class="card-title">
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col-md-8 col-6" id="rowHeader81">
+                                                    {!$Label.c.Repayment_process}
+                                                </div>
+                                                <div class="col-md-2 col-3" id="rowHeader82">
+                                                    {!v.RepaymentprocessNumber}
+                                                </div>
+                                                <div class="col-md-2 col-3" id="rowHeader83">
+                                                    <lightning:formattedNumber value="{!v.RepaymentprocessAmount}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="collapseEight" class="card-body collapse" data-parent="#accordion-at">
+                                    <div class="table-container-at">
+                                        <table id="table" class="display table-at table w-100" cellspacing="0" style="word-wrap:break-word;table-layout: fixed;">
+                                            <thead>
+                                                <tr>
+                                                    <th style="font-weight: bold;">{!$Label.c.Address}</th>
+                                                    <th style="font-weight: bold;">{!$Label.c.Start_Date}</th>
+                                                    <th style="font-weight: bold;">{!$Label.c.Deposit_held}</th>
+                                                    <th style="font-weight: bold;">{!$Label.c.Deposit_Account_Number}</th>
+                                                    <th style="font-weight: bold;">{!$Label.c.Number_of_Tenants}</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <aura:iteration items="{!v.RepaymentprocessRecords}" var="obj">
+													<tr>													
+														<aura:if isTrue="{!obj.Deposit__c!=null}">
+														<td><aura:unescapedHtml value="{!obj.Deposit__r.Property_Address__c}" /></td>
+														<td>{!obj.Deposit__r.Start_Date_Text__c}</td>
+														<td><lightning:formattedNumber value="{!obj.Deposit__r.Deposit_Amount__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></td>
+														<td>{!obj.Deposit__r.Name}</td>
+														<td>{!obj.Deposit__r.Number_of_Tenants_Value__c}</td>
+                                                         <aura:set attribute="else">
+                                                          <td><aura:unescapedHtml value="{!obj.Property_Address__c}" /></td>
+														<td>{!obj.Start_Date_Text__c}</td>
+														<td><lightning:formattedNumber value="{!obj.Deposit_Amount__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></td>
+														<td>{!obj.Name}</td>
+														<td>{!obj.Number_of_Tenants_Value__c}</td>
+                                                         </aura:set>      
+                                                      </aura:if>
+													</tr>
+												</aura:iteration>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+							<div class="card mb-0">
+                                <div id="cardHeader9" class="card-header collapsed" type="button" data-toggle="collapse" data-target="#collapseNine" aria-controls="collapseNine">
+                                    <div class="card-title">
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col-md-8 col-6" id="rowHeader91">
+                                                    <!--{!$Label.c.Deposits_repaid_in_the_last_year}-->
+                                                    Deposit repayments concluded in the last year
+                                                </div>
+                                                <div class="col-md-2 col-3" id="rowHeader92">
+                                                    {!v.repaidinthelastyearNumber}
+                                                </div>
+                                                <div class="col-md-2 col-3" id="rowHeader93">
+                                                    <lightning:formattedNumber value="{!v.repaidinthelastyearAmount}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="collapseNine" class="card-body collapse" data-parent="#accordion-at">
+                                    <div class="table-container-at">
+                                        <table id="table" class="display table-at table w-100" cellspacing="0" style="word-wrap:break-word;table-layout: fixed;">
+                                            <thead>
+                                                <tr>
+                                                    <th style="font-weight: bold;">{!$Label.c.Address}</th>
+                                                    <th style="font-weight: bold;">{!$Label.c.Start_Date}</th>
+                                                    <th style="font-weight: bold;">{!$Label.c.Deposit_held}</th>
+                                                    <th style="font-weight: bold;">{!$Label.c.Deposit_Account_Number}</th>
+                                                    <th style="font-weight: bold;">{!$Label.c.Number_of_Tenants}</th>
+                                                    <th></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <aura:iteration items="{!v.repaidinthelastyearRecords}" var="obj">
+													<tr>													
+														<aura:if isTrue="{!obj.Deposit__c!=null}">
+														<td><aura:unescapedHtml value="{!obj.Deposit__r.Property_Address__c}" /></td>
+														<td>{!obj.Deposit__r.Start_Date_Text__c}</td>
+														<td><lightning:formattedNumber value="{!obj.Deposit__r.Deposit_Amount__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></td>
+														<td>{!obj.Deposit__r.Name}</td>
+														<td>{!obj.Deposit__r.Number_of_Tenants_Value__c}</td>
+                                                         <aura:set attribute="else">
+                                                          <td><aura:unescapedHtml value="{!obj.Property_Address__c}" /></td>
+														<td>{!obj.Start_Date_Text__c}</td>
+														<td><lightning:formattedNumber value="{!obj.Deposit_Amount__c}" style="currency" currencyCode="GBP" minimumFractionDigits="2" maximumFractionDigits="2"/></td>
+														<td>{!obj.Name}</td>
+														<td>{!obj.Number_of_Tenants_Value__c}</td>
+                                                         </aura:set>      
+                                                      </aura:if>
+													</tr>
+												</aura:iteration>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    <!-- Table HTML End -->
+                </div>
+            </div>
+          </div>
+             
+    </body>
+    
+    
+    <!--  new tenent deposit end -->
+    
+    
+    
+    
+    
+   
+    
+</aura:component>

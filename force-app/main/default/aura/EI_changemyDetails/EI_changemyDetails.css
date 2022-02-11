@@ -1,0 +1,55 @@
+.THIS .updateCross{
+    background-color:white;
+}
+.THIS .updatedis{
+    display: block;
+    overflow: hidden;
+    height: 0.934527px;
+    padding-top: 0.0667519px;
+    margin-top: -0.0222506px;
+    padding-bottom:0.0667519px;
+    margin-bottom: 0.0445013px;
+
+}
+.THIS .textAreaClass .slds-textarea {
+    height:180px !important;
+}
+.THIS  .slds-textarea {
+    height:100px !important;
+}
+.THIS.myCard {
+	width:45%;
+    height:45%;
+    margin-left:10%;
+    margin-top:1%;
+}
+.THIS .disNone {
+	display:none!important;
+}
+.THIS .slds-form-element__help{
+    display:none!important;
+}
+
+.THIS .slds-required{
+    text-decoration: none!important;
+}
+
+.THIS .textcolor{
+    color:#6c757d!important;
+}
+
+.THIS .tArea{
+    width: 100%;
+    color:#6c757d!important;
+}
+
+ .THIS .selectin{
+    	width: 100%;
+      margin-top: 15px;
+    	height: 100%;
+    	padding-left: 5px;
+    	font-size: 18px;
+    	font-family: monospace;
+    	border: 1px solid #D9D8D7;
+    	color: #1f2d3d;
+    }

@@ -1,0 +1,10 @@
+.THIS .slds-slider-label__range{
+    display: none !important;
+}
+.THIS .myCustomClass input { 
+    text-align: right !important;
+}
+.THIS .btnNormal { 
+background-color: transparent !important;
+    color: #F45372 !important;
+}

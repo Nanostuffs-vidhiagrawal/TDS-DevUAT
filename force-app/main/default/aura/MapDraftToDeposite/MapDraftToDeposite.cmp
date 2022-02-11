@@ -1,0 +1,7 @@
+<aura:component controller = "MapCertificateDraftToDeposite" implements="forceCommunity:themeLayout,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" access="global" >
+	<aura:attribute name="draftId" type="Id"></aura:attribute>
+    <aura:handler name="init" action="{!c.handleInit}" value="{!this}"></aura:handler>
+    <lightning:navigation aura:id="navService"/>
+    <div style="font-size: initial;
+    padding-left: 50px;">redirecting to payments page...</div>
+</aura:component>

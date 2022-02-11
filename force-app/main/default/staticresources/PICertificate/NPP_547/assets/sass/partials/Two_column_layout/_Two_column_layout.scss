@@ -1,0 +1,222 @@
+.two_column_layout {
+	
+	.layout_image {
+		@include position_relative();
+		.frame_decorative_image {
+			height: $full;
+			width: $full;
+			@include position_absolute(0, auto, auto, auto);
+			background-image: url('../img/new_Frame_blue_small.png');
+			background-repeat: no-repeat;
+			background-size: contain;
+		}
+		img {
+			width: $full;
+			@include space(margin, bottom, $s25);
+		}
+
+		@include respond-below(sm) {
+			@include space(margin, top, $s15);
+			@include space(margin, bottom, $s15);
+		}
+	}
+
+	.layout_text {
+		h5 {
+			@include font_size($lg);
+			@include line_height($xxx_lg);
+			color: map-get($color, light-black);
+
+			@include respond-below(sm) {
+				@include font_size($above_base);
+				@include line_height($xx_lg);
+			}
+
+			@include respond-above(sm) {
+				@include space(margin, bottom, $s30);
+			}
+		}
+
+		p {
+			@include respond-above(sm) {
+				@include space(margin, bottom, $s20);
+			}
+
+			a {
+				&.call-text {
+					@include font_size($xxx_lg);
+					@include space(margin, top, $s10);
+					display: block;
+					@include respond-below(sm) {
+						@include font_size($lg);
+					}
+				}
+			}
+
+			strong {
+				color: map-get($color, light-black);
+			}
+		}
+
+		ul {
+			list-style: disc;
+			@include space(padding, left, $s20);
+			@include space(margin, bottom, $s15);
+		}
+	}
+
+	&.left_image {
+
+		.layout_image {		
+			@include respond-below(sm) {
+				@include space(margin, top, $zero);
+				@include space(margin, bottom, $s15);
+			}
+		}
+	}
+
+	&.two_column_video {
+		background: transparent linear-gradient(180deg, #F9F9F9 0%, #EAF8FC 100%) 0% 0% no-repeat padding-box;
+		@include space(padding, top, $s40);
+		@include space(padding, bottom, $s40);
+		@include respond-below(sm) {
+			@include space(padding, top, $s05);
+			@include space(padding, bottom, $s25);
+		}
+
+		.row {
+			@include flex_properties(left, center, wrap);
+		}
+
+		.layout_text {
+			//text-align: right;
+			//@include respond-below(sm) {
+				//text-align: left;
+			//}
+
+			//.see-all {
+				//@include space(margin, top, $s10);
+				//@include respond-below(sm) {
+					//@include space(margin, bottom, $s15);
+				//}
+			//}
+		}
+
+		.layout_video {
+			@include position_relative();
+			overflow: hidden;
+			cursor: pointer;
+
+			iframe, video {
+				width: $full;
+				min-height: 31.5rem;
+				max-height: 31.5rem;
+
+				@include respond-below(sm) {
+					min-height: 28rem;
+					max-height: 28rem;
+				}
+			}
+
+			.overlay-picture {
+				@include position_absolute($zero, auto, auto, $zero);
+				width: $full;
+
+				img {
+					max-width: $full;
+					width: $full;
+					min-height: 31.5rem;
+
+					@include respond-below(sm) {
+						min-height: 28rem;
+					}
+				}
+			}
+
+			.overlay-play-btn {
+				height: 7.5rem;
+				width: 7.5rem;
+				@include position_absolute(37%, auto, auto, 45%);
+				margin: 0 auto;
+				background-image: url('../img/play-circle.png');
+				background-size: $full;
+				background-repeat: no-repeat;
+
+				@include respond-below(sm) {
+					height: 5.5rem;
+					width: 5.5rem;
+				}
+			}
+		}
+	}
+
+	&.rtl {
+		background: transparent linear-gradient(180deg, #F9F9F9 0%, #EAF8FC 100%) 0% 0% no-repeat padding-box;
+		@include space(padding, top, $s40);
+		@include space(padding, bottom, $s40);
+		@include respond-below(sm) {
+			@include space(padding, top, $s25);
+			@include space(padding, bottom, $s25);
+		}
+		.layout_text {
+			text-align: right;
+			@include respond-below(sm) {
+				text-align: left;
+			}
+
+			.see-all {
+				@include space(margin, top, $s10);
+				@include respond-below(sm) {
+					@include space(margin, bottom, $s15);
+				}
+			}
+		}
+
+		.layout_video {
+			@include position_relative();
+			overflow: hidden;
+			cursor: pointer;
+
+			iframe, video {
+				width: $full;
+				min-height: 31.5rem;
+				max-height: 31.5rem;
+
+				@include respond-below(sm) {
+					min-height: 28rem;
+					max-height: 28rem;
+				}
+			}
+
+			.overlay-picture {
+				@include position_absolute($zero, auto, auto, $zero);
+				width: $full;
+
+				img {
+					max-width: $full;
+					width: $full;
+					min-height: 31.5rem;
+
+					@include respond-below(sm) {
+						min-height: 28rem;
+					}
+				}
+			}
+
+			.overlay-play-btn {
+				height: 7.5rem;
+				width: 7.5rem;
+				@include position_absolute(37%, auto, auto, 45%);
+				margin: 0 auto;
+				background-image: url('../img/play-circle.png');
+				background-size: $full;
+				background-repeat: no-repeat;
+
+				@include respond-below(sm) {
+					height: 5.5rem;
+					width: 5.5rem;
+				}
+			}
+		}
+	}
+}

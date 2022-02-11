@@ -1,0 +1,10 @@
+<aura:component
+    implements="lightning:isUrlAddressable,flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes">
+
+    <!-- Attributes -->
+    <aura:attribute name="successMsg" type="String" />
+    <aura:attribute name="successTitle" type="String" />
+
+    <!-- Handler -->
+    <aura:handler name='init' value='{!this}' action='{!c.doInit}' />
+</aura:component>

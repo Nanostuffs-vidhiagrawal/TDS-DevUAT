@@ -1,0 +1,256 @@
+<aura:component controller="EI_ShowDisputeCommentsController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+   <aura:attribute name="MessageData" type="Object" />
+   <aura:attribute name="spinner" type="boolean" default="true"/>
+   <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
+   <!--loading spinner start--> 
+   <aura:if isTrue="{!v.spinner}">
+      <div class="exampleHolder">
+         <lightning:spinner alternativeText="Loading" size="large" />
+      </div>
+   </aura:if>
+   <!-- Loading spinner end-->
+   <lightning:card title="{!v.MessageData.Type__c}">
+      <table class="slds-table_bordered" style="border: 1px solid rgb(217, 219, 221);" aria-labelledby="element-with-table-label other-element-with-table-label">
+         <tbody>
+            <!--Cleaning-->
+            <aura:if isTrue="{!v.MessageData.Type__c == 'Cleaning'}">
+               <lightning:recordViewForm
+                  recordId="{!v.MessageData.Id}"
+                  objectApiName="Dispute_Item__c">
+                  <div class="">
+                     <table class="slds-col slds-size_12-of-12 slds-p-horizontal_medium">
+                        <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Claim_description_for_cleaning_agll__c" />
+                           </td>
+                        </tr>
+                        <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Supporting_clause_cleaning_agll__c" />
+                           </td>
+                        </tr>
+                        <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Evidence_at_tenancystart_cleaning_agll__c" />
+                           </td>
+                        </tr>
+                        <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Evidence_at_tenancy_end_for_cleaning_agl__c" />
+                           </td>
+                        </tr>
+                        <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Supporting_evidence_for_cleaning_agll__c" />
+                           </td>
+                        </tr>
+                         <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Tenant_Disagree_comment__c" />
+                           </td>
+                        </tr>
+                     </table>
+                  </div>
+               </lightning:recordViewForm>
+            </aura:if>
+            <aura:if isTrue="{!v.MessageData.Type__c == 'Damage'}">
+               <lightning:recordViewForm
+                  recordId="{!v.MessageData.Id}"
+                  objectApiName="Dispute_Item__c">
+                  <div class="">
+                     <table class="slds-col slds-size_12-of-12 slds-p-horizontal_medium">
+                        <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Claim_description_for_damage_agll__c" />
+                           </td>
+                        </tr>
+                        <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Supporting_clause_damage_agll__c" />
+                           </td>
+                        </tr>
+                        <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Evidence_at_tenancystart_damage_agll__c" />
+                           </td>
+                        </tr>
+                        <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Evidence_at_tenancy_end_for_damage_agll__c" />
+                           </td>
+                        </tr>
+                        <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Supporting_evidence_for_damage_agll__c" />
+                           </td>
+                        </tr>
+                         <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Tenant_Disagree_comment__c" />
+                           </td>
+                        </tr>
+                     </table>
+                  </div>
+               </lightning:recordViewForm>
+            </aura:if>
+            <aura:if isTrue="{!v.MessageData.Type__c == 'Gardening'}">
+               <lightning:recordViewForm
+                  recordId="{!v.MessageData.Id}"
+                  objectApiName="Dispute_Item__c">
+                  <div class="">
+                     <table class="slds-col slds-size_12-of-12 slds-p-horizontal_medium">
+                        <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Claim_description_for_gardening_agll__c" />
+                           </td>
+                        </tr>
+                        <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Supporting_clause_gardening_agll__c" />
+                           </td>
+                        </tr>
+                        <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Evidence_at_tenancystart_gardening_agll__c" />
+                           </td>
+                        </tr>
+                        <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Evidence_at_tenancyend_gardening_agll__c" />
+                           </td>
+                        </tr>
+                        <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Supporting_evidence_for_gardening__c" />
+                           </td>
+                        </tr>
+                         <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Tenant_Disagree_comment__c" />
+                           </td>
+                        </tr>
+                     </table>
+                  </div>
+               </lightning:recordViewForm>
+            </aura:if>
+            <aura:if isTrue="{!v.MessageData.Type__c == 'Rent'}">
+               <lightning:recordViewForm
+                  recordId="{!v.MessageData.Id}"
+                  objectApiName="Dispute_Item__c">
+                  <div class="">
+                     <table class="slds-col slds-size_12-of-12 slds-p-horizontal_medium">
+                        <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Rent_arrears_description_agll__c" />
+                           </td>
+                        </tr>
+                        <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Was_the_property_re_let_rent_agll__c" />
+                           </td>
+                        </tr>
+                        <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Supporting_clause_rent_agll__c" />
+                           </td>
+                        </tr>
+                        <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Supporting_evidence_for_rent_agll__c" />
+                           </td>
+                        </tr>
+                         <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Tenant_Disagree_comment__c" />
+                           </td>
+                        </tr>
+                     </table>
+                  </div>
+               </lightning:recordViewForm>
+            </aura:if>
+            <aura:if isTrue="{!v.MessageData.Type__c == 'Redecoration'}">
+               <lightning:recordViewForm
+                  recordId="{!v.MessageData.Id}"
+                  objectApiName="Dispute_Item__c">
+                  <div class="">
+                     <table class="slds-col slds-size_12-of-12 slds-p-horizontal_medium">
+                        <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Claim_description_for_redecoration_agll__c" />
+                           </td>
+                        </tr>
+                        <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Supporting_clause_redecoration_agll__c" />
+                           </td>
+                        </tr>
+                        <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Evidence_at_tenancystart_redecoration_ag__c" />
+                           </td>
+                        </tr>
+                        <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Evidence_at_tenancyend_redecoration_agll__c" />
+                           </td>
+                        </tr>
+                        <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Supporting_evidence_for_redecoration_agl__c" />
+                           </td>
+                        </tr>
+                         <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Tenant_Disagree_comment__c" />
+                           </td>
+                        </tr>
+                     </table>
+                  </div>
+               </lightning:recordViewForm>
+            </aura:if>
+            <aura:if isTrue="{!v.MessageData.Type__c == 'Other'}">
+               <lightning:recordViewForm
+                  recordId="{!v.MessageData.Id}"
+                  objectApiName="Dispute_Item__c">
+                  <div class="">
+                     <table class="slds-col slds-size_12-of-12 slds-p-horizontal_medium">
+                        <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Claim_breakdown_other_AGLL__c" />
+                           </td>
+                        </tr>
+                        <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Supporting_clause_other_agll__c" />
+                           </td>
+                        </tr>
+                        <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Supporting_evidence_for_other_agll__c" />
+                           </td>
+                        </tr>
+                        <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Other_Reason__c" />
+                           </td>
+                        </tr>
+                        <aura:if isTrue="{!v.MessageData.RecordType.Name == 'SDS Dispute Item'}">
+                           <tr>
+                              <td class="" scope="col">
+                                 <lightning:outputField fieldName="Tenant_Statement__c" />
+                              </td>
+                           </tr>
+                        </aura:if>
+                        <tr>
+                           <td class="" scope="col">
+                              <lightning:outputField fieldName="Tenant_Disagree_comment__c" />
+                           </td>
+                        </tr>
+                     </table>
+                  </div>
+               </lightning:recordViewForm>
+            </aura:if>
+         </tbody>
+      </table>
+   </lightning:card>
+</aura:component>

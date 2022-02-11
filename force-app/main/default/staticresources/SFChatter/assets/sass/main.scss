@@ -1,0 +1,87 @@
+//Bootstrap File
+@import "bootstrap/bootstrap";
+@import "bootstrap/bootstrap-grid";
+@import "bootstrap/bootstrap-reboot";
+
+//slick slider
+@import "slick/slick";
+
+//Data Table
+@import "dataTable/dataTable";
+@import "dataTable/dataTable.responsive";
+
+//Date Picker
+@import "datePicker/datePicker";
+
+
+// Partial Files
+@import "partials/global/variable";
+@import "partials/global/mixin";
+@import "partials/global/base";
+@import "partials/font/fonts";
+@import "partials/global/typography";
+@import "partials/buttons/buttons";
+@import "partials/forms_element/forms-element";
+@import "partials/navigation/navigation";
+@import "partials/footer/footer";
+@import "partials/footer/copyright";
+@import "partials/Hero_Banner/HERO";
+@import "partials/latest-topics/latest-topics";
+@import "partials/How_it_works/how-it-works";
+
+
+@import "partials/Two_column_layout/Two_column_layout";
+@import "partials/One_column_layout/One_column_layout";
+@import "partials/two_card_grid/two_card_grid";
+@import "partials/about-us/about-us";
+@import "partials/contaceSafeDeposit/contaceSafeDeposit";
+@import "partials/overlay_box/overlay_box";
+@import "partials/get_In_Touch/get_In_Touch";
+@import "partials/get_In_Touch/get_In_Touch_form";
+@import "partials/Login/login-banner";
+@import "partials/Login/login-details";
+@import "partials/Login/login-banner-form";
+@import "partials/tabs/tabs";
+@import "partials/tags/tags";
+@import "partials/single_block/single_block";
+@import "partials/sf_custom-forms/sf_custom-forms";
+@import "partials/sf_single_square-box/sf_single_square-box";
+@import "partials/sf_input-range/sf_input-range";
+@import "partials/switching-component/switching-component";
+@import "partials/support_block/support_block";
+@import "partials/accordion/accordion-white";
+@import "partials/accordion/accordion-gray";
+@import "partials/table/table";
+@import "partials/global/scrollbar";
+@import "partials/search_bar/search_bar";
+@import "partials/deposit-summary/deposit-summary";
+@import "partials/popup/popup";
+@import "partials/job_description/job_description";
+@import "partials/slider/slider";
+@import "partials/back-navigation/back-navigation";
+@import "partials/loader/loader";
+@import "partials/step-form/step-form.scss";
+@import "partials/building-certification/building-certification";
+@import "partials/accordion-table/accordion-table";
+@import "partials/apply-job/apply-job";
+@import "partials/pagination/pagination";
+@import "partials/deposit_step_count/deposit_step_count";
+@import "partials/landlord_login/landlord_login";
+@import "partials/tenant_changeover/tenant_changeover";
+@import "partials/my_option/my_option";
+@import "partials/verification-step/verification-step";
+@import "partials/thank-you/thank-you";
+@import "partials/request_repayment/request_repayment";
+@import "partials/agree_box/agree_box";
+@import "partials/nnp/nnp_page";
+@import "partials/certificate-page/certificate-page";
+@import "partials/deposit_calculator/deposit_calculator";
+
+
+@import "partials/ZD_theme/ZD_theme";
+
+@import "partials/SDS_default_theme/SDS_default_theme";
+
+html {
+	font-size: 62.5%; /* Sets up the Base 10 stuff */
+}

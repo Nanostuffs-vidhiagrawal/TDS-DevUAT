@@ -1,0 +1,56 @@
+.get_In_Touch_form {
+	box-shadow: 0px 20px 60px #3E3E3E29;
+	@include space(padding, top, $s25);
+	@include space(padding, bottom, $s25);
+	@include space(padding, left, $s20);
+	@include space(padding, right, $s20);
+	text-align: right;
+
+	label {
+		@include font_size($base);
+		color: map-get($color, gray);
+		text-align: left;
+		width: $full;
+		@include space(margin, bottom, $s15);
+
+		span {
+			&.mandatory-field {
+				color: map-get($color, red);
+			}
+		}
+	}
+
+	input, select {
+		border: none;
+		border-bottom: 1px solid rgba(0,0,0,0.3);
+		@include font_size($base);
+		@include space(padding, all, $zero);
+		@include space(padding, bottom, $s15);
+		@include border_radius($zero);
+		opacity: 0.5;
+		transition: 0.3s;
+
+		&:hover, &:focus {
+			border: none;
+			border-bottom: 1px solid rgba(0,0,0,0.3);
+			outline: $zero;
+		    box-shadow: 0 0 black;
+		}
+
+		&:focus {
+			opacity: 1;
+		}
+	}
+
+	.look-up {
+		@include position_absolute(auto, 15px, 15px, auto);
+	}
+
+	.see-all {
+		@include space(margin, top, $s15);
+	}
+
+	@include respond-below(sm) {
+		@include space(padding, all, $s15);
+	}
+}

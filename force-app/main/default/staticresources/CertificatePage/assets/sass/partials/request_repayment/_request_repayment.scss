@@ -1,0 +1,212 @@
+.flex3{
+	flex: 3;
+	padding:0 $s05;
+}
+.flex1{
+	flex: 1;
+	padding:0 $s05;
+}
+
+.hasDatepicker{
+	position: absolute;
+	z-index: -1;
+	opacity: 0;
+	visibility: hidden;
+	width: 0px;
+}
+
+.calander-icon{
+	background-color: map-get($color, light_blue ); 
+	width: $s40;
+    height: $s40;
+    display: flex;
+	@include flex_properties(center, center);
+    border-radius: 4px;
+}
+
+.danger{
+	 border : 1px solid map-get($color, maroon) !important
+}
+
+.deposit_box_container {
+	display: flex;
+
+	@include respond-below(xs) {
+		flex-wrap: wrap;
+	}
+	
+	.deposit_box {
+		width: 49%;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		@include space(margin, right, $s15);
+
+		@include respond-below(xs) {
+			width: 100%;
+			@include space(margin, right, $zero);
+		}
+
+		&:last-child {
+			@include space(margin, right, $zero);
+		}
+
+		&:first-child, &:nth-child(2) {
+			img {
+				max-height: 85px;
+			}
+		}
+
+		h5 {
+			@include space(margin, bottom, $s05);
+		}
+
+		h6 {
+			@include space(margin, bottom, $zero);
+		}
+	}
+}
+
+.deposit_box {
+	@include border(1px ,solid, rgba(0, 0, 0, 0.1));
+	@include space(padding, top, $s10);
+	@include space(padding, bottom, $s10);
+	@include space(padding, left, $s15);
+	@include space(padding, right, $s15);
+	@include space(margin, bottom, $s45);
+
+	@include respond-below(sm) {
+		@include space(margin, bottom, $s25);
+	}	
+
+	&.deposit_danger {
+		margin-bottom: $zero !important;
+		h6 {
+			color: map-get($color, red);
+		}
+	}
+}
+
+.deposit-error {
+	color: map-get($color, red);
+	margin-bottom: $s45 !important;
+	margin-top: $s10 !important;
+
+	@include respond-below(sm) {
+		margin-bottom: $s25 !important;
+	}
+}
+
+.bg-blue-light{
+	background-color: #f2f9ff;
+	
+}
+
+.request_table {
+	@include space(margin, top, $s25);
+
+	@include respond-below(sm) {
+		@include space(margin, top, $s15);
+	}
+
+	label {
+		@include space(margin, bottom, $s45);
+
+		@include respond-below(sm) {
+			@include space(margin, bottom, $s25);
+		}
+	}
+
+	p {
+		@include font_size($below_base);
+		color: map-get($color, light-black);
+	}
+
+	& > p {
+		margin-bottom: $s20 !important;
+	}
+
+	.request_table_box {
+		border-top: 1px solid rgba(0, 0, 0, 0.1);
+		border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+		@include space(padding, all, $s05);
+		@include space(margin, bottom, 0.8rem);
+		min-height: 8.5rem;
+
+		.request_table_text {
+			display: flex;
+			justify-content: space-between;
+			margin-bottom: $zero !important;
+			@include space(padding, bottom, $s25);
+
+			&:last-child {
+				@include space(padding, bottom, $zero);
+			}
+
+			span {
+				&:first-child {
+					width: 50%;
+				}
+				width: 33%;
+			}
+		}
+	}
+
+	.request_table_total {
+		background-color: map-get($gray_shade, gray03);
+
+		.request_table_text {
+			display: flex;
+			justify-content: space-between;
+			font-weight: bold;
+			@include space(padding, all, $s10);
+
+			span {
+				&:first-child {
+					width: 50%;
+				}
+				width: 33%;
+			}
+		}
+	}
+
+	.request_table_label {
+		display: flex;
+		justify-content: space-between;
+		
+
+		label {
+			@include space(margin, bottom, $s10);
+			font-size: 14px !important;
+			&:first-child {
+				width: 50%;
+			}
+			&:nth-child(2) {
+				@include space(margin, right, $s05);
+			}
+			width: 33%;
+		}
+	}
+}
+
+.happens_next_block {
+	text-align: left;
+	max-width: 70rem;
+	margin: 0 auto;
+	background-color: rgba(143,220,255,0.1);
+	border-radius: $s20;
+	@include space(padding, all, $s25);
+	@include space(margin, top, $s45);
+
+	@include respond-below(sm) {
+		@include space(padding, all, $s15);
+		@include space(margin, top, $s25);
+	}
+
+	p {
+		@include font_size($below_base);
+		max-width: 70rem;
+	}
+}
+
+

@@ -1,0 +1,16 @@
+.THIS .see-all{
+    margin-top: 0;
+}
+.THIS .hideFlow{
+    display:none;
+    opacity: 0;
+        transition: opacity linear 0.1s;
+}
+
+.THIS .login{
+    width:95%;
+}
+.THIS .errormessag{
+    font-size:1.4rem;
+    color:red;
+}

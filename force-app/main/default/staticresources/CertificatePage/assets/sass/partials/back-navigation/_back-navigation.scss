@@ -1,0 +1,27 @@
+.back-navigation {
+	box-shadow: 0px 3px 2px #00000029;
+	@include space(padding, bottom, $s15);
+	@include space(margin, bottom, $s45);
+	
+	.container {
+		position: relative;
+	}
+
+	@include respond-below(sm) {
+		@include space(margin, bottom, $s25);
+	}
+
+	a {
+		@include font_size($above_base);
+		color: map-get($color, light-black);
+		text-decoration: none;
+	}
+
+	a {
+		&.download_pdf {
+			position: absolute;
+			right: $s15;
+			top: $zero;
+		}
+	}
+}

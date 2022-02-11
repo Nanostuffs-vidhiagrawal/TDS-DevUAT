@@ -1,0 +1,67 @@
+.overlay-box {
+	@include position_relative();
+	@include respond-below(sm) {
+		@include space(margin, bottom, $s15);
+	}
+	&__text {
+		@include position_absolute(0, auto, auto, auto);
+		height: $full;
+		width: $full;
+		background-color: rgba(69, 124, 191, 0.8);
+		@include space(padding, all, $s30);
+
+		@include respond-below(sm) {
+			@include space(padding, all, $s15);
+		}
+
+		h5, p {
+			color: map-get($color, white);
+		}
+
+		h5 {
+			overflow: hidden;
+		    display: -webkit-box;
+		    -webkit-line-clamp: 1;
+		    -webkit-box-orient: vertical;
+		}
+
+		p {
+			overflow: hidden;
+		    display: -webkit-box;
+		    -webkit-line-clamp: 3;
+		    -webkit-box-orient: vertical;
+			@include respond-above(sm) {
+				@include font_size($above_base);
+			}
+		}
+
+		.learn-more {
+			@include position_absolute(auto, 30px, 20px, auto);
+
+			@include respond-below(sm) {
+				@include position_absolute(auto, 15px, 15px, auto);
+			}
+		}
+	}
+
+	img {
+		max-width: $full;
+		width: $full;
+	}
+} 
+
+.overlay-box-container {
+	@include space(padding, top, $s55);
+	@include respond-below(sm) {
+		@include space(padding, top, $s25);
+	}
+	&.three-col {
+		.overlay-box {
+			picture {
+				img {
+					min-height: 22rem;
+				}
+			}
+		}
+	}
+}

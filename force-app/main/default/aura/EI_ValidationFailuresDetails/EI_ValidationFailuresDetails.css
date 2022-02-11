@@ -1,0 +1,75 @@
+.THIS .slds-form-element__help{
+    font-size:1.3rem;
+}
+.THIS .slds-input{
+     height: 36px;
+}
+.THIS .dataTables_empty{
+    display:none!important;
+}
+.THIS .lookupbtn{
+    font-size: 1.2rem;
+    font-family: Aller_regular!important;
+    border-radius: 3rem;
+    border-width: 2px;
+    border-style: solid;
+    border-color: #32669e;
+    background-color: #fff;
+    color: #32669e;
+    transition: .3s;
+    padding-top: .7rem;
+    padding-bottom: .7rem;
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+    margin-right: 8%;
+  
+}
+.THIS .textcss{
+    font-family: Aller_regular!important;
+    text-align: left!important;
+    color: #212529!important;
+    font-weight: 400!important;
+    line-height: 1.5!important;
+    font-size: 15px!important;
+    border-top: none;
+    border-bottom: none;
+    padding: 8px 18px;
+}
+
+.THIS .headingtext{
+    text-align:left;
+    padding: 16px 18px;
+    border-bottom: none!important;
+    font-weight: bold;
+    background-color: #F5F6FA;
+    font-size: 15px!important;
+    line-height: 1.5;
+    color:#212529;
+    border-top: none!important;
+    font-family: Aller_regular;
+}
+
+.THIS .dataTables_empty{
+    display:none!important;
+}
+
+.THIS .modal-backdrop {
+    z-index: 0!important;
+}
+
+.THIS .dynamic{
+    height: 4rem!important;
+}
+
+
+.THIS .textcss1{
+    font-family: Aller_regular!important;
+    text-align: left!important;
+    color: #212529!important;
+    font-weight: 400!important;
+    line-height: 1.5!important;
+    font-size: 15px!important;
+    border-top: none;
+    border-bottom: none;
+    padding: 2px 14px;
+}

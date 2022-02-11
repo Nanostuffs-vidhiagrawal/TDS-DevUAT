@@ -1,0 +1,398 @@
+.form-control {
+	&:focus {
+		@include border(1px, solid, map-get($color, blue));
+		box-shadow: 0 0 0 0.2rem rgba(50, 102, 158, 0.25)
+	}
+}
+
+// Input Style
+.search-input {
+	@include font_size($lg);
+	border: none;
+	@include space(padding, all, $zero);
+	@include position_absolute(auto, auto, auto, 15%);
+	transition: all 0.3s;
+	height: $s50;
+
+	&:focus {
+		box-shadow: none;
+		border: none;
+		border-bottom: 1px solid map-get($gray_shade, gray04);
+	}
+
+	@include respond-below(md) {
+		@include position_absolute($s15, auto, auto, $s15);
+	}
+
+	@include respond-below(sm) {
+		@include font_size($base);
+	}
+}
+
+.banner_form-expand__tab {
+	
+	input, select {
+		background-color: transparent !important;
+		border: none;
+		border-bottom: 1px solid rgba(255,255,255,0.4);
+		@include font_size($below_base);
+		color: map-get($banner-form-color, light-gray);
+		@include space(padding, left, $zero);
+		@include space(padding, right, $zero);
+		@include space(padding, top, $zero);
+
+		@include respond-below(sm) {
+			@include font_size($sm);
+		}
+
+		&:focus {
+			border: none;
+			border-bottom: 1px solid rgba(255,255,255,0.8);
+			box-shadow: none;
+			color: map-get($color, white);
+		}
+
+		option {
+			color: map-get($color, gray);
+		}
+	}
+
+	select {
+		@include space(padding, bottom, $s10);
+		height: auto;
+	}
+
+	label {
+		@include respond-below(sm) {
+			@include font_size($sm);
+		}
+	}
+}
+
+.file_section {
+	border: 4px dashed map-get($color, blue);
+	@include border_radius(5px);
+	@include space(padding, bottom, $s30);
+	@include space(padding, top, $s30);
+	@include space(padding, left, $s45);
+	@include space(padding, right, $s45);
+
+	&.no_border {
+		border: none;
+		@include space(padding, left, $zero);
+		@include space(padding, right, $zero);
+		@include space(padding, bottom, $zero);
+
+		&.with_para {
+			@include space(padding, top, 0.7rem);
+		}
+
+		.select_file_section {
+			display: flex;
+			justify-content: space-between;
+
+			.no_file {
+				@include space(margin, bottom, $zero);
+				span {
+					@include space(margin, right, $s15);
+				}
+			}
+
+			.upload_btns {
+				.close {
+					float: none;
+					opacity: 1;
+					@include space(margin, right, 0.7rem);
+				}
+
+				.tbl-btn {
+					@include space(margin, right, 0.7rem);
+					@include space(padding, left, $s20);
+					@include space(padding, right, $s20);
+
+					@include respond-below(sm) {
+						@include space(padding, left, 0.7rem);
+						@include space(padding, right, 0.7rem);
+					}
+
+					img {
+						@include space(margin, right, 0.7rem);
+						
+    					@include respond-below(sm) {
+    						top: -2px;
+    						position: relative;
+    					}
+					}
+				}
+			}
+		}
+	}
+
+	.row {
+		align-items: center;
+	}
+
+	@include respond-below(sm) {
+		@include space(padding, bottom, $s15);
+		@include space(padding, top, $s15);
+		@include space(padding, left, $s20);
+		@include space(padding, right, $s20);
+	}
+
+	input {
+		height: 18.5rem !important;
+    	opacity: 0 !important;
+    	cursor: pointer;
+	}
+
+	.custom_file {
+		width: $full;
+		text-align: center;
+		position: absolute;
+		top: $zero;
+		left: $zero;
+		z-index: -9;
+
+		img {
+			transform: rotate(180deg);
+    		width: 5rem;
+    		@include space(margin, bottom, $s20);
+		}
+
+		p {
+			text-align: center !important;
+			font-weight: bold;
+		}
+	}
+
+	.select_file_section {
+
+		.upload_range_part {
+
+			position: relative;
+			display: flex;
+			justify-content: space-between;
+    		align-items: flex-start;
+
+			div {
+				&:first-child {
+					width: $full;
+					position: relative;
+				}
+			}
+
+			.upload_btns {
+				display: flex;
+
+				.close {
+					@include font_size($xxx_lg);
+					@include line_height($x_sm);
+					color: map-get($color, blue);
+					opacity: 1;
+					@include space(margin, left, 0.7rem);
+
+					&:focus {
+						outline: 0;
+					}
+
+					&.check {
+						@include space(margin, top, -6px);
+						img {
+							width: 2.2rem;
+						}
+					}
+
+					&.trash {
+						@include space(margin, top, -9px);
+						img {
+							width: 2.4rem;
+						}
+					}
+				}
+			}
+
+			.upload_range {
+				display: block;
+				width: $full;
+				background-color: map-get($color, blue);
+				@include space(padding, all, 0.4rem);
+				@include space(margin, bottom, 0.8rem);
+				opacity: 0.4;
+			}
+
+			.success_upload {
+				display: block;
+				background-color: map-get($color, blue);
+				@include space(padding, all, 0.4rem);
+				@include space(margin, bottom, 0.8rem);
+				opacity: 1;
+				position: absolute;
+				top: $zero;
+				left: $zero;
+			}
+		}
+
+		&.success {
+			.no_file {
+				& > span {
+					background-color: map-get($color, green);
+				}
+			}
+		}
+
+		&.none {
+			.no_file {
+				& > span {
+					background-color: transparent;
+					border: 1px dashed map-get($color, light_blue);
+				}
+			}
+		}
+		
+		.no_file {
+
+			display: flex;
+			align-items: center;
+			@include space(margin, bottom, $s25);
+
+			& > span {
+				background-color: map-get($color, blue);
+				@include border_radius(50px);
+				width: $s50;
+				height: $s50;
+				min-width: $s50;
+				min-height: $s50;
+				@include space(margin, right, $s25);
+				display: flex;
+			    align-items: center;
+			    justify-content: center;
+			    color: map-get($color, white);
+			    @include font_size($sm);
+			    font-weight: bold;
+
+			    @include respond-below(sm) {
+			    	width: $s40;
+					height: $s40;
+					min-width: $s40;
+					min-height: $s40;
+					font-weight: initial;
+					@include font_size($below_base);
+					@include space(margin, right, $s10);
+			    }
+			}
+
+			p {
+				margin-bottom: $zero !important	;
+				font-weight: bold;
+				word-break: break-word;
+
+				@include respond-below(sm) {
+					@include font_size($below_base);
+				}
+
+				&.image_desc {
+					word-break: initial;
+
+					@include respond-below(md) {
+						display: block;
+					}
+
+					span {
+						@include respond-below(md) {
+							@include space(margin, right, $s10);
+							@include space(margin, left, $zero);
+							display: block;
+						}
+					}
+				}
+			}
+		}
+
+		.upload_btns {
+			@include space(margin, all, $zero);
+			min-width: 13rem;
+
+			@include respond-below(sm) {
+				min-width: 11rem;
+			}
+
+			.close {
+				@include space(margin, right, $zero);
+			}
+		}
+	}
+}
+
+.evi_label {
+	& ~ .row {
+		.alert {
+			border-radius: $zero;
+			@include space(margin, top, $s25);
+		}
+	}
+}
+
+.no_border {
+	& ~ .row {
+		.alert {
+			border-radius: $zero;
+			@include space(margin, top, $s25);
+
+			.questionsmark {
+				display: inline-block;
+				@include space(margin, left, $s10);
+
+				a {
+					color: map-get($color, light-black);
+					@include font_size($below_base);
+    				text-decoration: underline;
+				}
+			}
+		}
+	}
+}
+
+.blue-clr {
+	color: map-get($color, light_blue);
+}
+
+.image_input {
+	input {
+		height: auto !important;
+		opacity: 1 !important;
+		cursor: initial;
+	}
+}
+
+.image_desc {
+	display: flex;
+	justify-content: space-between;
+
+	span {
+		@include space(margin, left, $s15);
+	}
+}
+
+.range_form_group {
+	position: relative;
+
+	.input_range {
+		width: 67%;
+	}
+
+	.slds-slider__value {
+		position: absolute;
+		top: 61%;
+		right: 0;
+		@include font_size($below_base);
+	}
+}
+
+.sds_panel {
+	border: 5px solid map-get($color, blue) !important;
+	padding: $s25 !important;
+
+	p {
+		margin-bottom: $s10 !important;
+	}
+}

@@ -1,0 +1,31 @@
+<aura:component   access="global" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes"
+                controller="RequestRepaymentOfDepositController">
+    
+    <aura:attribute name="depositRecordId" type="String" />
+    <aura:attribute name="repaymentRequestRecordId" type="String" />
+    <aura:attribute name="repaymentRequest" type="Repayment_Request__c"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <lightning:navigation aura:id="navService" />
+    
+    <div class="tab-content custom-tab-content" id="sf-tabContent">            
+            <div class="tab-pane fade show active" id="sf-deposit" role="tabpanel" aria-labelledby="sf-deposit-tab">
+                <div class="thank_you">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <img src="{!$Resource.TDSTheme + '/assets/img/thank-you.png'}" alt="thank you"/>
+                                <h2>Thank You!</h2>
+                                <p>You have successfully completed your repayment request.</p>
+                                <div class="happens_next_block">
+                                    <h6>What happens next?</h6>
+                                    <p>We will now ask the tenant to respond to your repayment request. They have 30 working days (excluding today) to respond. If they agree, SafeDeposits Scotland will pay the deposit according to the request within 5 working days. If the tenant disagrees, you will be advised of this and an additional 10 working days will be given for negotiations.</p>
+                                </div>
+                                <a href="" class="see-all" onclick="{!c.goBackDepositRecord}">Go to deposit summary</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+</aura:component>

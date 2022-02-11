@@ -1,0 +1,70 @@
+.one_column_layout {
+	.layout_text {
+		h5 {
+			@include font_size($lg);
+			@include line_height($xxx_lg);
+			color: map-get($color, light-black);
+
+			@include respond-below(sm) {
+				@include font_size($above_base);
+				@include line_height($xx_lg);
+			}
+		}
+
+		ul {
+			list-style: disc;
+			@include space(padding, left, $s20);
+			@include space(margin, bottom, $s15);
+		}
+
+		p {
+			@include respond-above(sm) {
+				@include space(margin, bottom, $s20);
+			}
+
+			strong {
+				color: map-get($color, light-black);
+			}
+		}
+	}
+
+	.layout_image {
+		@include position_relative();
+		max-width: 48.5%;
+		float: right;
+		@include space(margin, bottom, $s15);
+		@include space(margin, left, $s30);
+		@include respond-below(sm) {
+			max-width: $full;
+			float: none;
+			@include space(margin, left, $zero);
+		}
+
+		&.image-left {
+			float: left;
+			@include space(margin, left, $zero);
+			@include space(margin, right, $s30);
+
+			@include respond-below(sm) {
+				float: none;
+				@include space(margin, right, $zero);
+			}
+		}
+
+		.frame_decorative_image {
+			height: $full;
+			width: $full;
+			@include position_absolute(0, auto, auto, auto);
+			background-image: url('../img/new_Frame_blue_small.png');
+			background-repeat: no-repeat;
+			background-size: contain;
+		}
+		img {
+			width: $full;
+		}
+
+		@include respond-below(sm) {
+			@include space(margin, top, $s15);
+		}
+	}
+}

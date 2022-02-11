@@ -1,0 +1,177 @@
+<aura:component
+  implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+  access="global"
+  controller="EI_ChangemyDetails"
+>
+  <aura:attribute
+    name="con"
+    type="Contact"
+    default="{'sObjectType':'Contact'}"
+  />
+
+  <aura:attribute
+    name="acc"
+    type="Account"
+    default="{'sObjectType':'Account'}"
+  />
+
+  <aura:attribute
+    name="orgAcc"
+    type="Map"
+    default="{accName:null,regCompName:null,tradName:null,regCompNo:null,phn:null,add:null}"
+  />
+    
+  <aura:attribute
+    name="orgAdd"
+    type="Map"
+    default="{Country__c:null,Postcode__c:null,Town_City__c:null,County__c:null,Address__c:null}"
+  />  
+<aura:attribute name="textareaval" type="string" />
+    
+  <aura:attribute name="errmsg" type="string" />
+  <aura:attribute name="loggedinuser" type="User" />
+  
+  <aura:attribute name="fieldnotEdit" type="Boolean" default="true" />
+  <aura:attribute name="fieldBankDetailsEdit" type="Boolean" default="true" />
+  <aura:attribute name="toggle" type="Boolean" default="true" />
+  <aura:attribute name="toggleBankDetails" type="Boolean" default="true" />
+  <aura:attribute name="openmodel" type="boolean" default="false" />
+  <aura:attribute name="salutationMap" type="Map" />
+  <aura:attribute name="ErrorMessage" type="String" />
+  <aura:attribute name="bankName" type="string" />
+  <aura:attribute name="bankAccountName" type="string" />
+  <aura:attribute name="sortCode" type="string" />
+  <aura:attribute name="accountNumber" type="string" />
+     <aura:attribute name="editAddress" type="boolean" default="false" />
+
+  <!-- BootStrap Errors using Aura:if-->
+  <aura:attribute name="titleError" type="boolean" default="false" />
+  <aura:attribute name="firstNameError" type="boolean" default="false" />
+  <aura:attribute name="SurNameError" type="boolean" default="false" />
+  <aura:attribute name="EmailError" type="boolean" default="false" />
+  <aura:attribute name="mobileError" type="boolean" default="false" />
+  <aura:attribute name="landlineError" type="boolean" default="false" />
+  <aura:attribute name="marketingError" type="boolean" default="false" />
+  <aura:attribute name="newsLetterError" type="boolean" default="false" />
+
+  <aura:attribute name="accountNameError" type="Boolean" default="false" />
+  <aura:attribute name="companyNameError" type="Boolean" default="false" />
+  <aura:attribute name="tradingNameError" type="Boolean" default="false" />
+  <aura:attribute name="showCorrespSection" type="Boolean" default="false" />
+    <aura:attribute name="showAccounttype" type="Boolean" default="true" />
+
+  <aura:attribute
+    name="companyRegistationNumberError"
+    type="Boolean"
+    default="false"
+  />
+  <aura:attribute name="telephoneNumberError" type="Boolean" default="false" />
+  <aura:attribute name="addressError" type="Boolean" default="false" />
+
+  <aura:attribute name="grnlEmailError" type="Boolean" default="false" />
+  <aura:attribute name="grnlEmailPatternError" type="Boolean" default="false" />
+
+  <aura:attribute name="disputeEmailError" type="Boolean" default="false" />
+  <aura:attribute
+    name="disputeEmailPatternError"
+    type="Boolean"
+    default="false"
+  />
+
+  <aura:attribute name="financeEmailError" type="Boolean" default="false" />
+  <aura:attribute
+    name="financeEmailPatternError"
+    type="Boolean"
+    default="false"
+  />
+
+  <!-- Prescribed Information Errors -->
+  <aura:attribute name="prescribedError" type="Boolean" default="false" />
+  <aura:attribute name="prescribedLengthError" type="Boolean" default="false" />
+  <aura:attribute
+    name="prescribedSuccessMessage"
+    type="Boolean"
+    default="false"
+  />
+  <aura:attribute
+    name="prescribedErrorMessage"
+    type="Boolean"
+    default="false"
+  />
+
+  <!-- Bank Detail Errors -->
+  <aura:attribute
+    name="nameOnAccountBlankError"
+    type="Boolean"
+    default="false"
+  />
+  <aura:attribute
+    name="accountNumberBlankError"
+    type="Boolean"
+    default="false"
+  />
+    
+        <aura:attribute name="successMsg" type="Boolean" default="false" />
+    <aura:attribute name="errorMsg" type="Boolean" default="false" />
+    
+    <aura:attribute name="passwordSuccessMsg" type="Boolean" default="false" />
+    <aura:attribute name="passwordErrorMsg" type="Boolean" default="false" />
+    
+    <aura:attribute name="sortCodeBlankError" type="Boolean" default="false" />
+    <aura:attribute name="invalidSortCodeError" type="Boolean" default="false" />
+    <aura:attribute name="invalidAccountNumberError" type="Boolean" default="false" />
+    <aura:attribute name="bankSuccessMessage" type="Boolean" default="false" />
+    <aura:attribute name="bankErrorMessage" type="Boolean" default="false" />
+
+  <aura:attribute
+    name="extraEmailSuccessMessage"
+    type="Boolean"
+    default="false"
+  />
+  <aura:attribute
+    name="extraEmailErrorMessage"
+    type="Boolean"
+    default="false"
+  />
+  
+  <!-- System and Application Event -->
+  <aura:handler name="init" value="{!this}" action="{!c.doInit}" />  
+  <aura:handler event="force:refreshView" action="{!c.doInit}" />  
+
+  <aura:attribute name="showChangeAccountType" type="Boolean" default="true" />
+
+  <body>
+      
+        <div class="tab-content custom-tab-content" id="sf-tabContent">
+            
+            <div class="tab-pane fade show active" id="sf-setting" role="tabpanel" aria-labelledby="sf-setting-tab">
+
+                <!-- left Tabs HTML Start -->
+                <div class="secondary-tab-container">
+                    <nav class="left-custom-tab">
+                        <div class="nav nav-tabs" id="left-nav-tab" role="tablist">
+                            <a class="nav-link active" id="left_nav-sf-presonal-tab" data-toggle="tab" href="#left_nav-sf-presonal" role="tab" aria-controls="left_nav-sf-presonal" aria-selected="true">
+                                <img class="initial-state" src="../assets/img/newspaper_icon.svg" alt=""/>
+                                Personal Details
+                            </a>
+                            <a class="nav-link" id="left_nav-sf-organisation-tab" data-toggle="tab" href="#left_nav-sf-organisation" role="tab" aria-controls="left_nav-sf-organisation" aria-selected="false">
+                                <img class="initial-state"  src="{!$Resource.TDSTheme + '/assets/img/Organisation_icon.svg'}" alt=""/>
+                                Organisations Details
+                            </a>
+                            <ul class="org-detail-list">
+                                <li class="account-detail"><a><span class="arrow-left"></span> Account Details</a></li>
+                                <li class="Correspondence-email"><a><span class="arrow-left"></span> Correspondence Email</a></li>
+                                <li class="payment-details"><a><span class="arrow-left"></span> Payment Details</a></li>
+                                <li class="prescribed-info"><a><span class="arrow-left"></span> Prescribed Information clauses</a></li>
+                                <li class="additional-user"><a><span class="arrow-left"></span> Additional User</a></li>
+                                <li class="account-type"><a><span class="arrow-left"></span> Account Type</a></li>
+                                <li class="close-account"><a><span class="arrow-left"></span> Close Account</a></li>
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+      </div>
+      
+    </body>
+</aura:component>
